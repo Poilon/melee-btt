@@ -16,15 +16,15 @@ CODES = json.loads((Path(__file__).resolve().parents[1] / 'shared/gameplay-codes
 
 def default_preferences():
     return {'music': True, 'rumble': True, 'ucf': True, 'iceClimbers': False,
-            'luigiMisfire': False, 'peachItems': ['random'] * 10}
+            'luigiMisfire': False, 'removeGo': False, 'fixedCamera': False, 'peachItems': ['random'] * 10}
 
 
 def normalize_preferences(value):
     defaults = default_preferences()
-    if not isinstance(value, dict) or set(value) not in ({'music', 'rumble'}, set(defaults)):
+    if not isinstance(value, dict) or set(value) not in ({'music', 'rumble'}, set(defaults) - {'removeGo', 'fixedCamera'}, set(defaults)):
         raise ValueError('Invalid companion play settings.')
     result = defaults | value
-    if any(type(result[key]) is not bool for key in ('music', 'rumble', 'ucf', 'iceClimbers', 'luigiMisfire')):
+    if any(type(result[key]) is not bool for key in ('music', 'rumble', 'ucf', 'iceClimbers', 'luigiMisfire', 'removeGo', 'fixedCamera')):
         raise ValueError('Invalid companion play settings.')
     items = result['peachItems']
     if not isinstance(items, list) or len(items) != 10 or any(not isinstance(item, str) or item not in ['random', *ITEM_IDS] for item in items):
@@ -60,7 +60,7 @@ def preference_codes(preferences):
     # Keep these in one block: both hook 800C9A44. The sheet requires Fix first.
     if prefs['ucf']:
         result.append(('TTRC: UCF', CODES['ucfFix']['code'] + '\n' + CODES['ucfDashback']['code']))
-    for key in ('iceClimbers', 'luigiMisfire'):
+    for key in ('iceClimbers', 'luigiMisfire', 'removeGo', 'fixedCamera'):
         if prefs[key]:
             result.append((CODES[key]['name'], CODES[key]['code']))
     peach = peach_code(prefs['peachItems'])

@@ -56,9 +56,11 @@ test('paused recording is linked for playback but excluded from personal bests a
  const add=frames=>store.add({challenge,identity,character:'donkey-kong',stage:'donkey-kong',frames,startedAt:'2022-01-09T18:59:18Z'});
  const id=add(1101);await writeFile(join(f.replayDir,'paused.slp'),withPause(bytes));await f.library.syncRuns(store);
  assert.ok(store.replay(id));assert.match(store.run(id,identity.id,challenge.id).exclusionReason,/Paused/);
- assert.deepEqual(store.bestRuns(challenge.id,identity.id),[]);assert.equal(store.personalBest(challenge.id,'donkey-kong',identity.id),null);
+ assert.deepEqual(store.bestRuns(challenge.id,identity.id),[]);
+ const visible=store.bestRuns(challenge.id,identity.id,{includeExcluded:true});assert.equal(visible.length,1);assert.equal(visible[0].id,id);assert.equal(visible[0].hasReplay,1);assert.match(visible[0].exclusionReason,/Paused/);
+ assert.equal(store.personalBest(challenge.id,'donkey-kong',identity.id),null);
  assert.deepEqual(store.progress(challenge.id,identity.id),{});assert.equal(store.stats(challenge.id).completions,0);
- const good=add(1400);assert.equal(store.bestRuns(challenge.id,identity.id)[0].id,good);assert.equal(store.bestRuns(challenge.id,identity.id)[0].attemptCount,2);
+ const good=add(1400);assert.equal(store.bestRuns(challenge.id,identity.id,{includeExcluded:true})[0].id,good);assert.equal(store.bestRuns(challenge.id,identity.id)[0].id,good);assert.equal(store.bestRuns(challenge.id,identity.id)[0].attemptCount,2);
  assert.equal(store.characterHistory(challenge.id,identity.id,'donkey-kong').length,2);
  await f.library.launchSaved(store.replay(id).sha256);assert.equal(f.calls.length,1);
 });

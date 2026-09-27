@@ -61,16 +61,25 @@ export class ScoreStore {
       LEFT JOIN run_replays rr ON rr.run_id = runs.id WHERE challenge_id = ? AND player_id = ? ORDER BY created_at DESC, runs.rowid DESC LIMIT 50`)
       .all(challengeId, playerId);
   }
-  bestRuns(challengeId, playerId) {
-    return this.db.prepare(`WITH ranked AS (
-      SELECT *, ROW_NUMBER() OVER(PARTITION BY character ORDER BY frames, created_at, id) AS place,
+  bestRuns(challengeId, playerId, {includeExcluded = false} = {}) {
+    // The dashboard may show the latest excluded attempt when no eligible best
+    // exists. Submission selection keeps its eligible-only default.
+    return this.db.prepare(`WITH candidates AS (
+      SELECT runs.*, runs.rowid AS sequence, x.reason AS exclusionReason,
       (SELECT COUNT(*) FROM runs all_runs WHERE all_runs.challenge_id=runs.challenge_id AND all_runs.player_id=runs.player_id AND all_runs.character=runs.character) AS attemptCount
-      FROM runs WHERE challenge_id=? AND player_id=? AND NOT EXISTS(SELECT 1 FROM run_exclusions x WHERE x.run_id=runs.id)
+      FROM runs LEFT JOIN run_exclusions x ON x.run_id=runs.id
+      WHERE challenge_id=? AND player_id=? AND (? OR x.run_id IS NULL)
+    ), ranked AS (
+      SELECT *, ROW_NUMBER() OVER(PARTITION BY character ORDER BY
+        exclusionReason IS NOT NULL,
+        CASE WHEN exclusionReason IS NULL THEN frames END,
+        CASE WHEN exclusionReason IS NOT NULL THEN sequence END DESC,
+        created_at, id) AS place FROM candidates
     ) SELECT r.id, r.character, r.stage, r.frames, r.created_at AS createdAt, r.attemptCount,
       COALESCE(s.status,'local') AS submissionStatus, s.replay_name AS replayName, s.note AS reviewNote,
-      rr.sha256 IS NOT NULL AS hasReplay FROM ranked r
+      rr.sha256 IS NOT NULL AS hasReplay, r.exclusionReason FROM ranked r
       LEFT JOIN submissions s ON s.run_id=r.id LEFT JOIN run_replays rr ON rr.run_id=r.id
-      WHERE r.place=1 ORDER BY r.character`).all(challengeId, playerId);
+      WHERE r.place=1 ORDER BY r.character`).all(challengeId, playerId, includeExcluded ? 1 : 0);
   }
   characterHistory(challengeId, playerId, character, offset = 0) {
     return this.db.prepare(`SELECT r.id, r.character, r.stage, r.frames, r.created_at AS createdAt,

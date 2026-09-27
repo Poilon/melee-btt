@@ -38,6 +38,8 @@ store.add({ challenge, identity: currentIdentity, character: 'fox', stage:'samus
 const dkBest=store.add({ challenge, identity: currentIdentity, character:'donkey-kong',stage:'donkey-kong',frames:1190 });
 const dkOld=store.add({ challenge, identity: currentIdentity, character:'donkey-kong',stage:'donkey-kong',frames:1300 });
 for(const id of [dkBest,dkOld])store.attachReplay(id,'b'.repeat(64),'record.slp');
+const peachPaused=store.add({challenge,identity:currentIdentity,character:'peach',stage:challenge.assignments.peach,frames:987});
+store.attachReplay(peachPaused,'b'.repeat(64),'record.slp');store.exclude(peachPaused,'Paused during the run. Excluded from records and submissions.');
 const remote = {
   status: () => ({ available:true,paired:true,pending:0 }),
   publicRun:async(id,playerId,replay=false)=>{const response=await fetch(`${origin}/api/shared/${replay?'replay':'run'}?id=${id}&playerId=${playerId}`);if(!response.ok)throw Error('Not public');return replay?Buffer.from(await response.arrayBuffer()):response.json();},

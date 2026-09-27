@@ -15,6 +15,7 @@ function renderSettings(settings){
  for(const id of ['play-settings','character-settings'])$(id).disabled=!settings||launchingDolphin;
  if(!settings){text('settings-note','Play settings unavailable.');return;}
  $('game-music').checked=settings.music;$('controller-rumble').checked=settings.rumble;
+ $('remove-go').checked=Boolean(settings.removeGo);$('fixed-camera').checked=Boolean(settings.fixedCamera);
  $('ucf').checked=settings.ucf??true;$('ice-climbers').checked=Boolean(settings.iceClimbers);$('luigi-misfire').checked=Boolean(settings.luigiMisfire);
  for(let i=0;i<10;i++)$(`peach-item-${10-i}`).value=settings.peachItems?.[i]||'random';
  text('settings-note',data?.capture?.dolphinRunning?'Saved automatically · close and relaunch Dolphin to apply changes.':'Saved automatically · applies the next time you launch Dolphin.');
@@ -24,12 +25,12 @@ async function saveSettings(){
  savingSettings=true;settingsRevision++;$('play-settings').disabled=true;$('character-settings').disabled=true;$('play').disabled=true;
  text('settings-note','Saving…');
  try{
-  const settings={music:$('game-music').checked,rumble:$('controller-rumble').checked,ucf:$('ucf').checked,iceClimbers:$('ice-climbers').checked,luigiMisfire:$('luigi-misfire').checked,peachItems:Array.from({length:10},(_,i)=>$(`peach-item-${10-i}`).value)};
+  const settings={music:$('game-music').checked,rumble:$('controller-rumble').checked,ucf:$('ucf').checked,removeGo:$('remove-go').checked,fixedCamera:$('fixed-camera').checked,iceClimbers:$('ice-climbers').checked,luigiMisfire:$('luigi-misfire').checked,peachItems:Array.from({length:10},(_,i)=>$(`peach-item-${10-i}`).value)};
   const result=await post('settings',settings,'settings');if(data)data.settings=result.settings;
  }catch(error){if(data)data.settings=previous;toast('Could not save play settings. Please try again.');}
  finally{savingSettings=false;settingsRevision++;$('play').disabled=false;renderSettings(data?.settings);}
 }
-for(const id of ['game-music','controller-rumble','ucf','ice-climbers','luigi-misfire',...Array.from({length:10},(_,i)=>`peach-item-${10-i}`)])$(id).addEventListener('change',saveSettings);
+for(const id of ['game-music','controller-rumble','ucf','remove-go','fixed-camera','ice-climbers','luigi-misfire',...Array.from({length:10},(_,i)=>`peach-item-${10-i}`)])$(id).addEventListener('change',saveSettings);
 $('peach-reset').addEventListener('click',()=>{for(let i=0;i<10;i++)$(`peach-item-${10-i}`).value='random';saveSettings();});
 function renderSetup(setup){
  const needsSetup=setup&&setup.ready===false;
@@ -67,11 +68,11 @@ function render(d){
  if(seen){const fresh=d.history.find(r=>!seen.has(r.id));if(fresh&&!fresh.exclusionReason)toast(`Run saved: ${names[fresh.character]} · ${formatTime(fresh.frames)}. Replay syncs automatically after leaving the results screen.`);}seen=new Set(d.history.map(r=>r.id));
 }
 const expanded=new Set(), attempts=new Map(), submitting=new Set();let runsKey, historyPlayer;
-function matchesTab(r){return tab==='all'||(tab==='ready'?['local','upload-error'].includes(r.submissionStatus):!['local','upload-error'].includes(r.submissionStatus));}
+function matchesTab(r){if(r.exclusionReason)return tab==='all';return tab==='all'||(tab==='ready'?['local','upload-error'].includes(r.submissionStatus):!['local','upload-error'].includes(r.submissionStatus));}
 function makeRunRow(r,group=false){
  const row=make('article','','run'),info=make(group?'button':'div','','run-info'),top=make('div','','run-top');
  top.append(make('strong',group?names[r.character]:`${names[r.character]} → ${names[r.stage]}`),make('time',formatTime(r.frames)),make('span',r.exclusionReason?'Excluded':({local:'Local only',queued:'Queued',submitted:'Submitted',pending:'Submitted',approved:'Submitted',rejected:'Rejected','upload-error':'Upload failed',superseded:'Replaced'})[r.submissionStatus]||'Local only',`badge ${r.submissionStatus}`));
- info.append(top,make('small',group?`Personal best · ${r.attemptCount} attempt${r.attemptCount===1?'':'s'} · ${expanded.has(r.character)?'Hide':'Show'} history ${expanded.has(r.character)?'▴':'▾'}`:new Date(r.createdAt).toLocaleString('en-US')));
+ info.append(top,make('small',group?`${r.exclusionReason?'No valid clear':'Personal best'} · ${r.attemptCount} attempt${r.attemptCount===1?'':'s'} · ${expanded.has(r.character)?'Hide':'Show'} history ${expanded.has(r.character)?'▴':'▾'}`:new Date(r.createdAt).toLocaleString('en-US')));
  if(group){const portrait=make('img','','run-portrait');portrait.src=`/assets/melee/${r.character}-portrait.webp`;portrait.alt='';portrait.width=32;portrait.height=36;portrait.loading='lazy';info.prepend(portrait);info.type='button';info.classList.add('run-summary');info.setAttribute('aria-expanded',String(expanded.has(r.character)));info.setAttribute('aria-label',`${names[r.character]}: ${expanded.has(r.character)?'hide':'show'} run history`);info.addEventListener('click',()=>toggleHistory(r.character));}
  if(r.exclusionReason)info.append(make('small',r.exclusionReason,'muted'));
  if(r.reviewNote&&!['pending','submitted'].includes(r.submissionStatus))info.append(make('small',r.reviewNote));
@@ -92,7 +93,7 @@ function makeRunRow(r,group=false){
 function renderRuns(d){
  if(historyPlayer!==`${d.challenge.id}:${d.identity?.id}`){historyPlayer=`${d.challenge.id}:${d.identity?.id}`;expanded.clear();attempts.clear();runsKey=null;}
  const groups=d.bestRuns||[];const key=JSON.stringify([groups,tab,[...expanded],[...attempts],[...submitting]]);if(key===runsKey)return;runsKey=key;
- const visible=groups.filter(matchesTab);text('run-count',`${groups.length} character${groups.length===1?'':'s'} · ${Object.values(d.progress||{}).reduce((n,p)=>n+p.runs,0)} runs`);$('empty').hidden=visible.length>0;$('run-list').replaceChildren();
+ const visible=groups.filter(matchesTab);text('run-count',`${groups.length} character${groups.length===1?'':'s'} · ${groups.reduce((n,r)=>n+r.attemptCount,0)} runs`);$('empty').hidden=visible.length>0;$('run-list').replaceChildren();
  for(const r of visible){const group=make('section','','run-group');group.append(makeRunRow(r,true));if(expanded.has(r.character)){const list=make('div','','attempt-history');const cache=attempts.get(r.character);list.append(make('p',`All ${names[r.character]} attempts · newest first`,'eyebrow'));if(!cache||cache.loading&&!cache.rows.length)list.append(make('p','Loading attempts…','muted'));if(cache){for(const attempt of cache.rows){const row=makeRunRow(attempt);if(attempt.id===r.id)row.classList.add('best-attempt');list.append(row);}if(cache.error)list.append(make('p',cache.error,'muted'));if(cache.rows.length<r.attemptCount&&!cache.loading){const more=make('button',cache.error?'Retry':'Load older runs','quiet');more.addEventListener('click',()=>loadHistory(r.character,true));list.append(more);}}group.append(list);} $('run-list').append(group);}
 }
 function toggleHistory(character){if(expanded.has(character)){expanded.delete(character);renderRuns(data);}else{expanded.add(character);renderRuns(data);loadHistory(character);}}

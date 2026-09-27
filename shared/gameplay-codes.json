@@ -16,5 +16,13 @@
   "luigiMisfire": {
     "name": "TTRC: Always Luigi misfire",
     "code": "04142AF8 38000001"
+  },
+  "removeGo": {
+    "name": "TTRC: Remove GO",
+    "code": "C22F6EA8 00000002\n7C6E1B78 2C030008\n60000000 00000000\nC22F6FAC 00000005\n2C0E0004 41820020\n3D808039 618C069C\n7D8903A6 4E800421\n60000000 39C00000\n60000000 00000000"
+  },
+  "fixedCamera": {
+    "name": "TTRC: Fixed camera",
+    "code": "04452C6C 00000004\n042F6508 4E800020"
   }
 }

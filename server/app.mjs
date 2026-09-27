@@ -199,7 +199,7 @@ export function createApp({ challenge, gecko, store, getIdentity, getCapture, la
           setup: onboarding?.get() || {ready:true},
           leaderboard: [], stats: store.stats(challenge.id),
           history: player ? store.history(challenge.id, player.id) : [],
-          bestRuns: player ? store.bestRuns(challenge.id, player.id) : [],
+          bestRuns: player ? store.bestRuns(challenge.id, player.id, {includeExcluded:true}) : [],
           progress: player ? store.progress(challenge.id, player.id) : {},
           personalBest: player ? store.personalBest(challenge.id, character, player.id) : null,
         });

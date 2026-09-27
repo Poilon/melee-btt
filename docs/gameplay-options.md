@@ -11,6 +11,12 @@ UCF is enabled by default, with the sheet’s Fix v0.73 before improved dashback
 
 These optional codes do not change the seed identity or original randomizer payload. They are installed before Dolphin reads its configuration; changing a setting while Dolphin runs takes effect after closing and relaunching Dolphin. Slippi serializes the enabled Gecko list (`Gecko::GenerateGct`) into recordings and Playback loads the recorded list; playback does not regenerate codes from current companion preferences. Submissions are included at reveal without prior approval; the organizer can inspect and exclude runs. Automated checks do not establish physical controller behavior or a complete in-game playthrough of every option.
 
+## Display options
+
+**Remove GO** and **Fixed camera** use the exact codes supplied by the project owner on 2026-09-27. Remove GO also matches the GO-only hooks in BTT Randomizer's speedrun pack. They are independently enabled, off by default, and take effect at the next Dolphin start. The fixed camera payload is `04452C6C 00000004` / `042F6508 4E800020`; this is the requested fixed-camera behavior, not a D-pad toggle. The seed, target positions, target timing and score capture rules are unchanged.
+
+Both payloads are pinned in the shared catalog and verified exactly. Existing two-field and six-field settings migrate with both options off. Updates from an older companion tab preserve the new preferences.
+
 ## Luigi misfire compatibility
 
 The sheet's `00142AFB 00000001` byte write changes `li r0,0` to `li r0,1` in Luigi's misfire selection. Slippi's [bootloader](https://github.com/project-slippi/slippi-ssbm-asm/blob/master/Bootloader/main.asm) handles `04`, `06` and `C2` writes but skips `00`. A code can consequently appear in the INI and replay without changing the game.

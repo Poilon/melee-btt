@@ -15,8 +15,15 @@ test('companion shows compact personal bests with expandable replay history', as
   await expect(page.locator('#replay-list')).toHaveCount(0);
   const fox=page.locator('.run-group').filter({has:page.getByRole('button',{name:'Fox: show run history'})});
   await expect(fox.getByRole('button',{name:'Submit',exact:false})).toBeDisabled();
-  await expect(page.locator('#run-list > .run-group')).toHaveCount(2);
-  await expect(page.locator('#run-list .run')).toHaveCount(2);
+  await expect(page.locator('#run-list > .run-group')).toHaveCount(3);
+  await expect(page.locator('#run-list .run')).toHaveCount(3);
+  const peach=page.locator('.run-group').filter({has:page.getByRole('button',{name:/^Peach: /})});
+  await expect(peach).toContainText('No valid clear');await expect(peach).toContainText('Paused during the run');
+  await expect(peach.getByRole('button',{name:'Submit',exact:false})).toHaveCount(0);
+  await expect(peach.getByRole('button',{name:'Watch replay'})).toBeEnabled();
+  await page.getByRole('button',{name:'Peach: show run history'}).click();
+  await expect(peach.locator('.attempt-history .run')).toHaveCount(1);
+  await page.getByRole('button',{name:'Peach: hide run history'}).click();
   await page.getByRole('button',{name:'Donkey Kong: show run history'}).click();
   const attempts=page.locator('.attempt-history .run');
   await expect(attempts).toHaveCount(2);
@@ -211,4 +218,14 @@ test('seeded target mix is explained in the companion and on the website',async(
  await page.goto('http://localhost:4319');
  await expect(page.locator('#target-behavior')).toHaveText('Seeded mix');
  await expect(page.locator('#course-grid')).toContainText('teleporting');
+});
+
+test('Remove GO and Fixed camera save independently and survive reload',async({page})=>{
+ await page.goto('/');
+ const go=page.getByRole('checkbox',{name:'Remove GO',exact:true}),camera=page.getByRole('checkbox',{name:'Fixed camera',exact:true});
+ await expect(go).toBeEnabled();await expect(go).not.toBeChecked();await expect(camera).not.toBeChecked();
+ await go.check();await expect(go).toBeEnabled();await camera.check();await expect(camera).toBeEnabled();
+ await page.reload();await expect(go).toBeChecked();await expect(camera).toBeChecked();
+ await go.uncheck();await expect(go).toBeEnabled();await page.reload();await expect(go).not.toBeChecked();await expect(camera).toBeChecked();
+ await camera.uncheck();await expect(camera).toBeEnabled();
 });

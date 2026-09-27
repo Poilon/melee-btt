@@ -51,14 +51,18 @@ test('Peach generator matches the supplied generator and branches by targets rem
 });
 
 test('prepared profiles apply the exact approved optional codes with UCF in the required order',()=>{
- const prefs={...defaultPlaySettings(),music:false,iceClimbers:true,luigiMisfire:true,peachItems:Array(10).fill('mr-saturn')};
+ const prefs={...defaultPlaySettings(),music:false,iceClimbers:true,luigiMisfire:true,removeGo:true,fixedCamera:true,peachItems:Array(10).fill('mr-saturn')};
  const patches=JSON.parse(execFileSync('python3',['-c',"import sys,json;sys.path.insert(0,'scripts');from play_settings import preference_codes;print(json.dumps(preference_codes(json.loads(sys.stdin.read()))))"],{input:JSON.stringify(prefs),encoding:'utf8'}));
- assert.deepEqual(patches.map(([name])=>name),['TTRC: Music off','TTRC: UCF','TTRC: Both Ice Climbers','TTRC: Always Luigi misfire','TTRC: Peach items']);
+ assert.deepEqual(patches.map(([name])=>name),['TTRC: Music off','TTRC: UCF','TTRC: Both Ice Climbers','TTRC: Always Luigi misfire','TTRC: Remove GO','TTRC: Fixed camera','TTRC: Peach items']);
  const ucf=patches.find(([name])=>name==='TTRC: UCF')[1];
  assert.ok(ucf.indexOf('C20C9A44 00000022')<ucf.indexOf('C20C9A44 0000002F'));validateGecko(ucf);
  const challenge='04000000 00000000\n',hash=createHash('sha256').update(challenge).digest('hex');
  const ini='[Gecko]\n$Target Test Randomizer Challenge\n'+challenge+patches.map(([name,code])=>'$'+name+'\n'+code+'\n').join('');
  assert.equal(verifyProfileCode(ini,hash),true);
+ assert.equal(patches.find(([name])=>name==='TTRC: Fixed camera')[1],'04452C6C 00000004\n042F6508 4E800020');
+ assert.match(patches.find(([name])=>name==='TTRC: Remove GO')[1],/^C22F6EA8 00000002\n7C6E1B78 2C030008/);
+ assert.equal(verifyProfileCode(ini.replace('04452C6C 00000004','04452C6C 00000005'),hash),false);
+ assert.equal(verifyProfileCode(ini.replace('7C6E1B78 2C030008','7C6E1B78 2C030007'),hash),false);
  assert.equal(patches.find(([name])=>name==='TTRC: Always Luigi misfire')[1],'04142AF8 38000001');
  assert.equal(verifyProfileCode(ini.replace('04142AF8 38000001','04142AF8 38000002'),hash),false);
  assert.equal(verifyProfileCode(ini.replace('04142AF8 38000001','00142AFB 00000001'),hash),true);
@@ -80,4 +84,16 @@ test('optional patches use code types supported by the Slippi bootloader',()=>{
    assert.ok(i<lines.length,'truncated Gecko payload');
   }
  }
+});
+
+test('six-field preferences migrate and older tabs preserve display options',async t=>{
+ const dir=await mkdtemp(join(tmpdir(),'ttrc-display-'));t.after(()=>rm(dir,{recursive:true,force:true}));
+ const {removeGo,fixedCamera,...legacy}=defaultPlaySettings(),path=join(dir,'settings.json');
+ await writeFile(path,JSON.stringify({...legacy,luigiMisfire:true}));
+ const store=new PlaySettings(path);await store.initialize();assert.equal(store.get().luigiMisfire,true);assert.equal(store.get().removeGo,false);assert.equal(store.get().fixedCamera,false);
+ await store.save({...store.get(),removeGo:true,fixedCamera:true});await store.save(legacy);
+ assert.equal(store.get().removeGo,true);assert.equal(store.get().fixedCamera,true);
+ const migrated=JSON.parse(execFileSync('python3',['-c',"import sys,json;sys.path.insert(0,'scripts');from play_settings import normalize_preferences;print(json.dumps(normalize_preferences(json.loads(sys.stdin.read()))))"],{input:JSON.stringify(legacy),encoding:'utf8'}));
+ assert.deepEqual(migrated,defaultPlaySettings());
+ for(const invalid of [{...store.get(),removeGo:1},{...store.get(),fixedCamera:'true'},{...legacy,removeGo:true}])assert.equal(validPlaySettings(invalid),false);
 });

@@ -31,7 +31,7 @@ See [implementation and validation](docs/target-motion.md). The downloadable Gec
 - Zelda and Sheik share one of the 25 challenge entries. Starting as Sheik or transforming during a run counts toward the same entry.
 - **Your runs** shows your best eligible run per character. Expand a character to see and replay earlier attempts.
 - New valid personal bests are submitted automatically with their replay. Each new best replaces the current submission for that character.
-- Paused runs are excluded from records and submissions, but remain available for playback.
+- Paused runs are excluded from records and submissions, but remain visible with the reason and replay. If a character has no eligible clear, Your runs shows its latest excluded attempt instead of hiding it.
 - Before the reveal, the website shows participants only. Other players’ times and ranks remain private.
 - You can explicitly **Disclose run** on the website to make that specific time and replay public.
 - Runs are submitted immediately and included at reveal without prior approval. Organizers can inspect replays and exclude invalid runs. Capture is experimental; structural replay checks alone do not prove a valid record.
@@ -39,6 +39,7 @@ See [implementation and validation](docs/target-motion.md). The downloadable Gec
 The companion saves these settings automatically and applies them the next time Dolphin starts:
 
 - **Game music**, **Controller rumble**, and **UCF** (enabled by default).
+- **Remove GO** hides the GO graphic; **Fixed camera** applies the fixed-camera code. Both are off by default.
 - Under **Character settings**, enable Nana alongside Popo or force Luigi’s misfires.
 - Choose Peach’s item separately for each remaining target count (10 through 1): Random, Turnip, Beam Sword, Bob-omb or Mr. Saturn. Repeated pulls at the same count give the same selected item; Random preserves the original choice.
 

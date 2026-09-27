@@ -3,7 +3,7 @@ export const itemIds = {'turnip':0x63,'beam-sword':0x0c,'bob-omb':0x06,'mr-satur
 export const approvedPreferenceCodes = new Map([
   ['$TTRC: Music off','04023FFC 38800000'],
   ['$TTRC: UCF',catalog.ucfFix.code+'\n'+catalog.ucfDashback.code],
-  ...['iceClimbers','luigiMisfire'].map(key=>['$'+catalog[key].name,catalog[key].code]),
+  ...['iceClimbers','luigiMisfire','removeGo','fixedCamera'].map(key=>['$'+catalog[key].name,catalog[key].code]),
 ]);
 // Pre-0.6.1 profiles used this byte write, which Slippi's bootloader ignores.
 // Accept only that exact legacy payload while generating the working 04 write.
