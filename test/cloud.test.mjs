@@ -56,7 +56,7 @@ test('player files create real independent profiles, authenticate runs and suppo
   assert.equal((await request('submissions', { method: 'POST', headers, body: { ...run, frames: 100 } })).status, 409);
   const publicBoard = (await request('dashboard?character=donkey-kong')).data;
   assert.equal(publicBoard.identity, null); assert.equal(publicBoard.history.length, 0);
-  assert.equal(publicBoard.stats.completions, 0); assert.deepEqual(publicBoard.leaderboard, []);
+  assert.equal(publicBoard.stats.completions, 1); assert.deepEqual(publicBoard.leaderboard, []);
   const privateBoard = (await request('dashboard?character=donkey-kong', { headers: { cookie } })).data;
   assert.equal(privateBoard.identity.displayName, 'Player'); assert.equal(privateBoard.personalBest.frames, 1234);
   assert.deepEqual(privateBoard.progress['donkey-kong'], { best: 1234, runs: 1 });
@@ -149,7 +149,7 @@ test('participants are alphabetical; rankings, times and replays stay sealed unt
   assert.equal((await request('review/decision', { method: 'POST', headers: admin, body: approve })).status, 409);
   const mine = (await request('submissions/mine', { headers })).data;
   assert.equal(mine.submissions[0].status, 'approved');
-  // A faster unreviewed run must not change the public rank.
+  // Even a faster submitted run remains hidden until reveal.
   const bob = { ...run, id: randomUUID(), frames: 1000 };
   const bobHeaders = { authorization: `Bearer ${b.data.playerFile.token}` };
   assert.equal((await request('submissions', { method: 'POST', headers: bobHeaders, body: bob })).status, 202);
@@ -251,4 +251,21 @@ test('new records replace current submissions without inheriting disclosure or l
  assert.equal((await disclose(best.id)).status,200);
  assert.equal((await request(`shared/run?id=${best.id}&playerId=${playerId}`)).data.run.frames,1300);
  assert.deepEqual((await request(evidence(best.id))).text,replay);
+});
+
+test('submitted bests are included at reveal without approval and can be excluded afterwards',async()=>{
+ const {request}=fixture(),admin={origin,authorization:`Bearer ${reviewerKey}`};
+ const player=await request('players/create',{method:'POST',headers:{origin},body:{displayName:'Direct submit'}});
+ const headers={authorization:`Bearer ${player.data.playerFile.token}`},playerId=player.data.playerFile.id;
+ const bytes=await readFile(new URL('./fixtures/BTTDK.slp',import.meta.url));
+ const run={id:randomUUID(),challengeId:challenge.id,geckoSha256:challenge.geckoSha256,character:'donkey-kong',stage:'donkey-kong',frames:1234,replay:bytes.toString('base64')};
+ const upload=await request('submissions',{method:'POST',headers,body:run});
+ assert.equal(upload.status,202);assert.equal(upload.data.status,'submitted');
+ const better={...run,id:randomUUID(),frames:1100};await request('submissions',{method:'POST',headers,body:better});
+ const open=(await request('dashboard?character=donkey-kong')).data;assert.deepEqual(open.leaderboard,[]);assert.equal(open.participants.length,1);assert.equal(open.stats.completions,1);
+ const mine=(await request('submissions/mine',{headers})).data;assert.equal(mine.submissions.find(r=>r.id===better.id).status,'submitted');
+ await request('review/close',{method:'POST',headers:admin,body:{challengeId:challenge.id,confirm:'REVEAL'}});
+ const revealed=(await request('dashboard?character=donkey-kong')).data;assert.equal(revealed.leaderboard[0].frames,1100);
+ assert.equal((await request('review/decision',{method:'POST',headers:admin,body:{id:better.id,playerId,status:'rejected',note:'Invalid time'}})).status,200);
+ const corrected=(await request('dashboard?character=donkey-kong')).data;assert.equal(corrected.leaderboard[0].frames,1234);assert.equal(corrected.stats.completions,1);
 });

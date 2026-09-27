@@ -25,7 +25,7 @@ export function createCompetition({ store, challenge, gecko, origin, reviewerKey
       const r = await store.get(f.pathname);
       if (!r) return null;
       const decision = await store.get(`reviews/${challenge.id}/${r.playerId}/${r.id}.json`);
-      return { ...r, status: decision?.status || 'pending', reviewNote: decision?.note || '', reviewedAt: decision?.at || null };
+      return { ...r, status: decision?.status || 'submitted', reviewNote: decision?.note || '', reviewedAt: decision?.at || null };
     }))).filter(Boolean);
     // Deterministic selection makes delayed retries and simultaneous uploads safe.
     const current=new Set(),ordered=[...rows].filter(r=>r.status!=='rejected').sort((a,b)=>a.frames-b.frames||a.createdAt.localeCompare(b.createdAt)||a.id.localeCompare(b.id));
@@ -84,7 +84,7 @@ export function createCompetition({ store, challenge, gecko, origin, reviewerKey
         character: input.character, stage: input.stage, frames: input.frames, createdAt: new Date(now()).toISOString(), replay, digest };
       try { await store.put(recordPath, record); } catch { if ((await store.get(recordPath))?.digest !== digest) throw new Error('Submission storage failed'); }
       cache = null;
-      return send(res, 202, { ok: true, status: 'pending', id: input.id });
+      return send(res, 202, { ok: true, status: 'submitted', id: input.id });
     }
     if(path==='submissions/disclose'&&req.method==='POST'){
       const user=await session(req);if(!user)return send(res,401,{error:'Sign in to disclose your own run.'});

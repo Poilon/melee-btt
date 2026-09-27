@@ -15,9 +15,9 @@ Local companion: **http://localhost:4317**. Organizer desk on this PC:
 5. Exit the result screen to finish writing the replay. The companion attaches the
    matching recording automatically and uploads the best run’s time and private
    replay together (maximum replay size: 2 MB). Paused runs are excluded.
-6. The submission becomes **In review** and your name appears in the participant
-   list. Rejection notes and approval status sync back into the companion. Only
-   approved runs enter the rankings when the challenge is revealed.
+6. The submission becomes **Submitted** and your name appears in the participant
+   list. Times remain private until reveal. Submitted bests enter the revealed
+   rankings automatically; the organizer can exclude a run with a reason.
 
 A failed connection leaves the replay and claim in a
 private durable upload queue, retried every 15 seconds. Local records remain safe.
@@ -28,7 +28,7 @@ runs replace it, while previous entries remain in the owner’s private history.
 Delayed retries cannot replace a better run. Review approval stays attached to
 the exact run and does not transfer to its replacement.
 
-The companion has a separate purple/mint design with a live timer, target counter,
+The companion has a separate purple/mint design with
 one personal best per character, expandable attempt history, submission filters and CSV export. Character selection happens in
 Melee; the companion displays the character and stage detected during the run.
 The public site retains the gold competition design, course search, favorites,
@@ -76,15 +76,14 @@ See [account setup](accounts.md).
 During an open challenge, public responses contain an alphabetical, challenge-wide
 participant list with player names and TT codes, **without rankings, time/frame
 fields, or performance-based ordering**. The leaderboard array is empty. Players
-with pending or approved submissions appear once; rejected-only entries do not.
+with submitted runs appear once; rejected-only entries do not.
 This is enforced by the server, not CSS. Your own submitted times and history
-remain visible to you when signed in. At reveal, the best approved time per player
-and character determines rank; equal times share a rank. Pending and rejected
-submissions never rank.
+remain visible to you when signed in. At reveal, the fastest non-rejected submission per player
+and character determines rank; equal times share a rank. No prior approval is required.
 
 By default, the organizer closes the challenge manually from the review desk.
 **Close challenge & reveal times** requires confirmation, stops new submissions
-and permanently reveals approved times. No real challenge is closed by setup or
+and permanently reveals submitted times. No real challenge is closed by setup or
 tests. An optional ISO timestamp `CHALLENGE_ENDS_AT` provides automatic closure.
 Reviews of submissions received before closure can continue after it.
 
@@ -143,20 +142,20 @@ is enabled. The real Marth → Mewtwo recording from 2026-09-27 was replayed thr
 all ten targets to a successful ending. This confirms that recording's playback,
 not automatic validation of other recordings or proof against tampering.
 
-## Human review
+## Optional human review
 
 The organizer desk lists submitted claims with their private replay downloads,
 recorded character/stage, claimed time, replay version and embedded-code check.
 Use **Launch replay** on the local desk, or download the `.slp` for a compatible
 Slippi playback Dolphin. Check the seed/course, character, all targets and game
-clock before approving. If replay playback cannot reproduce the run, reject it
+clock when checking a submission. If replay playback cannot reproduce the run, reject it
 with a reason rather than treating the parser as proof.
 
 The parser rejects renamed files, incomplete raw data, wrong game mode, mismatched
 character/stage and missing game endings. The evidence SHA-256 and immutable claim
 bind the submitted time to the attached bytes. A parser or matching Gecko list is
 not an anti-cheat proof, proof of ownership, or proof of a successful clear.
-Only human review grants `approved` status. A review decision is immutable in this
+Submission does not require human approval. An optional review decision is immutable in this
 interface. Replays are kept in private storage. Only reviewers can download undisclosed
 replays; disclosed replays are publicly downloadable through a permission-checked
 endpoint.
@@ -226,8 +225,8 @@ node scripts/prepare_vercel.mjs
 vercel --prod --yes --cwd .deploy --scope poilons-projects
 ```
 
-Tests cover actual replay parsing, authentication, replay privacy, pending/rejected
-exclusion, own-time visibility, sealed API payloads, review, closure and submission
+Tests cover actual replay parsing, authentication, replay privacy, automatic inclusion
+at reveal and rejected-run exclusion, own-time visibility, sealed API payloads, review, closure and submission
 retry. Browser tests exercise the complete replay submission and approval flow in
 memory-only fixtures. They never add test scores to production.
 

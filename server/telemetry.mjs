@@ -1,11 +1,11 @@
 import { randomUUID } from 'node:crypto';
+import {characterForExternalId} from '../shared/characters.mjs';
 import { stages } from '../src/challenge.mjs';
 
 // Melee NTSC 1.02 external character IDs and INTERNAL ground IDs (not the
 // external stage IDs used by the Gecko stage-selection table).
-const characterIds = [22, 8, 7, 5, 12, 17, 1, 0, 25, 20, 2, 11, 32, 4, 16, 18, 6, 21, 24, 13, 15, 10, 3, 9, 23];
 const groundIds = [44, 40, 51, 49, 55, 61, 43, 41, 65, 45, 46, 54, 47, 48, 59, 62, 50, 42, 56, 57, 58, 53, 63, 52, 64];
-export const characterForId = id => stages[characterIds.indexOf(id)];
+export const characterForId = characterForExternalId;
 export const stageForId = id => stages[groundIds.indexOf(id)];
 
 export class RunDetector {

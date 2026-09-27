@@ -2,10 +2,10 @@ import { readdir, lstat, readFile, mkdir, writeFile, rename } from 'node:fs/prom
 import { join } from 'node:path';
 import { createHash, randomUUID } from 'node:crypto';
 import { createRequire } from 'node:module';
+import {characterForExternalId} from '../shared/characters.mjs';
 import { inspectReplay, MAX_REPLAY_BYTES } from '../shared/replay.mjs';
 const require = createRequire(import.meta.url);
 const { SlippiGame } = require('@slippi/slippi-js');
-const characterIds = {22:'dr-mario',8:'mario',7:'luigi',5:'bowser',12:'peach',17:'yoshi',1:'donkey-kong',0:'captain-falcon',25:'ganondorf',20:'falco',2:'fox',11:'ness',14:'ice-climbers',32:'ice-climbers',4:'kirby',16:'samus',18:'zelda',6:'link',21:'young-link',24:'pichu',13:'pikachu',15:'jigglypuff',10:'mewtwo',3:'game-and-watch',9:'marth',23:'roy'};
 const hash = value => createHash('sha256').update(value).digest('hex');
 export class ReplayError extends Error {}
 export class ReplayLibrary {
@@ -17,7 +17,7 @@ export class ReplayLibrary {
       if(!Buffer.isBuffer(bytes)||bytes.length>MAX_REPLAY_BYTES)throw new Error();
       const game=new SlippiGame(bytes);
       const settings=game.getSettings();
-      const character=characterIds[settings?.players?.[0]?.characterId];
+      const character=characterForExternalId(settings?.players?.[0]?.characterId);
       if(!character)throw new Error();
       const stage=this.challenge.assignments[character];
       const details=inspectReplay(bytes,{character,stage},this.gecko);

@@ -5,6 +5,12 @@ export const approvedPreferenceCodes = new Map([
   ['$TTRC: UCF',catalog.ucfFix.code+'\n'+catalog.ucfDashback.code],
   ...['iceClimbers','luigiMisfire'].map(key=>['$'+catalog[key].name,catalog[key].code]),
 ]);
+// Pre-0.6.1 profiles used this byte write, which Slippi's bootloader ignores.
+// Accept only that exact legacy payload while generating the working 04 write.
+export function validPreferenceCode(name, code) {
+  return approvedPreferenceCodes.get(name) === code ||
+    (name === '$TTRC: Always Luigi misfire' && code === '00142AFB 00000001');
+}
 export function peachCode(items) {
   const pairs=items.flatMap((item,i)=>item==='random'?[]:[[10-i,itemIds[item]]]),n=pairs.length;
   if(!n)return '';

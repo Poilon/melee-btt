@@ -20,12 +20,13 @@ Windows 10/11 **x64**. The companion launcher is a small readable Windows script
 ## Records and replays
 
 - The companion captures fresh, completed Target Test runs and links their `.slp` files automatically.
+- Zelda and Sheik share one of the 25 challenge entries. Starting as Sheik or transforming during a run counts toward the same entry.
 - **Your runs** shows your best eligible run per character. Expand a character to see and replay earlier attempts.
 - New valid personal bests are submitted automatically with their replay. Each new best replaces the current submission for that character.
 - Paused runs are excluded from records and submissions, but remain available for playback.
 - Before the reveal, the website shows participants only. Other players’ times and ranks remain private.
 - You can explicitly **Disclose run** on the website to make that specific time and replay public.
-- Submitted replays require human review. Capture is experimental; structural replay checks alone do not prove a valid record.
+- Runs are submitted immediately and included at reveal without prior approval. Organizers can inspect replays and exclude invalid runs. Capture is experimental; structural replay checks alone do not prove a valid record.
 
 The companion saves these settings automatically and applies them the next time Dolphin starts:
 

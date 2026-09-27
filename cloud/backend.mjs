@@ -55,13 +55,13 @@ export function createCloudHandler({ store, challenge, gecko, origin, secret, re
         const rows = await competition.list();
         const phase = await competition.phase();
         const disclosed=await competition.disclosures(), sharedRuns=await competition.shared();
-        const boardRows = rows.filter(r => r.current && r.character === character && r.status === 'approved').sort((a, b) => a.frames - b.frames || a.createdAt.localeCompare(b.createdAt));
+        const boardRows = rows.filter(r => r.current && r.character === character && r.status !== 'rejected').sort((a, b) => a.frames - b.frames || a.createdAt.localeCompare(b.createdAt));
         const seen = new Set(); const best = boardRows.filter(r => seen.has(r.playerId) ? false : (seen.add(r.playerId), true));
         let lastFrames, rank = 0;
         const leaders = phase.timesRevealed ? best.slice(0, 100).map((r, index) => {
           if (r.frames !== lastFrames) { rank = index + 1; lastFrames = r.frames; }
           return { rank, playerId: r.playerId, displayName: r.displayName, connectCode: r.connectCode,
-            createdAt: r.createdAt, status: 'approved', frames: r.frames };
+            createdAt: r.createdAt, status: r.status, frames: r.frames };
         }) : [];
         // Sealed participation is challenge-wide and alphabetic, never ordered by performance.
         const entrants = rows.filter(r => r.status !== 'rejected');
@@ -72,7 +72,7 @@ export function createCloudHandler({ store, challenge, gecko, origin, secret, re
         return json(res, 200, { challenge, competition: phase, scope: 'public', identity, player: user ? { id: user.id } : null,
           auth: { mode: 'password', configured: Boolean(secret), account: user ? { name: profile?.displayName || '', provider: user.provider || 'legacy', linked: Boolean(profile) } : null },
           capture: { status: 'remote', experimental: true },
-          leaderboard: leaders, participants, sharedRuns, stats: { completions: rows.filter(r => r.current && r.status === 'approved').length, players: participants.length, characters: new Set(rows.filter(r => r.current && r.status === 'approved').map(r => r.character)).size },
+          leaderboard: leaders, participants, sharedRuns, stats: { completions: rows.filter(r => r.current && r.status !== 'rejected').length, players: participants.length, characters: new Set(rows.filter(r => r.current && r.status !== 'rejected').map(r => r.character)).size },
           history: mine.sort((a, b) => b.createdAt.localeCompare(a.createdAt) || a.id.localeCompare(b.id)).map(r => ({ id: r.id, character: r.character, stage: r.stage, frames: r.frames, createdAt: r.createdAt, status: r.status, current:r.current, disclosed:disclosed.has(`${r.playerId}:${r.id}`), reviewNote: r.reviewNote })),
           progress: Object.fromEntries(Object.keys(challenge.assignments).map(character => {
             const attempts = mine.filter(r => r.character === character);

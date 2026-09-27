@@ -1,4 +1,4 @@
-import {approvedPreferenceCodes,validPeachCode} from '../shared/gameplay-codes.mjs';
+import {validPreferenceCode,validPeachCode} from '../shared/gameplay-codes.mjs';
 import { sha256 } from '../src/upstream.mjs';
 
 export function verifyProfileCode(ini, expectedHash) {
@@ -19,7 +19,7 @@ export function verifyProfileCode(ini, expectedHash) {
   for (const [name, lines] of blocks) {
     const code=lines.join('\n');
     if(name==='$TTRC: Peach items'){if(!validPeachCode(code))return false;}
-    else if(approvedPreferenceCodes.get(name)!==code)return false;
+    else if(!validPreferenceCode(name,code))return false;
   }
   return true;
 }

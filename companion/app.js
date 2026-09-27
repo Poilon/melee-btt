@@ -68,16 +68,16 @@ const expanded=new Set(), attempts=new Map(), submitting=new Set();let runsKey, 
 function matchesTab(r){return tab==='all'||(tab==='ready'?['local','upload-error'].includes(r.submissionStatus):!['local','upload-error'].includes(r.submissionStatus));}
 function makeRunRow(r,group=false){
  const row=make('article','','run'),info=make(group?'button':'div','','run-info'),top=make('div','','run-top');
- top.append(make('strong',group?names[r.character]:`${names[r.character]} → ${names[r.stage]}`),make('time',formatTime(r.frames)),make('span',r.exclusionReason?'Excluded':({local:'Local only',queued:'Queued',pending:'In review',approved:'Approved',rejected:'Rejected','upload-error':'Upload failed',superseded:'Replaced'})[r.submissionStatus]||'Local only',`badge ${r.submissionStatus}`));
+ top.append(make('strong',group?names[r.character]:`${names[r.character]} → ${names[r.stage]}`),make('time',formatTime(r.frames)),make('span',r.exclusionReason?'Excluded':({local:'Local only',queued:'Queued',submitted:'Submitted',pending:'Submitted',approved:'Submitted',rejected:'Rejected','upload-error':'Upload failed',superseded:'Replaced'})[r.submissionStatus]||'Local only',`badge ${r.submissionStatus}`));
  info.append(top,make('small',group?`Personal best · ${r.attemptCount} attempt${r.attemptCount===1?'':'s'} · ${expanded.has(r.character)?'Hide':'Show'} history ${expanded.has(r.character)?'▴':'▾'}`:new Date(r.createdAt).toLocaleString('en-US')));
  if(group){const portrait=make('img','','run-portrait');portrait.src=`/assets/melee/${r.character}-portrait.webp`;portrait.alt='';portrait.width=32;portrait.height=36;portrait.loading='lazy';info.prepend(portrait);info.type='button';info.classList.add('run-summary');info.setAttribute('aria-expanded',String(expanded.has(r.character)));info.setAttribute('aria-label',`${names[r.character]}: ${expanded.has(r.character)?'hide':'show'} run history`);info.addEventListener('click',()=>toggleHistory(r.character));}
  if(r.exclusionReason)info.append(make('small',r.exclusionReason,'muted'));
- if(r.reviewNote)info.append(make('small',r.reviewNote));
+ if(r.reviewNote&&!['pending','submitted'].includes(r.submissionStatus))info.append(make('small',r.reviewNote));
  const replayHint=Date.now()-Date.parse(r.createdAt)<120000?'Waiting for replay · exit the results screen to finish saving.':'No replay found for this run. New runs need replay recording enabled.';
  const buttons=make('div','','run-actions'),watch=make('button','▶ Watch replay','secondary');watch.disabled=!r.hasReplay;watch.title=r.hasReplay?'Open this run’s replay in Dolphin':replayHint;watch.addEventListener('click',()=>launchReplay('runs/replay/launch',{id:r.id},watch));buttons.append(watch);
  if(!r.exclusionReason&&['local','upload-error'].includes(r.submissionStatus||'local')){
   const submit=make('button',submitting.has(r.id)?'Submitting…':r.submissionStatus==='upload-error'?'Retry upload':'Submit ↗','primary');
-  submit.disabled=!r.hasReplay||submitting.has(r.id);submit.title=r.hasReplay?'Send this run and its replay for review':watch.title;
+  submit.disabled=!r.hasReplay||submitting.has(r.id);submit.title=r.hasReplay?'Submit this run and its replay':watch.title;
   submit.addEventListener('click',async()=>{
    if(submitting.has(r.id))return;submitting.add(r.id);renderRuns(data);
    try{await post('submissions',{id:r.id},'submit');toast('Run submitted privately with its replay.');await refresh();}

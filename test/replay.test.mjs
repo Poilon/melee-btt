@@ -24,17 +24,17 @@ test('scene counters detect paused frames without treating old replay formats as
   assert.equal(inspectReplay(withPause(replay,0),run,'').pauseFrames,0);
 });
 
-test('Target Test replays accept both Ice Climbers IDs, including solo Popo (32)',async()=>{
+test('Target Test replays normalize Popo and Sheik without weakening character/course checks',async()=>{
  const {ReplayLibrary}=await import('../server/replays.mjs');
  const start=15+replay[16]+1;
  assert.equal(replay[start],0x36);assert.equal(replay[start+0x65],1);
- for(const characterId of [14,32]){
+ for(const [characterId,character] of [[14,'ice-climbers'],[32,'ice-climbers'],[18,'zelda'],[19,'zelda']]){
   const bytes=Buffer.from(replay);bytes[start+0x65]=characterId;
-  const run={character:'ice-climbers',stage:'donkey-kong'};
+  const run={character,stage:'donkey-kong'};
   assert.equal(inspectReplay(bytes,run,'').requiresHumanReview,true);
-  const library=new ReplayLibrary({challenge:{assignments:{'ice-climbers':'donkey-kong'}},gecko:''});
-  assert.equal(library.inspect(bytes).character,'ice-climbers');
+  const library=new ReplayLibrary({challenge:{assignments:{[character]:'donkey-kong'}},gecko:''});
+  assert.equal(library.inspect(bytes).character,character);
   assert.throws(()=>inspectReplay(bytes,{character:'fox',stage:'donkey-kong'},''),/character/);
-  assert.throws(()=>inspectReplay(bytes,{character:'ice-climbers',stage:'roy'},''),/stage/);
+  assert.throws(()=>inspectReplay(bytes,{character,stage:'roy'},''),/stage/);
  }
 });

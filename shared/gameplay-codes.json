@@ -15,6 +15,6 @@
   },
   "luigiMisfire": {
     "name": "TTRC: Always Luigi misfire",
-    "code": "00142AFB 00000001"
+    "code": "04142AF8 38000001"
   }
 }

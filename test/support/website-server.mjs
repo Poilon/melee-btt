@@ -45,7 +45,7 @@ const remote = {
   enqueue: async (run, replay, name) => {
     const response = await fetch(origin+'/api/submissions',{method:'POST',headers:{Authorization:`Bearer ${player.token}`,'Content-Type':'application/json'},body:JSON.stringify({id:run.id,challengeId:challenge.id,geckoSha256:challenge.geckoSha256,character:run.character,stage:run.stage,frames:run.frames,replay:replay.toString('base64')})});
     if(!response.ok)throw new Error('Submission failed');
-    store.setSubmission(run.id,'pending','Awaiting human review',name);
+    store.setSubmission(run.id,'submitted','',name);
   }
 };
 const account = new CompanionAccount({ origin, accept: async file => { player = parsePlayer(file, origin); currentIdentity = playerIdentity(player); }, signOut: async () => { currentIdentity = null; } });

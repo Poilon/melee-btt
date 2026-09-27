@@ -19,3 +19,16 @@ test('observed Fox result is saved only after a fresh attempt with a player', ()
   assert.equal(runs.length, 1); assert.equal(runs[0].frames, 704);
   detector.sample({ ...finish, minor: 0 }, identity); assert.equal(runs.length, 1);
 });
+
+test('Zelda and Sheik count as one course and transforming does not discard a clear',()=>{
+ const challenge={id:'a'.repeat(64),rules:{targets:10},assignments:{zelda:'fox'}};
+ const identity={id:'b'.repeat(64),displayName:'Fixture',connectCode:'TT#1'};
+ for(const [start,finish] of [[19,19],[18,19],[19,18]]){
+  const saved=[],detector=new RunDetector(challenge,run=>saved.push(run));
+  const initial={pid:1,major:15,minor:1,frame:124,characterId:start,stageId:46,remaining:10,result:0,seconds:0,timerFrame:0};
+  detector.sample(initial,identity);
+  const end={...initial,frame:1200,characterId:finish,remaining:0,result:6,seconds:17,timerFrame:5};
+  detector.sample(end,identity);detector.sample(end,identity);
+  assert.equal(saved.length,1);assert.equal(saved[0].character,'zelda');assert.equal(saved[0].stage,'fox');assert.equal(saved[0].frames,1025);
+ }
+});

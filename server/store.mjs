@@ -106,7 +106,7 @@ export class ScoreStore {
   }
   replay(id) { return this.db.prepare('SELECT sha256, file_name AS name FROM run_replays WHERE run_id = ?').get(id) || null; }
   setSubmission(id, status, note = '', replayName = null) {
-    if (!['local','queued','pending','approved','rejected','upload-error','superseded'].includes(status)) throw new Error('Invalid submission status');
+    if (!['local','queued','submitted','pending','approved','rejected','upload-error','superseded'].includes(status)) throw new Error('Invalid submission status');
     this.db.prepare(`INSERT INTO submissions VALUES (?, ?, ?, ?, ?) ON CONFLICT(run_id) DO UPDATE SET
       status=excluded.status, note=excluded.note, updated_at=excluded.updated_at,
       replay_name=COALESCE(excluded.replay_name, submissions.replay_name)`)

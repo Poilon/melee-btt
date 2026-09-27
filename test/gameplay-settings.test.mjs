@@ -59,9 +59,25 @@ test('prepared profiles apply the exact approved optional codes with UCF in the 
  const challenge='04000000 00000000\n',hash=createHash('sha256').update(challenge).digest('hex');
  const ini='[Gecko]\n$Target Test Randomizer Challenge\n'+challenge+patches.map(([name,code])=>'$'+name+'\n'+code+'\n').join('');
  assert.equal(verifyProfileCode(ini,hash),true);
- assert.equal(verifyProfileCode(ini.replace('00142AFB 00000001','00142AFB 00000002'),hash),false);
+ assert.equal(patches.find(([name])=>name==='TTRC: Always Luigi misfire')[1],'04142AF8 38000001');
+ assert.equal(verifyProfileCode(ini.replace('04142AF8 38000001','04142AF8 38000002'),hash),false);
+ assert.equal(verifyProfileCode(ini.replace('04142AF8 38000001','00142AFB 00000001'),hash),true);
+ assert.equal(verifyProfileCode(ini.replace('04142AF8 38000001','00142AFB 00000002'),hash),false);
  assert.equal(verifyProfileCode(ini.replace('0A0B0000','0A0C0000'),hash),false);
  for(const code of approvedPreferenceCodes.values())validateGecko(code);
  const off={...defaultPlaySettings(),ucf:false};
  assert.deepEqual(JSON.parse(execFileSync('python3',['-c',"import sys,json;sys.path.insert(0,'scripts');from play_settings import preference_codes;print(json.dumps(preference_codes(json.loads(sys.stdin.read()))))"],{input:JSON.stringify(off),encoding:'utf8'})),[]);
+});
+
+test('optional patches use code types supported by the Slippi bootloader',()=>{
+ for(const code of [...approvedPreferenceCodes.values(),peachCode(Array(10).fill('turnip'))]){
+  const lines=code.split('\n');
+  for(let i=0;i<lines.length;i++){
+   const [address,value]=lines[i].split(' '),type=address.slice(0,2);
+   assert.ok(['04','06','C2'].includes(type),`unsupported Gecko type ${type}`);
+   if(type==='C2')i+=parseInt(value,16);
+   else if(type==='06')i+=Math.ceil(parseInt(value,16)/8);
+   assert.ok(i<lines.length,'truncated Gecko payload');
+  }
+ }
 });

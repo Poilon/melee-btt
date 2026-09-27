@@ -95,7 +95,7 @@ export class RemoteSync {
           if ([400,409,410,413].includes(response.status)) { this.onUpdate?.(event.payload.id, 'upload-error', this.lastError); await unlink(file); this.pending--; continue; }
           break;
         }
-        this.onUpdate?.(event.payload.id, 'pending', 'Awaiting human review.');
+        this.onUpdate?.(event.payload.id, 'submitted', '');
         this.lastError = null; this.lastSynced = new Date().toISOString();
         await unlink(file); this.pending--;
       }

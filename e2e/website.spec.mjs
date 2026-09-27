@@ -38,7 +38,7 @@ test('replay goes from companion to private review; public site shows only parti
   const submitted=page.waitForRequest(r=>r.url().endsWith('/api/submissions')&&r.method()==='POST');
   await dk.getByRole('button',{name:'Submit',exact:false}).click();
   expect(Object.keys((await submitted).postDataJSON())).toEqual(['id']);
-  await expect(dk).toContainText('In review');
+  await expect(dk).toContainText('Submitted');
   await page.reload();
   await dk.getByRole('button',{name:'Watch replay'}).click();
   await expect(page.locator('#toast')).toContainText('Replay opened in Dolphin Playback');

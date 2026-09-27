@@ -147,7 +147,7 @@ function renderHistory(d) {
   text('history-empty',d.identity?'Your valid personal bests appear here automatically after the companion uploads their replays.':'Sign in to see all your submitted runs.');
   const groups=new Map();for(const r of d.history){if(!groups.has(r.character))groups.set(r.character,[]);groups.get(r.character).push(r);}
   text('history-count',`${groups.size} character${groups.size===1?'':'s'} · ${d.history.length} submitted run${d.history.length===1?'':'s'}`);
-  const status=r=>({pending:'In review',approved:'Approved',rejected:'Rejected'})[r.status]||r.status||'Submitted';
+  const status=r=>({submitted:'Submitted',pending:'Submitted',approved:'Submitted',rejected:'Rejected'})[r.status]||r.status||'Submitted';
   for(const [character,runs] of [...groups].sort(([a],[b])=>names[a].localeCompare(names[b],'en'))){
     const best=runs.find(r=>r.current===true)||runs.reduce((a,b)=>b.frames<a.frames?b:a),group=node('details','','record-group');
     group.dataset.character=character;group.open=expanded.has(character);
@@ -162,7 +162,7 @@ function renderHistory(d) {
       const row=node('div','',`history-row${run.id===best.id?' record-best':''}`),info=node('span',status(run));
       info.append(node('small',run.current===false?'Replaced by a newer record':'Current submission'));
       info.append(node('small',run.disclosed?'Public':'Private'));
-      if(run.reviewNote)info.append(node('small',run.reviewNote));
+      if(run.reviewNote&&!['pending','submitted'].includes(run.status))info.append(node('small',run.reviewNote));
       row.append(info,node('span',time(run.frames),'run-time'),node('span',new Date(run.createdAt).toLocaleString('en-US')));const actions=node('div','','record-actions');actions.append(disclosureButton(run));row.append(actions);list.append(row);
     }
     group.append(summary,list);root.append(group);
@@ -190,7 +190,7 @@ function renderShared(d){
   for(const r of runs){
     const card=node('article','','shared-run'),info=node('div','','shared-info');
     if(r.id===linkId&&r.playerId===linkPlayer)card.classList.add('shared-selected');
-    info.append(node('strong',r.displayName),node('span',`${names[r.character]} → ${names[r.stage]}`),node('small',r.status==='approved'?'Approved':r.status==='rejected'?'Rejected by reviewer':'Not yet verified'));
+    info.append(node('strong',r.displayName),node('span',`${names[r.character]} → ${names[r.stage]}`),node('small',r.status==='rejected'?'Excluded':'Submitted'));
     const actions=node('div','','shared-actions'),query=new URLSearchParams({id:r.id,playerId:r.playerId});
     const watch=node('a','Watch in Dolphin','button secondary');watch.href=`http://localhost:4317/?publicRun=${r.id}&playerId=${r.playerId}`;watch.target='_blank';watch.rel='noopener';watch.title='Open the companion to play this replay';
     const download=node('a','Download .slp','text-button');download.href=`/api/shared/replay?${query}`;download.download=`${r.id}.slp`;
