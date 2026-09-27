@@ -9,7 +9,7 @@ import { createApp } from '../../server/app.mjs';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { createCloudHandler } from '../../cloud/backend.mjs';
-const generated = await generateChallenge({ seed: 20260989 });
+const generated = await generateChallenge({ seed: 20260989, moving:true });
 // The upstream DK fixture is a vanilla course. Only this isolated test seed uses it.
 const challenge = { ...generated.manifest, assignments: { ...generated.manifest.assignments, 'donkey-kong': 'donkey-kong' } }, gecko = generated.gecko;
 const origin = 'http://localhost:4319', reviewerKey = 'd'.repeat(64);

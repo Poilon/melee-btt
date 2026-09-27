@@ -1,47 +1,3607 @@
 {
   "format": "ttrc-challenge-v1",
-  "id": "e00d93767b5d1062f6d2620e3f1d54d9ebbfc6935c3bf066a064f08d93978f8c",
-  "generatorVersion": "ttrc-btt3-v2",
+  "id": "4fb50341d258d338ed4abdd757b54169a060742246213ee1f358094a836977cb",
+  "generatorVersion": "ttrc-btt3-motion-v1",
   "upstreamRevision": "54e8faa7c58ee146e9ce9beac2bc390d36e75871",
   "game": "GALE01r2",
   "rules": {
-    "seed": 20260989,
+    "seed": 20260990,
     "stage": "all",
     "targets": 10,
     "spawn": true,
     "mismatch": true,
     "weighted": true,
-    "moving": false
+    "moving": true
   },
-  "geckoSha256": "38c5f7553502f27b56879d219253f4868655bfb717286b6c56021d6a18baee2a",
-  "bttSeed": "3faLb911n0O9",
+  "geckoSha256": "dbca2b75140bccc1e8be831a1e7ae846f6b4b7e1d8181d5893f4facc8376adb0",
+  "bttSeed": "3faLb911n0Oa",
   "character": null,
   "assignments": {
-    "donkey-kong": "dr-mario",
-    "link": "mario",
-    "mario": "luigi",
-    "mewtwo": "bowser",
-    "ness": "peach",
-    "dr-mario": "yoshi",
-    "kirby": "donkey-kong",
-    "jigglypuff": "captain-falcon",
-    "peach": "ganondorf",
-    "game-and-watch": "falco",
-    "zelda": "fox",
-    "ganondorf": "ness",
+    "mario": "dr-mario",
+    "marth": "mario",
+    "ice-climbers": "luigi",
+    "captain-falcon": "bowser",
+    "ganondorf": "peach",
+    "yoshi": "yoshi",
+    "pikachu": "donkey-kong",
+    "peach": "captain-falcon",
+    "pichu": "ganondorf",
+    "ness": "falco",
+    "jigglypuff": "fox",
+    "kirby": "ness",
     "luigi": "ice-climbers",
-    "bowser": "kirby",
-    "fox": "samus",
-    "falco": "zelda",
-    "roy": "link",
-    "samus": "young-link",
-    "young-link": "pichu",
-    "captain-falcon": "pikachu",
-    "yoshi": "jigglypuff",
-    "marth": "mewtwo",
-    "pikachu": "game-and-watch",
-    "pichu": "marth",
-    "ice-climbers": "roy"
+    "falco": "kirby",
+    "donkey-kong": "samus",
+    "roy": "zelda",
+    "dr-mario": "link",
+    "link": "young-link",
+    "bowser": "pichu",
+    "young-link": "pikachu",
+    "zelda": "jigglypuff",
+    "mewtwo": "mewtwo",
+    "fox": "game-and-watch",
+    "samus": "marth",
+    "game-and-watch": "roy"
   },
-  "geometry": "original"
+  "geometry": "original",
+  "motion": {
+    "version": "ttrc-motion-v1",
+    "mix": {
+      "minStatic": 0.6,
+      "maxMoving": 0.4,
+      "maxTeleport": 0.4
+    },
+    "courses": {
+      "dr-mario": [
+        {
+          "index": 0,
+          "kind": "static",
+          "anchor": {
+            "x": 11.078125,
+            "y": 19.9375
+          },
+          "destination": {
+            "x": 11.078125,
+            "y": 19.9375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 1,
+          "kind": "static",
+          "anchor": {
+            "x": 109.625,
+            "y": 33.375
+          },
+          "destination": {
+            "x": 109.625,
+            "y": 33.375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 2,
+          "kind": "static",
+          "anchor": {
+            "x": 61.6875,
+            "y": -65.890625
+          },
+          "destination": {
+            "x": 61.6875,
+            "y": -65.890625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 3,
+          "kind": "static",
+          "anchor": {
+            "x": -140.453125,
+            "y": 82.75
+          },
+          "destination": {
+            "x": -140.453125,
+            "y": 82.75
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 4,
+          "kind": "teleport",
+          "anchor": {
+            "x": 137.328125,
+            "y": 79.09375
+          },
+          "destination": {
+            "x": 118.328125,
+            "y": 98.09375
+          },
+          "legFrames": 240,
+          "startDelayFrames": 40
+        },
+        {
+          "index": 5,
+          "kind": "static",
+          "anchor": {
+            "x": -124.5,
+            "y": -103.796875
+          },
+          "destination": {
+            "x": -124.5,
+            "y": -103.796875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 6,
+          "kind": "static",
+          "anchor": {
+            "x": -104.578125,
+            "y": 25.296875
+          },
+          "destination": {
+            "x": -104.578125,
+            "y": 25.296875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 7,
+          "kind": "static",
+          "anchor": {
+            "x": 77.484375,
+            "y": 8.921875
+          },
+          "destination": {
+            "x": 77.484375,
+            "y": 8.921875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 8,
+          "kind": "static",
+          "anchor": {
+            "x": 75.90625,
+            "y": -53.25
+          },
+          "destination": {
+            "x": 75.90625,
+            "y": -53.25
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 9,
+          "kind": "static",
+          "anchor": {
+            "x": -36.296875,
+            "y": 84.84375
+          },
+          "destination": {
+            "x": -36.296875,
+            "y": 84.84375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        }
+      ],
+      "mario": [
+        {
+          "index": 0,
+          "kind": "static",
+          "anchor": {
+            "x": 3.90625,
+            "y": 85.640625
+          },
+          "destination": {
+            "x": 3.90625,
+            "y": 85.640625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 1,
+          "kind": "teleport",
+          "anchor": {
+            "x": -23.359375,
+            "y": -53.421875
+          },
+          "destination": {
+            "x": -23.359375,
+            "y": -39.421875
+          },
+          "legFrames": 210,
+          "startDelayFrames": 96
+        },
+        {
+          "index": 2,
+          "kind": "static",
+          "anchor": {
+            "x": 85.765625,
+            "y": 45.125
+          },
+          "destination": {
+            "x": 85.765625,
+            "y": 45.125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 3,
+          "kind": "static",
+          "anchor": {
+            "x": 83.90625,
+            "y": 21.359375
+          },
+          "destination": {
+            "x": 83.90625,
+            "y": 21.359375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 4,
+          "kind": "static",
+          "anchor": {
+            "x": 2.15625,
+            "y": 47.625
+          },
+          "destination": {
+            "x": 2.15625,
+            "y": 47.625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 5,
+          "kind": "static",
+          "anchor": {
+            "x": 96.765625,
+            "y": 14.015625
+          },
+          "destination": {
+            "x": 96.765625,
+            "y": 14.015625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 6,
+          "kind": "static",
+          "anchor": {
+            "x": -82.390625,
+            "y": 107.578125
+          },
+          "destination": {
+            "x": -82.390625,
+            "y": 107.578125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 7,
+          "kind": "teleport",
+          "anchor": {
+            "x": -87.9375,
+            "y": 75.875
+          },
+          "destination": {
+            "x": -87.9375,
+            "y": 101.875
+          },
+          "legFrames": 210,
+          "startDelayFrames": 116
+        },
+        {
+          "index": 8,
+          "kind": "static",
+          "anchor": {
+            "x": 126.53125,
+            "y": -10.5
+          },
+          "destination": {
+            "x": 126.53125,
+            "y": -10.5
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 9,
+          "kind": "static",
+          "anchor": {
+            "x": -53.71875,
+            "y": 64.40625
+          },
+          "destination": {
+            "x": -53.71875,
+            "y": 64.40625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        }
+      ],
+      "luigi": [
+        {
+          "index": 0,
+          "kind": "static",
+          "anchor": {
+            "x": -15.90625,
+            "y": 13.859375
+          },
+          "destination": {
+            "x": -15.90625,
+            "y": 13.859375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 1,
+          "kind": "static",
+          "anchor": {
+            "x": -42.28125,
+            "y": 2.40625
+          },
+          "destination": {
+            "x": -42.28125,
+            "y": 2.40625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 2,
+          "kind": "static",
+          "anchor": {
+            "x": 11.78125,
+            "y": 37.4375
+          },
+          "destination": {
+            "x": 11.78125,
+            "y": 37.4375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 3,
+          "kind": "static",
+          "anchor": {
+            "x": -53.5,
+            "y": 60.5
+          },
+          "destination": {
+            "x": -53.5,
+            "y": 60.5
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 4,
+          "kind": "static",
+          "anchor": {
+            "x": 68.921875,
+            "y": 42.25
+          },
+          "destination": {
+            "x": 68.921875,
+            "y": 42.25
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 5,
+          "kind": "teleport",
+          "anchor": {
+            "x": 69.828125,
+            "y": -55.71875
+          },
+          "destination": {
+            "x": 69.828125,
+            "y": -27.71875
+          },
+          "legFrames": 300,
+          "startDelayFrames": 100
+        },
+        {
+          "index": 6,
+          "kind": "static",
+          "anchor": {
+            "x": -64.21875,
+            "y": -5.9375
+          },
+          "destination": {
+            "x": -64.21875,
+            "y": -5.9375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 7,
+          "kind": "static",
+          "anchor": {
+            "x": -14.03125,
+            "y": 60.25
+          },
+          "destination": {
+            "x": -14.03125,
+            "y": 60.25
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 8,
+          "kind": "moving",
+          "anchor": {
+            "x": 7.40625,
+            "y": 25.46875
+          },
+          "destination": {
+            "x": 24.40625,
+            "y": 8.46875
+          },
+          "legFrames": 150,
+          "startDelayFrames": 16
+        },
+        {
+          "index": 9,
+          "kind": "static",
+          "anchor": {
+            "x": -4,
+            "y": 25.53125
+          },
+          "destination": {
+            "x": -4,
+            "y": 25.53125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        }
+      ],
+      "bowser": [
+        {
+          "index": 0,
+          "kind": "static",
+          "anchor": {
+            "x": 49.71875,
+            "y": 55.203125
+          },
+          "destination": {
+            "x": 49.71875,
+            "y": 55.203125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 1,
+          "kind": "static",
+          "anchor": {
+            "x": 36.3125,
+            "y": -15.453125
+          },
+          "destination": {
+            "x": 36.3125,
+            "y": -15.453125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 2,
+          "kind": "static",
+          "anchor": {
+            "x": 126.9375,
+            "y": 31.1875
+          },
+          "destination": {
+            "x": 126.9375,
+            "y": 31.1875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 3,
+          "kind": "static",
+          "anchor": {
+            "x": 45.015625,
+            "y": -104.125
+          },
+          "destination": {
+            "x": 45.015625,
+            "y": -104.125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 4,
+          "kind": "static",
+          "anchor": {
+            "x": 153.15625,
+            "y": -126.375
+          },
+          "destination": {
+            "x": 153.15625,
+            "y": -126.375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 5,
+          "kind": "static",
+          "anchor": {
+            "x": 149.265625,
+            "y": 95.046875
+          },
+          "destination": {
+            "x": 149.265625,
+            "y": 95.046875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 6,
+          "kind": "moving",
+          "anchor": {
+            "x": -13.96875,
+            "y": 25.578125
+          },
+          "destination": {
+            "x": -30.96875,
+            "y": 25.578125
+          },
+          "legFrames": 120,
+          "startDelayFrames": 16
+        },
+        {
+          "index": 7,
+          "kind": "moving",
+          "anchor": {
+            "x": 144.90625,
+            "y": -80.75
+          },
+          "destination": {
+            "x": 165.90625,
+            "y": -101.75
+          },
+          "legFrames": 180,
+          "startDelayFrames": 48
+        },
+        {
+          "index": 8,
+          "kind": "static",
+          "anchor": {
+            "x": 180.78125,
+            "y": 25.078125
+          },
+          "destination": {
+            "x": 180.78125,
+            "y": 25.078125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 9,
+          "kind": "moving",
+          "anchor": {
+            "x": -32.359375,
+            "y": -12.96875
+          },
+          "destination": {
+            "x": -21.359375,
+            "y": -23.96875
+          },
+          "legFrames": 150,
+          "startDelayFrames": 120
+        }
+      ],
+      "peach": [
+        {
+          "index": 0,
+          "kind": "static",
+          "anchor": {
+            "x": -26.109375,
+            "y": -10.546875
+          },
+          "destination": {
+            "x": -26.109375,
+            "y": -10.546875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 1,
+          "kind": "static",
+          "anchor": {
+            "x": -18.71875,
+            "y": -40.359375
+          },
+          "destination": {
+            "x": -18.71875,
+            "y": -40.359375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 2,
+          "kind": "static",
+          "anchor": {
+            "x": 127,
+            "y": -53.5
+          },
+          "destination": {
+            "x": 127,
+            "y": -53.5
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 3,
+          "kind": "static",
+          "anchor": {
+            "x": -41.828125,
+            "y": -78.390625
+          },
+          "destination": {
+            "x": -41.828125,
+            "y": -78.390625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 4,
+          "kind": "static",
+          "anchor": {
+            "x": 78.484375,
+            "y": -18.046875
+          },
+          "destination": {
+            "x": 78.484375,
+            "y": -18.046875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 5,
+          "kind": "static",
+          "anchor": {
+            "x": 83.890625,
+            "y": 58.8125
+          },
+          "destination": {
+            "x": 83.890625,
+            "y": 58.8125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 6,
+          "kind": "static",
+          "anchor": {
+            "x": 101.40625,
+            "y": 65.15625
+          },
+          "destination": {
+            "x": 101.40625,
+            "y": 65.15625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 7,
+          "kind": "static",
+          "anchor": {
+            "x": 6.390625,
+            "y": 105.90625
+          },
+          "destination": {
+            "x": 6.390625,
+            "y": 105.90625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 8,
+          "kind": "static",
+          "anchor": {
+            "x": 98.578125,
+            "y": -86.359375
+          },
+          "destination": {
+            "x": 98.578125,
+            "y": -86.359375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 9,
+          "kind": "static",
+          "anchor": {
+            "x": -4.765625,
+            "y": -10.6875
+          },
+          "destination": {
+            "x": -4.765625,
+            "y": -10.6875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        }
+      ],
+      "yoshi": [
+        {
+          "index": 0,
+          "kind": "static",
+          "anchor": {
+            "x": -20.703125,
+            "y": 81.453125
+          },
+          "destination": {
+            "x": -20.703125,
+            "y": 81.453125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 1,
+          "kind": "static",
+          "anchor": {
+            "x": -74.953125,
+            "y": -58.796875
+          },
+          "destination": {
+            "x": -74.953125,
+            "y": -58.796875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 2,
+          "kind": "static",
+          "anchor": {
+            "x": 8.90625,
+            "y": 73.9375
+          },
+          "destination": {
+            "x": 8.90625,
+            "y": 73.9375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 3,
+          "kind": "static",
+          "anchor": {
+            "x": 126.6875,
+            "y": -13.796875
+          },
+          "destination": {
+            "x": 126.6875,
+            "y": -13.796875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 4,
+          "kind": "teleport",
+          "anchor": {
+            "x": -94.625,
+            "y": 97.640625
+          },
+          "destination": {
+            "x": -62.625,
+            "y": 65.640625
+          },
+          "legFrames": 210,
+          "startDelayFrames": 84
+        },
+        {
+          "index": 5,
+          "kind": "static",
+          "anchor": {
+            "x": -148.578125,
+            "y": -24
+          },
+          "destination": {
+            "x": -148.578125,
+            "y": -24
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 6,
+          "kind": "static",
+          "anchor": {
+            "x": 27.625,
+            "y": 12.6875
+          },
+          "destination": {
+            "x": 27.625,
+            "y": 12.6875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 7,
+          "kind": "teleport",
+          "anchor": {
+            "x": -144.765625,
+            "y": 40.3125
+          },
+          "destination": {
+            "x": -144.765625,
+            "y": 76.3125
+          },
+          "legFrames": 210,
+          "startDelayFrames": 44
+        },
+        {
+          "index": 8,
+          "kind": "moving",
+          "anchor": {
+            "x": -104.90625,
+            "y": 33.3125
+          },
+          "destination": {
+            "x": -88.90625,
+            "y": 33.3125
+          },
+          "legFrames": 210,
+          "startDelayFrames": 76
+        },
+        {
+          "index": 9,
+          "kind": "static",
+          "anchor": {
+            "x": 63.46875,
+            "y": 125.015625
+          },
+          "destination": {
+            "x": 63.46875,
+            "y": 125.015625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        }
+      ],
+      "donkey-kong": [
+        {
+          "index": 0,
+          "kind": "static",
+          "anchor": {
+            "x": -69.078125,
+            "y": 161.65625
+          },
+          "destination": {
+            "x": -69.078125,
+            "y": 161.65625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 1,
+          "kind": "static",
+          "anchor": {
+            "x": 120.59375,
+            "y": 166.09375
+          },
+          "destination": {
+            "x": 120.59375,
+            "y": 166.09375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 2,
+          "kind": "static",
+          "anchor": {
+            "x": -52.46875,
+            "y": 69.8125
+          },
+          "destination": {
+            "x": -52.46875,
+            "y": 69.8125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 3,
+          "kind": "teleport",
+          "anchor": {
+            "x": 110.921875,
+            "y": 30.46875
+          },
+          "destination": {
+            "x": 146.921875,
+            "y": 30.46875
+          },
+          "legFrames": 270,
+          "startDelayFrames": 72
+        },
+        {
+          "index": 4,
+          "kind": "static",
+          "anchor": {
+            "x": -75.328125,
+            "y": 42.046875
+          },
+          "destination": {
+            "x": -75.328125,
+            "y": 42.046875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 5,
+          "kind": "moving",
+          "anchor": {
+            "x": 84.75,
+            "y": 183.109375
+          },
+          "destination": {
+            "x": 84.75,
+            "y": 164.109375
+          },
+          "legFrames": 150,
+          "startDelayFrames": 104
+        },
+        {
+          "index": 6,
+          "kind": "static",
+          "anchor": {
+            "x": -36.21875,
+            "y": 34.765625
+          },
+          "destination": {
+            "x": -36.21875,
+            "y": 34.765625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 7,
+          "kind": "static",
+          "anchor": {
+            "x": 104.765625,
+            "y": 155.96875
+          },
+          "destination": {
+            "x": 104.765625,
+            "y": 155.96875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 8,
+          "kind": "static",
+          "anchor": {
+            "x": -145.6875,
+            "y": 86.828125
+          },
+          "destination": {
+            "x": -145.6875,
+            "y": 86.828125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 9,
+          "kind": "static",
+          "anchor": {
+            "x": 52.546875,
+            "y": 37.46875
+          },
+          "destination": {
+            "x": 52.546875,
+            "y": 37.46875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        }
+      ],
+      "captain-falcon": [
+        {
+          "index": 0,
+          "kind": "static",
+          "anchor": {
+            "x": 62.46875,
+            "y": -104.9375
+          },
+          "destination": {
+            "x": 62.46875,
+            "y": -104.9375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 1,
+          "kind": "static",
+          "anchor": {
+            "x": 96.6875,
+            "y": -20.265625
+          },
+          "destination": {
+            "x": 96.6875,
+            "y": -20.265625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 2,
+          "kind": "moving",
+          "anchor": {
+            "x": 135.21875,
+            "y": -65.28125
+          },
+          "destination": {
+            "x": 135.21875,
+            "y": -56.28125
+          },
+          "legFrames": 150,
+          "startDelayFrames": 100
+        },
+        {
+          "index": 3,
+          "kind": "static",
+          "anchor": {
+            "x": 166.921875,
+            "y": 44.015625
+          },
+          "destination": {
+            "x": 166.921875,
+            "y": 44.015625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 4,
+          "kind": "static",
+          "anchor": {
+            "x": 13.1875,
+            "y": 5.546875
+          },
+          "destination": {
+            "x": 13.1875,
+            "y": 5.546875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 5,
+          "kind": "moving",
+          "anchor": {
+            "x": 163.046875,
+            "y": 12.796875
+          },
+          "destination": {
+            "x": 163.046875,
+            "y": 27.796875
+          },
+          "legFrames": 240,
+          "startDelayFrames": 104
+        },
+        {
+          "index": 6,
+          "kind": "static",
+          "anchor": {
+            "x": 126.359375,
+            "y": -17.109375
+          },
+          "destination": {
+            "x": 126.359375,
+            "y": -17.109375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 7,
+          "kind": "static",
+          "anchor": {
+            "x": 150.953125,
+            "y": 108.546875
+          },
+          "destination": {
+            "x": 150.953125,
+            "y": 108.546875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 8,
+          "kind": "static",
+          "anchor": {
+            "x": -136.96875,
+            "y": -49.90625
+          },
+          "destination": {
+            "x": -136.96875,
+            "y": -49.90625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 9,
+          "kind": "static",
+          "anchor": {
+            "x": -54.46875,
+            "y": -81.140625
+          },
+          "destination": {
+            "x": -54.46875,
+            "y": -81.140625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        }
+      ],
+      "ganondorf": [
+        {
+          "index": 0,
+          "kind": "moving",
+          "anchor": {
+            "x": -89.125,
+            "y": 10.703125
+          },
+          "destination": {
+            "x": -89.125,
+            "y": 21.703125
+          },
+          "legFrames": 120,
+          "startDelayFrames": 88
+        },
+        {
+          "index": 1,
+          "kind": "teleport",
+          "anchor": {
+            "x": 54.640625,
+            "y": 22.609375
+          },
+          "destination": {
+            "x": 30.640625,
+            "y": 46.609375
+          },
+          "legFrames": 270,
+          "startDelayFrames": 20
+        },
+        {
+          "index": 2,
+          "kind": "static",
+          "anchor": {
+            "x": -55.09375,
+            "y": 2.53125
+          },
+          "destination": {
+            "x": -55.09375,
+            "y": 2.53125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 3,
+          "kind": "static",
+          "anchor": {
+            "x": -39.09375,
+            "y": 91.96875
+          },
+          "destination": {
+            "x": -39.09375,
+            "y": 91.96875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 4,
+          "kind": "teleport",
+          "anchor": {
+            "x": -15.296875,
+            "y": 20.609375
+          },
+          "destination": {
+            "x": -34.296875,
+            "y": 1.609375
+          },
+          "legFrames": 210,
+          "startDelayFrames": 92
+        },
+        {
+          "index": 5,
+          "kind": "static",
+          "anchor": {
+            "x": -30.96875,
+            "y": 53.375
+          },
+          "destination": {
+            "x": -30.96875,
+            "y": 53.375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 6,
+          "kind": "static",
+          "anchor": {
+            "x": -61.59375,
+            "y": 64.359375
+          },
+          "destination": {
+            "x": -61.59375,
+            "y": 64.359375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 7,
+          "kind": "static",
+          "anchor": {
+            "x": 83.5,
+            "y": 56.265625
+          },
+          "destination": {
+            "x": 83.5,
+            "y": 56.265625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 8,
+          "kind": "static",
+          "anchor": {
+            "x": 86.375,
+            "y": 45.328125
+          },
+          "destination": {
+            "x": 86.375,
+            "y": 45.328125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 9,
+          "kind": "static",
+          "anchor": {
+            "x": -54.203125,
+            "y": 58.46875
+          },
+          "destination": {
+            "x": -54.203125,
+            "y": 58.46875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        }
+      ],
+      "falco": [
+        {
+          "index": 0,
+          "kind": "static",
+          "anchor": {
+            "x": 89.6875,
+            "y": 119.984375
+          },
+          "destination": {
+            "x": 89.6875,
+            "y": 119.984375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 1,
+          "kind": "moving",
+          "anchor": {
+            "x": -90.046875,
+            "y": 21.015625
+          },
+          "destination": {
+            "x": -107.046875,
+            "y": 4.015625
+          },
+          "legFrames": 150,
+          "startDelayFrames": 108
+        },
+        {
+          "index": 2,
+          "kind": "static",
+          "anchor": {
+            "x": 27.46875,
+            "y": 65.21875
+          },
+          "destination": {
+            "x": 27.46875,
+            "y": 65.21875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 3,
+          "kind": "static",
+          "anchor": {
+            "x": 90.515625,
+            "y": 101.859375
+          },
+          "destination": {
+            "x": 90.515625,
+            "y": 101.859375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 4,
+          "kind": "static",
+          "anchor": {
+            "x": 90.78125,
+            "y": 57.21875
+          },
+          "destination": {
+            "x": 90.78125,
+            "y": 57.21875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 5,
+          "kind": "static",
+          "anchor": {
+            "x": 41.4375,
+            "y": 4.21875
+          },
+          "destination": {
+            "x": 41.4375,
+            "y": 4.21875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 6,
+          "kind": "static",
+          "anchor": {
+            "x": -89.65625,
+            "y": 82.296875
+          },
+          "destination": {
+            "x": -89.65625,
+            "y": 82.296875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 7,
+          "kind": "static",
+          "anchor": {
+            "x": 16.375,
+            "y": 65.15625
+          },
+          "destination": {
+            "x": 16.375,
+            "y": 65.15625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 8,
+          "kind": "moving",
+          "anchor": {
+            "x": 90.40625,
+            "y": -51.546875
+          },
+          "destination": {
+            "x": 80.40625,
+            "y": -61.546875
+          },
+          "legFrames": 150,
+          "startDelayFrames": 120
+        },
+        {
+          "index": 9,
+          "kind": "teleport",
+          "anchor": {
+            "x": 0.15625,
+            "y": 44.734375
+          },
+          "destination": {
+            "x": 12.15625,
+            "y": 56.734375
+          },
+          "legFrames": 180,
+          "startDelayFrames": 16
+        }
+      ],
+      "fox": [
+        {
+          "index": 0,
+          "kind": "teleport",
+          "anchor": {
+            "x": 17.703125,
+            "y": 149.796875
+          },
+          "destination": {
+            "x": 4.703125,
+            "y": 149.796875
+          },
+          "legFrames": 210,
+          "startDelayFrames": 40
+        },
+        {
+          "index": 1,
+          "kind": "static",
+          "anchor": {
+            "x": 116.4375,
+            "y": 37.1875
+          },
+          "destination": {
+            "x": 116.4375,
+            "y": 37.1875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 2,
+          "kind": "static",
+          "anchor": {
+            "x": 30.25,
+            "y": 33.578125
+          },
+          "destination": {
+            "x": 30.25,
+            "y": 33.578125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 3,
+          "kind": "teleport",
+          "anchor": {
+            "x": -48.75,
+            "y": -13.6875
+          },
+          "destination": {
+            "x": -57.75,
+            "y": -4.6875
+          },
+          "legFrames": 240,
+          "startDelayFrames": 96
+        },
+        {
+          "index": 4,
+          "kind": "static",
+          "anchor": {
+            "x": -104.765625,
+            "y": 89.15625
+          },
+          "destination": {
+            "x": -104.765625,
+            "y": 89.15625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 5,
+          "kind": "static",
+          "anchor": {
+            "x": 102.875,
+            "y": 51.671875
+          },
+          "destination": {
+            "x": 102.875,
+            "y": 51.671875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 6,
+          "kind": "static",
+          "anchor": {
+            "x": -146.046875,
+            "y": -109.625
+          },
+          "destination": {
+            "x": -146.046875,
+            "y": -109.625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 7,
+          "kind": "static",
+          "anchor": {
+            "x": 10.375,
+            "y": -20.1875
+          },
+          "destination": {
+            "x": 10.375,
+            "y": -20.1875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 8,
+          "kind": "teleport",
+          "anchor": {
+            "x": 102.109375,
+            "y": 42.671875
+          },
+          "destination": {
+            "x": 69.109375,
+            "y": 42.671875
+          },
+          "legFrames": 300,
+          "startDelayFrames": 56
+        },
+        {
+          "index": 9,
+          "kind": "static",
+          "anchor": {
+            "x": 70.03125,
+            "y": 117.40625
+          },
+          "destination": {
+            "x": 70.03125,
+            "y": 117.40625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        }
+      ],
+      "ness": [
+        {
+          "index": 0,
+          "kind": "static",
+          "anchor": {
+            "x": -108.96875,
+            "y": 8.296875
+          },
+          "destination": {
+            "x": -108.96875,
+            "y": 8.296875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 1,
+          "kind": "static",
+          "anchor": {
+            "x": 75.796875,
+            "y": 39.515625
+          },
+          "destination": {
+            "x": 75.796875,
+            "y": 39.515625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 2,
+          "kind": "static",
+          "anchor": {
+            "x": -5.703125,
+            "y": -90.40625
+          },
+          "destination": {
+            "x": -5.703125,
+            "y": -90.40625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 3,
+          "kind": "static",
+          "anchor": {
+            "x": -29.40625,
+            "y": -26.421875
+          },
+          "destination": {
+            "x": -29.40625,
+            "y": -26.421875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 4,
+          "kind": "static",
+          "anchor": {
+            "x": 6.5,
+            "y": -68.734375
+          },
+          "destination": {
+            "x": 6.5,
+            "y": -68.734375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 5,
+          "kind": "static",
+          "anchor": {
+            "x": 36.921875,
+            "y": 5.703125
+          },
+          "destination": {
+            "x": 36.921875,
+            "y": 5.703125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 6,
+          "kind": "teleport",
+          "anchor": {
+            "x": 69.421875,
+            "y": 56.265625
+          },
+          "destination": {
+            "x": 69.421875,
+            "y": 79.265625
+          },
+          "legFrames": 270,
+          "startDelayFrames": 52
+        },
+        {
+          "index": 7,
+          "kind": "static",
+          "anchor": {
+            "x": -37.3125,
+            "y": -61.71875
+          },
+          "destination": {
+            "x": -37.3125,
+            "y": -61.71875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 8,
+          "kind": "static",
+          "anchor": {
+            "x": -35.171875,
+            "y": 71.875
+          },
+          "destination": {
+            "x": -35.171875,
+            "y": 71.875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 9,
+          "kind": "static",
+          "anchor": {
+            "x": 8.15625,
+            "y": 22.90625
+          },
+          "destination": {
+            "x": 8.15625,
+            "y": 22.90625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        }
+      ],
+      "ice-climbers": [
+        {
+          "index": 0,
+          "kind": "static",
+          "anchor": {
+            "x": -60.8125,
+            "y": 72.453125
+          },
+          "destination": {
+            "x": -60.8125,
+            "y": 72.453125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 1,
+          "kind": "teleport",
+          "anchor": {
+            "x": -18.84375,
+            "y": 129.078125
+          },
+          "destination": {
+            "x": -44.84375,
+            "y": 155.078125
+          },
+          "legFrames": 270,
+          "startDelayFrames": 108
+        },
+        {
+          "index": 2,
+          "kind": "static",
+          "anchor": {
+            "x": 34.390625,
+            "y": 380.078125
+          },
+          "destination": {
+            "x": 34.390625,
+            "y": 380.078125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 3,
+          "kind": "static",
+          "anchor": {
+            "x": -28.0625,
+            "y": 381.328125
+          },
+          "destination": {
+            "x": -28.0625,
+            "y": 381.328125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 4,
+          "kind": "static",
+          "anchor": {
+            "x": 5.125,
+            "y": 472.40625
+          },
+          "destination": {
+            "x": 5.125,
+            "y": 472.40625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 5,
+          "kind": "static",
+          "anchor": {
+            "x": -13.609375,
+            "y": 191.6875
+          },
+          "destination": {
+            "x": -13.609375,
+            "y": 191.6875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 6,
+          "kind": "static",
+          "anchor": {
+            "x": -68.75,
+            "y": 470.03125
+          },
+          "destination": {
+            "x": -68.75,
+            "y": 470.03125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 7,
+          "kind": "static",
+          "anchor": {
+            "x": -32.546875,
+            "y": 187.609375
+          },
+          "destination": {
+            "x": -32.546875,
+            "y": 187.609375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 8,
+          "kind": "static",
+          "anchor": {
+            "x": -39.78125,
+            "y": 73.765625
+          },
+          "destination": {
+            "x": -39.78125,
+            "y": 73.765625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 9,
+          "kind": "static",
+          "anchor": {
+            "x": -14.609375,
+            "y": 420.5
+          },
+          "destination": {
+            "x": -14.609375,
+            "y": 420.5
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        }
+      ],
+      "kirby": [
+        {
+          "index": 0,
+          "kind": "teleport",
+          "anchor": {
+            "x": 18.515625,
+            "y": -48.203125
+          },
+          "destination": {
+            "x": 31.515625,
+            "y": -61.203125
+          },
+          "legFrames": 180,
+          "startDelayFrames": 76
+        },
+        {
+          "index": 1,
+          "kind": "moving",
+          "anchor": {
+            "x": 21.65625,
+            "y": -9.078125
+          },
+          "destination": {
+            "x": -0.34375,
+            "y": 12.921875
+          },
+          "legFrames": 210,
+          "startDelayFrames": 104
+        },
+        {
+          "index": 2,
+          "kind": "static",
+          "anchor": {
+            "x": 61.1875,
+            "y": 72.796875
+          },
+          "destination": {
+            "x": 61.1875,
+            "y": 72.796875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 3,
+          "kind": "static",
+          "anchor": {
+            "x": 61.75,
+            "y": 154.1875
+          },
+          "destination": {
+            "x": 61.75,
+            "y": 154.1875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 4,
+          "kind": "static",
+          "anchor": {
+            "x": -58.9375,
+            "y": 140.78125
+          },
+          "destination": {
+            "x": -58.9375,
+            "y": 140.78125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 5,
+          "kind": "static",
+          "anchor": {
+            "x": -4.109375,
+            "y": 179.015625
+          },
+          "destination": {
+            "x": -4.109375,
+            "y": 179.015625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 6,
+          "kind": "moving",
+          "anchor": {
+            "x": -116.25,
+            "y": 134.078125
+          },
+          "destination": {
+            "x": -116.25,
+            "y": 112.078125
+          },
+          "legFrames": 150,
+          "startDelayFrames": 32
+        },
+        {
+          "index": 7,
+          "kind": "teleport",
+          "anchor": {
+            "x": 119.5625,
+            "y": 45.46875
+          },
+          "destination": {
+            "x": 95.5625,
+            "y": 21.46875
+          },
+          "legFrames": 180,
+          "startDelayFrames": 4
+        },
+        {
+          "index": 8,
+          "kind": "static",
+          "anchor": {
+            "x": 86.5,
+            "y": 37.609375
+          },
+          "destination": {
+            "x": 86.5,
+            "y": 37.609375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 9,
+          "kind": "static",
+          "anchor": {
+            "x": -70.1875,
+            "y": -15.1875
+          },
+          "destination": {
+            "x": -70.1875,
+            "y": -15.1875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        }
+      ],
+      "samus": [
+        {
+          "index": 0,
+          "kind": "static",
+          "anchor": {
+            "x": -122.953125,
+            "y": -94.9375
+          },
+          "destination": {
+            "x": -122.953125,
+            "y": -94.9375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 1,
+          "kind": "static",
+          "anchor": {
+            "x": 1.234375,
+            "y": -46.953125
+          },
+          "destination": {
+            "x": 1.234375,
+            "y": -46.953125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 2,
+          "kind": "static",
+          "anchor": {
+            "x": 75.953125,
+            "y": 87.578125
+          },
+          "destination": {
+            "x": 75.953125,
+            "y": 87.578125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 3,
+          "kind": "static",
+          "anchor": {
+            "x": -108,
+            "y": -11.28125
+          },
+          "destination": {
+            "x": -108,
+            "y": -11.28125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 4,
+          "kind": "static",
+          "anchor": {
+            "x": -90.96875,
+            "y": -34.640625
+          },
+          "destination": {
+            "x": -90.96875,
+            "y": -34.640625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 5,
+          "kind": "static",
+          "anchor": {
+            "x": 76.328125,
+            "y": 73
+          },
+          "destination": {
+            "x": 76.328125,
+            "y": 73
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 6,
+          "kind": "static",
+          "anchor": {
+            "x": 1.875,
+            "y": 122.609375
+          },
+          "destination": {
+            "x": 1.875,
+            "y": 122.609375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 7,
+          "kind": "static",
+          "anchor": {
+            "x": 94.15625,
+            "y": -57.125
+          },
+          "destination": {
+            "x": 94.15625,
+            "y": -57.125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 8,
+          "kind": "static",
+          "anchor": {
+            "x": 19.828125,
+            "y": -37.75
+          },
+          "destination": {
+            "x": 19.828125,
+            "y": -37.75
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 9,
+          "kind": "static",
+          "anchor": {
+            "x": 105.125,
+            "y": -87.109375
+          },
+          "destination": {
+            "x": 105.125,
+            "y": -87.109375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        }
+      ],
+      "zelda": [
+        {
+          "index": 0,
+          "kind": "static",
+          "anchor": {
+            "x": -22.015625,
+            "y": -44.578125
+          },
+          "destination": {
+            "x": -22.015625,
+            "y": -44.578125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 1,
+          "kind": "static",
+          "anchor": {
+            "x": 107.796875,
+            "y": -34.015625
+          },
+          "destination": {
+            "x": 107.796875,
+            "y": -34.015625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 2,
+          "kind": "static",
+          "anchor": {
+            "x": 51.734375,
+            "y": 19.046875
+          },
+          "destination": {
+            "x": 51.734375,
+            "y": 19.046875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 3,
+          "kind": "static",
+          "anchor": {
+            "x": -109.84375,
+            "y": 25.875
+          },
+          "destination": {
+            "x": -109.84375,
+            "y": 25.875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 4,
+          "kind": "teleport",
+          "anchor": {
+            "x": 32.296875,
+            "y": -1.3125
+          },
+          "destination": {
+            "x": 32.296875,
+            "y": -23.3125
+          },
+          "legFrames": 300,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 5,
+          "kind": "static",
+          "anchor": {
+            "x": 47.203125,
+            "y": -85.90625
+          },
+          "destination": {
+            "x": 47.203125,
+            "y": -85.90625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 6,
+          "kind": "static",
+          "anchor": {
+            "x": 39.96875,
+            "y": -15.25
+          },
+          "destination": {
+            "x": 39.96875,
+            "y": -15.25
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 7,
+          "kind": "teleport",
+          "anchor": {
+            "x": -76.0625,
+            "y": 61.84375
+          },
+          "destination": {
+            "x": -99.0625,
+            "y": 38.84375
+          },
+          "legFrames": 270,
+          "startDelayFrames": 36
+        },
+        {
+          "index": 8,
+          "kind": "static",
+          "anchor": {
+            "x": 11.515625,
+            "y": -93.359375
+          },
+          "destination": {
+            "x": 11.515625,
+            "y": -93.359375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 9,
+          "kind": "static",
+          "anchor": {
+            "x": -98.625,
+            "y": 20.875
+          },
+          "destination": {
+            "x": -98.625,
+            "y": 20.875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        }
+      ],
+      "link": [
+        {
+          "index": 0,
+          "kind": "static",
+          "anchor": {
+            "x": 115.5,
+            "y": 9.796875
+          },
+          "destination": {
+            "x": 115.5,
+            "y": 9.796875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 1,
+          "kind": "moving",
+          "anchor": {
+            "x": -37.65625,
+            "y": 93.328125
+          },
+          "destination": {
+            "x": -61.65625,
+            "y": 93.328125
+          },
+          "legFrames": 150,
+          "startDelayFrames": 44
+        },
+        {
+          "index": 2,
+          "kind": "static",
+          "anchor": {
+            "x": -20.40625,
+            "y": 71.296875
+          },
+          "destination": {
+            "x": -20.40625,
+            "y": 71.296875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 3,
+          "kind": "static",
+          "anchor": {
+            "x": -3.578125,
+            "y": -76.546875
+          },
+          "destination": {
+            "x": -3.578125,
+            "y": -76.546875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 4,
+          "kind": "static",
+          "anchor": {
+            "x": 21.359375,
+            "y": -45.046875
+          },
+          "destination": {
+            "x": 21.359375,
+            "y": -45.046875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 5,
+          "kind": "static",
+          "anchor": {
+            "x": -149.21875,
+            "y": -15.609375
+          },
+          "destination": {
+            "x": -149.21875,
+            "y": -15.609375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 6,
+          "kind": "static",
+          "anchor": {
+            "x": -70.21875,
+            "y": 24.953125
+          },
+          "destination": {
+            "x": -70.21875,
+            "y": 24.953125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 7,
+          "kind": "static",
+          "anchor": {
+            "x": -76.96875,
+            "y": 81.46875
+          },
+          "destination": {
+            "x": -76.96875,
+            "y": 81.46875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 8,
+          "kind": "static",
+          "anchor": {
+            "x": -27.765625,
+            "y": 56.25
+          },
+          "destination": {
+            "x": -27.765625,
+            "y": 56.25
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 9,
+          "kind": "static",
+          "anchor": {
+            "x": -87,
+            "y": -98.984375
+          },
+          "destination": {
+            "x": -87,
+            "y": -98.984375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        }
+      ],
+      "young-link": [
+        {
+          "index": 0,
+          "kind": "static",
+          "anchor": {
+            "x": -32.765625,
+            "y": -9.21875
+          },
+          "destination": {
+            "x": -32.765625,
+            "y": -9.21875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 1,
+          "kind": "static",
+          "anchor": {
+            "x": 40.078125,
+            "y": 197.640625
+          },
+          "destination": {
+            "x": 40.078125,
+            "y": 197.640625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 2,
+          "kind": "static",
+          "anchor": {
+            "x": 20.6875,
+            "y": 168.515625
+          },
+          "destination": {
+            "x": 20.6875,
+            "y": 168.515625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 3,
+          "kind": "static",
+          "anchor": {
+            "x": -128.484375,
+            "y": 15.75
+          },
+          "destination": {
+            "x": -128.484375,
+            "y": 15.75
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 4,
+          "kind": "static",
+          "anchor": {
+            "x": 107.09375,
+            "y": -33.515625
+          },
+          "destination": {
+            "x": 107.09375,
+            "y": -33.515625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 5,
+          "kind": "static",
+          "anchor": {
+            "x": -149.46875,
+            "y": 189.65625
+          },
+          "destination": {
+            "x": -149.46875,
+            "y": 189.65625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 6,
+          "kind": "static",
+          "anchor": {
+            "x": -36.109375,
+            "y": 98.40625
+          },
+          "destination": {
+            "x": -36.109375,
+            "y": 98.40625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 7,
+          "kind": "static",
+          "anchor": {
+            "x": -23.53125,
+            "y": 77.234375
+          },
+          "destination": {
+            "x": -23.53125,
+            "y": 77.234375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 8,
+          "kind": "static",
+          "anchor": {
+            "x": 17.40625,
+            "y": 70.734375
+          },
+          "destination": {
+            "x": 17.40625,
+            "y": 70.734375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 9,
+          "kind": "static",
+          "anchor": {
+            "x": 12.625,
+            "y": -26.078125
+          },
+          "destination": {
+            "x": 12.625,
+            "y": -26.078125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        }
+      ],
+      "pichu": [
+        {
+          "index": 0,
+          "kind": "static",
+          "anchor": {
+            "x": -115.4375,
+            "y": 92.25
+          },
+          "destination": {
+            "x": -115.4375,
+            "y": 92.25
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 1,
+          "kind": "static",
+          "anchor": {
+            "x": 132.46875,
+            "y": 37.328125
+          },
+          "destination": {
+            "x": 132.46875,
+            "y": 37.328125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 2,
+          "kind": "static",
+          "anchor": {
+            "x": -28.734375,
+            "y": -34.25
+          },
+          "destination": {
+            "x": -28.734375,
+            "y": -34.25
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 3,
+          "kind": "static",
+          "anchor": {
+            "x": 86.25,
+            "y": 20.75
+          },
+          "destination": {
+            "x": 86.25,
+            "y": 20.75
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 4,
+          "kind": "static",
+          "anchor": {
+            "x": 51.875,
+            "y": -32.015625
+          },
+          "destination": {
+            "x": 51.875,
+            "y": -32.015625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 5,
+          "kind": "static",
+          "anchor": {
+            "x": -85.96875,
+            "y": 14.15625
+          },
+          "destination": {
+            "x": -85.96875,
+            "y": 14.15625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 6,
+          "kind": "static",
+          "anchor": {
+            "x": -3.265625,
+            "y": 24.859375
+          },
+          "destination": {
+            "x": -3.265625,
+            "y": 24.859375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 7,
+          "kind": "static",
+          "anchor": {
+            "x": 141.875,
+            "y": 23.984375
+          },
+          "destination": {
+            "x": 141.875,
+            "y": 23.984375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 8,
+          "kind": "teleport",
+          "anchor": {
+            "x": 84.015625,
+            "y": -29.125
+          },
+          "destination": {
+            "x": 114.015625,
+            "y": -29.125
+          },
+          "legFrames": 240,
+          "startDelayFrames": 88
+        },
+        {
+          "index": 9,
+          "kind": "static",
+          "anchor": {
+            "x": 138.109375,
+            "y": -32.125
+          },
+          "destination": {
+            "x": 138.109375,
+            "y": -32.125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        }
+      ],
+      "pikachu": [
+        {
+          "index": 0,
+          "kind": "moving",
+          "anchor": {
+            "x": 154.515625,
+            "y": -29.75
+          },
+          "destination": {
+            "x": 154.515625,
+            "y": -10.75
+          },
+          "legFrames": 150,
+          "startDelayFrames": 96
+        },
+        {
+          "index": 1,
+          "kind": "static",
+          "anchor": {
+            "x": 145.5,
+            "y": 46.859375
+          },
+          "destination": {
+            "x": 145.5,
+            "y": 46.859375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 2,
+          "kind": "static",
+          "anchor": {
+            "x": -80.796875,
+            "y": 9.734375
+          },
+          "destination": {
+            "x": -80.796875,
+            "y": 9.734375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 3,
+          "kind": "static",
+          "anchor": {
+            "x": 42.265625,
+            "y": -41.90625
+          },
+          "destination": {
+            "x": 42.265625,
+            "y": -41.90625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 4,
+          "kind": "teleport",
+          "anchor": {
+            "x": -34.046875,
+            "y": 40.171875
+          },
+          "destination": {
+            "x": -68.046875,
+            "y": 40.171875
+          },
+          "legFrames": 270,
+          "startDelayFrames": 104
+        },
+        {
+          "index": 5,
+          "kind": "static",
+          "anchor": {
+            "x": 123.515625,
+            "y": 99.921875
+          },
+          "destination": {
+            "x": 123.515625,
+            "y": 99.921875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 6,
+          "kind": "static",
+          "anchor": {
+            "x": 82.640625,
+            "y": -31.375
+          },
+          "destination": {
+            "x": 82.640625,
+            "y": -31.375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 7,
+          "kind": "static",
+          "anchor": {
+            "x": 107.703125,
+            "y": 42.828125
+          },
+          "destination": {
+            "x": 107.703125,
+            "y": 42.828125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 8,
+          "kind": "moving",
+          "anchor": {
+            "x": -11.140625,
+            "y": 49.96875
+          },
+          "destination": {
+            "x": -20.140625,
+            "y": 58.96875
+          },
+          "legFrames": 180,
+          "startDelayFrames": 24
+        },
+        {
+          "index": 9,
+          "kind": "static",
+          "anchor": {
+            "x": -67.515625,
+            "y": 9.1875
+          },
+          "destination": {
+            "x": -67.515625,
+            "y": 9.1875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        }
+      ],
+      "jigglypuff": [
+        {
+          "index": 0,
+          "kind": "static",
+          "anchor": {
+            "x": 91.90625,
+            "y": 42.078125
+          },
+          "destination": {
+            "x": 91.90625,
+            "y": 42.078125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 1,
+          "kind": "static",
+          "anchor": {
+            "x": -60.078125,
+            "y": 20.90625
+          },
+          "destination": {
+            "x": -60.078125,
+            "y": 20.90625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 2,
+          "kind": "static",
+          "anchor": {
+            "x": -53.515625,
+            "y": -5.078125
+          },
+          "destination": {
+            "x": -53.515625,
+            "y": -5.078125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 3,
+          "kind": "static",
+          "anchor": {
+            "x": 5.46875,
+            "y": -28.828125
+          },
+          "destination": {
+            "x": 5.46875,
+            "y": -28.828125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 4,
+          "kind": "static",
+          "anchor": {
+            "x": -128.125,
+            "y": -7.90625
+          },
+          "destination": {
+            "x": -128.125,
+            "y": -7.90625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 5,
+          "kind": "static",
+          "anchor": {
+            "x": -106.96875,
+            "y": 35.890625
+          },
+          "destination": {
+            "x": -106.96875,
+            "y": 35.890625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 6,
+          "kind": "static",
+          "anchor": {
+            "x": 64,
+            "y": 48.46875
+          },
+          "destination": {
+            "x": 64,
+            "y": 48.46875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 7,
+          "kind": "static",
+          "anchor": {
+            "x": 6.296875,
+            "y": -55.9375
+          },
+          "destination": {
+            "x": 6.296875,
+            "y": -55.9375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 8,
+          "kind": "moving",
+          "anchor": {
+            "x": -65.546875,
+            "y": 51.015625
+          },
+          "destination": {
+            "x": -87.546875,
+            "y": 29.015625
+          },
+          "legFrames": 210,
+          "startDelayFrames": 52
+        },
+        {
+          "index": 9,
+          "kind": "static",
+          "anchor": {
+            "x": -4.046875,
+            "y": 20.078125
+          },
+          "destination": {
+            "x": -4.046875,
+            "y": 20.078125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        }
+      ],
+      "mewtwo": [
+        {
+          "index": 0,
+          "kind": "static",
+          "anchor": {
+            "x": 45.75,
+            "y": 45.78125
+          },
+          "destination": {
+            "x": 45.75,
+            "y": 45.78125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 1,
+          "kind": "static",
+          "anchor": {
+            "x": -103,
+            "y": -72.515625
+          },
+          "destination": {
+            "x": -103,
+            "y": -72.515625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 2,
+          "kind": "static",
+          "anchor": {
+            "x": -24.390625,
+            "y": 92.0625
+          },
+          "destination": {
+            "x": -24.390625,
+            "y": 92.0625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 3,
+          "kind": "teleport",
+          "anchor": {
+            "x": 3.625,
+            "y": 22.359375
+          },
+          "destination": {
+            "x": 38.625,
+            "y": -12.640625
+          },
+          "legFrames": 210,
+          "startDelayFrames": 92
+        },
+        {
+          "index": 4,
+          "kind": "static",
+          "anchor": {
+            "x": -67.515625,
+            "y": -90.375
+          },
+          "destination": {
+            "x": -67.515625,
+            "y": -90.375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 5,
+          "kind": "moving",
+          "anchor": {
+            "x": 92.609375,
+            "y": -20.96875
+          },
+          "destination": {
+            "x": 115.609375,
+            "y": 2.03125
+          },
+          "legFrames": 150,
+          "startDelayFrames": 12
+        },
+        {
+          "index": 6,
+          "kind": "teleport",
+          "anchor": {
+            "x": 86.125,
+            "y": 56.328125
+          },
+          "destination": {
+            "x": 86.125,
+            "y": 28.328125
+          },
+          "legFrames": 240,
+          "startDelayFrames": 120
+        },
+        {
+          "index": 7,
+          "kind": "static",
+          "anchor": {
+            "x": -108.453125,
+            "y": -47.875
+          },
+          "destination": {
+            "x": -108.453125,
+            "y": -47.875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 8,
+          "kind": "static",
+          "anchor": {
+            "x": -21.359375,
+            "y": -22.703125
+          },
+          "destination": {
+            "x": -21.359375,
+            "y": -22.703125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 9,
+          "kind": "static",
+          "anchor": {
+            "x": 120.53125,
+            "y": -112.65625
+          },
+          "destination": {
+            "x": 120.53125,
+            "y": -112.65625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        }
+      ],
+      "game-and-watch": [
+        {
+          "index": 0,
+          "kind": "static",
+          "anchor": {
+            "x": 66.546875,
+            "y": 39.71875
+          },
+          "destination": {
+            "x": 66.546875,
+            "y": 39.71875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 1,
+          "kind": "static",
+          "anchor": {
+            "x": 58.578125,
+            "y": 26.796875
+          },
+          "destination": {
+            "x": 58.578125,
+            "y": 26.796875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 2,
+          "kind": "static",
+          "anchor": {
+            "x": -18.03125,
+            "y": 39.59375
+          },
+          "destination": {
+            "x": -18.03125,
+            "y": 39.59375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 3,
+          "kind": "static",
+          "anchor": {
+            "x": -28.640625,
+            "y": 26.625
+          },
+          "destination": {
+            "x": -28.640625,
+            "y": 26.625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 4,
+          "kind": "static",
+          "anchor": {
+            "x": -71,
+            "y": -28.75
+          },
+          "destination": {
+            "x": -71,
+            "y": -28.75
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 5,
+          "kind": "static",
+          "anchor": {
+            "x": -62.859375,
+            "y": -26.078125
+          },
+          "destination": {
+            "x": -62.859375,
+            "y": -26.078125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 6,
+          "kind": "teleport",
+          "anchor": {
+            "x": 6.828125,
+            "y": 29.875
+          },
+          "destination": {
+            "x": -15.171875,
+            "y": 51.875
+          },
+          "legFrames": 210,
+          "startDelayFrames": 72
+        },
+        {
+          "index": 7,
+          "kind": "static",
+          "anchor": {
+            "x": 30.359375,
+            "y": -13.328125
+          },
+          "destination": {
+            "x": 30.359375,
+            "y": -13.328125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 8,
+          "kind": "static",
+          "anchor": {
+            "x": -73.125,
+            "y": 52.765625
+          },
+          "destination": {
+            "x": -73.125,
+            "y": 52.765625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 9,
+          "kind": "static",
+          "anchor": {
+            "x": 62.046875,
+            "y": 16.390625
+          },
+          "destination": {
+            "x": 62.046875,
+            "y": 16.390625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        }
+      ],
+      "marth": [
+        {
+          "index": 0,
+          "kind": "static",
+          "anchor": {
+            "x": 16,
+            "y": 50.328125
+          },
+          "destination": {
+            "x": 16,
+            "y": 50.328125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 1,
+          "kind": "static",
+          "anchor": {
+            "x": -95.1875,
+            "y": -20.6875
+          },
+          "destination": {
+            "x": -95.1875,
+            "y": -20.6875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 2,
+          "kind": "static",
+          "anchor": {
+            "x": -86.90625,
+            "y": -52.375
+          },
+          "destination": {
+            "x": -86.90625,
+            "y": -52.375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 3,
+          "kind": "static",
+          "anchor": {
+            "x": -63.3125,
+            "y": 130.890625
+          },
+          "destination": {
+            "x": -63.3125,
+            "y": 130.890625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 4,
+          "kind": "static",
+          "anchor": {
+            "x": 34.796875,
+            "y": -8.09375
+          },
+          "destination": {
+            "x": 34.796875,
+            "y": -8.09375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 5,
+          "kind": "static",
+          "anchor": {
+            "x": -105.078125,
+            "y": 122.296875
+          },
+          "destination": {
+            "x": -105.078125,
+            "y": 122.296875
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 6,
+          "kind": "teleport",
+          "anchor": {
+            "x": -77.296875,
+            "y": -34.265625
+          },
+          "destination": {
+            "x": -69.296875,
+            "y": -42.265625
+          },
+          "legFrames": 180,
+          "startDelayFrames": 60
+        },
+        {
+          "index": 7,
+          "kind": "static",
+          "anchor": {
+            "x": 2.984375,
+            "y": 96.828125
+          },
+          "destination": {
+            "x": 2.984375,
+            "y": 96.828125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 8,
+          "kind": "static",
+          "anchor": {
+            "x": -39.21875,
+            "y": -18.328125
+          },
+          "destination": {
+            "x": -39.21875,
+            "y": -18.328125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 9,
+          "kind": "static",
+          "anchor": {
+            "x": 71.765625,
+            "y": -43.890625
+          },
+          "destination": {
+            "x": 71.765625,
+            "y": -43.890625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        }
+      ],
+      "roy": [
+        {
+          "index": 0,
+          "kind": "static",
+          "anchor": {
+            "x": 30.90625,
+            "y": 120.75
+          },
+          "destination": {
+            "x": 30.90625,
+            "y": 120.75
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 1,
+          "kind": "static",
+          "anchor": {
+            "x": 74.8125,
+            "y": 126.34375
+          },
+          "destination": {
+            "x": 74.8125,
+            "y": 126.34375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 2,
+          "kind": "static",
+          "anchor": {
+            "x": -28.84375,
+            "y": 41.859375
+          },
+          "destination": {
+            "x": -28.84375,
+            "y": 41.859375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 3,
+          "kind": "static",
+          "anchor": {
+            "x": -68.9375,
+            "y": 95.5625
+          },
+          "destination": {
+            "x": -68.9375,
+            "y": 95.5625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 4,
+          "kind": "static",
+          "anchor": {
+            "x": 42.6875,
+            "y": 77.515625
+          },
+          "destination": {
+            "x": 42.6875,
+            "y": 77.515625
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 5,
+          "kind": "static",
+          "anchor": {
+            "x": -49.109375,
+            "y": 96.859375
+          },
+          "destination": {
+            "x": -49.109375,
+            "y": 96.859375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 6,
+          "kind": "static",
+          "anchor": {
+            "x": 11.625,
+            "y": 9.828125
+          },
+          "destination": {
+            "x": 11.625,
+            "y": 9.828125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 7,
+          "kind": "static",
+          "anchor": {
+            "x": -93.640625,
+            "y": 93.375
+          },
+          "destination": {
+            "x": -93.640625,
+            "y": 93.375
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 8,
+          "kind": "static",
+          "anchor": {
+            "x": 45.84375,
+            "y": 129.578125
+          },
+          "destination": {
+            "x": 45.84375,
+            "y": 129.578125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        },
+        {
+          "index": 9,
+          "kind": "static",
+          "anchor": {
+            "x": -119.25,
+            "y": 65.078125
+          },
+          "destination": {
+            "x": -119.25,
+            "y": 65.078125
+          },
+          "legFrames": 0,
+          "startDelayFrames": 0
+        }
+      ]
+    }
+  }
 }

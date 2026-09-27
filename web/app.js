@@ -52,6 +52,8 @@ function renderCourses() {
     button.setAttribute('aria-pressed', String(character === selection));
     button.append(portrait(character), node('strong', `${favorites.has(character) ? '★ ' : ''}${names[character]}`), node('span', `→ ${names[data.challenge.assignments[character]]}`),
       node('small', p?.best ? `✓ ${time(p.best)} · ${p.runs} run${p.runs === 1 ? '' : 's'}` : 'No submitted run', 'course-best'));
+    const targets=data.challenge.motion?.courses[data.challenge.assignments[character]];
+    if(targets){const counts=targets.reduce((a,t)=>(a[t.kind]++,a),{static:0,moving:0,teleport:0});button.append(node('small',`${counts.static} fixed · ${counts.moving} moving · ${counts.teleport} teleporting`,'course-best'));}
     button.addEventListener('click', () => { choose(character); $('board-title').scrollIntoView({ block: 'start', behavior: 'smooth' }); });
     $('course-grid').append(button);
   }
@@ -68,13 +70,14 @@ function render(d) {
   const revealed=Boolean(d.competition?.timesRevealed);
   document.querySelector('.board-footer>span:last-child').textContent = revealed ? 'Challenge closed · results revealed' : 'All participants · alphabetical order';
   text('board-title',revealed?'Leaderboard':'Participants');
-  document.querySelector('.leaderboard .eyebrow').textContent=revealed?'Reviewed results':'Current seed';
+  document.querySelector('.leaderboard .eyebrow').textContent=revealed?'Results':'Current seed';
   document.querySelector('thead tr').replaceChildren(...(revealed?['RANK','PLAYER','FINAL TIME','DATE']:['PLAYER']).map(label=>{const th=node('th',label);th.scope='col';return th;}));
   text('competition-state',revealed?'Challenge closed':'Results hidden');
-  text('competition-detail',revealed?'Submissions are closed. Approved times and rankings are now visible.':'Times and rankings stay hidden until the challenge closes, except runs their owners choose to disclose.');
-  document.querySelector('#board-empty h3').textContent=revealed?'No approved records yet.':'No participants yet';
-  document.querySelector('#board-empty p').textContent=revealed?'No reviewed results for this character.':'The companion submits valid personal bests automatically.';
+  text('competition-detail',revealed?'Submissions are closed. Submitted times and rankings are now visible.':'Times and rankings stay hidden until the challenge closes, except runs their owners choose to disclose.');
+  document.querySelector('#board-empty h3').textContent=revealed?'No records yet.':'No participants yet';
+  document.querySelector('#board-empty p').textContent=revealed?'No submitted results for this character.':'The companion submits valid personal bests automatically.';
   text('seed', c.rules.seed); text('board-seed', c.rules.seed); text('target-count', c.rules.targets);
+  text('target-behavior',c.motion?'Seeded mix':'Fixed');
   text('hero-stage', (names[c.assignments.fox] || '—').toUpperCase());
   text('route-summary', `${names[selection]} → ${names[c.assignments[selection]]}`);
   text('stat-courses', Object.keys(c.assignments).length); text('stat-players', d.stats.players); text('stat-runs', d.stats.completions);
@@ -242,8 +245,8 @@ async function play() {
 $('play').addEventListener('click', play); $('empty-play').addEventListener('click', play);
 $('copy-seed').addEventListener('click', async () => {
   if (!data) return;
-  try { await navigator.clipboard.writeText(data.challenge.bttSeed); toast('BTT seed copied, including the course settings.'); }
-  catch { toast(`BTT seed: ${data.challenge.bttSeed}`); }
+  try { await navigator.clipboard.writeText(data.challenge.motion?`TTRC ${data.challenge.rules.seed} · seeded motion · ${data.challenge.id}`:data.challenge.bttSeed); toast(data.challenge.motion?'TTRC challenge copied. Use Get Gecko code for the complete moving-target rules.':'BTT seed copied, including the course settings.'); }
+  catch { toast(data.challenge.motion?`TTRC seed: ${data.challenge.rules.seed} · seeded motion`:`BTT seed: ${data.challenge.bttSeed}`); }
 });
 $('share').addEventListener('click', async () => {
   const url = new URL('https://target-test-randomizer-challenge.vercel.app'); url.searchParams.set('character', selection);

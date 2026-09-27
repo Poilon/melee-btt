@@ -214,7 +214,7 @@ submissions, private evidence, review decisions and challenge closure state.
 Legacy score-only uploads return HTTP 410 and cannot enter the leaderboard.
 
 Vercel environment: `BLOB_READ_WRITE_TOKEN`, `SESSION_SECRET`, `REVIEWER_KEY` and
-optionally `CHALLENGE_ENDS_AT`. The current active seed is **20260989**. New seeds
+optionally `CHALLENGE_ENDS_AT`. The current active seed is **20260990**. New seeds
 require generating a challenge, preparing its Dolphin profile and deploying the
 same manifest/code. Use `TTRC_CHALLENGE_DIR` for a different local challenge folder.
 

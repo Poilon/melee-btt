@@ -17,6 +17,14 @@ Windows 10/11 **x64**. The companion launcher is a small readable Windows script
 
 **The game ISO is not included.** It stays on your computer and is never uploaded. The accepted original image has MD5 `0e63d4223b01d9aba596259dc155a174`.
 
+## Target behavior
+
+Every stage has **10 targets**, with a seeded mix of **6–10 fixed targets**, **0–4 moving targets**, and **0–4 teleporting targets**. The three counts always add up to ten. The seed chooses the counts, affected targets, directions, distances, delays and periods separately for each stage.
+
+Moving targets travel back and forth. Teleporting targets alternate between two positions with several seconds at each. Both return to their original positions regularly. Resetting a run restarts its timing; every player gets the same behavior. This is a challenge rule, not a local preference.
+
+See [implementation and validation](docs/target-motion.md). The downloadable Gecko code contains the complete rules; a BTT seed alone does not include TTRC's custom movement.
+
 ## Records and replays
 
 - The companion captures fresh, completed Target Test runs and links their `.slp` files automatically.
@@ -77,7 +85,7 @@ npm ci
 npm run setup
 npm test
 npm run test:ui
-npm run generate -- --seed 20260989 --stage all --targets 10
+npm run generate -- --seed 20260990 --stage all --targets 10 --moving
 python3 scripts/prepare_dolphin.py --record-replays --iso /path/to/Melee.iso --dolphin /path/to/Slippi\ Dolphin.exe
 npm start
 ```

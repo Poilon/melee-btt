@@ -54,6 +54,8 @@ function render(d){
  $('player-required').hidden=Boolean(ident);
  $('play').hidden=false;$('recorder-note').hidden=Boolean(c.native);
  $('replay-folder').hidden=!c.replayEnabled;$('recorder').hidden=Boolean(c.replayEnabled);text('recorder-state',c.native?'Dolphin records automatically. Choose your ISO with Open in Dolphin.':c.replayEnabled?'Replay-enabled profile ready. Launch Dolphin here for your next recorded attempt.':'Standard Dolphin does not create .slp files. Prepare the replay-enabled profile for new attempts.');
+ $('motion-note').hidden=!d.challenge.motion;
+ text('motion-note',d.challenge.motion?'10 targets per stage · 6–10 fixed · the rest move or teleport. The seed sets the mix and timing.':'');
  text('seed',d.challenge.rules.seed);text('player-name',ident?.displayName||'Not signed in');text('player-code',ident?.slug ? `@${ident.slug}` : ident?.connectCode || 'Username and password');text('avatar',ident?.displayName.slice(0,2).toUpperCase()||'?');
  text('check-player',`${ident?'✓':'○'} Signed in`);text('connection',connected?ident?'Dolphin connected':'Practice · no player':'Waiting for Dolphin');$('connection').classList.toggle('on',connected&&Boolean(ident));
  text('launch-note',ident?'Automatic submissions on · valid personal bests upload with their replays.':'Practice mode: sign in before starting a scored run.');
@@ -88,7 +90,7 @@ function makeRunRow(r,group=false){
  row.append(info,buttons);return row;
 }
 function renderRuns(d){
- if(historyPlayer!==d.identity?.id){historyPlayer=d.identity?.id;expanded.clear();attempts.clear();runsKey=null;}
+ if(historyPlayer!==`${d.challenge.id}:${d.identity?.id}`){historyPlayer=`${d.challenge.id}:${d.identity?.id}`;expanded.clear();attempts.clear();runsKey=null;}
  const groups=d.bestRuns||[];const key=JSON.stringify([groups,tab,[...expanded],[...attempts],[...submitting]]);if(key===runsKey)return;runsKey=key;
  const visible=groups.filter(matchesTab);text('run-count',`${groups.length} character${groups.length===1?'':'s'} · ${Object.values(d.progress||{}).reduce((n,p)=>n+p.runs,0)} runs`);$('empty').hidden=visible.length>0;$('run-list').replaceChildren();
  for(const r of visible){const group=make('section','','run-group');group.append(makeRunRow(r,true));if(expanded.has(r.character)){const list=make('div','','attempt-history');const cache=attempts.get(r.character);list.append(make('p',`All ${names[r.character]} attempts · newest first`,'eyebrow'));if(!cache||cache.loading&&!cache.rows.length)list.append(make('p','Loading attempts…','muted'));if(cache){for(const attempt of cache.rows){const row=makeRunRow(attempt);if(attempt.id===r.id)row.classList.add('best-attempt');list.append(row);}if(cache.error)list.append(make('p',cache.error,'muted'));if(cache.rows.length<r.attemptCount&&!cache.loading){const more=make('button',cache.error?'Retry':'Load older runs','quiet');more.addEventListener('click',()=>loadHistory(r.character,true));list.append(more);}}group.append(list);} $('run-list').append(group);}

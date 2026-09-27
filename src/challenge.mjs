@@ -1,5 +1,6 @@
 import vm from 'node:vm';
 import { readSources, revision, sha256 } from './upstream.mjs';
+import {createMotionPlan,motionGecko} from './target-motion.mjs';
 
 export const stages = Object.freeze([
   'dr-mario', 'mario', 'luigi', 'bowser', 'peach', 'yoshi', 'donkey-kong',
@@ -10,7 +11,7 @@ export const stages = Object.freeze([
 export const codeName = 'Target Test Randomizer Challenge';
 export const generatorVersion = 'ttrc-btt3-v2';
 
-export function normalizeRules({ seed, stage = 'all', targets = 10, spawn = true, mismatch = stage === 'all' } = {}) {
+export function normalizeRules({ seed, stage = 'all', targets = 10, spawn = true, mismatch = stage === 'all', moving = false } = {}) {
   if (!Number.isSafeInteger(seed) || seed < 1) {
     throw new Error('La seed doit être un entier entre 1 et 9007199254740991.');
   }
@@ -21,8 +22,9 @@ export function normalizeRules({ seed, stage = 'all', targets = 10, spawn = true
   }
   if (typeof spawn !== 'boolean') throw new Error('spawn doit être un booléen.');
   if (typeof mismatch !== 'boolean') throw new Error('mismatch doit être un booléen.');
+  if (typeof moving !== 'boolean') throw new Error('moving doit être un booléen.');
   if (mismatch && stage !== 'all') throw new Error('Le mélange personnage/stage nécessite --stage all.');
-  return { seed, stage, targets, spawn, mismatch, weighted: true, moving: false };
+  return { seed, stage, targets, spawn, mismatch, weighted: true, moving };
 }
 
 export function validateGecko(code) {
@@ -39,7 +41,7 @@ export function validateGecko(code) {
       i += size;
     }
   }
-  if (lines.length * 8 > 4096) throw new Error('Code trop volumineux pour ce prototype.');
+  if (lines.length * 8 > 8192) throw new Error('Code trop volumineux (8 KiB maximum).');
 }
 
 export async function generateChallenge(input) {
@@ -68,6 +70,7 @@ export async function generateChallenge(input) {
     },
     firebase: { initializeApp() {}, database },
     inputSeed: rules.seed,
+    motionEnabled: rules.moving,
   }, { codeGeneration: { strings: false, wasm: false } });
   vm.runInContext(source['seedrandom.js'], context, { timeout: 2000 });
   vm.runInContext(source['randomizer.js'], context, { timeout: 2000 });
@@ -75,6 +78,20 @@ export async function generateChallenge(input) {
   // hook and to exclude targets the assigned character cannot reach. Calling
   // getMismatchCode a second time would advance the RNG and report another map.
   vm.runInContext(`
+    globalThis.targetCaptures = [];
+    const originalGetValidCoordinates = getValidCoordinates;
+    getValidCoordinates = function (...args) {
+      for(let attempt=0;attempt<1000;attempt++){
+        const result = originalGetValidCoordinates(...args);
+        const packed=coordsToHalfWords(result.x,result.y);
+        const signed=h=>{const n=parseInt(h,16);return (n>=32768?n-65536:n)/64;};
+        const x=signed(packed.slice(0,4)),y=signed(packed.slice(4));
+        if(motionEnabled&&targetCaptures.some(c=>c.stage===args[0]&&Math.hypot(c.x-x,c.y-y)<8))continue;
+        globalThis.targetCaptures.push({stage:args[0],packed,x,y,randomExclusions:args[4]});
+        return result;
+      }
+      throw new Error('Cannot space targets safely; choose another seed.');
+    };
     const originalGetMismatchCode = getMismatchCode;
     getMismatchCode = function () {
       const result = originalGetMismatchCode();
@@ -83,7 +100,19 @@ export async function generateChallenge(input) {
     };
     randomize(inputSeed, 3);
   `, context, { timeout: 5000 });
-  const gecko = element('#result').value.trim().toUpperCase() + '\n';
+  let gecko = element('#result').value.trim().toUpperCase() + '\n';
+  let motion;
+  if(rules.moving){
+    const geometries=JSON.parse(vm.runInContext(`JSON.stringify(bounds.map((b,i)=>({
+      bounds:newBounds[i]||b,
+      mismatch:mismatchExclusions[i]?.[globalThis.stageToCharacter?.[i]??i]||[],
+      exceptions:exceptions[i]||[],
+      excluded:[...(exclusions[i]||[]),...(newExclusions[i]||[]),
+        ...(targetCaptures.find(c=>c.stage===i)?.randomExclusions&&randomExclusions[i]?[randomExclusions[i].slice(1)]:[])]
+    })))`,context,{timeout:1000}));
+    motion=createMotionPlan(rules.seed,stages,Array.from(context.targetCaptures),geometries);
+    gecko+=motionGecko(motion,stages);
+  }
   validateGecko(gecko);
   const assignments = {};
   if (rules.mismatch) {
@@ -98,7 +127,7 @@ export async function generateChallenge(input) {
   } else {
     for (const stage of rules.stage === 'all' ? stages : [rules.stage]) assignments[stage] = stage;
   }
-  const identity = { generatorVersion, upstreamRevision: revision, game: 'GALE01r2', rules, geckoSha256: sha256(gecko) };
+  const identity = { generatorVersion:rules.moving?'ttrc-btt3-motion-v1':generatorVersion, upstreamRevision: revision, game: 'GALE01r2', rules, geckoSha256: sha256(gecko) };
   const manifest = {
     format: 'ttrc-challenge-v1',
     id: sha256(JSON.stringify(identity)),
@@ -107,6 +136,7 @@ export async function generateChallenge(input) {
     character: rules.stage === 'all' ? null : rules.stage,
     assignments,
     geometry: 'original',
+    ...(motion?{motion}:{}),
   };
   const ini = `[Gecko]\n$${codeName} [djwang88, Punkline; TTRC]\n${gecko}\n[Gecko_Enabled]\n$${codeName}\n`;
   return { manifest, gecko, ini };

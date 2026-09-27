@@ -203,3 +203,12 @@ test('character options persist with UCF and per-target Peach items',async({page
  await expect(nana).toBeChecked();await expect(misfire).toBeChecked();
  await page.setViewportSize({width:390,height:844});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
+
+// Motion belongs to the challenge and is visible without a local gameplay toggle.
+test('seeded target mix is explained in the companion and on the website',async({page})=>{
+ await page.goto('http://localhost:4318');
+ await expect(page.locator('#motion-note')).toContainText('6–10 fixed');
+ await page.goto('http://localhost:4319');
+ await expect(page.locator('#target-behavior')).toHaveText('Seeded mix');
+ await expect(page.locator('#course-grid')).toContainText('teleporting');
+});
