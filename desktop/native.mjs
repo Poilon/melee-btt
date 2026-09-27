@@ -1,19 +1,20 @@
-// Started by our native Dolphin build, never by a shell script.
+// Shared entry point for native Dolphin and the independent companion launcher.
 import {readFile,writeFile,mkdir,appendFile,rename,cp,access} from 'node:fs/promises';
 import {join,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {execFile} from 'node:child_process';
+import {execFile,spawn} from 'node:child_process';
 import {promisify} from 'node:util';
-import {createServer} from 'node:net';
+import {companionRunning,checkCompanionPort,claimCompanion} from '../server/companion-instance.mjs';
 import {verifyIso} from '../server/onboarding.mjs';
 const root=fileURLToPath(new URL('../',import.meta.url)),exec=promisify(execFile);
-const runtimePath=join(root,'build/challenge/runtime.json');
+const runtimePath=join(root,'build/challenge/runtime.json'),port=Number(process.env.PORT||4317);
+const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 await mkdir(join(root,'.local'),{recursive:true});
 async function writeRuntime(value){await writeFile(runtimePath+'.tmp',JSON.stringify(value));await rename(runtimePath+'.tmp',runtimePath);}
 try {
  if(process.argv.includes('--prepare')){
   // Do not silently connect this installation to a different companion.
-  await new Promise((resolve,reject)=>{const probe=createServer();probe.once('error',reject);probe.listen(Number(process.env.PORT||4317),'127.0.0.1',()=>probe.close(resolve));});
+  await checkCompanionPort(root,port);
   const dolphin=join(root,'Slippi Dolphin.exe'),profile=join(root,'User');
   let previous={};try{previous=JSON.parse(await readFile(runtimePath,'utf8'));}catch{}
   await exec(join(root,'runtime/python/python.exe'),[join(root,'scripts/prepare_dolphin.py'),'--record-replays','--dolphin',dolphin,'--portable','--configure-only','--controller-config',join(profile,'Config')],{windowsHide:true,timeout:90000});
@@ -30,12 +31,26 @@ try {
   await verifyIso(iso);
   const runtime=JSON.parse(await readFile(runtimePath,'utf8'));
   await writeRuntime({...runtime,iso});
+ }else if(process.argv.includes('--open')){
+  if(!await companionRunning(root,port)){
+   const child=spawn(process.execPath,[fileURLToPath(import.meta.url),'--serve'],{cwd:root,detached:true,stdio:'ignore',windowsHide:true});
+   await new Promise((resolve,reject)=>{child.once('spawn',resolve);child.once('error',reject);});child.unref();
+   const deadline=Date.now()+100000;
+   while(!await companionRunning(root,port)){if(Date.now()>deadline)throw new Error('Companion did not start. See .local/startup.log.');await delay(300);}
+  }
+  await exec('powershell.exe',['-NoProfile','-NonInteractive','-Command',`Start-Process 'http://localhost:${port}'`],{windowsHide:true});
  }else if(process.argv.includes('--serve')){
-  const parent=Number(process.argv[process.argv.indexOf('--parent')+1]);
-  if(!Number.isSafeInteger(parent)||parent<1)throw new Error('Missing Dolphin process');
-  // Keep the service alive for this Dolphin session only. No autostart or install.
-  const timer=setInterval(()=>{try{process.kill(parent,0);}catch{clearInterval(timer);process.emit('SIGTERM');}},1000);
-  await import('../server/main.mjs');
+  if(await companionRunning(root,port))process.exit(0);
+  const release=await claimCompanion(root);
+  if(!release)process.exit(0);
+  try{
+   await checkCompanionPort(root,port);
+   // A fresh install needs its profile before the companion can observe Dolphin.
+   let prepared=false;try{const runtime=JSON.parse(await readFile(runtimePath,'utf8'));prepared=runtime.native&&runtime.profile===join(root,'User');}catch{}
+   if(!prepared)await exec(process.execPath,[fileURLToPath(import.meta.url),'--prepare'],{windowsHide:true,timeout:95000});
+   globalThis.ttrcReleaseCompanion=release;
+   await import('../server/main.mjs');
+  }catch(error){await release();throw error;}
  }else throw new Error('Unknown native action');
 }catch(error){
  await appendFile(join(root,'.local/startup.log'),`${new Date().toISOString()} ${error.stack||error}\n`);

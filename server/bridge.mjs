@@ -34,7 +34,7 @@ export class DolphinBridge {
         try {
           const sample = JSON.parse(line);
           this.lastSampleAt = Date.now();
-          this.state = { status: sample.status, experimental: true,
+          this.state = { status: sample.status, experimental: true, dolphinRunning: sample.status === 'connected' || sample.dolphinRunning === true,
             inGame: sample.major === 15 && sample.minor === 1,
             character: sample.major === 15 && sample.minor === 1 ? characterForId(sample.characterId) || null : null,
             stage: sample.major === 15 && sample.minor === 1 ? stageForId(sample.stageId) || null : null,

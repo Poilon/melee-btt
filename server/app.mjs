@@ -18,7 +18,7 @@ const files = new Map([
   ['/target.svg', ['target.svg', 'image/svg+xml']],
 ]);
 
-export function createApp({ challenge, gecko, store, getIdentity, getCapture, launch, remote, importPlayer, prepareRecorder, reviewerProxy, openReplays, replays, getPlaySettings, savePlaySettings, onboarding, account }) {
+export function createApp({ challenge, gecko, store, getIdentity, getCapture, launch, remote, importPlayer, prepareRecorder, reviewerProxy, openReplays, replays, getPlaySettings, savePlaySettings, onboarding, account, instance, quit }) {
   const server = createServer(async (req, res) => {
     const port = server.address()?.port;
     const hosts = new Set([`localhost:${port}`, `127.0.0.1:${port}`]);
@@ -36,6 +36,13 @@ export function createApp({ challenge, gecko, store, getIdentity, getCapture, la
     }
     try {
       const url = new URL(req.url, `http://${req.headers.host}`);
+      if (req.method === 'GET' && url.pathname === '/api/health') return json(200, {instance});
+      if (req.method === 'POST' && url.pathname === '/api/quit') {
+        if (!req.headers.origin || req.headers['x-ttrc-action'] !== 'quit') return json(403, {error:'Action not allowed.'});
+        if (!quit) return json(503, {error:'Quit unavailable.'});
+        res.once('finish', quit);
+        return json(200, {ok:true});
+      }
       if (req.method === 'POST' && ['/api/account/start', '/api/account/cancel', '/api/account/logout'].includes(url.pathname)) {
         if (!req.headers.origin || req.headers['x-ttrc-action'] !== 'profile') return json(403, { error: 'Action not allowed.' });
         if (!account) return json(503, { error: 'Sign-in unavailable. Update your companion.' });

@@ -1,25 +1,14 @@
 import { test, expect } from '@playwright/test';
 
-test('companion follows the in-game character, shows personal bests with expandable replay history', async ({ page }) => {
+test('companion shows compact personal bests with expandable replay history', async ({ page }) => {
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto('/');
   await expect(page.getByText('DESKTOP COMPANION')).toBeVisible();
   await expect(page.locator('#seed')).toHaveText('20260989');
   await expect(page.locator('#player-name')).toHaveText('Browser Test');
   await expect(page.locator('#run-list')).toContainText('00:20.57');
-  await expect(page.locator('#live-character')).toHaveText('Choose your character in Melee');
+  await expect(page.getByText('LIVE SESSION',{exact:true})).toHaveCount(0);
   await expect(page.locator('select')).toHaveCount(0);
-  await expect(page.getByText('ACTIVE CHALLENGE', { exact:true })).toHaveCount(0);
-  let fighter = 'marth';
-  await page.route('**/api/dashboard', async route => {
-    const response = await route.fetch(); const body = await response.json();
-    body.capture = { status:'connected', inGame:true, character:fighter, stage:body.challenge.assignments[fighter], timerFrames:704, remaining:3 };
-    await route.fulfill({response,json:body});
-  });
-  await expect(page.locator('#live-character')).toHaveText('Marth → Mewtwo');
-  fighter = 'fox';
-  await expect(page.locator('#live-character')).toHaveText('Fox → Samus');
-  await expect(page.locator('#live-time')).toHaveText('00:11.73');
   await page.locator('#play').click();
   await expect(page.locator('#toast')).toContainText('Dolphin is starting');
   await expect(page.getByText('WATCH YOUR ATTEMPTS',{exact:true})).toHaveCount(0);
@@ -167,6 +156,8 @@ test('website groups all submitted runs, retains old bests and exports the full 
 });
 
 test('companion saves music and rumble independently and restores them on reload',async({page})=>{
+ let running=false;
+ await page.route('**/api/dashboard',async route=>{const response=await route.fetch(),body=await response.json();body.capture={...body.capture,native:true,replayEnabled:true,dolphinRunning:running};await route.fulfill({response,json:body});});
  await page.goto('/');
  const music=page.getByRole('checkbox',{name:'Game music'}),rumble=page.getByRole('checkbox',{name:'Controller rumble'});
  await expect(music).toBeEnabled();await expect(music).toBeChecked();await expect(rumble).toBeChecked();
@@ -175,6 +166,8 @@ test('companion saves music and rumble independently and restores them on reload
  await rumble.uncheck();await expect(rumble).toBeEnabled();
  await page.reload();await expect(rumble).toBeEnabled();await expect(rumble).not.toBeChecked();await expect(music).not.toBeChecked();
  await expect(page.locator('#settings-note')).toContainText('next time you launch Dolphin');
+ await expect(page.getByRole('button',{name:'Launch Dolphin'})).toBeVisible();
+ running=true;await page.reload();await expect(page.locator('#settings-note')).toContainText('close and relaunch Dolphin');
  await music.check();await expect(music).toBeEnabled();await rumble.check();await expect(rumble).toBeEnabled();
 });
 

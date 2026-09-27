@@ -2,13 +2,14 @@ import { formatTime } from '/time.js';
 const $ = id => document.getElementById(id), text = (id, value) => { $(id).textContent = value; };
 const names = { 'dr-mario':'Dr. Mario',mario:'Mario',luigi:'Luigi',bowser:'Bowser',peach:'Peach',yoshi:'Yoshi','donkey-kong':'Donkey Kong','captain-falcon':'Captain Falcon',ganondorf:'Ganondorf',falco:'Falco',fox:'Fox',ness:'Ness','ice-climbers':'Ice Climbers',kirby:'Kirby',samus:'Samus',zelda:'Zelda',link:'Link','young-link':'Young Link',pichu:'Pichu',pikachu:'Pikachu',jigglypuff:'Jigglypuff',mewtwo:'Mewtwo','game-and-watch':'Mr. Game & Watch',marth:'Marth',roy:'Roy' };
 const make = (tag, value, css) => { const n=document.createElement(tag);n.textContent=value;if(css)n.className=css;return n; };
+let companionClosed=false;
 let data, tab='all', toastTimer, seen, savingSettings=false, launchingDolphin=false, settingsRevision=0;
 function renderSettings(settings){
  if(savingSettings)return;
  $('play-settings').disabled=!settings||launchingDolphin;
  if(!settings){text('settings-note','Play settings unavailable.');return;}
  $('game-music').checked=settings.music;$('controller-rumble').checked=settings.rumble;
- text('settings-note','Saved automatically · applies the next time you launch Dolphin.');
+ text('settings-note',data?.capture?.dolphinRunning?'Saved automatically · close and relaunch Dolphin to apply changes.':'Saved automatically · applies the next time you launch Dolphin.');
 }
 for(const id of ['game-music','controller-rumble'])$(id).addEventListener('change',async()=>{
  const previous=data?.settings;
@@ -33,22 +34,17 @@ for(const [id,action]of [['setup-iso','iso'],['setup-install','install'],['setup
  $(id).disabled=true;
  try{await post('setup/'+action,{},'setup');await refresh();}catch(error){toast(error.message);}finally{$(id).disabled=false;}
 });
-function toast(message){text('toast',message);$('toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').hidden=true,6500);}
+function toast(message){if(companionClosed)return;text('toast',message);$('toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').hidden=true,6500);}
 async function post(path,body,action='profile') { const r=await fetch(`/api/${path}`,{method:'POST',headers:{'X-TTRC-Action':action,'Content-Type':'application/json'},body:JSON.stringify(body||{})});const v=await r.json();if(!r.ok)throw new Error(v.error||'Please try again.');return v; }
 function render(d){
+ if(companionClosed)return;
  data=d;renderAccount(d);renderSettings(d.settings);renderSetup(d.setup);const ident=d.identity,c=d.capture,connected=c.status==='connected';
  $('player-required').hidden=Boolean(ident);
- $('play').hidden=Boolean(c.native);$('recorder-note').hidden=Boolean(c.native);
+ $('play').hidden=false;$('recorder-note').hidden=Boolean(c.native);
  $('replay-folder').hidden=!c.replayEnabled;$('recorder').hidden=Boolean(c.replayEnabled);text('recorder-state',c.native?'Dolphin records automatically. Choose your ISO with Open in Dolphin.':c.replayEnabled?'Replay-enabled profile ready. Launch Dolphin here for your next recorded attempt.':'Standard Dolphin does not create .slp files. Prepare the replay-enabled profile for new attempts.');
  text('seed',d.challenge.rules.seed);text('player-name',ident?.displayName||'Not signed in');text('player-code',ident?.slug ? `@${ident.slug}` : ident?.connectCode || 'Username and password');text('avatar',ident?.displayName.slice(0,2).toUpperCase()||'?');
  text('check-player',`${ident?'✓':'○'} Signed in`);text('connection',connected?ident?'Dolphin connected':'Practice · no player':'Waiting for Dolphin');$('connection').classList.toggle('on',connected&&Boolean(ident));
- text('live-character',connected&&c.inGame&&names[c.character]?`${names[c.character]}${names[c.stage]?' → '+names[c.stage]:''}`:'Choose your character in Melee');
- const artCharacter=connected&&c.inGame&&Object.hasOwn(names,c.character)?c.character:'fox';
- if($('live-art').dataset.character!==artCharacter){$('live-art').src=`/assets/melee/${artCharacter}.webp`;$('live-art').dataset.character=artCharacter;}
- text('live-time',formatTime(connected&&c.inGame?c.timerFrames||0:0));text('capture-state',connected?c.inGame?'Attempt in progress':'Dolphin ready':'Waiting for Dolphin');
- text('capture-note',!ident?'Sign in to save runs.':c.recording==='saved'?'Run saved. Its replay will be attached automatically.':'Experimental capture · only fresh, completed runs are saved.');
  text('launch-note',ident?'Automatic submissions on · valid personal bests upload with their replays.':'Practice mode: sign in before starting a scored run.');
- $('targets').replaceChildren(...Array.from({length:d.challenge.rules.targets},(_,i)=>make('span','',i<(c.remaining??d.challenge.rules.targets)?'remaining':'')));
  text('sync',d.remote?.lastError|| (d.remote?.pending?`${d.remote.pending} submission(s) waiting to upload.`:'Automatic submissions on. No uploads waiting.'));
  const count=Object.values(d.progress||{}).filter(p=>p.best).length;$('progress-count').replaceChildren(document.createTextNode(count+' '),make('small','/ 25 cleared'));$('progress').value=count;
  for(const [character,cache]of attempts){if(cache.loading)continue;const fresh=new Map(d.history.map(r=>[r.id,r]));cache.rows=cache.rows.map(r=>fresh.get(r.id)||r);}
@@ -62,7 +58,7 @@ function makeRunRow(r,group=false){
  const row=make('article','','run'),info=make(group?'button':'div','','run-info'),top=make('div','','run-top');
  top.append(make('strong',group?names[r.character]:`${names[r.character]} → ${names[r.stage]}`),make('time',formatTime(r.frames)),make('span',r.exclusionReason?'Excluded':({local:'Local only',queued:'Queued',pending:'In review',approved:'Approved',rejected:'Rejected','upload-error':'Upload failed',superseded:'Replaced'})[r.submissionStatus]||'Local only',`badge ${r.submissionStatus}`));
  info.append(top,make('small',group?`Personal best · ${r.attemptCount} attempt${r.attemptCount===1?'':'s'} · ${expanded.has(r.character)?'Hide':'Show'} history ${expanded.has(r.character)?'▴':'▾'}`:new Date(r.createdAt).toLocaleString('en-US')));
- if(group){const portrait=make('img','','run-portrait');portrait.src=`/assets/melee/${r.character}-portrait.webp`;portrait.alt='';portrait.width=58;portrait.height=72;portrait.loading='lazy';info.prepend(portrait);info.type='button';info.classList.add('run-summary');info.setAttribute('aria-expanded',String(expanded.has(r.character)));info.setAttribute('aria-label',`${names[r.character]}: ${expanded.has(r.character)?'hide':'show'} run history`);info.addEventListener('click',()=>toggleHistory(r.character));}
+ if(group){const portrait=make('img','','run-portrait');portrait.src=`/assets/melee/${r.character}-portrait.webp`;portrait.alt='';portrait.width=32;portrait.height=36;portrait.loading='lazy';info.prepend(portrait);info.type='button';info.classList.add('run-summary');info.setAttribute('aria-expanded',String(expanded.has(r.character)));info.setAttribute('aria-label',`${names[r.character]}: ${expanded.has(r.character)?'hide':'show'} run history`);info.addEventListener('click',()=>toggleHistory(r.character));}
  if(r.exclusionReason)info.append(make('small',r.exclusionReason,'muted'));
  if(r.reviewNote)info.append(make('small',r.reviewNote));
  const replayHint=Date.now()-Date.parse(r.createdAt)<120000?'Waiting for replay · exit the results screen to finish saving.':'No replay found for this run. New runs need replay recording enabled.';
@@ -96,7 +92,7 @@ async function loadHistory(character,more=false,keepDepth=false){
   if(player!==historyPlayer)return;attempts.set(character,{rows,loading:false,total});
  }catch{if(player!==historyPlayer)return;attempts.set(character,{rows:state.rows,loading:false,total,error:'Could not load attempts.'});}renderRuns(data);
 }
-async function refresh(){try{const revision=settingsRevision,r=await fetch('/api/dashboard');if(!r.ok)throw new Error();const next=await r.json();if(revision!==settingsRevision||savingSettings)next.settings=data?.settings;render(next);}catch{text('connection','Companion offline');}}
+async function refresh(){try{const revision=settingsRevision,r=await fetch('/api/dashboard');if(!r.ok)throw new Error();const next=await r.json();if(revision!==settingsRevision||savingSettings)next.settings=data?.settings;render(next);}catch{if(!companionClosed)text('connection','Companion offline');}}
 for(const [id,value]of [['tab-all','all'],['tab-ready','ready'],['tab-sent','sent']])$(id).addEventListener('click',()=>{tab=value;for(const b of document.querySelectorAll('.run-tabs button'))b.classList.toggle('active',b.id===id);if(data)render(data);});
 let startingSignIn = false;
 function renderAccount(d) {
@@ -126,13 +122,14 @@ for (const id of ['sign-in','sign-in-required']) $(id).addEventListener('click',
 $('account-cancel').addEventListener('click', async () => { try { await post('account/cancel'); await refresh(); } catch (error) { toast(error.message); } });
 $('sign-out').addEventListener('click', async () => { try { await post('account/logout'); seen = undefined; await refresh(); } catch (error) { toast(error.message); } });
 $('website').addEventListener('click',async()=>{if(!data?.identity){location.href='https://target-test-randomizer-challenge.vercel.app';return;}try{location.href=(await post('remote/browser')).url;}catch(err){toast(err.message);}});
+$('quit-companion').addEventListener('click',async()=>{if(data?.capture?.dolphinRunning&&!confirm('Quit companion? Dolphin will stay open, but new runs will not be captured until you reopen the companion.'))return;try{await post('quit',{},'quit');companionClosed=true;clearInterval(refreshTimer);clearTimeout(toastTimer);document.body.replaceChildren(make('main','Companion closed. You can close this tab.'));}catch(error){toast(error.message);}});
 $('play').addEventListener('click',async()=>{launchingDolphin=true;$('play').disabled=true;$('play-settings').disabled=true;try{const result=await post('launch',{},'launch');toast(result.status==='already-running'?'Dolphin is already running.':'Dolphin is starting. Choose your character in Target Test.');refresh();}catch(err){toast(err.message);}finally{launchingDolphin=false;$('play').disabled=false;renderSettings(data?.settings);}});
 $('replay-folder').addEventListener('click',async()=>{try{await post('recorder/folder',{},'launch');}catch(e){toast(e.message);}});
 $('recorder').addEventListener('click',async()=>{$('recorder').disabled=true;try{const result=await post('recorder/prepare',{},'launch');text('recorder-note',result.message);toast('Replay profile prepared. Close the current Dolphin, then use Launch Dolphin.');refresh();}catch(err){text('recorder-note',err.message);}finally{$('recorder').disabled=false;}});
 $('export').addEventListener('click',()=>{if(!data?.history.length){toast('Finish a run first.');return;}const csv=['character,stage,frames,time,status',...data.history.map(r=>[r.character,r.stage,r.frames,formatTime(r.frames),r.submissionStatus].join(','))].join('\n');const u=URL.createObjectURL(new Blob([csv],{type:'text/csv'})),a=document.createElement('a');a.href=u;a.download='target-test-local-runs.csv';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);});
 let replayLaunching=false;
 async function launchReplay(path,body,button){if(replayLaunching)return;replayLaunching=true;if(button)button.disabled=true;try{await post(path,body,'launch');toast('Replay opened in Dolphin Playback.');}catch(e){toast(e.message);}finally{replayLaunching=false;if(button)button.disabled=false;}}
-await refresh();setInterval(()=>{if(!document.hidden)refresh();},1500);
+await refresh();const refreshTimer=setInterval(()=>{if(!document.hidden)refresh();},1500);
 
 const publicParams=new URLSearchParams(location.search),publicRun=publicParams.get('publicRun'),publicPlayer=publicParams.get('playerId');
 if(publicRun&&publicPlayer){

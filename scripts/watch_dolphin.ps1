@@ -21,7 +21,7 @@ try {
                 } catch { $reader = $null }
             }
             if ($null -eq $reader) {
-                [Console]::WriteLine('{"status":"waiting"}')
+                [Console]::WriteLine((@{status='waiting'; dolphinRunning=($null -ne $candidate)} | ConvertTo-Json -Compress))
                 Start-Sleep -Milliseconds 1500
                 continue
             }

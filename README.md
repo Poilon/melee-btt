@@ -7,13 +7,13 @@ Randomized targets, shuffled character stages, and a shared seed for **Super Sma
 ## Play on Windows
 
 1. Download **TTRC-Windows-x64.zip** and extract the entire ZIP into a writable folder.
-2. Open **Slippi Dolphin.exe**. This is the TTRC build of Dolphin; the companion starts in the background with it.
-3. Click **Open** in Dolphin and select your original **Melee USA 1.02** ISO. It stays in its existing folder. Dolphin checks it before starting the game.
-4. Open **Tools → TTRC Companion** to see your runs and settings in your browser.
+2. Open **TTRC Companion.vbs**. Sign in and choose your music and rumble settings before launching Dolphin.
+3. Click **Launch Dolphin** in the companion, then **Open** in Dolphin and select your original **Melee USA 1.02** ISO. It stays in its existing folder. Dolphin checks it before starting the game.
+4. Keep the companion open for your runs and replay history. **Tools → TTRC Companion** in Dolphin also opens it.
 5. Click **Sign in** in the companion. Create an account with a unique username and a password, and confirm the matching connection code in your browser. No player file or Slippi account is needed.
 6. Choose any character in Melee. New valid personal bests are submitted automatically with their replay.
 
-Windows 10/11 **x64**. No separate launcher, command window, WSL, Node.js or Python installation. The companion stops when you close Dolphin. Internet is required for submissions and the first replay playback, which downloads the official Slippi Playback build. GameCube adapters may need their Windows driver installed. Other controllers can be configured in Dolphin’s **Controllers** window.
+Windows 10/11 **x64**. The companion launcher is a small readable Windows script; no command window, WSL, Node.js or Python installation is needed. The companion stays running when Dolphin closes. Use **Quit companion** to stop it. Opening **Slippi Dolphin.exe** directly still starts the companion if needed. Internet is required for submissions and the first replay playback, which downloads the official Slippi Playback build. GameCube adapters may need their Windows driver installed. Other controllers can be configured in Dolphin’s **Controllers** window.
 
 **The game ISO is not included.** It stays on your computer and is never uploaded. The accepted original image has MD5 `0e63d4223b01d9aba596259dc155a174`.
 
@@ -33,7 +33,7 @@ Replays are stored in **`Replays`**, next to Dolphin. The portable emulator prof
 
 ## Updating and troubleshooting
 
-Close Dolphin, back up `.local`, `User`, and `Replays`, then extract the latest release into the **same TTRC folder** and replace application files. Releases do not contain your personal data, so these folders are preserved. When upgrading from v0.1, keep `build/challenge/runtime.json`, `build/replay-profiles`, and `Dolphin/netplay/Replays` too: the native version imports your player and copies the old replays automatically on its first start.
+Close Dolphin and click **Quit companion**, back up `.local`, `User`, and `Replays`, then extract the latest release into the **same TTRC folder** and replace application files. Releases do not contain your personal data, so these folders are preserved. When upgrading from v0.1, keep `build/challenge/runtime.json`, `build/replay-profiles`, and `Dolphin/netplay/Replays` too: the native version imports your player and copies the old replays automatically on its first start.
 
 - **Wrong ISO:** use an original USA 1.02 image, not a modified or compressed image.
 - **Dolphin cannot start TTRC:** extract the entire ZIP, use a writable folder, and close any other companion using port 4317. See `.local/startup.log` for details.

@@ -17,6 +17,8 @@ import { CompanionAccount } from './account.mjs';
 import { RemoteSync } from './remote.mjs';
 import { AutoSubmitter } from './auto-submit.mjs';
 import { ReplayLibrary } from './replays.mjs';
+import { instanceId } from './companion-instance.mjs';
+import { launchNative } from './native-launch.mjs';
 import { PlaySettings } from './play-settings.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
@@ -94,6 +96,7 @@ const account = new CompanionAccount({ origin: siteOrigin, accept: acceptPlayer,
 }) });
 const accountTimer = setInterval(() => { account.poll().catch(() => {}); }, 3000);
 const server = createApp({
+  instance: await instanceId(root), quit: shutdown,
   ...generated, challenge: generated.manifest, store, remote, replays, onboarding, account,
   getPlaySettings: () => playSettings.get(),
   savePlaySettings: async value => {
@@ -129,12 +132,12 @@ const server = createApp({
     return response;
   },
   launch: async () => {
-    if(runtime?.native)return {status:'already-running'};
     if (bridge.status().status === 'connected') return { status: 'already-running' };
     if (launching) return { status: 'starting' };
     launching = true;
     try {
       await playSettings.queue;
+      if(runtime?.native)return await launchNative(root,runtime.dolphin);
       await exec(pythonExecutable(root), [join(root, 'scripts/prepare_dolphin.py'), '--challenge', challengeDir, ...(runtime?.recording ? ['--record-replays'] : []), ...(runtime?.dolphin ? ['--dolphin', runtime.dolphin] : []), ...(runtime?.iso ? ['--iso', runtime.iso] : []), '--launch'], { timeout: 30_000 });
       runtime = JSON.parse(await readFile(join(challengeDir, 'runtime.json'), 'utf8'));
       playerPath = profilePlayerPath(runtime);
@@ -152,6 +155,7 @@ server.listen(port, '127.0.0.1', async () => {
 });
 function shutdown() {
   clearInterval(accountTimer); clearInterval(refreshIdentity); clearInterval(syncTimer); clearInterval(replayTimer); bridge.stop();
-  server.close(() => { store.close(); process.exit(0); });
+  server.close(async () => { store.close(); await globalThis.ttrcReleaseCompanion?.(); process.exit(0); });
+  server.closeIdleConnections();
 }
 process.on('SIGINT', shutdown); process.on('SIGTERM', shutdown);
