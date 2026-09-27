@@ -92,7 +92,7 @@ export function createCloudHandler({ store, challenge, gecko, origin, secret, re
           capture: { status: 'remote', experimental: true },
           overallLeaderboard:phase.timesRevealed?overallStandings(rows.filter(r=>r.current),challenge.assignments):[],
           leaderboard: leaders, participants, sharedRuns, stats: { completions: rows.filter(r => r.current && r.status !== 'rejected').length, players: participants.length, characters: new Set(rows.filter(r => r.current && r.status !== 'rejected').map(r => r.character)).size },
-          history: mine.sort((a, b) => b.createdAt.localeCompare(a.createdAt) || a.id.localeCompare(b.id)).map(r => ({ id: r.id, character: r.character, stage: r.stage, frames: r.frames, createdAt: r.createdAt, status: r.status, current:r.current, disclosed:disclosed.has(`${r.playerId}:${r.id}`), reviewNote: r.reviewNote })),
+          history: mine.sort((a, b) => b.createdAt.localeCompare(a.createdAt) || a.id.localeCompare(b.id)).map(r => ({ id: r.id, character: r.character, stage: r.stage, frames: r.frames, createdAt: r.createdAt, status: r.status, current:r.current, disclosed:disclosed.has(`${r.playerId}:${r.id}`), disclosureKind:disclosed.has(`${r.playerId}:${r.id}`)?disclosed.get(`${r.playerId}:${r.id}`).kind||'replay':'private', reviewNote: r.reviewNote })),
           progress: Object.fromEntries(Object.keys(challenge.assignments).map(character => {
             const attempts = mine.filter(r => r.character === character);
             return [character, { runs: attempts.length, best: attempts.length ? Math.min(...attempts.map(r => r.frames)) : null }];

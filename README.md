@@ -33,7 +33,7 @@ See [implementation and validation](docs/target-motion.md). The downloadable Gec
 - New valid personal bests are submitted automatically with their replay. Each new best replaces the current submission for that character.
 - Paused runs are excluded from records and submissions, but remain visible with the reason and replay. If a character has no eligible clear, Your runs shows its latest excluded attempt instead of hiding it.
 - Before the reveal, the website shows participants only. Other players’ times and ranks remain private.
-- Use **Share score** or **Share replay** in the companion to publish a time alone or its time and replay before reveal.
+- Use **Share score** or **Share replay** in the companion, or **Disclose score** / **Disclose replay** under **Your runs** on the website, to publish a time alone or its time and replay before reveal.
 - Runs are submitted immediately and included at reveal without prior approval. Final personal bests and their replays become public at reveal. Capture is experimental; structural replay checks alone do not prove a valid record.
 
 The companion saves these settings automatically and applies them the next time Dolphin starts:

@@ -349,13 +349,17 @@ test('score-only disclosure never exposes replay bytes, and reveal publishes cur
  const {request}=fixture();
  const owner=await request('players/create',{method:'POST',headers:{origin},body:{displayName:'Score only'}});
  const device={authorization:`Bearer ${owner.data.playerFile.token}`},playerId=owner.data.playerFile.id;
+ const ownHistory=async()=>(await request('dashboard',{headers:{cookie:owner.headers['set-cookie'].split(';')[0]}})).data.history[0];
  const run={id:randomUUID(),challengeId:challenge.id,geckoSha256:challenge.geckoSha256,character:'donkey-kong',stage:'donkey-kong',frames:1234,replay:replay.toString('base64')};
  await request('submissions',{method:'POST',headers:device,body:run});
+ assert.equal((await ownHistory()).disclosureKind,'private');
  const share=kind=>request('submissions/disclose',{method:'POST',headers:{...device,origin},body:{id:run.id,public:true,kind}});
  const evidence=`shared/replay?id=${run.id}&playerId=${playerId}`;
  assert.equal((await share('score')).status,200);
+ assert.equal((await ownHistory()).disclosureKind,'score');
  assert.equal((await request('dashboard')).data.sharedRuns[0].hasReplay,false);assert.equal((await request(evidence)).status,404);
  assert.equal((await share('replay')).status,200);assert.equal((await request(evidence)).status,200);
+ assert.equal((await ownHistory()).disclosureKind,'replay');
  assert.equal((await share('score')).status,200);assert.equal((await request(evidence)).status,404);
  await request('review/close',{method:'POST',headers:{origin,authorization:`Bearer ${reviewerKey}`},body:{challengeId:challenge.id,confirm:'REVEAL'}});
  assert.equal((await request(evidence)).status,200);assert.equal((await request('dashboard')).data.sharedRuns[0].hasReplay,true);

@@ -199,9 +199,17 @@ function renderLeaderboard(d){
  if(revealed){document.querySelector('#board-empty h3').textContent=ths?'No complete THS yet':'No records yet';document.querySelector('#board-empty p').textContent=ths?'Submit a valid score for every character to enter the THS standings.':'No submitted results for this challenge.';}
 }
 for(const [id,view]of [['standings-overall','overall'],['standings-ths','ths']])$(id).addEventListener('click',()=>{standingsView=view;for(const [other,mode]of [['standings-overall','overall'],['standings-ths','ths']])$(other).setAttribute('aria-pressed',String(mode===view));if(data)renderLeaderboard(data);});
-let historyKey, sharedKey, pendingDisclosure;
+let historyKey, sharedKey, pendingDisclosure, pendingDisclosurePlayer, disclosureBusy=false;
+const finalPublic=run=>Boolean(data.competition?.timesRevealed&&run.current&&run.status!=='rejected');
+const disclosureKind=run=>finalPublic(run)?'replay':run.disclosureKind||(run.disclosed?'replay':'private');
+const disclosureLabel=run=>({score:'Score public · replay private',replay:'Score and replay public',private:'Private'})[disclosureKind(run)];
 function renderHistory(d) {
-  const key=JSON.stringify([d.player?.id,d.challenge.id,d.history]);
+  if(pendingDisclosure){
+    const latest=d.history.find(r=>r.id===pendingDisclosure.id);
+    if(d.player?.id!==pendingDisclosurePlayer||!latest){$('disclose-dialog').close();pendingDisclosure=null;}
+    else{pendingDisclosure=latest;renderDisclosure();}
+  }
+  const key=JSON.stringify([d.player?.id,d.challenge.id,d.competition?.timesRevealed,d.history]);
   if(key===historyKey)return;historyKey=key;
   const owner=`${d.player?.id||''}:${d.challenge.id}`,root=$('history-list');
   const expanded=new Set(root.dataset.owner===owner?[...root.querySelectorAll('details[open]')].map(el=>el.dataset.character):[]);
@@ -224,7 +232,7 @@ function renderHistory(d) {
     for(const run of runs){
       const row=node('div','',`history-row${run.id===best.id?' record-best':''}`),info=node('span',status(run));
       info.append(node('small',run.current===false?'Replaced by a newer record':'Current submission'));
-      info.append(node('small',run.disclosed?'Public':'Private'));
+      info.append(node('small',disclosureLabel(run)));
       if(run.reviewNote&&!['pending','submitted'].includes(run.status))info.append(node('small',run.reviewNote));
       row.append(info,node('span',time(run.frames),'run-time'),node('span',new Date(run.createdAt).toLocaleString('en-US')));const actions=node('div','','record-actions');actions.append(disclosureButton(run));row.append(actions);list.append(row);
     }
@@ -232,20 +240,25 @@ function renderHistory(d) {
   }
 }
 function disclosureButton(run){
-  if(data.competition?.timesRevealed&&run.current&&run.status!=='rejected')return node('small','Public after reveal');
-  const button=node('button',run.disclosed?'Make private':'Disclose run','text-button disclose-button');
-  button.type='button';button.title=run.disclosed?'Remove public access to this run':'Publish this time and replay to everyone';
-  button.addEventListener('click',async e=>{
+  if(finalPublic(run))return node('small','Score and replay public after reveal');
+  const kind=disclosureKind(run),button=node('button',kind==='score'?'Score public · Manage':kind==='replay'?'Replay public · Manage':'Disclose…','text-button disclose-button');
+  button.type='button';button.title='Choose whether to disclose the score or the score and replay';button.setAttribute('aria-label',`Manage ${names[run.character]} disclosure`);
+  button.addEventListener('click',e=>{
     e.preventDefault();e.stopPropagation();
-    if(run.disclosed){button.disabled=true;try{await action('submissions/disclose',{id:run.id,public:false});toast('Run is private.');await refresh();}catch(error){toast(error.message);}finally{button.disabled=false;}return;}
-    pendingDisclosure=run;text('disclose-summary',`${names[run.character]} → ${names[run.stage]} · ${time(run.frames)}`);text('disclose-error','');$('disclose-dialog').showModal();
+    pendingDisclosure=run;pendingDisclosurePlayer=data.player?.id;text('disclose-summary',`${names[run.character]} → ${names[run.stage]} · ${time(run.frames)}`);text('disclose-error','');renderDisclosure();$('disclose-dialog').showModal();
   });return button;
 }
-$('confirm-disclose').addEventListener('click',async()=>{
-  if(!pendingDisclosure)return;$('confirm-disclose').disabled=true;text('disclose-error','');
-  try{await action('submissions/disclose',{id:pendingDisclosure.id,public:true});$('disclose-dialog').close();pendingDisclosure=null;toast('Run and replay are now public.');await refresh();}
-  catch(error){text('disclose-error',error.message);}finally{$('confirm-disclose').disabled=false;}
+function renderDisclosure(){
+  if(!pendingDisclosure)return;
+  text('disclose-status',finalPublic(pendingDisclosure)?'Final record: the score and replay are public after reveal.':disclosureLabel(pendingDisclosure));
+  for(const kind of ['score','replay','private'])$('disclose-'+kind).disabled=disclosureBusy||finalPublic(pendingDisclosure)||disclosureKind(pendingDisclosure)===kind;
+}
+for(const kind of ['score','replay','private'])$('disclose-'+kind).addEventListener('click',async()=>{
+  if(!pendingDisclosure||disclosureBusy)return;disclosureBusy=true;renderDisclosure();text('disclose-error','');
+  try{await action('submissions/disclose',{id:pendingDisclosure.id,public:kind!=='private',kind:kind==='private'?'replay':kind});$('disclose-dialog').close();pendingDisclosure=null;toast(kind==='score'?'Score disclosed. The replay stays private until reveal.':kind==='replay'?'Score and replay are now public.':'Score and replay are private.');await refresh();}
+  catch(error){text('disclose-error',error.message);}finally{disclosureBusy=false;renderDisclosure();}
 });
+$('disclose-dialog').addEventListener('close',()=>{pendingDisclosure=null;});
 function renderShared(d){
   const profilePlayer=$('public-profile').dataset.player;
   const runs=(d.sharedRuns||[]).filter(r=>!profilePlayer||r.playerId===profilePlayer),key=JSON.stringify(runs);if(key===sharedKey)return;sharedKey=key;
