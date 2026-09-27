@@ -9,6 +9,7 @@ import { createApp } from '../../server/app.mjs';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { createCloudHandler } from '../../cloud/backend.mjs';
+import {hashPassword} from '../../cloud/password.mjs';
 const generated = await generateChallenge({ seed: 20260989, moving:true });
 // The upstream DK fixture is a vanilla course. Only this isolated test seed uses it.
 const challenge = { ...generated.manifest, assignments: { ...generated.manifest.assignments, 'donkey-kong': 'donkey-kong' } }, gecko = generated.gecko;
@@ -22,6 +23,10 @@ const memory = {
   async delete(path) { rows.delete(path); },
   async list(prefix) { return [...rows].filter(([p]) => p.startsWith(prefix)).map(([pathname, row]) => ({ pathname, uploadedAt: row.uploadedAt })); },
 };
+const adminId = 'c'.repeat(64);
+await memory.put('usernames/test_admin.json', {id:adminId,credential:{password:await hashPassword('Admin browser test 42'),revision:'test-admin-revision'}});
+await memory.put(`profiles/${adminId}.json`, {id:adminId,slug:'test_admin',displayName:'test_admin',connectCode:'TT#00001'});
+await memory.put(`roles/${adminId}.json`, {role:'admin'});
 const publicHandler = createCloudHandler({ store: memory, challenge, gecko, origin, secret: 'test-only', reviewerKey, allowLegacySignup: true });
 const staticFiles = { ...Object.fromEntries(artworkFiles), '/': ['index.html','text/html'], '/review': ['review.html','text/html'], ...Object.fromEntries(['app.js','time.js','review.js'].map(p=>['/'+p,[p,'text/javascript']])), ...Object.fromEntries(['style.css','review.css'].map(p=>['/'+p,[p,'text/css']])), '/target.svg':['target.svg','image/svg+xml'] };
 await new Promise(resolve => createServer(async (req, res) => {

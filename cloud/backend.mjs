@@ -1,6 +1,7 @@
 import { createAuth, publicProfile } from './auth.mjs';
 import { currentCredential } from './password.mjs';
 import { createCompetition } from './competition.mjs';
+import { isAdmin } from './admin.mjs';
 import { createHash, randomBytes } from 'node:crypto';
 
 const hash = value => createHash('sha256').update(value).digest('hex');
@@ -70,7 +71,7 @@ export function createCloudHandler({ store, challenge, gecko, origin, secret, re
         const mine = user ? rows.filter(r => r.playerId === user.id) : [];
         const personalBest = mine.filter(r => r.character === character).sort((a, b) => a.frames - b.frames)[0];
         return json(res, 200, { challenge, competition: phase, scope: 'public', identity, player: user ? { id: user.id } : null,
-          auth: { mode: 'password', configured: Boolean(secret), account: user ? { name: profile?.displayName || '', provider: user.provider || 'legacy', linked: Boolean(profile) } : null },
+          auth: { mode: 'password', configured: Boolean(secret), account: user ? { name: profile?.displayName || '', provider: user.provider || 'legacy', linked: Boolean(profile), admin: await isAdmin(store, user) } : null },
           capture: { status: 'remote', experimental: true },
           leaderboard: leaders, participants, sharedRuns, stats: { completions: rows.filter(r => r.current && r.status !== 'rejected').length, players: participants.length, characters: new Set(rows.filter(r => r.current && r.status !== 'rejected').map(r => r.character)).size },
           history: mine.sort((a, b) => b.createdAt.localeCompare(a.createdAt) || a.id.localeCompare(b.id)).map(r => ({ id: r.id, character: r.character, stage: r.stage, frames: r.frames, createdAt: r.createdAt, status: r.status, current:r.current, disclosed:disclosed.has(`${r.playerId}:${r.id}`), reviewNote: r.reviewNote })),

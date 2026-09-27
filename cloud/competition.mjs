@@ -1,5 +1,7 @@
 import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 import { inspectReplay, MAX_REPLAY_BYTES } from '../shared/replay.mjs';
+import { isAdmin } from './admin.mjs';
+import { createLifecycle } from './lifecycle.mjs';
 const hash = value => createHash('sha256').update(value).digest('hex');
 const uuid = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
 const cookieValue = (req, name) => (req.headers.cookie || '').split(';').map(s => s.trim()).find(s => s.startsWith(`${name}=`))?.slice(name.length + 1);
@@ -12,12 +14,8 @@ export function createCompetition({ store, challenge, gecko, origin, reviewerKey
     let text = ''; for await (const chunk of req) { text += chunk; if (text.length > max) throw new Error('Request too large.'); }
     return JSON.parse(text || '{}');
   };
-  const phase = async () => {
-    const close = await store.get(`challenges/${challenge.id}/closed.json`);
-    const deadline = endsAt && Number.isFinite(Date.parse(endsAt)) ? new Date(endsAt).toISOString() : null;
-    const closed = Boolean(close || (deadline && now() >= Date.parse(deadline)));
-    return { phase: closed ? 'closed' : 'open', timesRevealed: closed, endsAt: deadline, closedAt: close?.at || (closed ? deadline : null) };
-  };
+  const lifecycle = createLifecycle({store, challengeId: challenge.id, endsAt, now});
+  const phase = lifecycle.phase;
   const list = async () => {
     if (cache?.expires > now()) return cache.rows;
     const files = await store.list(`submissions/${challenge.id}/`);
@@ -44,12 +42,14 @@ export function createCompetition({ store, challenge, gecko, origin, reviewerKey
     return (await list()).filter(r=>visible.has(`${r.playerId}:${r.id}`)).map(r=>({...publicRecord(r),disclosedAt:visible.get(`${r.playerId}:${r.id}`).at})).sort((a,b)=>b.disclosedAt.localeCompare(a.disclosedAt)||a.id.localeCompare(b.id));
   };
   const reviewer = async req => {
+    const account = await session(req);
+    if (await isAdmin(store, account)) return {reviewer: account.id, account: true};
     const authorization = req.headers.authorization?.match(/^Bearer ([a-f0-9]{64})$/)?.[1];
     if (reviewerKey && authorization && timingSafeEqual(Buffer.from(hash(authorization)), Buffer.from(hash(reviewerKey)))) return { reviewer: hash(reviewerKey) };
     const token = cookieValue(req, 'ttrc_review');
     if (!/^[a-f0-9]{64}$/.test(token || '')) return null;
-    const session = await store.get(`review-sessions/${hash(token)}.json`);
-    return session?.expires > now() ? session : null;
+    const reviewSession = await store.get(`review-sessions/${hash(token)}.json`);
+    return reviewSession?.expires > now() ? reviewSession : null;
   };
   const handle = async (path, req, res) => {
     if (path === 'runs' && req.method === 'POST') return send(res, 410, { error: 'Attach a .slp replay and submit the run from the companion.' });
@@ -126,7 +126,7 @@ export function createCompetition({ store, challenge, gecko, origin, reviewerKey
     }
     if (path.startsWith('review/')) {
       const user = await reviewer(req);
-      if (!user) return send(res, 401, { error: 'Reviewer sign-in required.' });
+      if (!user) return send(res, 401, { error: 'Sign in with an admin account to manage this challenge.' });
       if (path === 'review/queue' && req.method === 'GET') return send(res, 200, { challenge, competition: await phase(), submissions: (await list()).filter(r=>r.current||r.status==='rejected') });
       if (path === 'review/replay' && req.method === 'GET') {
         const url = new URL(req.url, origin), id = url.searchParams.get('id'), playerId = url.searchParams.get('playerId');
@@ -147,8 +147,14 @@ export function createCompetition({ store, challenge, gecko, origin, reviewerKey
       if (path === 'review/close' && req.method === 'POST') {
         const input = await parseBody(req);
         if (input.challengeId !== challenge.id || input.confirm !== 'REVEAL') return send(res, 400, { error: 'Confirm the current challenge before revealing times.' });
-        try { await store.put(`challenges/${challenge.id}/closed.json`, { at: new Date(now()).toISOString(), reviewer: user.reviewer }); } catch { if (!await store.get(`challenges/${challenge.id}/closed.json`)) throw new Error('Could not close challenge'); }
-        return send(res, 200, { competition: await phase() });
+        try { return send(res, 200, { competition: await lifecycle.close(user.reviewer) }); }
+        catch (error) { if (error.status) return send(res, error.status, {error: error.message}); throw error; }
+      }
+      if (path === 'review/schedule' && req.method === 'POST') {
+        const input = await parseBody(req);
+        if (input.challengeId !== challenge.id || !Object.hasOwn(input, 'endsAt')) return send(res, 400, {error: 'Choose a deadline for the current challenge.'});
+        try { return send(res, 200, {competition: await lifecycle.schedule(input.endsAt, user.reviewer)}); }
+        catch (error) { if (error.status) return send(res, error.status, {error: error.message}); throw error; }
       }
       if (path === 'review/logout' && req.method === 'POST') {
         const token = cookieValue(req, 'ttrc_review');

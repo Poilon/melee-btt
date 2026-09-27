@@ -25,7 +25,7 @@ Production only needs these existing Vercel environment variables:
 
 - `SESSION_SECRET`: a strong random secret.
 - `BLOB_READ_WRITE_TOKEN`: access to the private Blob store.
-- `REVIEWER_KEY`: organizer review access.
+- `REVIEWER_KEY`: optional legacy organizer access. Admin accounts use their normal login.
 
 `SITE_ORIGIN` is optional when Vercel's canonical production URL is available.
 Google and Resend variables are not used. After changing server code or environment:
@@ -53,3 +53,29 @@ pages and sealed score responses never expose credentials or other players' priv
 
 Tests cover concurrent username claims, case-insensitive login, wrong passwords,
 legacy account upgrades, credential privacy, rate limits and companion cancellation.
+
+## Admin accounts
+
+An operator can grant a role to an existing password account using private Blob
+credentials (do not commit the environment file):
+
+```sh
+node --env-file=<private-env-file> scripts/set_admin.mjs poilon grant
+node --env-file=<private-env-file> scripts/set_admin.mjs poilon revoke
+```
+
+The grant is attached to the immutable player ID in private storage. Registration,
+public profiles and companion player files cannot assign roles. Access is checked
+on every admin API request, so revoking the role takes effect on existing sessions.
+
+Sign in normally, then open **Admin** in the website navigation (`/review`). Admins
+can see private submissions and download evidence, approve or exclude unreviewed
+runs, set or remove an end date, and close the challenge with a confirmation.
+Dates are entered in the browser's local time zone and stored in UTC.
+
+At the deadline, submissions stop and rankings/times are revealed automatically by
+the server, including when nobody has the admin page open. Without a date the
+challenge stays open until manual closure. Closure is permanent; the admin page
+cannot hide already revealed results or reopen submissions. Existing individually
+disclosed replays remain public; reveal publishes times and rankings, not all private
+replay files. The next seed is a separate publication and does not start automatically.

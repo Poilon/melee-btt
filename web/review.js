@@ -1,5 +1,127 @@
-import { formatTime } from '/time.js';
-const $=id=>document.getElementById(id),node=(tag,text,css)=>{const n=document.createElement(tag);n.textContent=text;if(css)n.className=css;return n;};let current;
-async function request(path,body){const r=await fetch(`/api/review/${path}`,body?{method:'POST',headers:{'Content-Type':'application/json','X-TTRC-Action':'review'},body:JSON.stringify(body)}:{});const d=await r.json();if(!r.ok)throw new Error(d.error||'Request failed');return d;}
-async function refresh(){try{const d=await request('queue');current=d;$('login').hidden=true;$('desk').hidden=false;$('phase').textContent=`Seed ${d.challenge.rules.seed} · ${d.competition.phase.toUpperCase()}`;$('close').disabled=d.competition.phase==='closed';$('queue').replaceChildren();const rows=[...d.submissions].sort((a,b)=>(['pending','submitted'].includes(a.status)?0:1)-(['pending','submitted'].includes(b.status)?0:1)||a.createdAt.localeCompare(b.createdAt));if(!rows.length)$('queue').append(node('p','No submissions yet.'));for(const r of rows){const card=node('article','','submission');card.append(node('h2',`${r.displayName} · ${r.character} → ${r.stage}`),node('time',formatTime(r.frames)),node('p',`${r.status.toUpperCase()} · ${new Date(r.createdAt).toLocaleString('en-US')}`),node('p',`Replay ${r.replay.version} · ${(r.replay.bytes/1024).toFixed(1)} KB · last replay frame ${r.replay.lastFrame}`),node('p',r.replay.embeddedCodeMatches?'Exact challenge code found in replay. Still verify playback and timing.':'Exact challenge code not found in replay. Verify the seed carefully before approving.','warning'));const a=node('a','Download private .slp ↓');a.href=`/api/review/replay?id=${r.id}&playerId=${r.playerId}`;a.download=`${r.id}.slp`;card.append(a);if(['localhost','127.0.0.1'].includes(location.hostname)){const launch=node('button','▶ Launch replay','approve');launch.addEventListener('click',async()=>{launch.disabled=true;try{const response=await fetch('/api/review/launch',{method:'POST',headers:{'Content-Type':'application/json','X-TTRC-Action':'launch'},body:JSON.stringify({id:r.id,playerId:r.playerId})});const result=await response.json();if(!response.ok)throw new Error(result.error||'Playback unavailable');$('message').textContent='Replay opened in Dolphin Playback.';}catch(e){$('message').textContent=e.message;}finally{launch.disabled=false;}});card.append(launch);}else{const local=node('a','Open companion to launch ↗');local.href='http://localhost:4317/review';local.target='_blank';local.rel='noopener';card.append(local);}if(['pending','submitted'].includes(r.status)){const note=node('textarea','');note.placeholder='Review notes or rejection reason';note.maxLength=500;note.setAttribute('aria-label',`Review notes for ${r.displayName}`);const buttons=node('div','','buttons');for(const [status,label]of [['approved','Approve run'],['rejected','Reject run']]){const b=node('button',label,status==='approved'?'approve':'reject');b.addEventListener('click',async()=>{b.disabled=true;try{await request('decision',{id:r.id,playerId:r.playerId,status,note:note.value});await refresh();}catch(e){$('message').textContent=e.message;b.disabled=false;}});buttons.append(b);}card.append(note,buttons);}else card.append(node('p',r.reviewNote||'No review note.'));$('queue').append(card);}}catch(e){$('message').textContent=e.message;$('login').hidden=false;}}
-$('login').addEventListener('submit',async e=>{e.preventDefault();try{await request('login',{key:$('key').value});$('key').value='';$('message').textContent='';refresh();}catch(err){$('message').textContent=err.message;}});$('refresh').addEventListener('click',refresh);$('close').addEventListener('click',()=>$('confirm').showModal());$('confirm-close').addEventListener('click',async()=>{try{await request('close',{challengeId:current.challenge.id,confirm:'REVEAL'});$('confirm').close();refresh();}catch(e){$('message').textContent=e.message;}});refresh();
+import {formatTime} from '/time.js';
+const $ = id => document.getElementById(id);
+const node = (tag, text, css) => { const n = document.createElement(tag); n.textContent = text; if (css) n.className = css; return n; };
+const characterName = value => value.split('-').map(word => word[0].toUpperCase() + word.slice(1)).join(' ');
+const localTime = value => new Date(value).toLocaleString('en-US', {dateStyle: 'medium', timeStyle: 'short'});
+let current;
+async function request(path, body) {
+  const response = await fetch(`/api/review/${path}`, body ? {method: 'POST', headers: {'Content-Type': 'application/json', 'X-TTRC-Action': 'review'}, body: JSON.stringify(body)} : {});
+  const result = await response.json();
+  if (!response.ok) throw Object.assign(new Error(result.error || 'Request failed'), {status: response.status});
+  return result;
+}
+function renderQueue() {
+  if (!current) return;
+  const query = $('player-filter').value.trim().toLowerCase(), character = $('character-filter').value, status = $('status-filter').value;
+  const rows = current.submissions.filter(r => (!query || r.displayName.toLowerCase().includes(query)) && (!character || r.character === character) && (!status || r.status === status))
+    .sort((a, b) => a.displayName.localeCompare(b.displayName) || a.character.localeCompare(b.character));
+  $('queue').replaceChildren();
+  $('result-count').textContent = `${rows.length} run${rows.length === 1 ? '' : 's'}`;
+  if (!rows.length) $('queue').append(node('p', current.submissions.length ? 'No matching submissions.' : 'No submissions yet.'));
+  for (const r of rows) {
+    const card = node('article', '', 'submission');
+    const heading = node('div', '', 'submission-heading');
+    heading.append(node('h3', `${r.displayName} · ${characterName(r.character)} → ${characterName(r.stage)}`), node('time', formatTime(r.frames)));
+    card.append(heading, node('p', `${r.status.toUpperCase()} · ${localTime(r.createdAt)}`));
+    const details = node('details', '', 'evidence-details');
+    details.append(node('summary', 'Replay details'), node('p', `Replay ${r.replay.version} · ${(r.replay.bytes / 1024).toFixed(1)} KB · last frame ${r.replay.lastFrame}`),
+      node('p', r.replay.embeddedCodeMatches ? 'Challenge code matches. Check the run and final time in playback.' : 'Exact challenge code not found in replay. Check the seed in playback.', 'warning'));
+    card.append(details);
+    const actions = node('div', '', 'buttons');
+    const download = node('a', 'Download private .slp ↓');
+    download.href = `/api/review/replay?id=${r.id}&playerId=${r.playerId}`; download.download = `${r.id}.slp`; actions.append(download);
+    if (['localhost', '127.0.0.1'].includes(location.hostname)) {
+      const launch = node('button', '▶ Launch replay', 'approve');
+      launch.addEventListener('click', async () => {
+        launch.disabled = true;
+        try {
+          const response = await fetch('/api/review/launch', {method: 'POST', headers: {'Content-Type': 'application/json', 'X-TTRC-Action': 'launch'}, body: JSON.stringify({id: r.id, playerId: r.playerId})});
+          const result = await response.json(); if (!response.ok) throw new Error(result.error || 'Playback unavailable');
+          $('message').textContent = 'Replay opened in Dolphin Playback.';
+        } catch (error) { $('message').textContent = error.message; }
+        finally { launch.disabled = false; }
+      });
+      actions.append(launch);
+    }
+    card.append(actions);
+    if (['pending', 'submitted'].includes(r.status)) {
+      const note = node('textarea', ''); note.placeholder = 'Review notes or rejection reason'; note.maxLength = 500; note.setAttribute('aria-label', `Review notes for ${r.displayName}`);
+      const buttons = node('div', '', 'buttons');
+      for (const [status, label] of [['approved', 'Approve run'], ['rejected', 'Exclude run']]) {
+        const button = node('button', label, status === 'approved' ? 'approve' : 'reject');
+        button.addEventListener('click', async () => {
+          button.disabled = true;
+          try { await request('decision', {id: r.id, playerId: r.playerId, status, note: note.value}); await refresh(); }
+          catch (error) { $('message').textContent = error.message; button.disabled = false; }
+        });
+        buttons.append(button);
+      }
+      card.append(note, buttons);
+    } else card.append(node('p', r.reviewNote || 'No review note.'));
+    $('queue').append(card);
+  }
+}
+async function refresh() {
+  try {
+    current = await request('queue');
+    $('access').hidden = true; $('desk').hidden = false;
+    const {competition, challenge, submissions} = current;
+    const closed = competition.phase === 'closed';
+    $('phase').textContent = `Seed ${challenge.rules.seed} · ${competition.phase.toUpperCase()}`;
+    for (const id of ['close', 'deadline', 'save-deadline', 'remove-deadline']) $(id).disabled = closed;
+    $('deadline-summary').textContent = closed ? `Results revealed · ${localTime(competition.closedAt)}` : competition.endsAt ? `Closes and reveals on ${localTime(competition.endsAt)}` : 'No end date. Submissions stay open until you close the challenge.';
+    if (competition.endsAt) {
+      const date = new Date(competition.endsAt);
+      $('deadline').value = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+    } else $('deadline').value = '';
+    $('players-count').textContent = new Set(submissions.filter(r => r.current).map(r => r.playerId)).size;
+    $('records-count').textContent = submissions.filter(r => r.current).length;
+    $('rejected-count').textContent = submissions.filter(r => r.status === 'rejected').length;
+    const selected = $('character-filter').value;
+    $('character-filter').replaceChildren(new Option('All characters', ''), ...Object.keys(challenge.assignments).sort().map(c => new Option(characterName(c), c)));
+    $('character-filter').value = selected; renderQueue();
+  } catch (error) {
+    $('message').textContent = error.message;
+    // Do not leave private records displayed after access has expired or been revoked.
+    $('desk').hidden = true; $('queue').replaceChildren(); current = null;
+    $('access').hidden = ![401, 403].includes(error.status);
+  }
+}
+async function saveDeadline(endsAt) {
+  if (!current) return;
+  $('save-deadline').disabled = true; $('remove-deadline').disabled = true;
+  try {
+    await request('schedule', {challengeId: current.challenge.id, endsAt});
+    $('message').textContent = endsAt ? 'End date saved. Times and rankings will be revealed automatically.' : 'End date removed. You can close the challenge manually.';
+    await refresh();
+  } catch (error) { $('message').textContent = error.message; $('save-deadline').disabled = false; $('remove-deadline').disabled = false; }
+}
+$('timezone').textContent = `Your time zone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}. Times and rankings become public at this date.`;
+$('schedule').addEventListener('submit', event => {
+  event.preventDefault();
+  if (!$('deadline').value) { $('message').textContent = 'Choose an end date, or use Remove date.'; return; }
+  const date = new Date($('deadline').value);
+  if (!Number.isFinite(date.getTime())) { $('message').textContent = 'Choose a valid end date.'; return; }
+  saveDeadline(date.toISOString());
+});
+$('remove-deadline').addEventListener('click', () => saveDeadline(null));
+for (const id of ['player-filter', 'character-filter', 'status-filter']) $(id).addEventListener('input', renderQueue);
+$('login').addEventListener('submit', async event => {
+  event.preventDefault();
+  try { await request('login', {key: $('key').value}); $('key').value = ''; $('message').textContent = ''; await refresh(); }
+  catch (error) { $('message').textContent = error.message; }
+});
+$('refresh').addEventListener('click', refresh);
+$('close').addEventListener('click', () => {
+  $('confirm-error').textContent = '';
+  $('confirm-summary').textContent = `Seed ${current.challenge.rules.seed} · ${current.submissions.filter(r => r.current).length} current records`;
+  $('confirm').showModal();
+});
+$('confirm-close').addEventListener('click', async () => {
+  $('confirm-close').disabled = true;
+  try { await request('close', {challengeId: current.challenge.id, confirm: 'REVEAL'}); $('confirm').close(); $('message').textContent = 'Challenge closed. Times and rankings are now public.'; await refresh(); }
+  catch (error) { $('confirm-error').textContent = error.message; }
+  finally { $('confirm-close').disabled = false; }
+});
+document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+await refresh();

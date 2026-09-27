@@ -13,10 +13,12 @@ const replay = await readFile(new URL('./fixtures/BTTDK.slp', import.meta.url));
 const reviewerKey = 'd'.repeat(64);
 const challenge = { id: 'test-seed', geckoSha256: 'test-code', rules: { seed: 42 }, assignments: { fox: 'samus', marth: 'mewtwo', 'donkey-kong': 'donkey-kong' } };
 function fixture(options = {}) {
-  const rows = new Map();
+  const rows = new Map(), versions = new Map();
   const store = {
     async get(path) { return rows.get(path)?.value ?? null; },
-    async put(path, value, overwrite = false) { if (!overwrite && rows.has(path)) throw new Error('Exists'); rows.set(path, { value, uploadedAt: new Date() }); },
+    async put(path, value, overwrite = false) { if (!overwrite && rows.has(path)) throw new Error('Exists'); rows.set(path, { value, uploadedAt: new Date() }); versions.set(path, (versions.get(path) || 0) + 1); },
+    async readVersion(path) { return rows.has(path) ? {value: structuredClone(rows.get(path).value), etag: versions.get(path)} : null; },
+    async writeVersion(path, value, etag) { if (versions.get(path) !== etag) return false; await this.put(path, value, true); return true; },
     async delete(path) { rows.delete(path); },
     async list(prefix) { return [...rows].filter(([p]) => p.startsWith(prefix)).map(([pathname, r]) => ({ pathname, uploadedAt: r.uploadedAt })); },
   };
@@ -268,4 +270,77 @@ test('submitted bests are included at reveal without approval and can be exclude
  const revealed=(await request('dashboard?character=donkey-kong')).data;assert.equal(revealed.leaderboard[0].frames,1100);
  assert.equal((await request('review/decision',{method:'POST',headers:admin,body:{id:better.id,playerId,status:'rejected',note:'Invalid time'}})).status,200);
  const corrected=(await request('dashboard?character=donkey-kong')).data;assert.equal(corrected.leaderboard[0].frames,1234);assert.equal(corrected.stats.completions,1);
+});
+
+test('admin access belongs to the signed-in account, cannot be self-assigned and is revoked immediately', async () => {
+  const {request, rows} = fixture();
+  const signup = async username => {
+    const result = await request('auth/signup', {method:'POST', headers:{origin}, body:{username,password:'Test password 123',admin:true,role:'admin'}});
+    assert.equal(result.status,200);
+    return {id:result.data.profile.id,cookie:result.headers['set-cookie'].split(';')[0]};
+  };
+  const owner = await signup('organizer'), player = await signup('ordinary_player');
+  const headers = {origin,cookie:owner.cookie};
+  assert.equal((await request('dashboard',{headers})).data.auth.account.admin,false);
+  assert.equal((await request('review/queue',{headers})).status,401);
+  rows.set(`roles/${owner.id}.json`,{value:{role:'admin'}});
+  assert.equal((await request('dashboard',{headers})).data.auth.account.admin,true);
+  assert.equal((await request('review/queue',{headers})).status,200);
+  const id=randomUUID(), record={id,playerId:player.id,displayName:'ordinary_player',connectCode:'TT#1',character:'fox',stage:'samus',frames:1531,createdAt:new Date().toISOString(),replay:{sha256:'evidence'}};
+  rows.set(`submissions/${challenge.id}/${player.id}/${id}.json`,{value:record});
+  rows.set(`evidence/${challenge.id}/${player.id}/${id}.json`,{value:{base64:replay.toString('base64')}});
+  const evidence=`review/replay?id=${id}&playerId=${player.id}`;
+  assert.deepEqual((await request(evidence,{headers})).text,replay);
+  for(const h of [{},{origin,cookie:player.cookie},{origin,authorization:`Bearer ${'a'.repeat(64)}`}]) {
+    assert.equal((await request(evidence,{headers:h})).status,401);
+    assert.equal((await request('review/queue',{headers:h})).status,401);
+    assert.notEqual((await request('review/close',{method:'POST',headers:h,body:{challengeId:challenge.id,confirm:'REVEAL'}})).status,200);
+    assert.notEqual((await request('review/schedule',{method:'POST',headers:h,body:{challengeId:challenge.id,endsAt:null}})).status,200);
+  }
+  assert.equal((await request('review/decision',{method:'POST',headers,body:{id,playerId:player.id,status:'rejected',note:'Invalid clear'}})).status,200);
+  assert.equal((await request('review/queue',{headers})).data.submissions[0].status,'rejected');
+  assert.equal((await request('review/schedule',{method:'POST',headers:{cookie:owner.cookie},body:{challengeId:challenge.id,endsAt:null}})).status,403);
+  assert.equal((await request('review/schedule',{method:'POST',headers:{...headers,origin:'https://evil.test'},body:{challengeId:challenge.id,endsAt:null}})).status,403);
+  rows.delete(`roles/${owner.id}.json`);
+  assert.equal((await request('review/queue',{headers})).status,401);
+  assert.equal((await request(evidence,{headers})).status,401);
+  assert.equal((await request('dashboard',{headers})).data.auth.account.admin,false);
+});
+
+test('scheduled reveal persists, closes submissions at the exact deadline, and cannot be reopened',async()=>{
+  let clock=Date.now();const {request,rows}=fixture({now:()=>clock});
+  const headers={origin,authorization:`Bearer ${reviewerKey}`};
+  const schedule=endsAt=>request('review/schedule',{method:'POST',headers,body:{challengeId:challenge.id,endsAt}});
+  for(const invalid of ['yesterday','',false,{},new Date(clock-1000).toISOString()])assert.equal((await schedule(invalid)).status,400);
+  const end=new Date(clock+60000).toISOString();
+  assert.equal((await schedule(end)).data.competition.endsAt,end);
+  assert.equal((await request('dashboard')).data.competition.endsAt,end);
+  assert.equal((await schedule(null)).data.competition.endsAt,null);
+  assert.equal((await schedule(end)).status,200);
+  const created=await request('players/create',{method:'POST',headers:{origin},body:{displayName:'At deadline'}});
+  const playerId=created.data.playerFile.id,device={authorization:`Bearer ${created.data.playerFile.token}`};
+  const run={id:randomUUID(),challengeId:challenge.id,geckoSha256:challenge.geckoSha256,character:'donkey-kong',stage:'donkey-kong',frames:1234,replay:replay.toString('base64')};
+  assert.equal((await request('submissions',{method:'POST',headers:device,body:run})).status,202);
+  clock+=59999;assert.equal((await request('dashboard')).data.competition.timesRevealed,false);
+  clock+=1;const board=(await request('dashboard?character=donkey-kong')).data;
+  assert.equal(board.competition.timesRevealed,true);assert.equal(board.leaderboard[0].frames,1234);
+  assert.equal((await request('submissions',{method:'POST',headers:device,body:{...run,id:randomUUID()}})).status,409);
+  assert.equal((await schedule(null)).status,409);
+  assert.equal((await schedule(new Date(clock+60000).toISOString())).status,409);
+  assert.equal((await request(`shared/replay?id=${run.id}&playerId=${playerId}`)).status,404);
+  assert.equal(rows.get(`challenges/${challenge.id}/lifecycle.json`).value.endsAt,end);
+});
+
+test('a concurrent schedule update cannot undo manual reveal; legacy closures remain closed',async()=>{
+  const {request,rows}=fixture();const headers={origin,authorization:`Bearer ${reviewerKey}`};
+  await Promise.all([
+    request('review/close',{method:'POST',headers,body:{challengeId:challenge.id,confirm:'REVEAL'}}),
+    request('review/schedule',{method:'POST',headers,body:{challengeId:challenge.id,endsAt:new Date(Date.now()+60000).toISOString()}}),
+  ]);
+  assert.equal((await request('dashboard')).data.competition.phase,'closed');
+  assert.equal((await request('review/schedule',{method:'POST',headers,body:{challengeId:challenge.id,endsAt:null}})).status,409);
+  rows.delete(`challenges/${challenge.id}/lifecycle.json`);
+  const at=new Date(Date.now()-60000).toISOString();rows.set(`challenges/${challenge.id}/closed.json`,{value:{at}});
+  assert.equal((await request('dashboard')).data.competition.closedAt,at);
+  assert.equal((await request('review/schedule',{method:'POST',headers,body:{challengeId:challenge.id,endsAt:null}})).status,409);
 });

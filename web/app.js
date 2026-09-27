@@ -10,15 +10,9 @@ const $ = id => document.getElementById(id);
 const text = (id, value) => { $(id).textContent = value; };
 const node = (tag, value, className) => { const n = document.createElement(tag); n.textContent = value; if (className) n.className = className; return n; };
 const date = iso => new Date(iso).toLocaleDateString('en-US', { day: '2-digit', month: 'short' });
-function preference(key, fallback) { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } }
-function savePreference(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch {} }
 let selection = new URLSearchParams(location.search).get('character') || 'fox';
 if (!Object.hasOwn(names, selection)) selection = 'fox';
 let data, toastTimer, busy = false, seenRuns, playerSeen;
-const storedFavorites = preference('ttrc-favorites', []);
-const favorites = new Set(Array.isArray(storedFavorites) ? storedFavorites.filter(c => Object.hasOwn(names, c)) : []);
-let favoritesOnly = false;
-document.body.classList.toggle('focus-mode', preference('ttrc-focus', false) === true);
 function toast(message) {
   clearTimeout(toastTimer); text('toast', message); $('toast').hidden = false;
   toastTimer = setTimeout(() => { $('toast').hidden = true; }, 6500);
@@ -42,7 +36,7 @@ function portrait(character) {
 function renderCourses() {
   if (!data) return;
   const query = $('course-search').value.trim().toLowerCase();
-  const characters = Object.keys(names).filter(c => data.challenge.assignments[c] && (!favoritesOnly || favorites.has(c)) &&
+  const characters = Object.keys(names).filter(c => data.challenge.assignments[c] &&
     `${names[c]} ${names[data.challenge.assignments[c]]}`.toLowerCase().includes(query));
   $('course-grid').replaceChildren();
   for (const character of characters) {
@@ -50,7 +44,7 @@ function renderCourses() {
     const button = node('button', '', `course-card${character === selection ? ' selected' : ''}${p?.best ? ' cleared' : ''}`);
     button.setAttribute('aria-label', `${names[character]} → ${names[data.challenge.assignments[character]]}`);
     button.setAttribute('aria-pressed', String(character === selection));
-    button.append(portrait(character), node('strong', `${favorites.has(character) ? '★ ' : ''}${names[character]}`), node('span', `→ ${names[data.challenge.assignments[character]]}`),
+    button.append(portrait(character), node('strong', names[character]), node('span', `→ ${names[data.challenge.assignments[character]]}`),
       node('small', p?.best ? `✓ ${time(p.best)} · ${p.runs} run${p.runs === 1 ? '' : 's'}` : 'No submitted run', 'course-best'));
     const targets=data.challenge.motion?.courses[data.challenge.assignments[character]];
     if(targets){const counts=targets.reduce((a,t)=>(a[t.kind]++,a),{static:0,moving:0,teleport:0});button.append(node('small',`${counts.static} fixed · ${counts.moving} moving · ${counts.teleport} teleporting`,'course-best'));}
@@ -59,8 +53,6 @@ function renderCourses() {
   }
   text('course-count', `${characters.length} course${characters.length === 1 ? '' : 's'}`);
   $('course-empty').hidden = characters.length > 0;
-  text('favorite', favorites.has(selection) ? '★ Favorited' : '☆ Favorite');
-  $('favorite').setAttribute('aria-pressed', String(favorites.has(selection)));
 }
 function render(d) {
   data = d;
@@ -74,17 +66,18 @@ function render(d) {
   document.querySelector('thead tr').replaceChildren(...(revealed?['RANK','PLAYER','FINAL TIME','DATE']:['PLAYER']).map(label=>{const th=node('th',label);th.scope='col';return th;}));
   text('competition-state',revealed?'Challenge closed':'Results hidden');
   text('competition-detail',revealed?'Submissions are closed. Submitted times and rankings are now visible.':'Times and rankings stay hidden until the challenge closes, except runs their owners choose to disclose.');
+  if (!revealed && d.competition?.endsAt) text('competition-detail', `Closes and reveals ${new Date(d.competition.endsAt).toLocaleString('en-US', {dateStyle:'medium', timeStyle:'short'})} (your local time). Times and rankings stay hidden until then, except disclosed runs.`);
   document.querySelector('#board-empty h3').textContent=revealed?'No records yet.':'No participants yet';
   document.querySelector('#board-empty p').textContent=revealed?'No submitted results for this character.':'The companion submits valid personal bests automatically.';
   text('seed', c.rules.seed); text('board-seed', c.rules.seed); text('target-count', c.rules.targets);
   text('target-behavior',c.motion?'Seeded mix':'Fixed');
   text('hero-stage', (names[c.assignments.fox] || '—').toUpperCase());
-  text('route-summary', `${names[selection]} → ${names[c.assignments[selection]]}`);
   text('stat-courses', Object.keys(c.assignments).length); text('stat-players', d.stats.players); text('stat-runs', d.stats.completions);
   const initials = ident ? ident.displayName.trim().split(/\s+/).slice(0, 2).map(w => Array.from(w)[0]).join('').toUpperCase() : '?';
   text('avatar', initials); text('top-avatar', initials);
   text('display-name', ident?.displayName || 'Not signed in');
   const account = d.auth?.account;
+  $('admin-link').hidden = !account?.admin;
   text('connect-code', ident?.slug ? `@${ident.slug}` : account ? 'Choose your TTRC username' : 'Sign in to save your records');
   if (ident?.slug) $('connect-code').href = `/players/${ident.slug}`; else $('connect-code').removeAttribute('href');
   text('top-name', ident?.displayName || 'My player');
@@ -213,22 +206,6 @@ function choose(character) {
   selection = character;
   const url = new URL(location); url.searchParams.set('character', character); history.replaceState(null, '', url); refresh();
 }
-function randomCourse(uncleared = false) {
-  if (!data) return;
-  let options = Object.keys(data.challenge.assignments).filter(c => (!uncleared || !data.progress?.[c]?.best) && c !== selection);
-  if (!options.length && uncleared) options = Object.keys(data.challenge.assignments).filter(c => !data.progress?.[c]?.best);
-  if (!options.length) { toast('All courses have a submitted run.'); return; }
-  choose(options[Math.floor(Math.random() * options.length)]);
-}
-function focusMode() {
-  const on = document.body.classList.toggle('focus-mode'); savePreference('ttrc-focus', on); text('focus', on ? 'Exit focus' : 'Focus mode');
-}
-text('focus', document.body.classList.contains('focus-mode') ? 'Exit focus' : 'Focus mode');
-$('random-course').addEventListener('click', () => randomCourse());
-$('next-course').addEventListener('click', () => randomCourse(true));
-$('focus').addEventListener('click', focusMode);
-$('favorite').addEventListener('click', () => { favorites.has(selection) ? favorites.delete(selection) : favorites.add(selection); savePreference('ttrc-favorites', [...favorites]); renderCourses(); });
-$('favorites-only').addEventListener('click', () => { favoritesOnly = !favoritesOnly; $('favorites-only').setAttribute('aria-pressed', String(favoritesOnly)); renderCourses(); });
 $('course-search').addEventListener('input', renderCourses);
 async function play() {
   if (!data) return;
@@ -247,11 +224,6 @@ $('copy-seed').addEventListener('click', async () => {
   if (!data) return;
   try { await navigator.clipboard.writeText(data.challenge.motion?`TTRC ${data.challenge.rules.seed} · seeded motion · ${data.challenge.id}`:data.challenge.bttSeed); toast(data.challenge.motion?'TTRC challenge copied. Use Get Gecko code for the complete moving-target rules.':'BTT seed copied, including the course settings.'); }
   catch { toast(data.challenge.motion?`TTRC seed: ${data.challenge.rules.seed} · seeded motion`:`BTT seed: ${data.challenge.bttSeed}`); }
-});
-$('share').addEventListener('click', async () => {
-  const url = new URL('https://target-test-randomizer-challenge.vercel.app'); url.searchParams.set('character', selection);
-  try { await navigator.clipboard.writeText(url.href); toast('Challenge link copied.'); }
-  catch { toast(`Share: ${url.href}`); }
 });
 const connectId = new URLSearchParams(location.search).get('connect');
 let connectionInfo, connectionDone = false, authMode = 'login';
@@ -312,12 +284,6 @@ $('export-runs').addEventListener('click', () => {
   if (!data?.history.length) return;
   const rows = ['character,stage,frames,time,date', ...data.history.map(r => [r.character, r.stage, r.frames, time(r.frames), r.createdAt].join(','))];
   download(rows.join('\n'), `target-test-${data.challenge.rules.seed}-all-runs.csv`, 'text/csv');
-});
-document.addEventListener('keydown', e => {
-  if (e.ctrlKey || e.metaKey || e.altKey || e.repeat || /INPUT|TEXTAREA|SELECT/.test(e.target.tagName) || e.target.isContentEditable || document.querySelector('dialog[open]')) return;
-  if (e.key.toLowerCase() === 'r') randomCourse();
-  if (e.key.toLowerCase() === 'f') focusMode();
-  if (e.key === '?') $('help').showModal();
 });
 async function consumeSignIn() {
   if (!location.hash.startsWith('#signin=')) return;

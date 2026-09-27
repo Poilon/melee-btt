@@ -1,5 +1,41 @@
 import { test, expect } from '@playwright/test';
 
+test('admin uses the normal account, schedules reveal and keeps management private', async ({page, browser}) => {
+  const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  await page.goto('http://localhost:4319');
+  await expect(page.locator('#admin-link')).toBeHidden();
+  await page.locator('#player-action').click();
+  await page.locator('#auth-username').fill('test_admin');
+  await page.locator('#auth-password').fill('Admin browser test 42');
+  await page.locator('#auth-submit').click();
+  await expect(page.getByRole('link',{name:'Admin',exact:true})).toBeVisible();
+  await page.locator('#admin-link').click();
+  await expect(page.getByRole('heading',{name:'Challenge management'})).toBeVisible();
+  await expect(page.locator('#desk')).toBeVisible();await expect(page.locator('#access')).toBeHidden();
+  await expect(page.locator('#deadline-summary')).toContainText('No end date');
+  const future=new Date(Date.now()+86400000);future.setSeconds(0,0);
+  const local=new Date(future.getTime()-future.getTimezoneOffset()*60000).toISOString().slice(0,16);
+  await page.locator('#deadline').fill(local);await page.getByRole('button',{name:'Save date'}).click();
+  await expect(page.locator('#message')).toContainText('End date saved');
+  await page.reload();await expect(page.locator('#deadline')).toHaveValue(local);
+  await page.locator('#close').click();await expect(page.locator('#confirm')).toBeVisible();
+  await page.locator('#confirm').getByRole('button',{name:'Close',exact:true}).click();
+  await expect(page.locator('#phase')).toContainText('OPEN');
+  await page.screenshot({path:'build/admin-desktop.png',fullPage:true});
+  const guestContext=await browser.newContext(),guest=await guestContext.newPage();
+  await guest.goto('http://localhost:4319');await expect(guest.locator('#admin-link')).toBeHidden();
+  await expect(guest.locator('#competition-detail')).toContainText('Closes and reveals');
+  await guest.goto('http://localhost:4319/review');await expect(guest.locator('#access')).toBeVisible();await expect(guest.locator('#desk')).toBeHidden();
+  await guestContext.close();
+  await page.getByRole('button',{name:'Remove date'}).click();await expect(page.locator('#deadline-summary')).toContainText('No end date');
+  await page.setViewportSize({width:390,height:844});
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.screenshot({path:'build/admin-mobile.png',fullPage:true});
+  await page.goto('http://localhost:4319');await page.locator('#logout').click();await expect(page.locator('#admin-link')).toBeHidden();
+  await page.goto('http://localhost:4319/review');await expect(page.locator('#desk')).toBeHidden();
+  expect(errors).toEqual([]);
+});
+
 test('companion shows compact personal bests with expandable replay history', async ({ page }) => {
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto('/');
@@ -228,4 +264,17 @@ test('Remove GO and Fixed camera save independently and survive reload',async({p
  await page.reload();await expect(go).toBeChecked();await expect(camera).toBeChecked();
  await go.uncheck();await expect(go).toBeEnabled();await page.reload();await expect(go).not.toBeChecked();await expect(camera).toBeChecked();
  await camera.uncheck();await expect(camera).toBeEnabled();
+});
+
+ test('public website drops course tools and ignores old focus and favorites preferences',async({page})=>{
+  const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  await page.addInitScript(()=>{localStorage.setItem('ttrc-focus','true');localStorage.setItem('ttrc-favorites','["fox"]');});
+  await page.goto('http://localhost:4319');
+  await expect(page.locator('#course-grid .course-card')).toHaveCount(25);
+  for(const label of ['Random course','Favorite','Share challenge','Focus mode','Selected course','Favorites only'])await expect(page.getByText(label,{exact:false})).toHaveCount(0);
+  await expect(page.locator('.sidebar')).toBeVisible();
+  await page.keyboard.press('f');await page.keyboard.press('r');
+  await expect(page.locator('body')).not.toHaveClass(/focus-mode/);
+  await page.locator('#course-search').fill('Marth');await expect(page.locator('#course-grid')).toContainText('Marth');
+  expect(errors).toEqual([]);
 });

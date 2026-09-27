@@ -119,7 +119,7 @@ export function createApp({ challenge, gecko, store, getIdentity, getCapture, la
       }
       if (url.pathname.startsWith('/api/review/')) {
         const path = url.pathname.slice(5);
-        if (!reviewerProxy || !['review/queue','review/replay','review/decision','review/close'].includes(path)) return json(404, { error: 'Reviewer route unavailable.' });
+        if (!reviewerProxy || !['review/queue','review/replay','review/decision','review/close','review/schedule'].includes(path)) return json(404, { error: 'Reviewer route unavailable.' });
         if (req.method !== 'GET' && (!req.headers.origin || req.headers['x-ttrc-action'] !== 'review')) return json(403, { error: 'Action not allowed.' });
         let body = ''; for await (const chunk of req) { body += chunk; if (body.length > 4096) return json(413, { error: 'Request too large.' }); }
         const response = await reviewerProxy(path, url.search, req.method, body || undefined);

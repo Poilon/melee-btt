@@ -25,7 +25,7 @@ await writeFile(join(out, 'package.json'), JSON.stringify({ name: 'target-test-r
 await writeFile(join(out, 'vercel.json'), JSON.stringify({
   framework: null, outputDirectory: 'public', installCommand: 'npm install --omit=dev', buildCommand: '',
   functions: { 'api/index.mjs': { includeFiles: 'challenge/**', maxDuration: 30 } },
-  rewrites: [{ source: '/players/:slug', destination: '/index.html' }, { source: '/api/:route*', destination: '/api/index?route=:route*' }],
+  rewrites: [{ source: '/review', destination: '/review.html' }, { source: '/players/:slug', destination: '/index.html' }, { source: '/api/:route*', destination: '/api/index?route=:route*' }],
   headers: [{ source: '/(.*)', headers: [
     { key: 'X-Content-Type-Options', value: 'nosniff' },
     { key: 'Referrer-Policy', value: 'no-referrer' },

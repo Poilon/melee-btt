@@ -1,1 +1,32 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Target Test — Review desk</title><link rel="stylesheet" href="/review.css"><script type="module" src="/review.js"></script></head><body><main><header><div><p>ORGANIZER WORKSPACE</p><h1>Review desk</h1></div><a href="/">← Back</a></header><form id="login" hidden><label for="key">Reviewer key</label><input id="key" type="password" autocomplete="off" required><button>Sign in</button></form><p id="message" role="status"></p><section id="desk" hidden><div class="controls"><strong id="phase">Open challenge</strong><button id="refresh">Refresh queue</button><a href="/api/challenge/code" download>Download challenge Gecko code</a><button id="close">Close challenge & reveal times</button></div><p class="note">Download and play the replay in a compatible playback Dolphin. Check the seed/code, character, stage, all targets and final time. Submissions are included at reveal automatically. You can check replays and exclude invalid runs before or after reveal.</p><div id="queue"></div></section></main><dialog id="confirm"><form method="dialog"><button aria-label="Close">×</button></form><h2>Reveal submitted times?</h2><p>This closes submissions for the current challenge and reveals all submitted times publicly, excluding rejected runs. This action cannot be undone here.</p><button id="confirm-close">Close & reveal</button></dialog></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TTRC — Admin</title><link rel="icon" href="/target.svg">
+  <link rel="stylesheet" href="/review.css"><script type="module" src="/review.js"></script>
+</head>
+<body><main>
+  <header><div><p>TTRC / ADMIN</p><h1>Challenge management</h1></div><a href="/">← Back to challenge</a></header>
+  <section id="access" hidden><h2>Admin access</h2><p>Sign in with your TTRC admin account on the website, then return here.</p><a href="/#profil">Sign in →</a>
+    <details><summary>Legacy reviewer access</summary><form id="login"><label for="key">Reviewer key</label><input id="key" type="password" autocomplete="off" required><button>Sign in</button></form></details>
+  </section>
+  <p id="message" role="status"></p>
+  <section id="desk" hidden>
+    <section class="challenge-panel">
+      <div class="controls"><strong id="phase">Open challenge</strong><button id="refresh">Refresh</button></div>
+      <p id="deadline-summary"></p>
+      <form id="schedule"><label for="deadline">End date</label><div class="schedule-inputs"><input id="deadline" type="datetime-local"><button id="save-deadline">Save date</button><button id="remove-deadline" type="button">Remove date</button></div><p class="note" id="timezone"></p></form>
+      <div class="reveal-row"><div><h2>Close & reveal</h2><p class="note">Stops submissions and publishes times and rankings for every character. This also happens automatically at the end date.</p></div><button id="close">Close challenge & reveal times</button></div>
+      <p class="note">Results remain available after the reveal. A new seed is published separately; closing this challenge does not start another one.</p>
+      <a href="/api/challenge/code" download>Download challenge Gecko code ↓</a>
+    </section>
+    <div class="stats" aria-label="Challenge statistics"><div><strong id="players-count">0</strong><span>Participants</span></div><div><strong id="records-count">0</strong><span>Current records</span></div><div><strong id="rejected-count">0</strong><span>Excluded runs</span></div></div>
+    <section aria-labelledby="submissions-title"><div class="queue-heading"><h2 id="submissions-title">Submissions</h2><span id="result-count"></span></div>
+      <p class="note">Admin access includes private times and replays before the reveal. Runs count automatically; approval is optional. Download a replay to check it in Dolphin Playback.</p>
+      <div class="filters"><label>Player<input id="player-filter" type="search" placeholder="Search players"></label><label>Character<select id="character-filter"><option value="">All characters</option></select></label><label>Status<select id="status-filter"><option value="">All statuses</option><option value="submitted">Submitted</option><option value="approved">Approved</option><option value="rejected">Excluded</option></select></label></div>
+      <div id="queue"></div>
+    </section>
+  </section>
+  <dialog id="confirm"><form method="dialog"><button aria-label="Close">×</button></form><h2>Reveal submitted times?</h2><p>This closes submissions and makes all current times and rankings public, excluding rejected runs. The results cannot be hidden again.</p><p id="confirm-summary"></p><p id="confirm-error" role="alert"></p><button id="confirm-close">Close & reveal</button></dialog>
+</main></body>
+</html>
