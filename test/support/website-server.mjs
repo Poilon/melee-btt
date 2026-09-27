@@ -1,3 +1,4 @@
+import {defaultPlaySettings} from '../../shared/play-settings.mjs';
 import { artworkFiles } from '../../shared/artwork.mjs';
 // In-memory fixtures: never read the real player file, score DB or reviewer key.
 import { generateChallenge } from '../../src/challenge.mjs';
@@ -49,7 +50,7 @@ const remote = {
 };
 const account = new CompanionAccount({ origin, accept: async file => { player = parsePlayer(file, origin); currentIdentity = playerIdentity(player); }, signOut: async () => { currentIdentity = null; } });
 setInterval(() => account.poll(), 100);
-let playSettings={music:true,rumble:true};
+let playSettings=defaultPlaySettings();
 createApp({ challenge, gecko, store, remote, account,
   getPlaySettings:()=>({...playSettings}),savePlaySettings:async value=>(playSettings={...value}),
   replays: {

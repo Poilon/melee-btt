@@ -17,7 +17,7 @@ export function inspectReplay(bytes, run, gecko) {
   const settings = game.getSettings();
   if (settings?.gameMode !== GameMode.TARGET_TEST) throw new Error('This replay is not a Target Test run.');
   const characterIds = { 'dr-mario': 22, mario:8, luigi:7, bowser:5, peach:12, yoshi:17, 'donkey-kong':1, 'captain-falcon':0, ganondorf:25, falco:20, fox:2, ness:11, 'ice-climbers':14, kirby:4, samus:16, zelda:18, link:6, 'young-link':21, pichu:24, pikachu:13, jigglypuff:15, mewtwo:10, 'game-and-watch':3, marth:9, roy:23 };
-  if (!settings.players.some(p => p.characterId === characterIds[run.character])) throw new Error('Replay character does not match this run.');
+  if (!settings.players.some(p => p.characterId === characterIds[run.character] || (run.character === 'ice-climbers' && p.characterId === 32))) throw new Error('Replay character does not match this run.');
   const expectedStage = Stage[`TARGET_TEST_${enumName(run.stage)}`];
   const originalStage = Stage[`TARGET_TEST_${enumName(run.character)}`];
   if (![expectedStage, originalStage].filter(Number.isInteger).includes(settings.stageId)) throw new Error('Replay stage does not match this course.');

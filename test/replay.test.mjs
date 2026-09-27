@@ -23,3 +23,18 @@ test('scene counters detect paused frames without treating old replay formats as
   const paused=inspectReplay(withPause(replay),run,'');assert.equal(paused.pauseDetectionAvailable,true);assert.equal(paused.pauseFrames,35);
   assert.equal(inspectReplay(withPause(replay,0),run,'').pauseFrames,0);
 });
+
+test('Target Test replays accept both Ice Climbers IDs, including solo Popo (32)',async()=>{
+ const {ReplayLibrary}=await import('../server/replays.mjs');
+ const start=15+replay[16]+1;
+ assert.equal(replay[start],0x36);assert.equal(replay[start+0x65],1);
+ for(const characterId of [14,32]){
+  const bytes=Buffer.from(replay);bytes[start+0x65]=characterId;
+  const run={character:'ice-climbers',stage:'donkey-kong'};
+  assert.equal(inspectReplay(bytes,run,'').requiresHumanReview,true);
+  const library=new ReplayLibrary({challenge:{assignments:{'ice-climbers':'donkey-kong'}},gecko:''});
+  assert.equal(library.inspect(bytes).character,'ice-climbers');
+  assert.throws(()=>inspectReplay(bytes,{character:'fox',stage:'donkey-kong'},''),/character/);
+  assert.throws(()=>inspectReplay(bytes,{character:'ice-climbers',stage:'roy'},''),/stage/);
+ }
+});

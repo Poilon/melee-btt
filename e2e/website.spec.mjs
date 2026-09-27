@@ -8,7 +8,7 @@ test('companion shows compact personal bests with expandable replay history', as
   await expect(page.locator('#player-name')).toHaveText('Browser Test');
   await expect(page.locator('#run-list')).toContainText('00:20.57');
   await expect(page.getByText('LIVE SESSION',{exact:true})).toHaveCount(0);
-  await expect(page.locator('select')).toHaveCount(0);
+  await expect(page.locator('#peach-items select')).toHaveCount(10);
   await page.locator('#play').click();
   await expect(page.locator('#toast')).toContainText('Dolphin is starting');
   await expect(page.getByText('WATCH YOUR ATTEMPTS',{exact:true})).toHaveCount(0);
@@ -183,4 +183,23 @@ test('fresh companion shows ISO onboarding and reveals play controls only after 
  await expect(page.getByRole('button',{name:'Choose another ISO'})).toBeDisabled();
  setup={...setup,ready:true,busy:false};await page.reload();
  await expect(page.locator('#setup-panel')).not.toBeVisible();await expect(page.getByRole('button',{name:'Launch Dolphin'})).toBeVisible();
+});
+
+
+test('character options persist with UCF and per-target Peach items',async({page})=>{
+ await page.goto('/');await expect(page.getByRole('checkbox',{name:'UCF',exact:true})).toBeChecked();
+ await page.locator('.character-settings summary').click();
+ const nana=page.getByRole('checkbox',{name:'Ice Climbers: play with Nana'}),misfire=page.getByRole('checkbox',{name:'Luigi: always misfire'});
+ await nana.check();await expect(nana).toBeEnabled();await misfire.check();await expect(misfire).toBeEnabled();
+ await page.getByLabel('Peach item with 10 targets left',{exact:true}).selectOption('beam-sword');await expect(nana).toBeEnabled();
+ await page.getByLabel('Peach item with 9 targets left',{exact:true}).selectOption('bob-omb');await expect(nana).toBeEnabled();
+ await page.reload();await page.locator('.character-settings summary').click();
+ await expect(nana).toBeChecked();await expect(misfire).toBeChecked();await expect(page.getByRole('checkbox',{name:'UCF',exact:true})).toBeChecked();
+ await expect(page.getByLabel('Peach item with 10 targets left',{exact:true})).toHaveValue('beam-sword');
+ await expect(page.getByLabel('Peach item with 9 targets left',{exact:true})).toHaveValue('bob-omb');
+ await expect(page.getByLabel('Peach item with 1 targets left',{exact:true})).toHaveValue('random');
+ await page.getByRole('button',{name:'Reset to random'}).click();await expect(nana).toBeEnabled();
+ for(const select of await page.locator('#peach-items select').all())await expect(select).toHaveValue('random');
+ await expect(nana).toBeChecked();await expect(misfire).toBeChecked();
+ await page.setViewportSize({width:390,height:844});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });

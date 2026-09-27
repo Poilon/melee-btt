@@ -1,3 +1,4 @@
+import {approvedPreferenceCodes,validPeachCode} from '../shared/gameplay-codes.mjs';
 import { sha256 } from '../src/upstream.mjs';
 
 export function verifyProfileCode(ini, expectedHash) {
@@ -16,7 +17,9 @@ export function verifyProfileCode(ini, expectedHash) {
   if (!challenge || sha256(challenge.join('\n') + '\n') !== expectedHash) return false;
   blocks.delete('$Target Test Randomizer Challenge');
   for (const [name, lines] of blocks) {
-    if (name !== '$TTRC: Music off' || lines.join('\n') !== '04023FFC 38800000') return false;
+    const code=lines.join('\n');
+    if(name==='$TTRC: Peach items'){if(!validPeachCode(code))return false;}
+    else if(approvedPreferenceCodes.get(name)!==code)return false;
   }
   return true;
 }

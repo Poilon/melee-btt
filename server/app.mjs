@@ -60,9 +60,9 @@ export function createApp({ challenge, gecko, store, getIdentity, getCapture, la
         if (!req.headers.origin || req.headers['x-ttrc-action'] !== 'settings') return json(403, { error: 'Action not allowed.' });
         if (!savePlaySettings) return json(503, { error: 'Play settings unavailable.' });
         let body = '';
-        for await (const chunk of req) { body += chunk; if (body.length > 256) return json(413, { error: 'Request too large.' }); }
+        for await (const chunk of req) { body += chunk; if (body.length > 2048) return json(413, { error: 'Request too large.' }); }
         let value; try { value = JSON.parse(body); } catch { return json(400, { error: 'Invalid play settings.' }); }
-        if (!validPlaySettings(value)) return json(400, { error: 'Music and rumble must be true or false.' });
+        if (!validPlaySettings(value)) return json(400, { error: 'Invalid play settings.' });
         return json(200, { settings: await savePlaySettings(value) });
       }
       if(url.pathname==='/api/shared/run'&&req.method==='GET'){

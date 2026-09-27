@@ -1,4 +1,4 @@
-"""Apply cosmetic preferences only when preparing our dedicated Dolphin profile."""
+"""Apply companion preferences only when preparing our dedicated Dolphin profile."""
 import configparser
 import json
 from pathlib import Path
@@ -10,13 +10,63 @@ MUSIC_CODE_NAME = 'TTRC: Music off'
 MUSIC_OFF_CODE = '04023FFC 38800000'
 
 
-def load_preferences(path=SETTINGS_PATH):
-    if not path.exists():
-        return {'music': True, 'rumble': True}
-    value = json.loads(path.read_text())
-    if not isinstance(value, dict) or set(value) != {'music', 'rumble'} or any(type(v) is not bool for v in value.values()):
+ITEM_IDS = {'turnip': 0x63, 'beam-sword': 0x0C, 'bob-omb': 0x06, 'mr-saturn': 0x07}
+CODES = json.loads((Path(__file__).resolve().parents[1] / 'shared/gameplay-codes.json').read_text())
+
+
+def default_preferences():
+    return {'music': True, 'rumble': True, 'ucf': True, 'iceClimbers': False,
+            'luigiMisfire': False, 'peachItems': ['random'] * 10}
+
+
+def normalize_preferences(value):
+    defaults = default_preferences()
+    if not isinstance(value, dict) or set(value) not in ({'music', 'rumble'}, set(defaults)):
         raise ValueError('Invalid companion play settings.')
-    return value
+    result = defaults | value
+    if any(type(result[key]) is not bool for key in ('music', 'rumble', 'ucf', 'iceClimbers', 'luigiMisfire')):
+        raise ValueError('Invalid companion play settings.')
+    items = result['peachItems']
+    if not isinstance(items, list) or len(items) != 10 or any(not isinstance(item, str) or item not in ['random', *ITEM_IDS] for item in items):
+        raise ValueError('Invalid Peach items.')
+    return result
+
+
+def load_preferences(path=SETTINGS_PATH):
+    return normalize_preferences(json.loads(path.read_text())) if path.exists() else default_preferences()
+
+
+def peach_code(items):
+    # Sockdude1's generator branches on the target counter, not a pull counter.
+    pairs = [(10-index, ITEM_IDS[item]) for index, item in enumerate(items) if item != 'random']
+    n = len(pairs)
+    if not n:
+        return ''
+    words = [0xC211D0A4, 2*n+3, 0x3E608049, 0x6273ED9D, 0x8A930000]
+    for targets, _ in pairs:
+        words += [0x2C140000 | targets, 0x41820000 | n*8]
+    words += [0x48000000 | (2*n+1)*4]
+    for index, (_, item) in enumerate(pairs):
+        words += [0x38C00000 | item, 0x48000000 | (n-index)*8]
+    words += [0x7FE6FB78, 0]
+    return '\n'.join(f'{words[i]:08X} {words[i+1]:08X}' for i in range(0, len(words), 2))
+
+
+def preference_codes(preferences):
+    prefs = normalize_preferences(preferences)
+    result = []
+    if not prefs['music']:
+        result.append((MUSIC_CODE_NAME, MUSIC_OFF_CODE))
+    # Keep these in one block: both hook 800C9A44. The sheet requires Fix first.
+    if prefs['ucf']:
+        result.append(('TTRC: UCF', CODES['ucfFix']['code'] + '\n' + CODES['ucfDashback']['code']))
+    for key in ('iceClimbers', 'luigiMisfire'):
+        if prefs[key]:
+            result.append((CODES[key]['name'], CODES[key]['code']))
+    peach = peach_code(prefs['peachItems'])
+    if peach:
+        result.append(('TTRC: Peach items', peach))
+    return result
 
 
 def read_ini(path):

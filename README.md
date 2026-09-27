@@ -27,7 +27,15 @@ Windows 10/11 **x64**. The companion launcher is a small readable Windows script
 - You can explicitly **Disclose run** on the website to make that specific time and replay public.
 - Submitted replays require human review. Capture is experimental; structural replay checks alone do not prove a valid record.
 
-**Game music** and **Controller rumble** can be toggled in the companion. Settings are saved automatically and apply on the next launch of Dolphin. The custom title appears on Melee’s character-select screen.
+The companion saves these settings automatically and applies them the next time Dolphin starts:
+
+- **Game music**, **Controller rumble**, and **UCF** (enabled by default).
+- Under **Character settings**, enable Nana alongside Popo or force Luigi’s misfires.
+- Choose Peach’s item separately for each remaining target count (10 through 1): Random, Turnip, Beam Sword, Bob-omb or Mr. Saturn. Repeated pulls at the same count give the same selected item; Random preserves the original choice.
+
+The codes come from the supplied [BTT code sheet](https://docs.google.com/spreadsheets/d/1Zz93mr8iqHYhHtod6tJgF7dHU7fGhU8iQ3rayQNXVxA/edit?gid=1983385300) and [sockdude1’s Peach generator](https://codepen.io/sockdude1/full/ExKxKQp). UCF combines Fix v0.73 followed by improved dashback, in the sheet’s required order. These are approved optional patches alongside the unchanged seed code; Slippi records enabled patches in the replay. See [code provenance and validation](docs/gameplay-options.md).
+
+The custom title appears on Melee’s character-select screen.
 
 Replays are stored in **`Replays`**, next to Dolphin. The portable emulator profile and managed sign-in credentials live in **`User`**; scores and pending uploads stay in **`.local`**.
 
@@ -40,6 +48,7 @@ Close Dolphin and click **Quit companion**, back up `.local`, `User`, and `Repla
 - **Replay player download interrupted:** click Watch replay again to retry.
 - **Game is already open:** close it before applying music/rumble changes or launching another session.
 - **No controller input:** check Dolphin’s Controllers settings and your adapter driver.
+- **Ice Climbers replay not attached on v0.5 or earlier:** update the companion. Solo Popo replays use character ID 32; both IDs 14 and 32 are accepted. Existing captured runs are linked and submitted automatically when their matching replay is available.
 - **No score saved:** sign in before the attempt; start a fresh run and complete it without pausing. Leave the results screen so Dolphin finishes saving the replay.
 - **Windows blocks the app:** these initial releases are unsigned. Verify the download source and compare the ZIP with `SHA256SUMS.txt`; do not disable Windows security globally.
 

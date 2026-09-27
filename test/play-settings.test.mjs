@@ -5,6 +5,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {once} from 'node:events';
 import {execFileSync} from 'node:child_process';
+import {defaultPlaySettings} from '../shared/play-settings.mjs';
 import {PlaySettings} from '../server/play-settings.mjs';
 import {createApp} from '../server/app.mjs';
 
@@ -15,14 +16,14 @@ test('play settings persist, reject malformed values and require a same-origin a
  server.listen(0,'127.0.0.1');await once(server,'listening');const origin=`http://127.0.0.1:${server.address().port}`;
  const post=(value,headers={Origin:origin,'X-TTRC-Action':'settings'})=>fetch(origin+'/api/settings',{method:'POST',headers:{'Content-Type':'application/json',...headers},body:JSON.stringify(value)});
  try{
-  assert.deepEqual(settings.get(),{music:true,rumble:true});
+  assert.deepEqual(settings.get(),defaultPlaySettings());
   assert.equal((await post({music:false,rumble:false},{})).status,403);
   assert.equal((await post({music:false,rumble:false},{Origin:'https://other.example','X-TTRC-Action':'settings'})).status,403);
   for(const value of [{music:0,rumble:false},{music:false},null,{music:true,rumble:true,path:'/tmp/file'}])assert.equal((await post(value)).status,400);
-  const response=await post({music:false,rumble:false});assert.equal(response.status,200);assert.deepEqual((await response.json()).settings,{music:false,rumble:false});
-  const restarted=new PlaySettings(path);await restarted.initialize();assert.deepEqual(restarted.get(),{music:false,rumble:false});
+  const response=await post({music:false,rumble:false});assert.equal(response.status,200);assert.deepEqual((await response.json()).settings,{...defaultPlaySettings(),music:false,rumble:false});
+  const restarted=new PlaySettings(path);await restarted.initialize();assert.deepEqual(restarted.get(),{...defaultPlaySettings(),music:false,rumble:false});
   await Promise.all([settings.save({music:true,rumble:false}),settings.save({music:false,rumble:true})]);
-  assert.deepEqual(JSON.parse(await readFile(path,'utf8')),{music:false,rumble:true});
+  assert.deepEqual(JSON.parse(await readFile(path,'utf8')),{...defaultPlaySettings(),music:false,rumble:true});
  }finally{await new Promise(resolve=>server.close(resolve));await rm(dir,{recursive:true,force:true});}
 });
 
@@ -31,7 +32,7 @@ test('Dolphin settings preserve audio, inputs, recording and restore motor stren
 import sys,tempfile,json
 from pathlib import Path
 sys.path.insert(0,'scripts')
-from play_settings import apply_preferences,read_ini,load_preferences
+from play_settings import apply_preferences,read_ini,load_preferences,default_preferences
 with tempfile.TemporaryDirectory() as directory:
  p=Path(directory);(p/'Config').mkdir();(p/'.ttrc-profile').write_text('test')
  (p/'Config/Dolphin.ini').write_text('[Core]\nSlippiSaveReplays = True\nSIDevice0 = 12\nSlippiJukeboxVolume = 67\n[DSP]\nVolume = 35\nBackend = XAudio2\n')
@@ -49,7 +50,7 @@ with tempfile.TemporaryDirectory() as directory:
  assert pads['GCPad1']['Rumble/Motor/Range']=='42' and 'Rumble/Motor/Range' not in pads['GCPad2']
  assert pads['GCPad1']['Rumble/Motor']=='Motor L' and pads['GCPad1']['Buttons/A']=='Button 0'
  assert not (p/'Challenge/rumble-ranges.json').exists()
- prefs=p/'preferences.json';assert load_preferences(prefs)=={'music':True,'rumble':True}
+ prefs=p/'preferences.json';assert load_preferences(prefs)==default_preferences()
  prefs.write_text(json.dumps({'music':False,'rumble':True}));assert load_preferences(prefs)['music'] is False
  prefs.write_text(json.dumps({'music':0,'rumble':True}))
  try:load_preferences(prefs);raise AssertionError('invalid preferences accepted')

@@ -4,21 +4,33 @@ const names = { 'dr-mario':'Dr. Mario',mario:'Mario',luigi:'Luigi',bowser:'Bowse
 const make = (tag, value, css) => { const n=document.createElement(tag);n.textContent=value;if(css)n.className=css;return n; };
 let companionClosed=false;
 let data, tab='all', toastTimer, seen, savingSettings=false, launchingDolphin=false, settingsRevision=0;
+const peachOptions=[['random','Random'],['turnip','Turnip'],['beam-sword','Beam Sword'],['bob-omb','Bob-omb'],['mr-saturn','Mr. Saturn']];
+for(let i=0;i<10;i++){
+ const label=make('label',''),select=make('select','');select.id=`peach-item-${10-i}`;select.setAttribute('aria-label',`Peach item with ${10-i} targets left`);
+ for(const [value,name]of peachOptions){const option=make('option',name);option.value=value;select.append(option);}
+ label.append(make('span',`${10-i} left`),select);$('peach-items').append(label);
+}
 function renderSettings(settings){
  if(savingSettings)return;
- $('play-settings').disabled=!settings||launchingDolphin;
+ for(const id of ['play-settings','character-settings'])$(id).disabled=!settings||launchingDolphin;
  if(!settings){text('settings-note','Play settings unavailable.');return;}
  $('game-music').checked=settings.music;$('controller-rumble').checked=settings.rumble;
+ $('ucf').checked=settings.ucf??true;$('ice-climbers').checked=Boolean(settings.iceClimbers);$('luigi-misfire').checked=Boolean(settings.luigiMisfire);
+ for(let i=0;i<10;i++)$(`peach-item-${10-i}`).value=settings.peachItems?.[i]||'random';
  text('settings-note',data?.capture?.dolphinRunning?'Saved automatically · close and relaunch Dolphin to apply changes.':'Saved automatically · applies the next time you launch Dolphin.');
 }
-for(const id of ['game-music','controller-rumble'])$(id).addEventListener('change',async()=>{
+async function saveSettings(){
  const previous=data?.settings;
- savingSettings=true;settingsRevision++;$('play-settings').disabled=true;$('play').disabled=true;
+ savingSettings=true;settingsRevision++;$('play-settings').disabled=true;$('character-settings').disabled=true;$('play').disabled=true;
  text('settings-note','Saving…');
- try{const result=await post('settings',{music:$('game-music').checked,rumble:$('controller-rumble').checked},'settings');if(data)data.settings=result.settings;}
- catch(error){if(data)data.settings=previous;toast('Could not save play settings. Please try again.');}
+ try{
+  const settings={music:$('game-music').checked,rumble:$('controller-rumble').checked,ucf:$('ucf').checked,iceClimbers:$('ice-climbers').checked,luigiMisfire:$('luigi-misfire').checked,peachItems:Array.from({length:10},(_,i)=>$(`peach-item-${10-i}`).value)};
+  const result=await post('settings',settings,'settings');if(data)data.settings=result.settings;
+ }catch(error){if(data)data.settings=previous;toast('Could not save play settings. Please try again.');}
  finally{savingSettings=false;settingsRevision++;$('play').disabled=false;renderSettings(data?.settings);}
-});
+}
+for(const id of ['game-music','controller-rumble','ucf','ice-climbers','luigi-misfire',...Array.from({length:10},(_,i)=>`peach-item-${10-i}`)])$(id).addEventListener('change',saveSettings);
+$('peach-reset').addEventListener('click',()=>{for(let i=0;i<10;i++)$(`peach-item-${10-i}`).value='random';saveSettings();});
 function renderSetup(setup){
  const needsSetup=setup&&setup.ready===false;
  document.body.classList.toggle('needs-setup',Boolean(needsSetup));$('setup-panel').hidden=!needsSetup;
@@ -123,7 +135,7 @@ $('account-cancel').addEventListener('click', async () => { try { await post('ac
 $('sign-out').addEventListener('click', async () => { try { await post('account/logout'); seen = undefined; await refresh(); } catch (error) { toast(error.message); } });
 $('website').addEventListener('click',async()=>{if(!data?.identity){location.href='https://target-test-randomizer-challenge.vercel.app';return;}try{location.href=(await post('remote/browser')).url;}catch(err){toast(err.message);}});
 $('quit-companion').addEventListener('click',async()=>{if(data?.capture?.dolphinRunning&&!confirm('Quit companion? Dolphin will stay open, but new runs will not be captured until you reopen the companion.'))return;try{await post('quit',{},'quit');companionClosed=true;clearInterval(refreshTimer);clearTimeout(toastTimer);document.body.replaceChildren(make('main','Companion closed. You can close this tab.'));}catch(error){toast(error.message);}});
-$('play').addEventListener('click',async()=>{launchingDolphin=true;$('play').disabled=true;$('play-settings').disabled=true;try{const result=await post('launch',{},'launch');toast(result.status==='already-running'?'Dolphin is already running.':'Dolphin is starting. Choose your character in Target Test.');refresh();}catch(err){toast(err.message);}finally{launchingDolphin=false;$('play').disabled=false;renderSettings(data?.settings);}});
+$('play').addEventListener('click',async()=>{launchingDolphin=true;$('play').disabled=true;$('play-settings').disabled=true;$('character-settings').disabled=true;try{const result=await post('launch',{},'launch');toast(result.status==='already-running'?'Dolphin is already running.':'Dolphin is starting. Choose your character in Target Test.');refresh();}catch(err){toast(err.message);}finally{launchingDolphin=false;$('play').disabled=false;renderSettings(data?.settings);}});
 $('replay-folder').addEventListener('click',async()=>{try{await post('recorder/folder',{},'launch');}catch(e){toast(e.message);}});
 $('recorder').addEventListener('click',async()=>{$('recorder').disabled=true;try{const result=await post('recorder/prepare',{},'launch');text('recorder-note',result.message);toast('Replay profile prepared. Close the current Dolphin, then use Launch Dolphin.');refresh();}catch(err){text('recorder-note',err.message);}finally{$('recorder').disabled=false;}});
 $('export').addEventListener('click',()=>{if(!data?.history.length){toast('Finish a run first.');return;}const csv=['character,stage,frames,time,status',...data.history.map(r=>[r.character,r.stage,r.frames,formatTime(r.frames),r.submissionStatus].join(','))].join('\n');const u=URL.createObjectURL(new Blob([csv],{type:'text/csv'})),a=document.createElement('a');a.href=u;a.download='target-test-local-runs.csv';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);});

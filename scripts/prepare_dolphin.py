@@ -9,7 +9,7 @@ from pathlib import Path
 import re
 import shutil
 import subprocess
-from play_settings import load_preferences, apply_preferences, MUSIC_CODE_NAME, MUSIC_OFF_CODE
+from play_settings import load_preferences, apply_preferences, preference_codes
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DOLPHIN = Path('/mnt/c/Users/Ubuntu/Desktop/tout/Dolphin-x64/Dolphin.exe')
@@ -132,9 +132,10 @@ def main():
         shutil.copyfile(source_save, target_save)
     # Build the INI from the hashed code rather than trusting a separately edited INI.
     name = 'Target Test Randomizer Challenge'
-    music_code = '' if preferences['music'] else f'${MUSIC_CODE_NAME}\n{MUSIC_OFF_CODE}\n'
-    music_enabled = '' if preferences['music'] else f'${MUSIC_CODE_NAME}\n'
-    ini = f'[Gecko]\n${name}\n{code.decode()}\n{music_code}[Gecko_Enabled]\n${name}\n{music_enabled}'
+    extras = preference_codes(preferences)
+    extra_code = ''.join(f'${label}\n{patch}\n' for label, patch in extras)
+    extra_enabled = ''.join(f'${label}\n' for label, _ in extras)
+    ini = f'[Gecko]\n${name}\n{code.decode()}\n{extra_code}[Gecko_Enabled]\n${name}\n{extra_enabled}'
     if args.record_replays:
         sys_ini = args.dolphin.parent / 'Sys/GameSettings/GALE01r2.ini'
         if not sys_ini.is_file():
