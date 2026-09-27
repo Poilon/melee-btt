@@ -397,3 +397,59 @@ test('old challenges prompt guests to sign in and show an empty state for nonpar
  await expect(page.locator('#old-challenges-message')).toContainText('Sign in');
  expect(errors).toEqual([]);
 });
+
+function requestGate(){let release;const wait=new Promise(resolve=>{release=resolve;});return {wait,release};}
+
+test('website shows skeletons during slow loads and clears them after a character error',async({page})=>{
+ const origin='http://localhost:4319',base=await(await page.request.get(origin+'/api/dashboard')).json();
+ base.competition={...base.competition,timesRevealed:true,phase:'closed'};
+ let gate=requestGate(),fail=false;
+ await page.route('**/api/dashboard?**',async route=>{await gate.wait;const character=new URL(route.request().url()).searchParams.get('character');await route.fulfill({status:fail?503:200,json:fail?{error:'Unavailable'}:{...base,character}});});
+ await page.goto(origin,{waitUntil:'commit'});
+ await expect(page.locator('#scores .loading-skeleton')).toBeVisible();await expect(page.locator('#loading-status')).toContainText('Loading challenge');
+ gate.release();await expect(page.locator('#scores')).not.toHaveAttribute('aria-busy','true');await expect(page.locator('#loading-status')).toBeHidden();
+ gate=requestGate();fail=true;
+ await page.locator('[data-character="samus"]').click();
+ await expect(page.locator('#character-results .loading-skeleton')).toBeVisible();await expect(page.locator('#character-results')).toHaveAttribute('aria-busy','true');
+ gate.release();await expect(page.locator('#character-results-note')).toContainText('Could not refresh');
+ await expect(page.locator('#character-results .loading-skeleton')).toHaveCount(0);await expect(page.locator('#loading-status')).toBeHidden();
+ await page.getByRole('button',{name:'Close character details'}).click();
+ fail=false;await page.locator('[data-character="samus"]').click();await expect(page.locator('#character-results-note')).toContainText('No submitted results');
+ await page.getByRole('button',{name:'Close character details'}).click();
+ // Polling updates cached data without putting the whole page back into a loading state.
+ const poll=page.waitForResponse(r=>r.url().includes('/api/dashboard?'));
+ await poll;await expect(page.locator('#loading-status')).toBeHidden();
+});
+
+test('companion shows attempt skeletons, busy replay buttons and recovers from launch failure',async({page})=>{
+ const base=await(await page.request.get('http://localhost:4318/api/dashboard')).json();
+ const run={id:'loading-test',character:'fox',stage:'samus',frames:1234,createdAt:new Date().toISOString(),submissionStatus:'submitted',hasReplay:true,attemptCount:1};
+ base.bestRuns=[run];base.history=[run];
+ await page.route('**/api/dashboard',route=>route.fulfill({json:base}));
+ let historyGate=requestGate();
+ await page.route('**/api/runs?**',async route=>{await historyGate.wait;await route.fulfill({json:{runs:[run]}});});
+ await page.goto('http://localhost:4318');await page.getByRole('button',{name:'Fox: show run history'}).click();
+ await expect(page.locator('.attempt-history .loading-skeleton')).toBeVisible();await expect(page.locator('.attempt-history')).toHaveAttribute('aria-busy','true');
+ historyGate.release();await expect(page.locator('.attempt-history .run')).toHaveCount(1);await expect(page.locator('.attempt-history .loading-skeleton')).toHaveCount(0);
+ const launchGate=requestGate();let launches=0;
+ await page.route('**/api/runs/replay/launch',async route=>{launches++;await launchGate.wait;await route.fulfill({status:503,json:{error:'Playback unavailable. Try again.'}});});
+ const watch=page.locator('.attempt-history').getByRole('button',{name:'Watch replay'});await watch.click();
+ await expect(watch).toHaveAttribute('aria-busy','true');await expect(watch).toBeDisabled();
+ await watch.evaluate(el=>el.dispatchEvent(new MouseEvent('click',{bubbles:true})));expect(launches).toBe(1);
+ await expect(page.locator('#loading-status')).toContainText('Opening replay');
+ launchGate.release();await expect(page.locator('#toast')).toContainText('Playback unavailable');await expect(watch).toBeEnabled();await expect(watch).not.toHaveAttribute('aria-busy','true');await expect(page.locator('#loading-status')).toBeHidden();
+});
+
+test('admin shows initial and refresh skeletons and stops loading on an API error',async({page})=>{
+ const origin='http://localhost:4319';
+ await page.request.post(origin+'/api/auth/login',{headers:{Origin:origin},data:{username:'test_admin',password:'Admin browser test 42'}});
+ const queue=await(await page.request.get(origin+'/api/review/queue')).json();
+ let gate=requestGate(),fail=false;
+ await page.route('**/api/review/queue',async route=>{await gate.wait;await route.fulfill({status:fail?503:200,json:fail?{error:'Temporary connection failure'}:queue});});
+ await page.goto(origin+'/review',{waitUntil:'commit'});await expect(page.locator('#admin-loading .loading-skeleton')).toBeVisible();
+ gate.release();await expect(page.locator('#desk')).toBeVisible();await expect(page.locator('#admin-loading')).toBeHidden();
+ gate=requestGate();fail=true;await page.locator('#refresh').click();
+ await expect(page.locator('#refresh')).toHaveAttribute('aria-busy','true');await expect(page.locator('#queue .loading-skeleton')).toBeVisible();
+ gate.release();await expect(page.locator('#message')).toContainText('Temporary connection failure');
+ await expect(page.locator('#refresh')).not.toHaveAttribute('aria-busy','true');await expect(page.locator('#loading-status')).toBeHidden();await expect(page.locator('#desk')).toBeHidden();
+});

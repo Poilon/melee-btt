@@ -1,5 +1,6 @@
 import { formatTime as time } from './time.js';
 import { createArchivesView } from './archives.js';
+import {startLoading,showSkeleton} from './loading.js';
 const names = {
   'dr-mario': 'Dr. Mario', mario: 'Mario', luigi: 'Luigi', bowser: 'Bowser', peach: 'Peach', yoshi: 'Yoshi',
   'donkey-kong': 'Donkey Kong', 'captain-falcon': 'Captain Falcon', ganondorf: 'Ganondorf', falco: 'Falco', fox: 'Fox',
@@ -27,12 +28,16 @@ function download(value, name, type = 'application/json') {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 async function action(path, body) {
+  const control=path.startsWith('auth/')?$(path==='auth/logout'?'logout':'auth-submit'):path==='submissions/disclose'?$('disclose-'+(body.public?body.kind:'private')):path==='companion/connect/approve'?$('approve-companion'):null;
+  const done=startLoading(path==='auth/logout'?'Signing out…':path==='auth/signup'?'Creating account…':path.startsWith('auth/')?'Signing in…':path==='submissions/disclose'?'Updating disclosure…':'Connecting…',control);
+  try{
   const response = await fetch(apiPath(path), { method: 'POST',
     headers: { 'X-TTRC-Action': 'profile', ...(body ? { 'Content-Type': 'application/json' } : {}) },
     ...(body ? { body: JSON.stringify(body) } : {}) });
   const result = await response.json();
   if (!response.ok) throw Object.assign(new Error(result.error || 'Please try again.'), { code: result.code, status: response.status });
   return result;
+  }finally{done();}
 }
 function portrait(character) {
   const img = document.createElement('img'); img.src = `/assets/melee/${character}-portrait.webp`; img.alt = ''; img.className = 'fighter-portrait'; img.width = 68; img.height = 80; img.loading = 'lazy'; return img;
@@ -282,7 +287,7 @@ function publicReplayCard(r) {
     actions.append(share);card.append(info,node('time',time(r.frames),'run-time'),actions);
     return card;
 }
-let characterDetailsKey;
+let characterDetailsKey,finishCharacterLoading;
 function renderCharacterDetails() {
   if (!data) return;
   const profilePlayer=$('public-profile').dataset.player;
@@ -299,7 +304,8 @@ function renderCharacterDetails() {
   else text('character-targets',`${data.challenge.rules.targets} fixed`);
   text('character-best',best?time(best):'No submitted run');
   text('character-results-note',!revealed?'Times and rankings stay hidden until the reveal. Disclosed runs are available below.':!ready?'Loading results…':data.leaderboard.length?'Final standings for this character.':'No submitted results for this character.');
-  $('character-results').replaceChildren();
+  finishCharacterLoading?.();$('character-results').replaceChildren();
+  if(!ready)finishCharacterLoading=showSkeleton($('character-results'));
   if(revealed&&ready)for(const r of data.leaderboard){
     const row=node('li');row.append(node('span',`#${r.rank}`,'rank'),node('strong',r.displayName),node('span',time(r.frames),'run-time'),node('span',`${r.points||0} pts`,'character-points'));$('character-results').append(row);
   }
@@ -310,16 +316,19 @@ function renderCharacterDetails() {
 $('character-dialog').addEventListener('close',()=>{
   document.querySelector(`#course-grid [data-character="${selection}"]`)?.focus({preventScroll:true});
 });
-async function refresh() {
+async function refresh({quiet=false}={}) {
   const requested = selection;
+  const done=quiet?()=>{}:startLoading(data?'Loading results…':'Loading challenge…');
+  const initial=!data,clear=initial?showSkeleton($('scores')):()=>{};
+  if(initial)document.body.classList.add('initial-loading');
   try {
     const response = await fetch(apiPath(`dashboard?character=${encodeURIComponent(requested)}`));
     if (!response.ok) throw new Error();
     const next = await response.json(); if (requested === selection) render(next);
   } catch {
     text('capture-top', 'Site offline · reconnecting…'); $('capture-top').classList.remove('connected');
-    if ($('character-dialog').open && requested===selection) { characterDetailsKey=undefined; text('character-results-note','Could not refresh results. Reconnecting…'); }
-  }
+    if ($('character-dialog').open && requested===selection) { finishCharacterLoading?.();characterDetailsKey=undefined; text('character-results-note','Could not refresh results. Reconnecting…'); }
+  }finally{clear();document.body.classList.remove('initial-loading');done();}
 }
 function choose(character) {
   selection = character;
@@ -414,26 +423,28 @@ window.addEventListener('hashchange', async () => { await consumeSignIn(); await
 await consumeSignIn();
 if (connectId) {
   $('connect-panel').hidden = false;
+  const done=startLoading('Loading companion connection…',$('approve-companion'));
   try {
     const response = await fetch(`/api/companion/connect/info?id=${encodeURIComponent(connectId)}`), result = await response.json();
     if (!response.ok) throw new Error(result.error);
     connectionInfo = result;
-  } catch (error) { text('connect-status', error.message); }
+  } catch (error) { text('connect-status', error.message); }finally{done();}
 }
 const profileSlug = location.pathname.match(/^\/players\/([a-z0-9_]+)$/)?.[1];
 if (profileSlug) {
   $('public-profile').hidden = false;
+  const done=startLoading('Loading player profile…');
   try {
     const response = await fetch(`/api/players/profile?slug=${encodeURIComponent(profileSlug)}`), result = await response.json();
     if (!response.ok) throw new Error(result.error);
     text('public-name', `@${result.profile.slug}`); document.title = `@${result.profile.slug} · TTRC`;
     $('public-profile').dataset.player = result.profile.id;
-  } catch (error) { text('public-name', 'Player not found'); text('public-note', error.message); }
+  } catch (error) { text('public-name', 'Player not found'); text('public-note', error.message); }finally{done();}
 }
 await refresh();
-setInterval(() => { if (!document.hidden && !busy) refresh(); }, 5000);
+setInterval(() => { if (!document.hidden && !busy) refresh({quiet:true}); }, 5000);
 setInterval(() => { if (!document.hidden) renderDeadline(); }, 1000);
-document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh({quiet:true}); });
 
 for(const link of document.querySelectorAll('a[href="/api/challenge/code"]'))link.href=apiPath('challenge/code');
 fetch('/api/challenges').then(r=>r.ok?r.json():null).then(result=>{

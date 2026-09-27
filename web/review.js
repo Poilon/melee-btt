@@ -1,14 +1,19 @@
 import {formatTime} from '/time.js';
+import {startLoading,showSkeleton} from '/loading.js';
 const $ = id => document.getElementById(id);
 const node = (tag, text, css) => { const n = document.createElement(tag); n.textContent = text; if (css) n.className = css; return n; };
 const characterName = value => value.split('-').map(word => word[0].toUpperCase() + word.slice(1)).join(' ');
 const localTime = value => new Date(value).toLocaleString('en-US', {dateStyle: 'medium', timeStyle: 'short'});
 let current;
-async function request(path, body) {
+async function request(path, body, {quiet=false}={}) {
+  const control=path==='login'?$('login').querySelector('button'):path==='schedule'?$(body.endsAt===null?'remove-deadline':'save-deadline'):$(({queue:'refresh',close:'confirm-close',generate:'publish-challenge'})[path]);
+  const done=quiet?()=>{}:startLoading(({queue:'Loading submissions…',login:'Signing in…',schedule:'Saving end date…',close:'Revealing results…',generate:'Generating challenge…'})[path]||'Loading…',control);
+  try{
   const response = await fetch(`/api/review/${path}`, body ? {method: 'POST', headers: {'Content-Type': 'application/json', 'X-TTRC-Action': 'review'}, body: JSON.stringify(body)} : {});
   const result = await response.json();
   if (!response.ok) throw Object.assign(new Error(result.error || 'Request failed'), {status: response.status});
   return result;
+  }finally{done();}
 }
 function renderQueue() {
   if (!current) return;
@@ -34,12 +39,13 @@ function renderQueue() {
       const launch = node('button', '▶ Launch replay', 'approve');
       launch.addEventListener('click', async () => {
         launch.disabled = true;
+        const done=startLoading('Opening replay…',launch);
         try {
           const response = await fetch('/api/review/launch', {method: 'POST', headers: {'Content-Type': 'application/json', 'X-TTRC-Action': 'launch'}, body: JSON.stringify({id: r.id, playerId: r.playerId})});
           const result = await response.json(); if (!response.ok) throw new Error(result.error || 'Playback unavailable');
           $('message').textContent = 'Replay opened in Dolphin Playback.';
         } catch (error) { $('message').textContent = error.message; }
-        finally { launch.disabled = false; }
+        finally { launch.disabled = false;done(); }
       });
       actions.append(launch);
     }
@@ -47,9 +53,12 @@ function renderQueue() {
     $('queue').append(card);
   }
 }
-async function refresh() {
+async function refresh({quiet=false}={}) {
+  const initial=!current;
+  $('admin-loading').hidden=!initial;
+  const clear=quiet?()=>{}:showSkeleton(initial?$('admin-loading'):$('queue'),4);
   try {
-    current = await request('queue');
+    current = await request('queue',undefined,{quiet});
     $('access').hidden = true; $('desk').hidden = false;
     const {competition, challenge, submissions} = current;
     const closed = competition.phase === 'closed';
@@ -73,7 +82,7 @@ async function refresh() {
     // Do not leave private records displayed after access has expired or been revoked.
     $('desk').hidden = true; $('queue').replaceChildren(); current = null;
     $('access').hidden = ![401, 403].includes(error.status);
-  }
+  }finally{clear();$('admin-loading').hidden=true;}
 }
 async function saveDeadline(endsAt) {
   if (!current) return;
@@ -111,7 +120,7 @@ $('confirm-close').addEventListener('click', async () => {
   catch (error) { $('confirm-error').textContent = error.message; }
   finally { $('confirm-close').disabled = false; }
 });
-document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh({quiet:true}); });
 await refresh();
 
 let pendingSeed;

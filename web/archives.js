@@ -1,4 +1,5 @@
 import {formatTime} from './time.js';
+import {startLoading,showSkeleton} from './loading.js';
 
 const $=id=>document.getElementById(id);
 const node=(tag,text,className)=>{const element=document.createElement(tag);element.textContent=text;if(className)element.className=className;return element;};
@@ -46,10 +47,11 @@ export function createArchivesView({signIn,toast}){
   let loading=false;
   async function loadCode(){
    if(loading||code.value)return;loading=true;retry.hidden=true;status.textContent='Loading Gecko code…';
+   const done=startLoading('Loading Gecko code…',code);code.classList.add('loading-code');
    try{
     const response=await fetch(api(challenge.id,'challenge/code'));if(!response.ok)throw Error('Code unavailable');
     code.value=await response.text();copy.disabled=false;status.textContent='Select the code or copy it into Dolphin.';
-   }catch{status.textContent='Could not load the Gecko code.';retry.hidden=false;}finally{loading=false;}
+   }catch{status.textContent='Could not load the Gecko code.';retry.hidden=false;}finally{loading=false;code.classList.remove('loading-code');done();}
   }
   details.addEventListener('toggle',()=>{if(details.open)loadCode();});retry.addEventListener('click',loadCode);
   copy.addEventListener('click',async()=>{
@@ -62,6 +64,7 @@ export function createArchivesView({signIn,toast}){
   if(!active()||pending||loadedKey===identityKey)return;
   if(!playerId){state('Sign in to see the challenges you participated in.',{login:true});return;}
   const version=++request;pending=true;state('Loading your challenges…');
+  const done=startLoading('Loading old challenges…'),clear=showSkeleton($('old-challenges-list'),4);
   try{
    const response=await fetch('/api/challenges/mine');
    if(version!==request)return;
@@ -75,7 +78,7 @@ export function createArchivesView({signIn,toast}){
    else state('No finished challenges yet. Challenges with your submitted scores will appear here after the reveal.');
    loadedKey=identityKey;
   }catch{if(version===request)state('Could not load your old challenges.',{retry:true});}
-  finally{if(version===request)pending=false;}
+  finally{clear();done();if(version===request)pending=false;}
  }
  function navigate(){
   const show=active();$('old-challenges').hidden=!show;$('current-challenge-view').hidden=show;

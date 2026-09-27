@@ -15,6 +15,8 @@ const files = new Map([
   ['/review.js', ['review.js', 'text/javascript; charset=utf-8']],
   ['/review.css', ['review.css', 'text/css; charset=utf-8']],
   ['/time.js', ['time.js', 'text/javascript; charset=utf-8']],
+  ['/loading.js', ['loading.js', 'text/javascript; charset=utf-8']],
+  ['/loading.css', ['loading.css', 'text/css; charset=utf-8']],
   ['/style.css', ['../companion/style.css', 'text/css; charset=utf-8']],
   ['/target.svg', ['target.svg', 'image/svg+xml']],
   ['/favicon-companion.svg', ['favicon-companion.svg', 'image/svg+xml']],
