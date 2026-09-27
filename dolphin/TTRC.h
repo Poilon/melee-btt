@@ -64,5 +64,6 @@ inline void OpenCompanion() {
   const auto count = GetEnvironmentVariableW(L"PORT", port, 16);
   wxLaunchDefaultBrowser(wxString(L"http://localhost:") + (count > 0 && count < 16 ? port : L"4317"));
 }
+inline void OnCompanion(wxCommandEvent&) { OpenCompanion(); }
 }
 #endif
