@@ -1,0 +1,42 @@
+name: Build TTRC Dolphin
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: project-slippi/Ishiiruka
+          ref: e7711b104b339a99385f2bb12b472d46140a7bc7
+          path: upstream
+          submodules: recursive
+      - run: python scripts/patch_dolphin.py upstream
+      - name: Rust version
+        id: rust
+        shell: bash
+        run: echo "version=$(sed -rn 's/^channel = "(.*)"/\1/p' upstream/Externals/SlippiRustExtensions/rust-toolchain.toml)" >> "$GITHUB_OUTPUT"
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: ${{ steps.rust.outputs.version }}
+          rustflags: ''
+      - uses: microsoft/setup-msbuild@v2
+      - name: DirectX SDK
+        run: choco install directx-sdk --no-progress -y
+      - name: Build
+        shell: cmd
+        run: msbuild upstream\Source\Dolphin.sln /m:2 /p:Configuration=Release /p:Platform=x64
+      - name: Package executable and matching source
+        shell: bash
+        run: |
+          mkdir -p dolphin-build
+          cp "upstream/Binary/x64/Slippi Dolphin.exe" dolphin-build/'Slippi Dolphin.exe'
+          cp upstream/license.txt dolphin-build/LICENSE-Dolphin.txt
+          tar --exclude=.git --exclude=Build --exclude=Binary --exclude=target -czf dolphin-build/TTRC-Dolphin-Source.tar.gz -C upstream .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ttrc-dolphin
+          path: dolphin-build
