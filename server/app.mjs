@@ -17,6 +17,8 @@ const files = new Map([
   ['/time.js', ['time.js', 'text/javascript; charset=utf-8']],
   ['/style.css', ['../companion/style.css', 'text/css; charset=utf-8']],
   ['/target.svg', ['target.svg', 'image/svg+xml']],
+  ['/favicon-companion.svg', ['favicon-companion.svg', 'image/svg+xml']],
+  ['/favicon-admin.svg', ['favicon-admin.svg', 'image/svg+xml']],
 ]);
 
 export function createApp({ challenge:initialChallenge, gecko:initialGecko, getChallenge, onlineChallenge, updateChallenge, store, getIdentity, getCapture, launch, remote, importPlayer, prepareRecorder, reviewerProxy, openReplays, replays, getPlaySettings, savePlaySettings, onboarding, account, instance, quit }) {
