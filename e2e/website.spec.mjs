@@ -244,7 +244,7 @@ test('website groups all submitted runs, retains old bests and exports the full 
   await fox.locator('summary').click();await expect(fox.locator('.history-row')).toHaveCount(60);
   await expect(fox.locator('.history-row').last()).toContainText('00:10.00');
   await page.getByRole('button',{name:'Marth → Mewtwo',exact:true}).click();
-  await expect(page.locator('#personal-character')).toHaveText('MARTH');
+  await expect(page.locator('#character-title')).toHaveText('Marth');
   await expect(fox).toHaveAttribute('open','');await expect(page.locator('#history-list details')).toHaveCount(2);
   await expect(page.locator('#character-dialog')).toBeVisible();
   await page.getByRole('button',{name:'Close character details'}).click();

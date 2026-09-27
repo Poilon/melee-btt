@@ -136,17 +136,9 @@ function render(d) {
   text('auth-note', 'No email required.');
   renderConnection();
   renderLeaderboard(d);
-  text('personal-character', names[selection].toUpperCase());
-  const best = d.personalBest;
-  const leader = d.leaderboard[0];
-  const gap = best && leader && best.frames > leader.frames ? ` · ${time(best.frames - leader.frames)} behind #1` : '';
-  $('personal-time').replaceChildren(document.createTextNode(best ? time(best.frames) : '—'), node('span', best ? `your best on this seed${gap}` : 'no completed runs yet'));
   const connected = d.capture.status === 'connected';
   text('capture-top', remote ? (revealed?'Challenge closed':'Submissions open') : connected ? ident ? '● Dolphin connected' : 'Practice only · sign in' : '○ Waiting for Dolphin');
   $('capture-top').classList.toggle('connected', remote || (connected && Boolean(ident)));
-  text('capture-title', remote ? ident ? 'Submit from the companion' : 'Player required' : connected ? d.capture.inGame ? 'Run in progress' : 'Dolphin detected' : 'Local companion');
-  text('capture-detail', remote ? ident ? 'Valid personal bests and their replays are submitted automatically. They stay private unless you disclose them.' : 'Sign in, then connect your companion to submit records.' :
-    !ident ? 'Sign in to record your runs.' : d.remote?.lastError || (d.remote?.pending ? `${d.remote.pending} run(s) waiting to upload. Local records are safe.` : connected ? d.capture.inGame ? `${d.capture.remaining} targets left · experimental capture` : 'Start a fresh run, then click Submit on your best attempt.' : 'Play the challenge to connect Dolphin.'));
   const progress = Object.values(d.progress || {}).filter(p => p.best);
   const cleared = progress.length, total = Object.keys(c.assignments).length;
   text('progress-count', `${cleared} / ${total}`); $('progress-bar').max = total; $('progress-bar').value = cleared;
