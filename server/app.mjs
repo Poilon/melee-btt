@@ -18,7 +18,7 @@ const files = new Map([
   ['/target.svg', ['target.svg', 'image/svg+xml']],
 ]);
 
-export function createApp({ challenge, gecko, store, getIdentity, getCapture, launch, remote, importPlayer, prepareRecorder, reviewerProxy, openReplays, replays, getPlaySettings, savePlaySettings, onboarding }) {
+export function createApp({ challenge, gecko, store, getIdentity, getCapture, launch, remote, importPlayer, prepareRecorder, reviewerProxy, openReplays, replays, getPlaySettings, savePlaySettings, onboarding, account }) {
   const server = createServer(async (req, res) => {
     const port = server.address()?.port;
     const hosts = new Set([`localhost:${port}`, `127.0.0.1:${port}`]);
@@ -36,6 +36,12 @@ export function createApp({ challenge, gecko, store, getIdentity, getCapture, la
     }
     try {
       const url = new URL(req.url, `http://${req.headers.host}`);
+      if (req.method === 'POST' && ['/api/account/start', '/api/account/cancel', '/api/account/logout'].includes(url.pathname)) {
+        if (!req.headers.origin || req.headers['x-ttrc-action'] !== 'profile') return json(403, { error: 'Action not allowed.' });
+        if (!account) return json(503, { error: 'Sign-in unavailable. Update your companion.' });
+        try { return json(200, await account[url.pathname.split('/').at(-1)]()); }
+        catch (error) { return json(503, { error: error.message }); }
+      }
       if (req.method === 'POST' && ['/api/setup/iso','/api/setup/install','/api/setup/folder'].includes(url.pathname)) {
         if (!onboarding) return json(503, {error:'Setup unavailable.'});
         if (!req.headers.origin || req.headers['x-ttrc-action'] !== 'setup') return json(403, {error:'Action not allowed.'});
@@ -73,7 +79,7 @@ export function createApp({ challenge, gecko, store, getIdentity, getCapture, la
         if (!replays) return json(503, { error: 'Playback unavailable.' });
         if (!req.headers.origin || req.headers['x-ttrc-action'] !== 'launch') return json(403, { error: 'Launch not allowed.' });
         const identity = await getIdentity();
-        if (!identity) return json(401, { error: 'Import your player first.' });
+        if (!identity) return json(401, { error: 'Sign in first.' });
         let body = ''; for await (const chunk of req) { body += chunk; if (body.length > 3 * 1024 * 1024) return json(413, { error: 'Replay must be under 2 MB.' }); }
         let input; try { input = JSON.parse(body); } catch { return json(400, { error: 'Invalid request.' }); }
         const run = store.run(input.id, identity.id, challenge.id);
@@ -137,7 +143,7 @@ export function createApp({ challenge, gecko, store, getIdentity, getCapture, la
       if (req.method === 'POST' && url.pathname === '/api/submissions') {
         if (!remote || !req.headers.origin || req.headers['x-ttrc-action'] !== 'submit') return json(403, { error: 'Action not allowed.' });
         const identity = await getIdentity();
-        if (!identity) return json(401, { error: 'Import your user.json first.' });
+        if (!identity) return json(401, { error: 'Sign in first.' });
         let body = '';
         for await (const chunk of req) { body += chunk; if (body.length > 3 * 1024 * 1024) return json(413, { error: 'Replay must be under 2 MB.' }); }
         const input = JSON.parse(body), run = store.run(input.id, identity.id, challenge.id);
@@ -169,7 +175,7 @@ export function createApp({ challenge, gecko, store, getIdentity, getCapture, la
       }
       if (req.method === 'GET' && url.pathname === '/api/runs') {
         const identity = await getIdentity();
-        if (!identity) return json(401, { error: 'Import your player first.' });
+        if (!identity) return json(401, { error: 'Sign in first.' });
         const character = url.searchParams.get('character'), offset = Number(url.searchParams.get('offset') || 0);
         if (!stages.includes(character) || !Number.isInteger(offset) || offset < 0 || offset > 1000000) return json(400, { error: 'Invalid history request.' });
         return json(200, { runs: store.characterHistory(challenge.id, identity.id, character, offset) });
@@ -180,7 +186,7 @@ export function createApp({ challenge, gecko, store, getIdentity, getCapture, la
         const identity = await getIdentity();
         const player = identity;
         return json(200, {
-          challenge, identity, player, auth: { mode: 'player-file', configured: true, account: identity ? { name: identity.displayName, linked: true } : null }, capture: getCapture(), scope: 'local', character,
+          challenge, identity, player, auth: { mode: 'google', configured: true, connection: account?.status(), account: identity ? { name: identity.displayName, linked: true } : null }, capture: getCapture(), scope: 'local', character,
           remote: remote?.status(identity) || { available: false, paired: false, pending: 0 },
           settings: getPlaySettings?.() || null,
           setup: onboarding?.get() || {ready:true},

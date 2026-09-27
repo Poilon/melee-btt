@@ -102,39 +102,39 @@ test('replay goes from companion to private review; public site shows only parti
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
 
-test('public player creation downloads an independent user.json and restores the same account', async ({ page }) => {
+test('Google login chooses a username and connects the companion without downloading a file', async ({ page, context }) => {
+  const errors = []; page.on('pageerror', e => errors.push(e.message));
   await page.goto('http://localhost:4319');
-  await expect(page.locator('#player-action')).toHaveText('Create your player');
+  await expect(page.locator('#player-action')).toHaveText('Continue with Google');
+  await expect(page.locator('input[type=file]')).toHaveCount(0);
   await page.locator('#player-action').click();
-  await page.locator('#player-name').fill('No Slippi Needed');
-  const downloaded = page.waitForEvent('download');
-  await page.locator('#create-submit').click();
-  const file = await downloaded;
-  expect(file.suggestedFilename()).toBe('user.json');
-  const stream = await file.createReadStream();
-  let raw = ''; for await (const part of stream) raw += part;
-  const playerFile = JSON.parse(raw);
-  expect(playerFile.format).toBe('target-test-player-v1');
-  expect(playerFile.displayName).toBe('No Slippi Needed');
-  expect(playerFile.token).toMatch(/^[a-f0-9]{64}$/);
-  await expect(page.locator('#player-ready')).toBeVisible();
-  await page.locator('#player-ready .close-dialog').click();
-  await expect(page.locator('#display-name')).toHaveText('No Slippi Needed');
-  const dashboard = await page.request.get('http://localhost:4319/api/dashboard');
-  expect(await dashboard.text()).not.toContain(playerFile.token);
-  await page.locator('#logout').click();
-  await expect(page.locator('#player-action')).toHaveText('Create your player');
-  const response = await page.request.post('http://localhost:4319/api/companion/browser', { headers: { Authorization: `Bearer ${playerFile.token}` } });
-  const { url } = await response.json();
-  await page.goto(url);
-  await expect(page.locator('#display-name')).toHaveText('No Slippi Needed');
-  expect(page.url()).not.toContain('signin=');
+  await expect(page.locator('#username-dialog')).toBeVisible();
+  await page.locator('#username').fill('Browser_Player');
+  await page.locator('#username-submit').click();
+  await expect(page.locator('#connect-code')).toHaveText('@browser_player');
+  await page.locator('#connect-code').click();
+  await expect(page.locator('#public-name')).toHaveText('@browser_player');
   await page.goto('http://localhost:4318');
-  await page.locator('#player-file').setInputFiles({ name: 'user.json', mimeType: 'application/json', buffer: Buffer.from(raw) });
-  await expect(page.locator('#player-name')).toHaveText('No Slippi Needed');
-  await expect(page.locator('#toast')).toContainText('Player loaded');
+  await page.locator('#sign-out').click();
+  await expect(page.locator('#player-name')).toHaveText('Not signed in');
+  const popupEvent = context.waitForEvent('page'); await page.locator('#sign-in').click();
+  const popup = await popupEvent; await popup.waitForLoadState();
+  await expect(popup.locator('#connect-verification')).toHaveText(await page.locator('#account-code').innerText());
+  await popup.locator('#approve-companion').click();
+  await expect(popup.locator('#connect-status')).toContainText('Connected');
+  await expect(page.locator('#player-code')).toHaveText('@browser_player');
+  await expect(page.locator('#account-connection')).not.toBeVisible();
+  const dashboard = await (await page.request.get('http://localhost:4318/api/dashboard')).json();
+  expect(JSON.stringify(dashboard)).not.toContain('token');
+  await popup.close();
+  await page.goto('http://localhost:4319'); await page.locator('#logout').click();
+  await expect(page.locator('#player-action')).toHaveText('Continue with Google');
+  await page.locator('#player-action').click();
+  await expect(page.locator('#connect-code')).toHaveText('@browser_player');
+  await expect(page.locator('#username-dialog')).not.toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  expect(errors).toEqual([]);
 });
 
 test('website groups all submitted runs, retains old bests and exports the full history',async({page})=>{

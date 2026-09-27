@@ -36,18 +36,18 @@ for(const [id,action]of [['setup-iso','iso'],['setup-install','install'],['setup
 function toast(message){text('toast',message);$('toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').hidden=true,6500);}
 async function post(path,body,action='profile') { const r=await fetch(`/api/${path}`,{method:'POST',headers:{'X-TTRC-Action':action,'Content-Type':'application/json'},body:JSON.stringify(body||{})});const v=await r.json();if(!r.ok)throw new Error(v.error||'Please try again.');return v; }
 function render(d){
- data=d;renderSettings(d.settings);renderSetup(d.setup);const ident=d.identity,c=d.capture,connected=c.status==='connected';
+ data=d;renderAccount(d);renderSettings(d.settings);renderSetup(d.setup);const ident=d.identity,c=d.capture,connected=c.status==='connected';
  $('player-required').hidden=Boolean(ident);
  $('play').hidden=Boolean(c.native);$('recorder-note').hidden=Boolean(c.native);
  $('replay-folder').hidden=!c.replayEnabled;$('recorder').hidden=Boolean(c.replayEnabled);text('recorder-state',c.native?'Dolphin records automatically. Choose your ISO with Open in Dolphin.':c.replayEnabled?'Replay-enabled profile ready. Launch Dolphin here for your next recorded attempt.':'Standard Dolphin does not create .slp files. Prepare the replay-enabled profile for new attempts.');
- text('seed',d.challenge.rules.seed);text('player-name',ident?.displayName||'No player loaded');text('player-code',ident?.connectCode||'Import your challenge user.json');text('avatar',ident?.displayName.slice(0,2).toUpperCase()||'?');
- text('check-player',`${ident?'✓':'○'} Player file loaded`);text('connection',connected?ident?'Dolphin connected':'Practice · no player':'Waiting for Dolphin');$('connection').classList.toggle('on',connected&&Boolean(ident));
+ text('seed',d.challenge.rules.seed);text('player-name',ident?.displayName||'Not signed in');text('player-code',ident?.slug ? `@${ident.slug}` : ident?.connectCode || 'Sign in with Google');text('avatar',ident?.displayName.slice(0,2).toUpperCase()||'?');
+ text('check-player',`${ident?'✓':'○'} Signed in`);text('connection',connected?ident?'Dolphin connected':'Practice · no player':'Waiting for Dolphin');$('connection').classList.toggle('on',connected&&Boolean(ident));
  text('live-character',connected&&c.inGame&&names[c.character]?`${names[c.character]}${names[c.stage]?' → '+names[c.stage]:''}`:'Choose your character in Melee');
  const artCharacter=connected&&c.inGame&&Object.hasOwn(names,c.character)?c.character:'fox';
  if($('live-art').dataset.character!==artCharacter){$('live-art').src=`/assets/melee/${artCharacter}.webp`;$('live-art').dataset.character=artCharacter;}
  text('live-time',formatTime(connected&&c.inGame?c.timerFrames||0:0));text('capture-state',connected?c.inGame?'Attempt in progress':'Dolphin ready':'Waiting for Dolphin');
- text('capture-note',!ident?'Import your player file to save runs.':c.recording==='saved'?'Run saved. Its replay will be attached automatically.':'Experimental capture · only fresh, completed runs are saved.');
- text('launch-note',ident?'Automatic submissions on · valid personal bests upload with their replays.':'Practice mode: import user.json before starting a scored run.');
+ text('capture-note',!ident?'Sign in to save runs.':c.recording==='saved'?'Run saved. Its replay will be attached automatically.':'Experimental capture · only fresh, completed runs are saved.');
+ text('launch-note',ident?'Automatic submissions on · valid personal bests upload with their replays.':'Practice mode: sign in before starting a scored run.');
  $('targets').replaceChildren(...Array.from({length:d.challenge.rules.targets},(_,i)=>make('span','',i<(c.remaining??d.challenge.rules.targets)?'remaining':'')));
  text('sync',d.remote?.lastError|| (d.remote?.pending?`${d.remote.pending} submission(s) waiting to upload.`:'Automatic submissions on. No uploads waiting.'));
  const count=Object.values(d.progress||{}).filter(p=>p.best).length;$('progress-count').replaceChildren(document.createTextNode(count+' '),make('small','/ 25 cleared'));$('progress').value=count;
@@ -98,8 +98,33 @@ async function loadHistory(character,more=false,keepDepth=false){
 }
 async function refresh(){try{const revision=settingsRevision,r=await fetch('/api/dashboard');if(!r.ok)throw new Error();const next=await r.json();if(revision!==settingsRevision||savingSettings)next.settings=data?.settings;render(next);}catch{text('connection','Companion offline');}}
 for(const [id,value]of [['tab-all','all'],['tab-ready','ready'],['tab-sent','sent']])$(id).addEventListener('click',()=>{tab=value;for(const b of document.querySelectorAll('.run-tabs button'))b.classList.toggle('active',b.id===id);if(data)render(data);});
-for(const id of ['import-player','import-required'])$(id).addEventListener('click',()=>$('player-file').click());
-$('player-file').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{if(f.size>4096)throw new Error('Use your challenge user.json.');await post('player/import',JSON.parse(await f.text()));seen=undefined;toast('Player loaded. Start a fresh run to save your time.');refresh();}catch(err){toast(err.message);}});
+let startingSignIn = false;
+function renderAccount(d) {
+ $('sign-in').hidden = Boolean(d.identity); $('sign-out').hidden = !d.identity;
+ const connection = d.auth?.connection;
+ $('account-connection').hidden = !connection || ['idle', 'connected'].includes(connection.status);
+ if (!connection || connection.status === 'idle') return;
+ if (connection.status === 'connected') return;
+ text('account-code', connection.code?.match(/.{4}/g)?.join(' ') || '');
+ text('account-status', connection.error || 'Waiting for confirmation…');
+ $('account-link').hidden = connection.status !== 'pending';
+ if (connection.url) $('account-link').href = connection.url;
+}
+async function signIn() {
+ if (startingSignIn) return;
+ startingSignIn = true;
+ const popup = window.open('about:blank', '_blank'); if (popup) popup.opener = null;
+ try {
+  const connection = await post('account/start');
+  if (data) { data.auth.connection = connection; renderAccount(data); }
+  if (popup) popup.location = connection.url;
+  await refresh();
+ } catch (error) { popup?.close(); toast(error.message); }
+ finally { startingSignIn = false; }
+}
+for (const id of ['sign-in','sign-in-required']) $(id).addEventListener('click', signIn);
+$('account-cancel').addEventListener('click', async () => { try { await post('account/cancel'); await refresh(); } catch (error) { toast(error.message); } });
+$('sign-out').addEventListener('click', async () => { try { await post('account/logout'); seen = undefined; await refresh(); } catch (error) { toast(error.message); } });
 $('website').addEventListener('click',async()=>{if(!data?.identity){location.href='https://target-test-randomizer-challenge.vercel.app';return;}try{location.href=(await post('remote/browser')).url;}catch(err){toast(err.message);}});
 $('play').addEventListener('click',async()=>{launchingDolphin=true;$('play').disabled=true;$('play-settings').disabled=true;try{const result=await post('launch',{},'launch');toast(result.status==='already-running'?'Dolphin is already running.':'Dolphin is starting. Choose your character in Target Test.');refresh();}catch(err){toast(err.message);}finally{launchingDolphin=false;$('play').disabled=false;renderSettings(data?.settings);}});
 $('replay-folder').addEventListener('click',async()=>{try{await post('recorder/folder',{},'launch');}catch(e){toast(e.message);}});

@@ -26,6 +26,10 @@ export class RemoteSync {
     await writeFile(`${file}.tmp`, JSON.stringify(pairing), { mode: 0o600 }); await rename(`${file}.tmp`, file);
     this.pairing = pairing;
   }
+  async clearPairing() {
+    this.pairing = null;
+    await unlink(join(this.directory, 'companion.json')).catch(error => { if (error.code !== 'ENOENT') throw error; });
+  }
   async browserLink(identity) {
     if (!this.pairing || this.pairing.localPlayerId !== identity?.id) throw new Error('Player not linked');
     const response = await this.fetcher(`${this.origin}/api/companion/browser`, { method: 'POST',

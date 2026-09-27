@@ -14,7 +14,7 @@ function preference(key, fallback) { try { return JSON.parse(localStorage.getIte
 function savePreference(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch {} }
 let selection = new URLSearchParams(location.search).get('character') || 'fox';
 if (!Object.hasOwn(names, selection)) selection = 'fox';
-let data, toastTimer, downloadedFile, busy = false, seenRuns, playerSeen;
+let data, toastTimer, busy = false, seenRuns, playerSeen;
 const storedFavorites = preference('ttrc-favorites', []);
 const favorites = new Set(Array.isArray(storedFavorites) ? storedFavorites.filter(c => Object.hasOwn(names, c)) : []);
 let favoritesOnly = false;
@@ -81,17 +81,19 @@ function render(d) {
   const initials = ident ? ident.displayName.trim().split(/\s+/).slice(0, 2).map(w => Array.from(w)[0]).join('').toUpperCase() : '?';
   text('avatar', initials); text('top-avatar', initials);
   text('display-name', ident?.displayName || 'Not signed in');
-  text('connect-code', ident?.connectCode || (remote ? 'Create your challenge player' : 'Import your challenge user.json'));
+  const account = d.auth?.account, needsUsername = d.auth?.needsUsername;
+  text('connect-code', ident?.slug ? `@${ident.slug}` : account ? 'Choose your TTRC username' : 'Sign in to save your records');
+  if (ident?.slug) $('connect-code').href = `/players/${ident.slug}`; else $('connect-code').removeAttribute('href');
   text('top-name', ident?.displayName || 'My player');
   $('identity-check').hidden = !ident;
-  text('identity-note', remote ? ident ? 'Your challenge profile is ready. Import your user.json into the companion to submit runs.' :
-    'Choose a name, download your player file, and take it into the companion. No external account needed.' :
-    ident ? 'Player loaded from this challenge’s Dolphin profile. New completed runs are saved automatically.' : 'Download user.json from the challenge website, then import it here. No Slippi installation needed.');
-  text('player-action', remote ? ident ? 'Open companion ↗' : 'Create your player' : ident ? 'Open my online profile ↗' : 'Import user.json');
-  $('player-download').hidden = !remote || !ident;
-  $('logout').hidden = !remote || !ident;
-  $('player-switch').hidden = remote || !ident;
-  text('auth-note', remote ? 'Keep a backup of your user.json.' : d.remote?.paired ? 'Online records enabled · player file stays on your PC' : 'Your challenge file belongs only to this project.');
+  text('identity-note', ident?.slug ? 'Your records are linked to this account on every PC.' : account?.provider === 'legacy' ?
+    'Link Google to keep this profile and its existing records.' : 'Sign in with Google, then choose your TTRC username.');
+  text('player-action', needsUsername ? 'Choose username' : ident?.slug ? 'Open companion ↗' : 'Continue with Google');
+  $('player-action').disabled = !d.auth?.configured && !ident?.slug;
+  $('logout').hidden = !account;
+  text('auth-note', !d.auth?.configured ? 'Google sign-in is being configured. Please try again later.' : 'Your Google name is not shown publicly.');
+  renderConnection();
+  if (needsUsername && !usernamePrompted) { usernamePrompted = true; $('username-dialog').showModal(); }
   $('scores').replaceChildren();
   const publicRows=revealed?d.leaderboard:(d.participants||[]);
   for (const score of publicRows) {
@@ -109,11 +111,11 @@ function render(d) {
   const gap = best && leader && best.frames > leader.frames ? ` · ${time(best.frames - leader.frames)} behind #1` : '';
   $('personal-time').replaceChildren(document.createTextNode(best ? time(best.frames) : '—'), node('span', best ? `your best on this seed${gap}` : 'no completed runs yet'));
   const connected = d.capture.status === 'connected';
-  text('capture-top', remote ? (revealed?'Challenge closed':'Submissions open') : connected ? ident ? '● Dolphin connected' : 'Practice only · import user.json' : '○ Waiting for Dolphin');
+  text('capture-top', remote ? (revealed?'Challenge closed':'Submissions open') : connected ? ident ? '● Dolphin connected' : 'Practice only · sign in' : '○ Waiting for Dolphin');
   $('capture-top').classList.toggle('connected', remote || (connected && Boolean(ident)));
   text('capture-title', remote ? ident ? 'Submit from the companion' : 'Player required' : connected ? d.capture.inGame ? 'Run in progress' : 'Dolphin detected' : 'Local companion');
-  text('capture-detail', remote ? ident ? 'Valid personal bests and their replays are submitted automatically. They stay private unless you disclose them.' : 'Create your player file and join the challenge.' :
-    !ident ? 'Import user.json to record your runs.' : d.remote?.lastError || (d.remote?.pending ? `${d.remote.pending} run(s) waiting to upload. Local records are safe.` : connected ? d.capture.inGame ? `${d.capture.remaining} targets left · experimental capture` : 'Start a fresh run, then click Submit on your best attempt.' : 'Play the challenge to connect Dolphin.'));
+  text('capture-detail', remote ? ident ? 'Valid personal bests and their replays are submitted automatically. They stay private unless you disclose them.' : 'Sign in, then connect your companion to submit records.' :
+    !ident ? 'Sign in to record your runs.' : d.remote?.lastError || (d.remote?.pending ? `${d.remote.pending} run(s) waiting to upload. Local records are safe.` : connected ? d.capture.inGame ? `${d.capture.remaining} targets left · experimental capture` : 'Start a fresh run, then click Submit on your best attempt.' : 'Play the challenge to connect Dolphin.'));
   const progress = Object.values(d.progress || {}).filter(p => p.best);
   const cleared = progress.length, total = Object.keys(c.assignments).length;
   text('progress-count', `${cleared} / ${total}`); $('progress-bar').max = total; $('progress-bar').value = cleared;
@@ -141,7 +143,7 @@ function renderHistory(d) {
   const expanded=new Set(root.dataset.owner===owner?[...root.querySelectorAll('details[open]')].map(el=>el.dataset.character):[]);
   root.dataset.owner=owner;root.replaceChildren();
   $('history-empty').hidden=d.history.length>0;$('export-runs').disabled=!d.history.length;
-  text('history-empty',d.identity?'Your valid personal bests appear here automatically after the companion uploads their replays.':'Sign in through your companion to see all your submitted runs.');
+  text('history-empty',d.identity?'Your valid personal bests appear here automatically after the companion uploads their replays.':'Sign in to see all your submitted runs.');
   const groups=new Map();for(const r of d.history){if(!groups.has(r.character))groups.set(r.character,[]);groups.get(r.character).push(r);}
   text('history-count',`${groups.size} character${groups.size===1?'':'s'} · ${d.history.length} submitted run${d.history.length===1?'':'s'}`);
   const status=r=>({pending:'In review',approved:'Approved',rejected:'Rejected'})[r.status]||r.status||'Submitted';
@@ -180,7 +182,8 @@ $('confirm-disclose').addEventListener('click',async()=>{
   catch(error){text('disclose-error',error.message);}finally{$('confirm-disclose').disabled=false;}
 });
 function renderShared(d){
-  const runs=d.sharedRuns||[],key=JSON.stringify(runs);if(key===sharedKey)return;sharedKey=key;
+  const profilePlayer=$('public-profile').dataset.player;
+  const runs=(d.sharedRuns||[]).filter(r=>!profilePlayer||r.playerId===profilePlayer),key=JSON.stringify(runs);if(key===sharedKey)return;sharedKey=key;
   text('shared-count',runs.length);$('shared-empty').hidden=runs.length>0;$('shared-list').replaceChildren();
   const linkId=new URLSearchParams(location.search).get('run'),linkPlayer=new URLSearchParams(location.search).get('player');
   for(const r of runs){
@@ -246,36 +249,50 @@ $('share').addEventListener('click', async () => {
   try { await navigator.clipboard.writeText(url.href); toast('Challenge link copied.'); }
   catch { toast(`Share: ${url.href}`); }
 });
-$('player-action').addEventListener('click', async () => {
+let usernamePrompted = false;
+const connectId = new URLSearchParams(location.search).get('connect');
+let connectionInfo, connectionDone = false;
+function googleSignIn() {
+  const url = new URL('/api/auth/google/start', location.origin);
+  if (/^[a-f0-9]{64}$/.test(connectId || '')) url.searchParams.set('connect', connectId);
+  location.href = url.href;
+}
+$('player-action').addEventListener('click', () => {
   if (!data) return;
-  if (data.scope === 'public') { if (data.identity) $('play-guide').showModal(); else $('create-player').showModal(); return; }
-  if (!data.identity) { $('player-upload').click(); return; }
-  try { const result = await action('remote/browser'); location.href = result.url; }
+  if (data.auth?.needsUsername) { $('username-dialog').showModal(); return; }
+  if (data.identity?.slug) { window.open('http://localhost:4317', '_blank', 'noopener'); return; }
+  googleSignIn();
+});
+$('username').addEventListener('input', () => text('username-preview', `${location.origin}/players/${$('username').value.trim().toLowerCase()}`));
+$('username-form').addEventListener('submit', async e => {
+  e.preventDefault(); if (busy) return; busy = true; $('username-submit').disabled = true; text('username-error', '');
+  try { await action('players/username', { username: $('username').value }); $('username-dialog').close(); await refresh(); toast('Username saved.'); }
+  catch (error) { text('username-error', error.message); }
+  finally { busy = false; $('username-submit').disabled = false; }
+});
+$('logout').addEventListener('click', async () => {
+  try { await action('auth/logout'); usernamePrompted = false; await refresh(); toast('Signed out of this browser.'); }
   catch (error) { toast(error.message); }
 });
-$('create-player-form').addEventListener('submit', async e => {
-  e.preventDefault(); if (busy) return; busy = true; $('create-submit').disabled = true; text('create-error', '');
-  try {
-    const result = await action('players/create', { displayName: $('player-name').value.trim() });
-    downloadedFile = result.playerFile; download(downloadedFile, 'user.json');
-    $('create-player').close(); $('player-ready').showModal(); await refresh();
-  } catch (error) { text('create-error', error.message); }
-  finally { busy = false; $('create-submit').disabled = false; }
+function renderConnection() {
+  if (!connectId) return;
+  $('connect-panel').hidden = false;
+  if (connectionDone) { text('connect-status', 'Connected. You can return to your companion.'); $('approve-companion').hidden = true; return; }
+  if (!connectionInfo) return;
+  text('connect-verification', connectionInfo.code.match(/.{4}/g).join(' '));
+  const google = data?.auth?.account?.provider === 'google', ready = google && data?.identity?.slug;
+  text('connect-status', ready ? `Connect as @${data.identity.slug}` : google ? 'Choose your username to continue.' : 'Sign in with Google to continue.');
+  text('approve-companion', ready ? 'Connect companion' : google ? 'Choose username' : 'Continue with Google');
+  $('approve-companion').disabled = !data?.auth?.configured;
+}
+$('approve-companion').addEventListener('click', async () => {
+  if (data?.auth?.account?.provider !== 'google') { googleSignIn(); return; }
+  if (!data?.identity?.slug) { $('username-dialog').showModal(); return; }
+  $('approve-companion').disabled = true;
+  try { await action('companion/connect/approve', { id: connectId, code: connectionInfo.code }); connectionDone = true; renderConnection(); }
+  catch (error) { text('connect-status', error.message); }
+  finally { $('approve-companion').disabled = false; }
 });
-$('download-again').addEventListener('click', () => { if (downloadedFile) download(downloadedFile, 'user.json'); });
-$('player-download').addEventListener('click', async () => {
-  $('player-download').disabled = true;
-  try { const result = await action('players/download'); downloadedFile = result.playerFile; download(downloadedFile, 'user.json'); toast('user.json downloaded. Keep this file private and save a backup.'); }
-  catch (error) { toast(error.message); } finally { $('player-download').disabled = false; }
-});
-$('player-switch').addEventListener('click', () => $('player-upload').click());
-$('player-upload').addEventListener('change', async e => {
-  const file = e.target.files[0]; e.target.value = ''; if (!file) return;
-  if (file.size > 4096) { toast('Use the user.json downloaded from this challenge website.'); return; }
-  try { const player = JSON.parse(await file.text()); await action('player/import', player); toast('Player loaded. New runs save locally. Click Submit to send your best run with its replay.'); await refresh(); }
-  catch { toast('Could not import this file. Use our challenge user.json and check your connection.'); }
-});
-$('logout').addEventListener('click', async () => { try { await action('auth/logout'); downloadedFile = null; await refresh(); toast('Website signed out. Your companion can keep recording runs.'); } catch (error) { toast(error.message); } });
 $('export-runs').addEventListener('click', () => {
   if (!data?.history.length) return;
   const rows = ['character,stage,frames,time,date', ...data.history.map(r => [r.character, r.stage, r.frames, time(r.frames), r.createdAt].join(','))];
@@ -295,6 +312,29 @@ async function consumeSignIn() {
 }
 window.addEventListener('hashchange', async () => { await consumeSignIn(); await refresh(); });
 await consumeSignIn();
+if (connectId) {
+  $('connect-panel').hidden = false;
+  try {
+    const response = await fetch(`/api/companion/connect/info?id=${encodeURIComponent(connectId)}`), result = await response.json();
+    if (!response.ok) throw new Error(result.error);
+    connectionInfo = result;
+  } catch (error) { text('connect-status', error.message); }
+}
+const authError = new URLSearchParams(location.search).get('authError');
+if (authError) {
+  toast(authError === 'configuration' ? 'Google sign-in is being configured. Please try again later.' : 'Google sign-in did not finish. Try again. If this Google account belongs to another TTRC profile, sign out before switching accounts.');
+  const clean = new URL(location); clean.searchParams.delete('authError'); history.replaceState(null, '', clean);
+}
+const profileSlug = location.pathname.match(/^\/players\/([a-z0-9_]+)$/)?.[1];
+if (profileSlug) {
+  $('public-profile').hidden = false;
+  try {
+    const response = await fetch(`/api/players/profile?slug=${encodeURIComponent(profileSlug)}`), result = await response.json();
+    if (!response.ok) throw new Error(result.error);
+    text('public-name', `@${result.profile.slug}`); document.title = `@${result.profile.slug} · TTRC`;
+    $('public-profile').dataset.player = result.profile.id;
+  } catch (error) { text('public-name', 'Player not found'); text('public-note', error.message); }
+}
 await refresh();
 setInterval(() => { if (!document.hidden && !busy) refresh(); }, 5000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });

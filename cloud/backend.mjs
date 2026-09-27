@@ -1,23 +1,24 @@
+import { createAuth, googleProvider, publicProfile } from './auth.mjs';
 import { createCompetition } from './competition.mjs';
 import { createHash, randomBytes } from 'node:crypto';
 
 const hash = value => createHash('sha256').update(value).digest('hex');
 const random = () => randomBytes(32).toString('hex');
 const cookieValue = (req, name) => (req.headers.cookie || '').split(';').map(s => s.trim()).find(s => s.startsWith(`${name}=`))?.slice(name.length + 1);
-export function createCloudHandler({ store, challenge, gecko, origin, secret, reviewerKey, endsAt, now = Date.now }) {
+export function createCloudHandler({ store, challenge, gecko, origin, secret, reviewerKey, endsAt, now = Date.now, googleClientId, googleClientSecret, google: injectedGoogle, allowLegacySignup = false }) {
   const cookie = (name, value, seconds) => `${name}=${value}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${seconds}`;
   const json = (res, status, value) => { res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' }); res.end(JSON.stringify(value)); };
   const session = async req => {
     const token = cookieValue(req, 'ttrc_session');
     if (!/^[a-f0-9]{64}$/.test(token || '')) return null;
     const data = await store.get(`sessions/${hash(token)}.json`);
-    return data?.expires > Date.now() ? data : null;
+    return data?.expires > now() ? data : null;
   };
   const bearer = async req => {
     const token = req.headers.authorization?.match(/^Bearer ([a-f0-9]{64})$/)?.[1];
     if (!token) return null;
     const data = await store.get(`devices/${hash(token)}.json`);
-    return data?.expires > Date.now() ? data : null;
+    return data?.expires > now() ? data : null;
   };
   const body = async req => {
     if (req.body !== undefined) {
@@ -29,6 +30,9 @@ export function createCloudHandler({ store, challenge, gecko, origin, secret, re
     for await (const chunk of req) { data += chunk; if (data.length > 16_384) throw new Error('Body too large'); }
     return JSON.parse(data || '{}');
   };
+  const google = injectedGoogle || googleProvider({ clientId: googleClientId, clientSecret: googleClientSecret, origin });
+  if (!secret) google.configured = false;
+  const auth = createAuth({ store, origin, secret, google, session, body, cookie, json, now });
   const competition = createCompetition({ store, challenge, gecko, origin, reviewerKey, endsAt, bearer, session, json, now });
 
   return async (req, res) => {
@@ -38,16 +42,17 @@ export function createCloudHandler({ store, challenge, gecko, origin, secret, re
       const url = new URL(req.url, origin);
       const path = url.searchParams.get('route') || url.pathname.replace(/^\/api\/?/, '');
       if (req.headers.origin && req.headers.origin !== origin) return json(res, 403, { error: 'Origin not allowed.' });
-      if (req.method === 'POST' && !['companion/browser', 'runs', 'submissions'].includes(path) && req.headers.origin !== origin) {
+      if (req.method === 'POST' && !['companion/browser', 'companion/connect/start', 'companion/connect/poll', 'runs', 'submissions'].includes(path) && req.headers.origin !== origin) {
         return json(res, 403, { error: 'Action not allowed.' });
       }
+      if (await auth(path, req, res, url)) return;
       if (await competition.handle(path, req, res)) return;
       if (req.method === 'GET' && path === 'dashboard') {
         const character = url.searchParams.get('character') || 'fox';
         if (!Object.hasOwn(challenge.assignments, character)) return json(res, 400, { error: 'Unknown character.' });
         const user = await session(req);
         const profile = user ? await store.get(`profiles/${user.id}.json`) : null;
-        const identity = profile ? { ...profile, verified: false, source: 'companion' } : null;
+        const identity = profile ? { ...publicProfile(profile), verified: false, source: 'companion' } : null;
         const rows = await competition.list();
         const phase = await competition.phase();
         const disclosed=await competition.disclosures(), sharedRuns=await competition.shared();
@@ -66,7 +71,7 @@ export function createCloudHandler({ store, challenge, gecko, origin, secret, re
         const mine = user ? rows.filter(r => r.playerId === user.id) : [];
         const personalBest = mine.filter(r => r.character === character).sort((a, b) => a.frames - b.frames)[0];
         return json(res, 200, { challenge, competition: phase, scope: 'public', identity, player: user ? { id: user.id } : null,
-          auth: { mode: 'companion', configured: true, account: user ? { name: user.name, linked: Boolean(profile) } : null },
+          auth: { mode: 'google', configured: google.configured, needsUsername: user?.provider === 'google' && !profile?.slug, account: user ? { name: profile?.displayName || '', provider: user.provider || 'legacy', linked: Boolean(profile) } : null },
           capture: { status: 'remote', experimental: true },
           leaderboard: leaders, participants, sharedRuns, stats: { completions: rows.filter(r => r.current && r.status === 'approved').length, players: participants.length, characters: new Set(rows.filter(r => r.current && r.status === 'approved').map(r => r.character)).size },
           history: mine.sort((a, b) => b.createdAt.localeCompare(a.createdAt) || a.id.localeCompare(b.id)).map(r => ({ id: r.id, character: r.character, stage: r.stage, frames: r.frames, createdAt: r.createdAt, status: r.status, current:r.current, disclosed:disclosed.has(`${r.playerId}:${r.id}`), reviewNote: r.reviewNote })),
@@ -88,6 +93,7 @@ export function createCloudHandler({ store, challenge, gecko, origin, secret, re
         return json(res, 200, { ok: true });
       }
       if (req.method === 'POST' && ['players/create', 'players/download'].includes(path)) {
+        if (!allowLegacySignup) return json(res, 410, { error: 'Sign in with Google. Player file downloads are no longer used.' });
         let profile;
         if (path === 'players/create') {
           const input = await body(req);
@@ -126,7 +132,7 @@ export function createCloudHandler({ store, challenge, gecko, origin, secret, re
         const device = await bearer(req);
         if (!device) return json(res, 401, { error: 'Open your companion to sign in.' });
         const ticket = random();
-        await store.put(`tickets/${hash(ticket)}.json`, { id: device.id, name: device.displayName, expires: Date.now() + 60_000 });
+        await store.put(`tickets/${hash(ticket)}.json`, { id: device.id, name: device.displayName, provider: device.slug ? 'google' : 'legacy', expires: Date.now() + 60_000 });
         // Fragment stays out of HTTP logs and is removed by the browser before redemption.
         return json(res, 200, { url: `${origin}/#signin=${ticket}` });
       }
@@ -139,7 +145,7 @@ export function createCloudHandler({ store, challenge, gecko, origin, secret, re
         try { await store.put(`tickets-used/${key}.json`, { at: Date.now() }); }
         catch { return json(res, 409, { error: 'Sign-in link already used.' }); }
         const token = random();
-        await store.put(`sessions/${hash(token)}.json`, { id: ticket.id, name: ticket.name, expires: Date.now() + 30 * 86400_000 });
+        await store.put(`sessions/${hash(token)}.json`, { id: ticket.id, name: ticket.name, provider: ticket.provider, expires: Date.now() + 30 * 86400_000 });
         await store.delete(`tickets/${key}.json`);
         res.setHeader('Set-Cookie', cookie('ttrc_session', token, 30 * 86400));
         return json(res, 200, { ok: true });

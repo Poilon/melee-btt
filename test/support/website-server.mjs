@@ -3,6 +3,7 @@ import { artworkFiles } from '../../shared/artwork.mjs';
 import { generateChallenge } from '../../src/challenge.mjs';
 import { parsePlayer, playerIdentity } from '../../server/player.mjs';
 import { ScoreStore } from '../../server/store.mjs';
+import { CompanionAccount } from '../../server/account.mjs';
 import { createApp } from '../../server/app.mjs';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
@@ -18,11 +19,12 @@ const memory = {
   async delete(path) { rows.delete(path); },
   async list(prefix) { return [...rows].filter(([p]) => p.startsWith(prefix)).map(([pathname, row]) => ({ pathname, uploadedAt: row.uploadedAt })); },
 };
-const publicHandler = createCloudHandler({ store: memory, challenge, gecko, origin, secret: 'test-only', reviewerKey });
+const publicHandler = createCloudHandler({ store: memory, challenge, gecko, origin, secret: 'test-only', reviewerKey, allowLegacySignup: true, google: { configured: true, authorize: ({ state }) => `${origin}/api/auth/google/callback?state=${state}&code=browser-google`, exchange: async code => code } });
 const staticFiles = { ...Object.fromEntries(artworkFiles), '/': ['index.html','text/html'], '/review': ['review.html','text/html'], ...Object.fromEntries(['app.js','time.js','review.js'].map(p=>['/'+p,[p,'text/javascript']])), ...Object.fromEntries(['style.css','review.css'].map(p=>['/'+p,[p,'text/css']])), '/target.svg':['target.svg','image/svg+xml'] };
 await new Promise(resolve => createServer(async (req, res) => {
   if (req.url.startsWith('/api/')) return publicHandler(req, res);
-  const file = staticFiles[new URL(req.url, origin).pathname];
+  const path = new URL(req.url, origin).pathname;
+  const file = path.startsWith('/players/') ? staticFiles['/'] : staticFiles[path];
   if (!file) { res.writeHead(404); res.end(); return; }
   res.writeHead(200, { 'Content-Type': file[1] }); res.end(await readFile(new URL(`../../web/${file[0]}`, import.meta.url)));
 }).listen(4319, '127.0.0.1', resolve));
@@ -43,8 +45,10 @@ const remote = {
     store.setSubmission(run.id,'pending','Awaiting human review',name);
   }
 };
+const account = new CompanionAccount({ origin, accept: async file => { player = parsePlayer(file, origin); currentIdentity = playerIdentity(player); }, signOut: async () => { currentIdentity = null; } });
+setInterval(() => account.poll(), 100);
 let playSettings={music:true,rumble:true};
-createApp({ challenge, gecko, store, remote,
+createApp({ challenge, gecko, store, remote, account,
   getPlaySettings:()=>({...playSettings}),savePlaySettings:async value=>(playSettings={...value}),
   replays: {
     list: async()=>[{id:'a'.repeat(64),name:'record.slp',character:'donkey-kong',stage:'donkey-kong',ready:true}],

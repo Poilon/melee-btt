@@ -90,7 +90,7 @@ test('local API blocks foreign origins and arbitrary score writes; serves actual
   const f = await fixture(t);
   const get = await fetch(`${f.base}/api/dashboard?character=fox`);
   const body = await get.json();
-  assert.equal(body.challenge.id, challenge.id); assert.equal(body.auth.mode, 'player-file');
+  assert.equal(body.challenge.id, challenge.id); assert.equal(body.auth.mode, 'google');
   assert.deepEqual(body.leaderboard, []);
   assert.equal((await fetch(`${f.base}/api/dashboard?character=bad`)).status, 400);
   assert.equal((await fetch(`${f.base}/api/dashboard`, { headers: { Origin: 'https://evil.test' } })).status, 403);

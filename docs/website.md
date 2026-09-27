@@ -6,12 +6,9 @@ Local companion: **http://localhost:4317**. Organizer desk on this PC:
 
 ## Play and submit
 
-1. On the public website, **Create your player**, choose a name and download
-   **user.json**. No Discord, Slippi account, email or password is required.
-2. Run `npm start`, open the companion, then **Import player** with that file.
-3. Use **Prepare replay-enabled Dolphin** once, close the old Dolphin when ready,
-   and **Launch Dolphin** from the companion. A Slippi Dolphin executable is needed
-   to write `.slp` files; no Slippi login is needed for offline Target Test.
+1. Open the TTRC build of **Slippi Dolphin.exe** and select your Melee USA 1.02 ISO with **Open**.
+2. Open **Tools → TTRC Companion**, click **Sign in**, then continue with Google in your browser.
+3. Choose a unique TTRC username on first sign-in. Confirm that the website and companion show the same code, then **Connect companion**. Credentials are saved automatically; there is no player-file download/import step.
 4. Choose your character in Dolphin and play a fresh attempt with the companion
    running. Completed runs are saved locally. Valid personal bests are submitted
    automatically once their matching replay is complete.
@@ -42,29 +39,38 @@ loads older runs in pages of 50. The website displays and exports all of your
 submitted runs across characters, grouped by personal best with expandable
 history. Personal bests include all stored attempts.
 
-## Player file
+## Accounts and companion connection
 
-This is our own `target-test-player-v1` file, unrelated to Slippi's account format.
-The companion verifies it with the website and puts it under
-`build/replay-profiles/<challenge-id>/Challenge/user.json` for the replay profile.
-The `Challenge` subfolder avoids colliding with Slippi Dolphin's own account file.
-Standard Dolphin practice profiles use `build/profiles/<challenge-id>/user.json`.
-When switching from the standard profile to the replay profile, the companion
-restores the player already imported for this challenge after verifying it with
-the website. An existing destination file is never silently replaced.
-No Slippi credentials are searched for, copied or uploaded.
+Google OpenID Connect uses authorization code + PKCE, state and nonce. The server
+validates Google's ID token signature, audience, issuer, expiry and authorized
+party. It stores a hashed Google subject mapping, never email or real name.
+Website sessions use an HttpOnly, Secure, SameSite=Lax cookie and expire after 30 days.
 
-Keep the file private and backed up: its key can sign in and submit as your player.
-Import the same file on another PC to keep the same identity. While signed in,
-**Download user.json again** issues another key; existing keys remain valid until
-expiry. There is no email recovery if both the file and browser session are lost.
-Player keys last one year and website sessions last 30 days. Display names and
-short TT codes are labels, not unique or verified identities; the full player ID
-identifies the account.
+The first login reserves a case-insensitive, permanent username (3–24 ASCII
+letters/numbers/underscores, starting with a letter or number). Create-only Blob
+reservations enforce uniqueness across serverless instances. `/players/<slug>`
+exposes only public identity and explicitly disclosed replays, never private records.
 
-**Open challenge website** in the companion signs you in with a one-time, 60-second
-link. The browser removes its fragment before exchanging it for an HttpOnly,
-Secure cookie. Signing out of the site does not stop automatic uploads from the companion.
+The companion requests a ten-minute connection and shows a verification code.
+The signed-in browser explicitly approves the matching request. The companion
+polls using a private random secret; only that poll can obtain the device credential.
+A lost response can be retried without creating extra credentials. Cancel, expiry,
+sign-out and account changes stop the pending flow. A device credential lasts one year.
+
+Credentials remain internally managed in `User/Challenge/user.json` and
+`.local/companion.json`. No Slippi credentials are searched for, copied or uploaded.
+Signing out of the companion prevents legacy files from silently signing back in.
+Local runs and replays remain on disk, scoped to their original player ID.
+
+For migration, **Open challenge website** from an already connected companion,
+then **Continue with Google**. Possession of that legacy session lets Google link
+to the original player ID; records and display names are retained. It never merges
+accounts by matching a display name. Existing device credentials continue working.
+Anonymous profile creation and manual player-file downloads return HTTP 410.
+
+**Open challenge website** uses a one-time, 60-second sign-in ticket in a URL
+fragment, removed before redemption. Signing out of the website does not stop
+companion uploads. See [Google OAuth deployment setup](google-auth.md).
 
 ## Sealed leaderboard
 
@@ -209,7 +215,7 @@ from deployment. Cloud storage holds profiles, hashed device/session keys,
 submissions, private evidence, review decisions and challenge closure state.
 Legacy score-only uploads return HTTP 410 and cannot enter the leaderboard.
 
-Vercel environment: `BLOB_READ_WRITE_TOKEN`, `SESSION_SECRET`, `REVIEWER_KEY` and
+Vercel environment: `BLOB_READ_WRITE_TOKEN`, `SESSION_SECRET`, `REVIEWER_KEY`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` and
 optionally `CHALLENGE_ENDS_AT`. The current active seed is **20260989**. New seeds
 require generating a challenge, preparing its Dolphin profile and deploying the
 same manifest/code. Use `TTRC_CHALLENGE_DIR` for a different local challenge folder.

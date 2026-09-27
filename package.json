@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@slippi/slippi-js": "9.1.3",
-    "@vercel/blob": "^2.8.0"
+    "@vercel/blob": "^2.8.0",
+    "jose": "^6.2.12"
   }
 }

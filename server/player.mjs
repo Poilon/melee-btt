@@ -6,9 +6,9 @@ export function parsePlayer(value, origin) {
       !/^[a-f0-9]{64}$/.test(value.id || '') || !/^[a-f0-9]{64}$/.test(value.token || '') ||
       typeof value.displayName !== 'string' || !value.displayName.trim() || value.displayName.length > 24 ||
       /[\u0000-\u001f\u007f]/.test(value.displayName) || !/^TT#[0-9]{5}$/.test(value.connectCode || '')) throw new Error('Invalid challenge player file');
-  return { format: value.format, origin, id: value.id, displayName: value.displayName, connectCode: value.connectCode, token: value.token };
+  return { format: value.format, origin, id: value.id, displayName: value.displayName, connectCode: value.connectCode, token: value.token, ...(/^[a-z0-9][a-z0-9_]{2,23}$/.test(value.slug || '') ? { slug: value.slug } : {}) };
 }
-export const playerIdentity = file => ({ id: file.id, displayName: file.displayName, connectCode: file.connectCode, source: 'challenge', verified: false });
+export const playerIdentity = file => ({ id: file.id, displayName: file.displayName, connectCode: file.connectCode, source: 'challenge', verified: false, ...(file.slug ? { slug: file.slug } : {}) });
 export async function readPlayer(path, origin) {
   try { const text = await readFile(path, 'utf8'); if (text.length > 4096) return null; return parsePlayer(JSON.parse(text.replace(/^\uFEFF/, '')), origin); } catch { return null; }
 }

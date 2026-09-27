@@ -10,7 +10,7 @@ Randomized targets, shuffled character stages, and a shared seed for **Super Sma
 2. Open **Slippi Dolphin.exe**. This is the TTRC build of Dolphin; the companion starts in the background with it.
 3. Click **Open** in Dolphin and select your original **Melee USA 1.02** ISO. It stays in its existing folder. Dolphin checks it before starting the game.
 4. Open **Tools → TTRC Companion** to see your runs and settings in your browser.
-5. [Create your player on the website](https://target-test-randomizer-challenge.vercel.app), download your `user.json`, and **Import player** in the companion before starting a scored run. No Slippi or Discord account is needed.
+5. Click **Sign in** in the companion. Continue with Google, choose a unique TTRC username, and confirm the matching connection code in your browser. No player file or Slippi account is needed.
 6. Choose any character in Melee. New valid personal bests are submitted automatically with their replay.
 
 Windows 10/11 **x64**. No separate launcher, command window, WSL, Node.js or Python installation. The companion stops when you close Dolphin. Internet is required for submissions and the first replay playback, which downloads the official Slippi Playback build. GameCube adapters may need their Windows driver installed. Other controllers can be configured in Dolphin’s **Controllers** window.
@@ -29,7 +29,7 @@ Windows 10/11 **x64**. No separate launcher, command window, WSL, Node.js or Pyt
 
 **Game music** and **Controller rumble** can be toggled in the companion. Settings are saved automatically and apply on the next launch of Dolphin. The custom title appears on Melee’s character-select screen.
 
-Replays are stored in **`Replays`**, next to Dolphin. The portable emulator profile and player file live in **`User`**; scores and pending uploads stay in **`.local`**.
+Replays are stored in **`Replays`**, next to Dolphin. The portable emulator profile and managed sign-in credentials live in **`User`**; scores and pending uploads stay in **`.local`**.
 
 ## Updating and troubleshooting
 
@@ -40,8 +40,22 @@ Close Dolphin, back up `.local`, `User`, and `Replays`, then extract the latest 
 - **Replay player download interrupted:** click Watch replay again to retry.
 - **Game is already open:** close it before applying music/rumble changes or launching another session.
 - **No controller input:** check Dolphin’s Controllers settings and your adapter driver.
-- **No score saved:** import your player before the attempt; start a fresh run and complete it without pausing. Leave the results screen so Dolphin finishes saving the replay.
+- **No score saved:** sign in before the attempt; start a fresh run and complete it without pausing. Leave the results screen so Dolphin finishes saving the replay.
 - **Windows blocks the app:** these initial releases are unsigned. Verify the download source and compare the ZIP with `SHA256SUMS.txt`; do not disable Windows security globally.
+
+## Accounts
+
+Sign in with the same Google account on each PC to keep your TTRC profile and records.
+Your public username is unique and permanent, with a profile at `/players/your_username`.
+Your Google name and email are not published or stored. Signing out of the website
+leaves the companion connected; signing out in the companion stops new scored runs.
+
+**Existing players:** open the website using **Open challenge website** in your
+already connected companion, then **Continue with Google**. This links your existing
+player ID and keeps its records. Choose your username once. Do this before creating
+a separate TTRC account with Google; distinct existing accounts are not merged automatically.
+
+Self-hosting requires Google OAuth credentials; see [Google setup](docs/google-auth.md).
 
 ## Development
 

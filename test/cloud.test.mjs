@@ -20,7 +20,7 @@ function fixture(options = {}) {
     async delete(path) { rows.delete(path); },
     async list(prefix) { return [...rows].filter(([p]) => p.startsWith(prefix)).map(([pathname, r]) => ({ pathname, uploadedAt: r.uploadedAt })); },
   };
-  const handler = createCloudHandler({ store, challenge, gecko: 'CODE', origin, secret: 'test-secret', reviewerKey, ...options,
+  const handler = createCloudHandler({ store, challenge, gecko: 'CODE', origin, secret: 'test-secret', reviewerKey, allowLegacySignup: true, ...options,
   });
   async function request(path, { method = 'GET', headers = {}, body } = {}) {
     const result = { headers: {}, status: 200 };

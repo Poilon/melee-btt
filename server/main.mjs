@@ -1,4 +1,4 @@
-import { mkdir, readFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile, rm, access } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { resolve, join } from 'node:path';
 import { execFile } from 'node:child_process';
@@ -13,6 +13,7 @@ import { ScoreStore } from './store.mjs';
 import { RunDetector } from './telemetry.mjs';
 import { DolphinBridge } from './bridge.mjs';
 import { createApp } from './app.mjs';
+import { CompanionAccount } from './account.mjs';
 import { RemoteSync } from './remote.mjs';
 import { AutoSubmitter } from './auto-submit.mjs';
 import { ReplayLibrary } from './replays.mjs';
@@ -38,13 +39,18 @@ try { runtime = JSON.parse(await readFile(join(challengeDir, 'runtime.json'), 'u
 const profilePlayerPath = rt => rt?.recording ? join(rt.profile, 'Challenge', 'user.json') : join(rt?.profile || join(root, 'build/profiles', stored.id), 'user.json');
 let playerPath = profilePlayerPath(runtime);
 let identity = null;
-async function refreshPlayer() {
+const signedOutPath = join(root, '.local/signed-out');
+let signedOut = await access(signedOutPath).then(() => true, () => false);
+let playerQueue = Promise.resolve();
+function withPlayerLock(fn) { const next = playerQueue.then(fn); playerQueue = next.catch(() => {}); return next; }
+async function refreshPlayer() { return withPlayerLock(async () => {
+  if (signedOut) { identity = null; return; }
   try {
     const previous = runtime?.recording ? join(root, 'build/profiles', stored.id, 'user.json') : null;
     const file = await restoreProfilePlayer(playerPath, previous, siteOrigin, file => remote.usePlayer(file));
     identity = file ? playerIdentity(file) : null;
   } catch { identity = null; }
-}
+}); }
 await refreshPlayer();
 const refreshIdentity = setInterval(refreshPlayer, 5000);
 const syncTimer = setInterval(async () => { await remote.flush(); await remote.refreshReviews(); }, 15_000);
@@ -74,19 +80,28 @@ const onboarding = new Onboarding({ root, challengeDir, onReady: async next => {
   bridge.stop(); bridge.profile = next.profile; await bridge.start();
 } });
 await onboarding.initialize(runtime);
+const acceptPlayer = value => withPlayerLock(async () => {
+  const file = parsePlayer(value, siteOrigin);
+  await remote.usePlayer(file); await savePlayer(playerPath, file);
+  await rm(signedOutPath, { force: true }); signedOut = false;
+  identity = playerIdentity(file); detector.reset();
+});
+const account = new CompanionAccount({ origin: siteOrigin, accept: acceptPlayer, signOut: () => withPlayerLock(async () => {
+  await writeFile(signedOutPath, 'signed out\n', { mode: 0o600 });
+  signedOut = true; identity = null; detector.reset();
+  await rm(playerPath, { force: true });
+  await remote.clearPairing();
+}) });
+const accountTimer = setInterval(() => { account.poll().catch(() => {}); }, 3000);
 const server = createApp({
-  ...generated, challenge: generated.manifest, store, remote, replays, onboarding,
+  ...generated, challenge: generated.manifest, store, remote, replays, onboarding, account,
   getPlaySettings: () => playSettings.get(),
   savePlaySettings: async value => {
     if (launching) throw new Error('Dolphin is starting.');
     return playSettings.save(value);
   },
   getIdentity: async () => identity,
-  importPlayer: async value => {
-    const file = parsePlayer(value, siteOrigin);
-    await remote.usePlayer(file); await savePlayer(playerPath, file);
-    identity = playerIdentity(file); detector.reset();
-  },
+  importPlayer: acceptPlayer,
   getCapture: () => ({ ...bridge.status(), native: Boolean(runtime?.native), replayEnabled: Boolean(runtime?.recording) }),
   openReplays: async () => {
     if (!runtime?.replays) throw new Error('Prepare the replay profile first');
@@ -132,11 +147,11 @@ const server = createApp({
 });
 server.listen(port, '127.0.0.1', async () => {
   console.log(`Target Test Randomizer Challenge : http://localhost:${port}`);
-  console.log(`Seed ${stored.rules.seed} — import your challenge user.json to save records.`);
+  console.log(`Seed ${stored.rules.seed} — sign in through the companion to save records.`);
   await bridge.start();
 });
 function shutdown() {
-  clearInterval(refreshIdentity); clearInterval(syncTimer); clearInterval(replayTimer); bridge.stop();
+  clearInterval(accountTimer); clearInterval(refreshIdentity); clearInterval(syncTimer); clearInterval(replayTimer); bridge.stop();
   server.close(() => { store.close(); process.exit(0); });
 }
 process.on('SIGINT', shutdown); process.on('SIGTERM', shutdown);
