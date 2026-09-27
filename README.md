@@ -123,6 +123,13 @@ website archives. Companion v0.8.0 downloads new challenges and verifies them wi
 the pinned generator: close Dolphin, then use **Update challenge**, or launch from
 the companion. No new ZIP is needed for each seed.
 
+The website's **Old challenges** tab lists finished challenges with your valid
+submissions, including the just-ended current challenge. Each summary shows its
+seed, start and end dates, your place, points and THS. Expand a challenge for its
+overall/THS leaderboards and copyable Gecko code, or open the complete challenge
+to browse character results and replays. Start dates come from publication records;
+legacy challenges without one show **Not recorded**.
+
 ### Reveal scoring
 
 The overall leaderboard adds character points and THS points. Character places 1–5

@@ -28,7 +28,7 @@ await memory.put('usernames/test_admin.json', {id:adminId,credential:{password:a
 await memory.put(`profiles/${adminId}.json`, {id:adminId,slug:'test_admin',displayName:'test_admin',connectCode:'TT#00001'});
 await memory.put(`roles/${adminId}.json`, {role:'admin'});
 const publicHandler = createHostedHandler({ store: memory, fallback:{manifest:challenge,gecko}, generate:generateChallenge, origin, secret: 'test-only', reviewerKey, allowLegacySignup: true });
-const staticFiles = { ...Object.fromEntries(artworkFiles), '/': ['index.html','text/html'], '/review': ['review.html','text/html'], ...Object.fromEntries(['app.js','time.js','review.js'].map(p=>['/'+p,[p,'text/javascript']])), ...Object.fromEntries(['style.css','review.css'].map(p=>['/'+p,[p,'text/css']])), '/target.svg':['target.svg','image/svg+xml'] };
+const staticFiles = { ...Object.fromEntries(artworkFiles), '/': ['index.html','text/html'], '/review': ['review.html','text/html'], ...Object.fromEntries(['app.js','archives.js','time.js','review.js'].map(p=>['/'+p,[p,'text/javascript']])), ...Object.fromEntries(['style.css','review.css'].map(p=>['/'+p,[p,'text/css']])), ...Object.fromEntries(['target.svg','favicon-site.svg','favicon-admin.svg'].map(p=>['/'+p,[p,'image/svg+xml']])) };
 await new Promise(resolve => createServer(async (req, res) => {
   if (req.url.startsWith('/api/')) return publicHandler(req, res);
   const path = new URL(req.url, origin).pathname;

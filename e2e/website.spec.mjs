@@ -154,8 +154,24 @@ test('replay goes from companion to private review; public site shows only parti
   await expect(page.locator('#board-empty')).toContainText('No complete THS yet');
   await page.getByRole('button',{name:'Overall points',exact:true}).click();
   await expect(page.locator('.leaderboard thead')).toContainText('RANK');
+  await page.getByRole('link',{name:'Old challenges',exact:true}).click();
+  await expect(page.locator('#current-challenge-view')).toBeHidden();
+  const archive=page.locator('.archive-card');await expect(archive).toHaveCount(1);
+  await expect(archive).toContainText('Your place');await expect(archive).toContainText('#1 of 1');
+  await expect(archive).toContainText('Start date');await expect(archive).toContainText('Not recorded');await expect(archive).toContainText('End date');
+  await archive.locator('summary').click();await expect(archive.locator('tbody')).toContainText('Browser Test');
+  const gecko=await(await page.request.get('http://localhost:4319/api/challenge/code')).text();
+  await expect(archive.locator('textarea')).toHaveValue(gecko);
+  await page.context().grantPermissions(['clipboard-read','clipboard-write']);
+  await archive.getByRole('button',{name:'Copy Gecko code'}).click();
+  expect(await page.evaluate(()=>navigator.clipboard.readText())).toBe(gecko);
+  await archive.getByRole('button',{name:'Total High Score',exact:true}).click();await expect(archive).toContainText('No player completed all characters.');
+  await archive.getByRole('button',{name:'Overall points',exact:true}).click();
   await page.setViewportSize({width:390,height:844});
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.screenshot({path:'build/archives-mobile.png',fullPage:true});
+  await archive.getByRole('link',{name:'Open challenge & replays'}).click();
+  await expect(page.locator('#old-challenges')).toBeHidden();await expect(page.locator('#competition-state')).toHaveText('Challenge closed');
 });
 
 test('Unique username and password connect the companion without email or file downloads', async ({ page, context }) => {
@@ -345,4 +361,22 @@ test('admin generates a fresh seed and the previous challenge remains accessible
  await page.goto(origin);await expect(page.locator('#seed')).toHaveText('20261012');await page.locator('#challenge-archives summary').click();
  await page.getByRole('link',{name:`Seed ${before.challenge.rules.seed}`,exact:true}).click();
  await expect(page.locator('#seed')).toHaveText(String(before.challenge.rules.seed));await expect(page.locator('#competition-state')).toHaveText('Challenge closed');
+});
+
+test('old challenges prompt guests to sign in and show an empty state for nonparticipants',async({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('http://localhost:4319/#old-challenges');
+ await expect(page.locator('#old-challenges-message')).toContainText('Sign in');
+ await expect(page.locator('#old-challenges-list')).toBeEmpty();
+ await page.locator('#old-challenges-signin').click();
+ await page.locator('#auth-username').fill('test_admin');await page.locator('#auth-password').fill('Admin browser test 42');
+ await page.locator('#auth-submit').click();
+ await expect(page.locator('#old-challenges-message')).toContainText('No finished challenges yet');
+ await expect(page.locator('#old-challenges-link')).toHaveAttribute('aria-current','page');
+ await page.reload();await expect(page.locator('#old-challenges-message')).toContainText('No finished challenges yet');
+ await page.getByRole('link',{name:'Current challenge',exact:true}).click();
+ await expect(page.locator('#current-challenge-view')).toBeVisible();
+ await page.locator('#logout').click();await page.getByRole('link',{name:'Old challenges',exact:true}).click();
+ await expect(page.locator('#old-challenges-message')).toContainText('Sign in');
+ expect(errors).toEqual([]);
 });

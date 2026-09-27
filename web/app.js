@@ -1,4 +1,5 @@
 import { formatTime as time } from './time.js';
+import { createArchivesView } from './archives.js';
 const names = {
   'dr-mario': 'Dr. Mario', mario: 'Mario', luigi: 'Luigi', bowser: 'Bowser', peach: 'Peach', yoshi: 'Yoshi',
   'donkey-kong': 'Donkey Kong', 'captain-falcon': 'Captain Falcon', ganondorf: 'Ganondorf', falco: 'Falco', fox: 'Fox',
@@ -15,6 +16,7 @@ const date = iso => new Date(iso).toLocaleDateString('en-US', { day: '2-digit', 
 let selection = new URLSearchParams(location.search).get('character') || 'fox';
 if (!Object.hasOwn(names, selection)) selection = 'fox';
 let data, toastTimer, busy = false, seenRuns, playerSeen;
+const archivesView=createArchivesView({signIn:()=>showAuth(),toast});
 function toast(message) {
   clearTimeout(toastTimer); text('toast', message); $('toast').hidden = false;
   toastTimer = setTimeout(() => { $('toast').hidden = true; }, 6500);
@@ -159,6 +161,7 @@ function render(d) {
     }
   }
   seenRuns = new Set(d.history.map(run => run.id));
+  archivesView.update(d);
 }
 let standingsView='overall';
 function pointsBreakdown(player){

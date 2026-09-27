@@ -53,6 +53,33 @@ test('concurrent generation activates only one new seed',async()=>{
  assert.equal((await request('challenges')).body.challenges.length,2);
  assert.equal((await request('challenge/current')).body.manifest.id,results.find(r=>r.status===201).body.challenge.id);
 });
+test('personal challenge archives contain only participated, revealed challenges with final standings and dates',async()=>{
+ const {request,store}=fixture(),challengeId=fallback.manifest.id,playerId='a'.repeat(64),otherId='c'.repeat(64);
+ const record=(id,playerId,character,frames)=>({id,playerId,displayName:playerId==='a'.repeat(64)?'Player':'Other',connectCode:'TT#1',character,stage:fallback.manifest.assignments[character],frames,createdAt:'2026-09-26T15:00:00.000Z'});
+ await store.put(`submissions/${challengeId}/${playerId}/one.json`,record('one',playerId,'fox',600));
+ await store.put(`submissions/${challengeId}/${otherId}/two.json`,record('two',otherId,'fox',700));
+ assert.equal((await request('challenges/mine')).status,401);
+ assert.deepEqual((await request('challenges/mine',{admin:true})).body.challenges,[],'open challenge stays out of archives');
+ await request('review/close',{method:'POST',admin:true,body:{challengeId,confirm:'REVEAL'}});
+ let archives=(await request('challenges/mine',{admin:true})).body.challenges;
+ assert.equal(archives.length,1,'closed current challenge is already archived');
+ assert.equal(archives[0].you.playerId,playerId);assert.equal(archives[0].you.rank,1);assert.equal(archives[0].you.totalPoints,10);assert.equal(archives[0].you.thsFrames,null);
+ assert.equal(archives[0].leaderboard.length,2);assert.equal(archives[0].startedAt,null,'unknown legacy start dates are not invented');
+ assert.ok(Number.isFinite(Date.parse(archives[0].endedAt)));
+ const endedAt=archives[0].endedAt;
+ const generated=await request('review/generate',{method:'POST',admin:true,body:{challengeId,seed:20261012,confirm:'NEW CHALLENGE'}});
+ const next=generated.body.challenge;
+ await store.put(`submissions/${next.id}/${otherId}/three.json`,record('three',otherId,'fox',700));
+ await request('review/close',{method:'POST',admin:true,body:{challengeId:next.id,confirm:'REVEAL'}});
+ archives=(await request('challenges/mine',{admin:true})).body.challenges;
+ assert.equal(archives.length,1,'another player’s challenge is excluded');assert.equal(archives[0].endedAt,endedAt);
+ await store.put(`submissions/${next.id}/${playerId}/four.json`,record('four',playerId,'fox',600));
+ archives=(await request('challenges/mine',{admin:true})).body.challenges;
+ assert.equal(archives.length,2);
+ assert.equal(archives.find(c=>c.id===next.id).startedAt,generated.body.publishedAt);
+ await store.put(`reviews/${next.id}/${playerId}/four.json`,{status:'rejected'});
+ assert.equal((await request('challenges/mine',{admin:true})).body.challenges.length,1,'excluded runs do not qualify');
+});
 test('companion verifies online challenges, repairs interrupted writes and retains the bundled seed offline',async()=>{
  const directory=await mkdtemp(join(tmpdir(),'ttrc-online-'));
  try{

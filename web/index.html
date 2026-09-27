@@ -17,6 +17,7 @@
       <a class="nav-active" href="#main"><span aria-hidden="true">◎</span> Current challenge <i></i></a>
       <a href="#parcours"><span aria-hidden="true">▦</span> Courses <b>25</b></a>
       <a href="#records"><span aria-hidden="true">◷</span> My records</a>
+      <a id="old-challenges-link" href="#old-challenges"><span aria-hidden="true">◴</span> Old challenges</a>
       <a id="admin-link" href="/review" hidden><span aria-hidden="true">⚙</span> Admin</a>
     </nav>
     <div class="sidebar-bottom"><div class="edition">MELEE <span>NTSC 1.02</span></div><span class="local-badge"><i></i> Local companion</span></div>
@@ -26,6 +27,12 @@
     <main id="main">
       <section class="panel connect-panel" id="connect-panel" hidden><p class="eyebrow">COMPANION CONNECTION</p><h2>Connect this companion</h2><p>Only continue if you clicked Sign in in your own TTRC Companion. Check that both windows show this code:</p><strong id="connect-verification" class="verification-code"></strong><p id="connect-status" role="status">Loading connection…</p><button id="approve-companion" class="button primary" disabled>Connect companion</button></section>
       <section class="panel" id="public-profile" hidden><p class="eyebrow">PLAYER</p><h2 id="public-name"></h2><p id="public-note">Times and rankings remain hidden until the reveal. Shared replays appear below.</p></section>
+      <section id="old-challenges" aria-labelledby="old-challenges-title" hidden>
+        <div class="archive-heading"><div><h1 id="old-challenges-title">Old challenges</h1><p>Finished challenges you participated in.</p></div><span id="old-challenges-count" class="small-badge" hidden></span></div>
+        <div id="old-challenges-state" class="panel archive-state"><p id="old-challenges-message" role="status">Loading your challenges…</p><button id="old-challenges-signin" class="button primary" hidden>Sign in</button><button id="old-challenges-retry" class="button secondary" hidden>Try again</button></div>
+        <div id="old-challenges-list"></div>
+      </section>
+      <div id="current-challenge-view">
       <div class="page-heading"><p class="page-subtitle">Current challenge</p><span class="status-badge" id="capture-top">Loading challenge…</span></div>
       <section class="challenge-deadline" aria-labelledby="deadline-label">
         <div><h2 id="deadline-label">Challenge ends</h2><strong id="deadline-countdown" role="timer" aria-live="off">Loading…</strong></div>
@@ -57,6 +64,7 @@
       <section class="panel courses" id="parcours" aria-labelledby="courses-title"><div class="panel-heading"><div><h2 id="courses-title">Character stages</h2></div><span class="small-badge">25 COURSES</span></div><p class="section-note">Select a character to see its course and your records. Each stage keeps its original platforms.</p><div class="course-tools"><input id="course-search" type="search" placeholder="Find a character or stage…" aria-label="Search courses"><span id="course-count" class="muted">25 courses</span></div><p id="course-empty" class="muted" hidden>No matching courses. Try another search.</p><div class="course-grid" id="course-grid"></div></section>
       <section class="panel history" id="records" aria-labelledby="history-title"><div class="panel-heading"><div><h2 id="history-title">Your runs</h2></div><button class="text-button" id="export-runs">Export all runs ↓</button></div><div id="history-empty" class="history-empty">Your automatic submissions will appear here, grouped by character.</div><p id="history-count" class="section-note"></p><div id="history-list"></div></section>
       <footer class="footer"><span><img src="/target.svg" width="22" height="22" alt=""> TARGET TEST RANDOMIZER CHALLENGE</span><p>Scores stay private until reveal · <a href="/assets/melee/CREDITS.txt">Artwork credits</a></p><a href="/api/challenge/code" download>Download Gecko code ↗</a></footer>
+      </div>
     </main>
   </div>
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>

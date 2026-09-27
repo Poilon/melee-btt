@@ -24,7 +24,11 @@ export function createChallengeManager({store,fallback,generate,endsAt,now=Date.
       const packs=await Promise.all((await store.list('challenge-packages/')).map(f=>store.get(f.pathname)));
       const active=await current();
       const published=(await Promise.all(packs.filter(Boolean).map(async p=>p.manifest.id===active.manifest.id||await store.get(`challenges/${p.manifest.id}/closed.json`)?p:null))).filter(Boolean);
-      return [...new Map([fallback,...published].map(p=>[p.manifest.id,{id:p.manifest.id,seed:p.manifest.rules.seed,publishedAt:p.publishedAt||null,current:p.manifest.id===active.manifest.id}])).values()].sort((a,b)=>Number(b.current)-Number(a.current)||(b.publishedAt||'').localeCompare(a.publishedAt||''));
+      const unique=[...new Map([fallback,...published,active].map(p=>[p.manifest.id,p])).values()];
+      return (await Promise.all(unique.map(async p=>{
+        const state=await createLifecycle({store,challengeId:p.manifest.id,endsAt:p.manifest.id===fallback.manifest.id?endsAt:null,now}).phase();
+        return {id:p.manifest.id,seed:p.manifest.rules.seed,publishedAt:p.publishedAt||null,startedAt:p.publishedAt||null,endedAt:state.closedAt,closed:state.timesRevealed,current:p.manifest.id===active.manifest.id};
+      }))).sort((a,b)=>Number(b.current)-Number(a.current)||(b.publishedAt||'').localeCompare(a.publishedAt||''));
     },
     async regenerate({challengeId,seed,confirm},reviewer){
       if(confirm!=='NEW CHALLENGE')throw fail('Confirm before publishing a new challenge.',400);

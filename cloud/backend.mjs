@@ -48,6 +48,22 @@ export function createCloudHandler({ store, challenge, gecko, origin, secret, re
       }
       if (await auth(path, req, res, url)) return;
       if (await competition.handle(path, req, res)) return;
+      if(req.method==='GET'&&path==='challenges/mine'){
+        const user=await session(req);
+        if(!user)return json(res,401,{error:'Sign in to see your old challenges.'});
+        const archives=[];
+        for(const metadata of (await challengeManager?.list()||[]).filter(c=>c.closed)){
+          if(!(await store.list(`submissions/${metadata.id}/${user.id}/`)).length)continue;
+          const pack=await challengeManager.get(metadata.id);
+          const rows=await createCompetition({store,challenge:pack.manifest,gecko:pack.gecko,now}).list();
+          const standings=overallStandings(rows,pack.manifest.assignments);
+          if(!standings.some(p=>p.playerId===user.id))continue;
+          const leaderboard=standings.map(({courses,...player})=>player);
+          archives.push({...metadata,leaderboard,you:leaderboard.find(p=>p.playerId===user.id)});
+        }
+        archives.sort((a,b)=>b.endedAt.localeCompare(a.endedAt)||a.id.localeCompare(b.id));
+        return json(res,200,{challenges:archives});
+      }
       if (req.method === 'GET' && path === 'dashboard') {
         const character = url.searchParams.get('character') || 'fox';
         if (!Object.hasOwn(challenge.assignments, character)) return json(res, 400, { error: 'Unknown character.' });
