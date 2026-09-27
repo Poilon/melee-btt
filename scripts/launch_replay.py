@@ -63,7 +63,7 @@ def main():
         "Write-Output ('started:' + (Start-Process -FilePath $exe -ArgumentList $arguments -PassThru).Id)",
     ])
     encoded = base64.b64encode(ps.encode('utf-16-le')).decode()
-    result = subprocess.run(['powershell.exe','-NoProfile','-NonInteractive','-EncodedCommand',encoded],check=True,capture_output=True,text=True,errors='replace')
+    result = subprocess.run(['powershell.exe','-NoProfile','-NonInteractive','-EncodedCommand',encoded],check=True,capture_output=True,text=True,errors='replace',creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
     print(result.stdout.strip())
 
 if __name__ == '__main__': main()

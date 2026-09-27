@@ -26,7 +26,11 @@ jobs:
           rustflags: ''
       - uses: microsoft/setup-msbuild@v2
       - name: DirectX SDK
-        run: choco install directx-sdk --no-progress -y
+        run: |
+          choco install directx-sdk --no-progress -y
+          $sdk = "${env:ProgramFiles(x86)}\Microsoft DirectX SDK (June 2010)\"
+          if (!(Test-Path ($sdk + 'Include\d3dx9.h'))) { throw 'DirectX SDK headers are missing' }
+          "DXSDK_DIR=$sdk" >> $env:GITHUB_ENV
       - name: Build
         shell: cmd
         run: msbuild upstream\Source\Dolphin.sln /m:2 /p:Configuration=Release /p:Platform=x64
