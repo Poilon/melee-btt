@@ -1,0 +1,247 @@
+# Website, companion and replay review
+
+Public website: **https://target-test-randomizer-challenge.vercel.app**.
+Local companion: **http://localhost:4317**. Organizer desk on this PC:
+**http://localhost:4317/review**.
+
+## Play and submit
+
+1. On the public website, **Create your player**, choose a name and download
+   **user.json**. No Discord, Slippi account, email or password is required.
+2. Run `npm start`, open the companion, then **Import player** with that file.
+3. Use **Prepare replay-enabled Dolphin** once, close the old Dolphin when ready,
+   and **Launch Dolphin** from the companion. A Slippi Dolphin executable is needed
+   to write `.slp` files; no Slippi login is needed for offline Target Test.
+4. Choose your character in Dolphin and play a fresh attempt with the companion
+   running. Completed runs are saved locally. Valid personal bests are submitted
+   automatically once their matching replay is complete.
+5. Exit the result screen to finish writing the replay. The companion attaches the
+   matching recording automatically and uploads the best run’s time and private
+   replay together (maximum replay size: 2 MB). Paused runs are excluded.
+6. The submission becomes **In review** and your name appears in the participant
+   list. Rejection notes and approval status sync back into the companion. Only
+   approved runs enter the rankings when the challenge is revealed.
+
+A failed connection leaves the replay and claim in a
+private durable upload queue, retried every 15 seconds. Local records remain safe.
+Permanent upload errors are shown on the run; resolve the reported issue and retry.
+An already accepted run cannot be changed by reusing its ID. Each player has
+one current submission per character: the fastest non-rejected run. New faster
+runs replace it, while previous entries remain in the owner’s private history.
+Delayed retries cannot replace a better run. Review approval stays attached to
+the exact run and does not transfer to its replacement.
+
+The companion has a separate purple/mint design with a live timer, target counter,
+one personal best per character, expandable attempt history, submission filters and CSV export. Character selection happens in
+Melee; the companion displays the character and stage detected during the run.
+The public site retains the gold competition design, course search, favorites,
+progress, focus mode and character links. Character cards select course details and personal records,
+then the character’s leaderboard after reveal. It does not choose a fighter in
+Melee. The companion’s recent exports include up to 50 runs; expanded character history
+loads older runs in pages of 50. The website displays and exports all of your
+submitted runs across characters, grouped by personal best with expandable
+history. Personal bests include all stored attempts.
+
+## Player file
+
+This is our own `target-test-player-v1` file, unrelated to Slippi's account format.
+The companion verifies it with the website and puts it under
+`build/replay-profiles/<challenge-id>/Challenge/user.json` for the replay profile.
+The `Challenge` subfolder avoids colliding with Slippi Dolphin's own account file.
+Standard Dolphin practice profiles use `build/profiles/<challenge-id>/user.json`.
+When switching from the standard profile to the replay profile, the companion
+restores the player already imported for this challenge after verifying it with
+the website. An existing destination file is never silently replaced.
+No Slippi credentials are searched for, copied or uploaded.
+
+Keep the file private and backed up: its key can sign in and submit as your player.
+Import the same file on another PC to keep the same identity. While signed in,
+**Download user.json again** issues another key; existing keys remain valid until
+expiry. There is no email recovery if both the file and browser session are lost.
+Player keys last one year and website sessions last 30 days. Display names and
+short TT codes are labels, not unique or verified identities; the full player ID
+identifies the account.
+
+**Open challenge website** in the companion signs you in with a one-time, 60-second
+link. The browser removes its fragment before exchanging it for an HttpOnly,
+Secure cookie. Signing out of the site does not stop automatic uploads from the companion.
+
+## Sealed leaderboard
+
+During an open challenge, public responses contain an alphabetical, challenge-wide
+participant list with player names and TT codes, **without rankings, time/frame
+fields, or performance-based ordering**. The leaderboard array is empty. Players
+with pending or approved submissions appear once; rejected-only entries do not.
+This is enforced by the server, not CSS. Your own submitted times and history
+remain visible to you when signed in. At reveal, the best approved time per player
+and character determines rank; equal times share a rank. Pending and rejected
+submissions never rank.
+
+By default, the organizer closes the challenge manually from the review desk.
+**Close challenge & reveal times** requires confirmation, stops new submissions
+and permanently reveals approved times. No real challenge is closed by setup or
+tests. An optional ISO timestamp `CHALLENGE_ENDS_AT` provides automatic closure.
+Reviews of submissions received before closure can continue after it.
+
+## Optional public disclosure
+
+On the website, **Disclose run** publishes that specific time and replay after
+showing exactly what becomes public. All visitors can see it under **Public
+replays**, copy a direct link, download the `.slp`, or **Watch in Dolphin**.
+The last action opens the companion with the selected run; **Launch replay**
+starts playback. Merely opening a link never starts an executable.
+
+Disclosure requires the owner’s signed-in website session. It applies to one
+immutable run, never to a character or future replacement. **Make private** removes
+public access again; downloaded copies cannot be recalled. Replay download and
+playback check the disclosure flag on every request. Approval/rejection is shown
+separately, and private review notes are not published. The participant list and
+undisclosed results remain sealed until the organizer’s reveal.
+
+## Launching replays
+
+Recordings are saved in the **Replays** folder next to the recording Dolphin
+executable. **Open replay folder** opens that directory. Preparing the profile
+copies legacy recordings without deleting originals or overwriting existing
+recordings. Playback is available directly in **Your runs**; there is no duplicate
+replay gallery in the companion.
+**Your runs** initially shows one personal best per character. Click a character
+row to see all its attempts, newest first, with **Watch replay** on each recorded
+run. Replay association runs every two seconds and requires a unique matching
+character, course and recording start timestamp. The replay frame counter is not
+the in-game timer, and is not used to reject a match when the start was captured. Ambiguous matches are
+left unresolved. The companion waits for Dolphin to finish the file, then keeps
+a private copy. The association survives restarts and the original file being
+moved. No manual linking, file picker or submit click is needed for a new personal best.
+Paused recordings are linked for playback but excluded from local personal bests,
+progress and submissions. The companion and public upload API check jumps in the
+Slippi scene-frame counter (available since 3.10); older files still require manual
+pause review. The score is never replaced by the replay’s frame index.
+Old clears made without replay recording cannot acquire a replay retroactively.
+Replays are limited to 2 MB.
+
+The local organizer desk has the same **Launch replay** button on each submission.
+It downloads the private evidence through the reviewer connection and opens a
+local copy. On the public review page, **Open companion to launch** opens the local
+desk; the website itself cannot start a Windows executable.
+
+Playback uses a separate profile under `build/playback-profiles/<challenge>/<stage>`
+and private snapshots under `.local/playback/replays`. It reuses the existing
+viewer for that stage when possible and restarts the selected replay. It never
+writes into the original `.slp`, recording profile or ordinary Slippi profile.
+The viewer is excluded from live score capture, so watching cannot create a run.
+
+Playback loads the Gecko list embedded in the replay. BTT's modular randomizer
+also reads Melee's `selected_stage` global (0x804D49E8), so the viewer restores the
+recorded external stage ID before loading the stage. Slippi's normal resync option
+is enabled. The real Marth → Mewtwo recording from 2026-09-27 was replayed through
+all ten targets to a successful ending. This confirms that recording's playback,
+not automatic validation of other recordings or proof against tampering.
+
+## Human review
+
+The organizer desk lists submitted claims with their private replay downloads,
+recorded character/stage, claimed time, replay version and embedded-code check.
+Use **Launch replay** on the local desk, or download the `.slp` for a compatible
+Slippi playback Dolphin. Check the seed/course, character, all targets and game
+clock before approving. If replay playback cannot reproduce the run, reject it
+with a reason rather than treating the parser as proof.
+
+The parser rejects renamed files, incomplete raw data, wrong game mode, mismatched
+character/stage and missing game endings. The evidence SHA-256 and immutable claim
+bind the submitted time to the attached bytes. A parser or matching Gecko list is
+not an anti-cheat proof, proof of ownership, or proof of a successful clear.
+Only human review grants `approved` status. A review decision is immutable in this
+interface. Replays are kept in private storage. Only reviewers can download undisclosed
+replays; disclosed replays are publicly downloadable through a permission-checked
+endpoint.
+
+On the organizer's PC, `.local/reviewer.key` supplies the server-side reviewer
+credential; the local desk does not expose that key to browser JavaScript. Other
+reviewers can use `/review.html` on the public site and sign in with the shared
+reviewer key. Never distribute this key with a player pack. Reviewer sessions
+expire after one hour. The local server checks host, origin and action headers
+and binds only to loopback; it must not be exposed publicly.
+
+## Emulator and capture
+
+Current setup targets WSL with Windows Dolphin, Node.js 24 and Python 3:
+
+```sh
+npm install
+npm run setup
+npm run generate
+python3 scripts/prepare_dolphin.py --record-replays
+npm start
+```
+
+The default recorder executable is Slippi Launcher's installed netplay Dolphin.
+Use `--dolphin`, `--iso` and `--controller-config` for custom paths. The script
+verifies the original Melee USA 1.02 ISO and creates an isolated replay profile,
+with recording enabled and Slippi online/menu patches disabled. Existing ordinary
+Dolphin and Slippi profiles are not modified. `runtime.json` selects the prepared
+profile for the companion. Supply your own ISO; no installer or ISO is distributed.
+
+The Windows reader observes only the dedicated profile's process, read-only.
+It must see a fresh attempt, expected character/stage, all targets broken, success
+and a frozen final timer. Failures, resets, time reversals, changing players or
+processes cancel the capture. Attaching midway through a run cannot save a score.
+
+Times are integer game frames. Melee's fractional display is
+`floor((frames % 60) * 99 / 59)` with 60 frames/second. Fox's observed 704-frame
+result matches 11.73. The fraction is read at match +0x2C, not +0x26.
+Capture remains experimental. Standard Dolphin boot and the Slippi recording
+profile's Target Test menu/memory connection have been checked. A real locally recorded Marth replay has also been played through a successful
+ending. A complete new attempt with the repaired player-profile migration, live
+score capture and human submission review remains to be cross-checked.
+The previous 11.73 made on standard Dolphin has no replay to attach retroactively.
+
+Address references: [m-target GALE01-2.lua](https://github.com/bkacjios/m-target/blob/8458ada90b2dc5031508d0fe15313e6654f23392/source/modules/games/GALE01-2.lua),
+[result handling](https://github.com/bkacjios/m-target/blob/8458ada90b2dc5031508d0fe15313e6654f23392/source/targets.lua).
+Replay support: [Slippi ShouldRecord.asm](https://github.com/project-slippi/slippi-ssbm-asm/blob/master/Recording/ShouldRecord.asm),
+[slippi-js](https://github.com/project-slippi/slippi-js).
+
+## Storage, tests and deployment
+
+Local records: `.local/scores.sqlite`; queued uploads: `.local/outbox`; player key
+cache: `.local/companion.json`. These and emulator profiles are private and excluded
+from deployment. Cloud storage holds profiles, hashed device/session keys,
+submissions, private evidence, review decisions and challenge closure state.
+Legacy score-only uploads return HTTP 410 and cannot enter the leaderboard.
+
+Vercel environment: `BLOB_READ_WRITE_TOKEN`, `SESSION_SECRET`, `REVIEWER_KEY` and
+optionally `CHALLENGE_ENDS_AT`. The current active seed is **20260989**. New seeds
+require generating a challenge, preparing its Dolphin profile and deploying the
+same manifest/code. Use `TTRC_CHALLENGE_DIR` for a different local challenge folder.
+
+```sh
+npm test
+npm run test:ui
+node scripts/prepare_vercel.mjs
+vercel --prod --yes --cwd .deploy --scope poilons-projects
+```
+
+Tests cover actual replay parsing, authentication, replay privacy, pending/rejected
+exclusion, own-time visibility, sealed API payloads, review, closure and submission
+retry. Browser tests exercise the complete replay submission and approval flow in
+memory-only fixtures. They never add test scores to production.
+
+The deployment allowlist contains only web/cloud/shared code and generated
+challenge data. No ISO, player file, local database, reviewer key, test replay or
+emulator is uploaded. Listings can take about 15 seconds to refresh across cloud
+instances; companion review status is checked every 30 seconds.
+
+### Companion play settings
+
+The companion's **Game music** and **Controller rumble** checkboxes save to
+`.local/play-settings.json`. They are independent of the player account and
+survive a companion restart. Changes apply when launching Dolphin from the
+companion; an open game is not interrupted or changed mid-run.
+
+The dedicated play profile uses Slippi's `04023FFC 38800000` music-only patch
+when music is disabled, and removes that optional patch on the next enabled
+launch. The seed's original Gecko payload and hash remain unchanged. Master
+volume and sound effects are preserved. Adapter rumble is configured for all
+four ports; emulated controller motor strengths are restored when re-enabled.
+Sources: [Slippi music patch](https://github.com/project-slippi/slippi-ssbm-asm/blob/master/Binary/GameMusicOff.bin),
+[Dolphin configuration](https://github.com/project-slippi/Ishiiruka/blob/slippi/Source/Core/Core/ConfigManager.cpp).

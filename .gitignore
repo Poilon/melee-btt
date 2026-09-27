@@ -1,0 +1,27 @@
+*.iso
+*.gcm
+*.rvz
+.cache/
+build/
+__pycache__/
+.local/
+node_modules/
+test-results/
+playwright-report/
+# Player files contain credentials. Never put them in the repository.
+user.json
+User.json
+.env
+.env.*
+!.env.example
+.deploy/
+.vercel/
+# Portable installs and download artifacts are never source files.
+Games/
+Dolphin/
+runtime/
+release.json
+*.zip
+*.slp
+!test/fixtures/BTTDK.slp
+*:Zone.Identifier

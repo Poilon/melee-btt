@@ -1,0 +1,10 @@
+Super Smash Bros. Melee character artwork
+
+Game characters and original assets: Nintendo / HAL Laboratory and their respective owners.
+Source: Readek, Melee Stream Tool
+https://github.com/Readek/Melee-Stream-Tool/tree/a8027307264f8a1e57d671d54f22ab34e2a3ef7f/Stream%20Tool/Resources/Characters
+
+Default character portraits and VS Screen / Default Right poses.
+The source project credits The Spriters Resource, Melee HD Asset Library (https://assets.melee.tv/), and VS poses (https://smashboards.com/threads/download-available-poses-for-classic-mode-vs.435797/).
+Transparent margins trimmed, resized, and encoded as WebP for these interfaces.
+Artwork retains its original ownership; this fan project is not affiliated with Nintendo, HAL Laboratory, or Slippi.

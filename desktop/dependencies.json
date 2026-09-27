@@ -1,0 +1,6 @@
+{
+  "node": {"url":"https://nodejs.org/dist/v24.21.0/node-v24.21.0-win-x64.zip","sha256":"158f7685b44de51f6c0df1d153526cbcd3e1bc739a8dfc607721cef75de9e541"},
+  "python": {"url":"https://www.python.org/ftp/python/3.13.7/python-3.13.7-embed-amd64.zip","sha256":"f6cca216a359be84797cabb54149ce5e062afb16cc7567eb7fc51cacb2d86b65"},
+  "netplay": {"url":"https://github.com/project-slippi/Ishiiruka/releases/download/v3.6.4/FM-Slippi-3.6.4-Win.zip","sha256":"873ee4c5752c425b02e73e7f6a09b1478b10dce61258bcdf20e14bd69de89e2f"},
+  "playback": {"url":"https://github.com/project-slippi/Ishiiruka-Playback/releases/download/v3.5.2/playback-3.5.2-Win.zip","sha256":"86b6c5bd50a627e8ebf6dddb644f75e7eb1f5138eab9d4886e296499732863c8"}
+}
