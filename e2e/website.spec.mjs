@@ -453,3 +453,33 @@ test('admin shows initial and refresh skeletons and stops loading on an API erro
  gate.release();await expect(page.locator('#message')).toContainText('Temporary connection failure');
  await expect(page.locator('#refresh')).not.toHaveAttribute('aria-busy','true');await expect(page.locator('#loading-status')).toBeHidden();await expect(page.locator('#desk')).toBeHidden();
 });
+
+test('companion counts aborted attempts separately from finishes and updates an open history',async({page})=>{
+ const base=await(await page.request.get('http://localhost:4318/api/dashboard')).json();
+ const finished={id:'finished-fox',character:'fox',stage:base.challenge.assignments.fox,frames:600,createdAt:new Date().toISOString(),submissionStatus:'submitted',hasReplay:true,attemptStatus:'finished'};
+ const aborted={id:'aborted-fox',...finished,frames:null,hasReplay:false,attemptStatus:'aborted',abortReason:'Reset or changed run'};aborted.id='aborted-fox';
+ const running={...aborted,id:'active-fox',attemptStatus:'active',abortReason:''};
+ const marth={...aborted,id:'aborted-marth',character:'marth',stage:base.challenge.assignments.marth};
+ const counts={fox:{total:3,finished:1,aborted:1,interrupted:0,active:1},marth:{total:2,finished:0,aborted:2,interrupted:0,active:0}};
+ base.bestRuns=[{...finished,attemptCount:3,finishedCount:1},{...marth,attemptCount:2,finishedCount:0}];base.history=[finished];
+ base.attempts={total:5,finished:1,aborted:3,interrupted:0,active:1,byCharacter:counts};
+ await page.route('**/api/dashboard',route=>route.fulfill({json:base}));
+ await page.route('**/api/runs?**',route=>route.fulfill({json:{runs:new URL(route.request().url()).searchParams.get('character')==='fox'?[running,aborted,finished]:[marth,{...marth,id:'old-marth'}]}}));
+ await page.goto('http://localhost:4318');await expect(page.locator('#total-attempts')).toHaveText('5');await expect(page.locator('#finished-attempts')).toHaveText('1');
+ await expect(page.locator('#active-attempts')).toHaveText('1 in progress');
+ const fox=page.locator('.run-group').filter({has:page.getByRole('button',{name:'Fox: show run history'})});
+ await expect(fox).toContainText('3 total attempts · 1 finished');
+ await page.getByRole('button',{name:'Fox: show run history'}).click();await expect(page.locator('.attempt-history .run')).toHaveCount(3);
+ const unfinished=page.locator('.attempt-history .run').filter({has:page.locator('.badge').filter({hasText:/^(Aborted|In progress)$/})});
+ await expect(unfinished).toHaveCount(2);await expect(unfinished.getByRole('button')).toHaveCount(0);
+ running.attemptStatus='aborted';running.abortReason='Left the course';counts.fox.active=0;counts.fox.aborted=2;base.attempts.active=0;base.attempts.aborted=4;
+ await expect(page.locator('#active-attempts')).toBeEmpty();
+ await expect(page.locator('.attempt-history .badge').filter({hasText:'In progress'})).toHaveCount(0);
+ await expect(page.locator('.attempt-history .badge').filter({hasText:'Aborted'})).toHaveCount(2);
+ await page.getByRole('button',{name:'Marth: show run history'}).click();
+ const group=page.locator('.run-group').filter({has:page.getByRole('button',{name:'Marth: hide run history'})});
+ await expect(group).toContainText('No completed run');await expect(group).toContainText('2 total attempts · 0 finished');await expect(group.getByRole('button',{name:'Watch replay'})).toHaveCount(0);
+ await page.setViewportSize({width:390,height:844});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ await page.screenshot({path:'build/attempts-mobile.png',fullPage:true});
+ await page.locator('#tab-sent').click();await expect(page.locator('#run-list > .run-group')).toHaveCount(1);await expect(page.locator('#total-attempts')).toHaveText('5');
+});

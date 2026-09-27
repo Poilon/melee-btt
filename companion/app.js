@@ -73,17 +73,20 @@ function render(d){
  text('sync',d.remote?.lastError|| (d.remote?.pending?`${d.remote.pending} submission(s) waiting to upload.`:'Automatic submissions on. No uploads waiting.'));
  const count=Object.values(d.progress||{}).filter(p=>p.best).length;$('progress-count').replaceChildren(document.createTextNode(count+' '),make('small','/ 25 cleared'));$('progress').value=count;
  for(const [character,cache]of attempts){if(cache.loading)continue;const fresh=new Map(d.history.map(r=>[r.id,r]));cache.rows=cache.rows.map(r=>fresh.get(r.id)||r);}
+ text('total-attempts',d.attempts?.total??(d.bestRuns||[]).reduce((n,r)=>n+r.attemptCount,0));text('finished-attempts',d.attempts?.finished??(d.bestRuns||[]).reduce((n,r)=>n+(r.finishedCount??r.attemptCount),0));text('active-attempts',d.attempts?.active?`${d.attempts.active} in progress`:'');
  renderRuns(d);
- for(const best of d.bestRuns||[]){const cache=attempts.get(best.character);if(expanded.has(best.character)&&cache&&!cache.loading&&cache.total!==best.attemptCount)loadHistory(best.character,false,true);}
+ for(const best of d.bestRuns||[]){const cache=attempts.get(best.character);if(expanded.has(best.character)&&cache&&!cache.loading&&(cache.total!==best.attemptCount||cache.signature!==attemptSignature(best.character)))loadHistory(best.character,false,true);}
  if(seen){const fresh=d.history.find(r=>!seen.has(r.id));if(fresh&&!fresh.exclusionReason)toast(`Run saved: ${names[fresh.character]} · ${formatTime(fresh.frames)}. Replay syncs automatically after leaving the results screen.`);}seen=new Set(d.history.map(r=>r.id));
 }
 const expanded=new Set(), attempts=new Map(), submitting=new Set();let runsKey, historyPlayer;
-function matchesTab(r){if(r.exclusionReason)return tab==='all';return tab==='all'||(tab==='ready'?['local','upload-error'].includes(r.submissionStatus):!['local','upload-error'].includes(r.submissionStatus));}
-function makeRunRow(r,group=false){
+const attemptSignature=character=>JSON.stringify(data.attempts?.byCharacter?.[character]||null);
+function matchesTab(r){if(r.attemptStatus&&r.attemptStatus!=='finished')return tab==='all';if(r.exclusionReason)return tab==='all';return tab==='all'||(tab==='ready'?['local','upload-error'].includes(r.submissionStatus):!['local','upload-error'].includes(r.submissionStatus));}
+function makeRunRow(r,group=false){ const unfinished=Boolean(r.attemptStatus&&r.attemptStatus!=='finished');
  const row=make('article','','run'),info=make(group?'button':'div','','run-info'),top=make('div','','run-top');
- top.append(make('strong',group?names[r.character]:`${names[r.character]} → ${names[r.stage]}`),make('time',formatTime(r.frames)),make('span',r.exclusionReason?'Excluded':({local:'Local only',queued:'Queued',submitted:'Submitted',pending:'Submitted',approved:'Submitted',rejected:'Rejected','upload-error':'Upload failed',superseded:'Replaced'})[r.submissionStatus]||'Local only',`badge ${r.submissionStatus}`));
- info.append(top,make('small',group?`${r.exclusionReason?'No valid clear':'Personal best'} · ${r.attemptCount} attempt${r.attemptCount===1?'':'s'} · ${expanded.has(r.character)?'Hide':'Show'} history ${expanded.has(r.character)?'▴':'▾'}`:new Date(r.createdAt).toLocaleString('en-US')));
+ top.append(make('strong',group?names[r.character]:`${names[r.character]} → ${names[r.stage]}`),make('time',unfinished?'—':formatTime(r.frames)),make('span',unfinished?({active:'In progress',aborted:'Aborted',interrupted:'Interrupted'})[r.attemptStatus]:r.exclusionReason?'Excluded':({local:'Local only',queued:'Queued',submitted:'Submitted',pending:'Submitted',approved:'Submitted',rejected:'Rejected','upload-error':'Upload failed',superseded:'Replaced'})[r.submissionStatus]||'Local only',`badge ${unfinished?r.attemptStatus:r.submissionStatus}`));
+ info.append(top,make('small',group?`${unfinished?'No completed run':r.exclusionReason?'No valid clear':'Personal best'} · ${r.attemptCount} total attempts · ${r.finishedCount??r.attemptCount} finished · ${expanded.has(r.character)?'Hide':'Show'} history ${expanded.has(r.character)?'▴':'▾'}`:new Date(r.createdAt).toLocaleString('en-US')));
  if(group){const portrait=make('img','','run-portrait');portrait.src=`/assets/melee/${r.character}-portrait.webp`;portrait.alt='';portrait.width=32;portrait.height=36;portrait.loading='lazy';info.prepend(portrait);info.type='button';info.classList.add('run-summary');info.setAttribute('aria-expanded',String(expanded.has(r.character)));info.setAttribute('aria-label',`${names[r.character]}: ${expanded.has(r.character)?'hide':'show'} run history`);info.addEventListener('click',()=>toggleHistory(r.character));}
+ if(unfinished){if(!group&&r.abortReason)info.append(make('small',r.abortReason,'muted'));row.append(info);return row;}
  if(r.exclusionReason)info.append(make('small',r.exclusionReason,'muted'));
  if(r.reviewNote&&!['pending','submitted'].includes(r.submissionStatus))info.append(make('small',r.reviewNote));
  const replayHint=Date.now()-Date.parse(r.createdAt)<120000?'Waiting for replay · exit the results screen to finish saving.':'No replay found for this run. New runs need replay recording enabled.';
@@ -110,20 +113,20 @@ function makeRunRow(r,group=false){
 function renderRuns(d){
  if(historyPlayer!==`${d.challenge.id}:${d.identity?.id}`){historyPlayer=`${d.challenge.id}:${d.identity?.id}`;expanded.clear();attempts.clear();runsKey=null;}
  const groups=d.bestRuns||[];const key=JSON.stringify([groups,d.remote?.disclosures,d.remote?.finalRunIds,tab,[...expanded],[...attempts],[...submitting]]);if(key===runsKey)return;runsKey=key;
- const visible=groups.filter(matchesTab);text('run-count',`${groups.length} character${groups.length===1?'':'s'} · ${groups.reduce((n,r)=>n+r.attemptCount,0)} runs`);$('empty').hidden=visible.length>0;$('run-list').replaceChildren();
- for(const r of visible){const group=make('section','','run-group');group.append(makeRunRow(r,true));if(expanded.has(r.character)){const list=make('div','','attempt-history');const cache=attempts.get(r.character);list.setAttribute('aria-busy',String(Boolean(cache?.loading)));list.append(make('p',`All ${names[r.character]} attempts · newest first`,'eyebrow'));if(!cache||cache.loading&&!cache.rows.length)list.append(skeletonRows(3));if(cache){for(const attempt of cache.rows){const row=makeRunRow(attempt);if(attempt.id===r.id)row.classList.add('best-attempt');list.append(row);}if(cache.error)list.append(make('p',cache.error,'muted'));if(cache.rows.length<r.attemptCount&&!cache.loading){const more=make('button',cache.error?'Retry':'Load older runs','quiet');more.addEventListener('click',()=>loadHistory(r.character,true));list.append(more);}}group.append(list);} $('run-list').append(group);}
+ const visible=groups.filter(matchesTab);text('run-count',`${groups.length} character${groups.length===1?'':'s'} · ${groups.reduce((n,r)=>n+r.attemptCount,0)} attempts`);$('empty').hidden=visible.length>0;$('run-list').replaceChildren();
+ for(const r of visible){const group=make('section','','run-group');group.append(makeRunRow(r,true));if(expanded.has(r.character)){const list=make('div','','attempt-history');const cache=attempts.get(r.character);list.setAttribute('aria-busy',String(Boolean(cache?.loading)));list.append(make('p',`All ${names[r.character]} attempts · newest first`,'eyebrow'));if(!cache||cache.loading&&!cache.rows.length)list.append(skeletonRows(3));if(cache){for(const attempt of cache.rows){const row=makeRunRow(attempt);if(attempt.id===r.id&&(!attempt.attemptStatus||attempt.attemptStatus==='finished'))row.classList.add('best-attempt');list.append(row);}if(cache.error)list.append(make('p',cache.error,'muted'));if(cache.rows.length<r.attemptCount&&!cache.loading){const more=make('button',cache.error?'Retry':'Load older runs','quiet');more.addEventListener('click',()=>loadHistory(r.character,true));list.append(more);}}group.append(list);} $('run-list').append(group);}
 }
 function toggleHistory(character){if(expanded.has(character)){expanded.delete(character);renderRuns(data);}else{expanded.add(character);renderRuns(data);loadHistory(character);}}
 async function loadHistory(character,more=false,keepDepth=false){
  const old=attempts.get(character);if(old?.loading)return;
- const player=historyPlayer,total=data.bestRuns.find(r=>r.character===character)?.attemptCount;
+ const player=historyPlayer,total=data.bestRuns.find(r=>r.character===character)?.attemptCount,signature=attemptSignature(character);
  const state={rows:more||keepDepth?old?.rows||[]:[],loading:true,total};attempts.set(character,state);renderRuns(data);
  const done=keepDepth?()=>{}:startLoading('Loading attempts…');
  try{
   const rows=more?[...state.rows]:[],limit=keepDepth?Math.max(50,state.rows.length):rows.length+50;
   do{const response=await fetch(`/api/runs?character=${character}&offset=${rows.length}`);if(!response.ok)throw new Error();const result=await response.json();rows.push(...result.runs);if(result.runs.length<50)break;}while(rows.length<limit);
-  if(player!==historyPlayer)return;attempts.set(character,{rows,loading:false,total});
- }catch{if(player!==historyPlayer)return;attempts.set(character,{rows:state.rows,loading:false,total,error:'Could not load attempts.'});}finally{done();}renderRuns(data);
+  if(player!==historyPlayer)return;attempts.set(character,{rows,loading:false,total,signature});
+ }catch{if(player!==historyPlayer)return;attempts.set(character,{rows:state.rows,loading:false,total,signature,error:'Could not load attempts.'});}finally{done();}renderRuns(data);
 }
 async function refresh({quiet=false}={}){
  const initial=!data,done=quiet?()=>{}:startLoading(initial?'Loading companion…':'Updating companion…'),clear=initial?showSkeleton($('run-list'),5):()=>{};

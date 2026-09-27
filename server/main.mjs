@@ -32,6 +32,7 @@ await mkdir(join(root, '.local'), { recursive: true });
 const playSettings = new PlaySettings(join(root, '.local/play-settings.json'));
 await playSettings.initialize();
 const store = new ScoreStore(process.env.TTRC_DB || join(root, '.local/scores.sqlite'));
+store.recoverAttempts();
 const siteOrigin = process.env.TTRC_SITE_URL || 'https://target-test-randomizer-challenge.vercel.app';
 const remote = new RemoteSync(join(root, '.local'), siteOrigin);
 remote.challengeId=generated.manifest.id;
@@ -63,7 +64,7 @@ const refreshIdentity = setInterval(refreshPlayer, 5000);
 const syncTimer = setInterval(async () => { await remote.flush(); await remote.refreshReviews(); }, 15_000);
 const detector = new RunDetector(generated.manifest, run => {
   store.add(run); // A completed replay is required before automatic submission.
-});
+},Date.now,attempt=>store.recordAttempt(attempt));
 const bridge = new DolphinBridge(root, generated.manifest, detector, () => identity);
 if (runtime?.profile) bridge.profile = runtime.profile;
 if (runtime?.native) bridge.nativeExecutable = runtime.dolphin;

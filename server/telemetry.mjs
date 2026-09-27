@@ -9,8 +9,11 @@ export const characterForId = characterForExternalId;
 export const stageForId = id => stages[groundIds.indexOf(id)];
 
 export class RunDetector {
-  constructor(challenge, onComplete, now = Date.now) { this.challenge = challenge; this.onComplete = onComplete; this.now = now; }
-  reset() { this.run = null; this.last = null; this.stableFinish = 0; }
+  constructor(challenge, onComplete, now = Date.now, onAttempt = () => {}) { this.challenge = challenge; this.onComplete = onComplete; this.now = now; this.onAttempt=onAttempt; }
+  reset(reason='Capture interrupted',status='interrupted') {
+    if(this.run&&!this.run.saved)this.onAttempt({...this.run,status,reason,endedAt:new Date(this.now()).toISOString(),elapsedFrames:this.last?.frames||0});
+    this.run = null; this.last = null; this.stableFinish = 0;
+  }
   sample(s, identity) {
     const character = characterForId(s.characterId);
     const stage = stageForId(s.stageId);
@@ -20,20 +23,21 @@ export class RunDetector {
         s.remaining < 0 || s.remaining > this.challenge.rules.targets ||
         !Number.isInteger(s.seconds) || !Number.isInteger(s.timerFrame) ||
         s.seconds < 0 || s.seconds > 3600 || s.timerFrame < 0 || s.timerFrame >= 60) {
-      this.reset(); return;
+      this.reset(!inGame?'Left the course':'Capture interrupted',!inGame?'aborted':'interrupted'); return;
     }
     const frames = s.seconds * 60 + s.timerFrame;
     // New process, character, account, retry, or time reversal invalidates the old attempt.
     if (this.run && (s.pid !== this.run.pid || character !== this.run.character ||
         stage !== this.run.stage || identity.id !== this.run.identity.id ||
         (this.last && (s.frame < this.last.frame || frames < this.last.frames || s.remaining > this.last.remaining)))) {
-      this.reset();
+      this.reset('Reset or changed run','aborted');
     }
-    if ([4, 7, 8].includes(s.result)) { this.reset(); return; }
+    if ([4, 7, 8].includes(s.result)) { this.reset('Run ended without a clear','aborted'); return; }
     // Only arm after seeing a new attempt with all targets before/at timer start.
     // Attaching halfway through a run or on a stale results screen cannot save a score.
     if (!this.run && s.result === 0 && s.remaining === this.challenge.rules.targets && frames <= 6) {
-      this.run = { id: randomUUID(), pid: s.pid, character, stage, identity: { ...identity }, startedAt: new Date(this.now()).toISOString(), saved: false };
+      this.run = { id: randomUUID(), pid: s.pid, challenge:this.challenge, character, stage, identity: { ...identity }, startedAt: new Date(this.now()).toISOString(), saved: false };
+      this.onAttempt({...this.run,status:'active'});
     }
     if (!this.run) return;
     if (s.remaining === 0 && s.result === 6 && frames > 0 && frames <= 216000) {

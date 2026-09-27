@@ -224,7 +224,8 @@ export function createApp({ challenge:initialChallenge, gecko:initialGecko, getC
           setup: onboarding?.get() || {ready:true},
           leaderboard: [], stats: store.stats(challenge.id),
           history: player ? store.history(challenge.id, player.id) : [],
-          bestRuns: player ? store.bestRuns(challenge.id, player.id, {includeExcluded:true}) : [],
+          bestRuns: player ? store.runGroups(challenge.id, player.id) : [],
+          attempts: store.attemptStats(challenge.id,player?.id||''),
           progress: player ? store.progress(challenge.id, player.id) : {},
           personalBest: player ? store.personalBest(challenge.id, character, player.id) : null,
         });

@@ -30,6 +30,7 @@ See [implementation and validation](docs/target-motion.md). The downloadable Gec
 - The companion captures fresh, completed Target Test runs and links their `.slp` files automatically.
 - Zelda and Sheik share one of the 25 challenge entries. Starting as Sheik or transforming during a run counts toward the same entry.
 - **Your runs** shows your best eligible run per character. Expand a character to see and replay earlier attempts.
+- **Total attempts** counts every observed start, including resets, failures and abandoned runs. **Finished attempts** counts captured clears, including paused clears that remain excluded from records. Counts are local to the signed-in player and challenge, with per-character totals and an attempt history. Interrupted capture is labeled separately; unfinished attempts never become scores or submissions. Existing clears are included automatically, but abandoned attempts from before v0.8.2 cannot be reconstructed. Keep the companion running and start a fresh attempt for it to be counted.
 - New valid personal bests are submitted automatically with their replay. Each new best replaces the current submission for that character.
 - Paused runs are excluded from records and submissions, but remain visible with the reason and replay. If a character has no eligible clear, Your runs shows its latest excluded attempt instead of hiding it.
 - Before the reveal, the website shows participants only. Other players’ times and ranks remain private.

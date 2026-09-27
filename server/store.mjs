@@ -27,19 +27,59 @@ export class ScoreStore {
         run_id TEXT PRIMARY KEY, sha256 TEXT NOT NULL, file_name TEXT NOT NULL
       ) STRICT;
       CREATE INDEX IF NOT EXISTS runs_board ON runs(challenge_id, character, player_id, frames);
+      CREATE TABLE IF NOT EXISTS attempts (
+        id TEXT PRIMARY KEY, challenge_id TEXT NOT NULL, player_id TEXT NOT NULL,
+        character TEXT NOT NULL, stage TEXT NOT NULL, started_at TEXT NOT NULL, ended_at TEXT,
+        status TEXT NOT NULL CHECK(status IN ('active','finished','aborted','interrupted')),
+        elapsed_frames INTEGER NOT NULL DEFAULT 0 CHECK(elapsed_frames BETWEEN 0 AND 216000),
+        reason TEXT NOT NULL DEFAULT ''
+      ) STRICT;
+      CREATE INDEX IF NOT EXISTS attempts_player ON attempts(challenge_id,player_id,character,started_at);
+      INSERT OR IGNORE INTO attempts
+        SELECT r.id,r.challenge_id,r.player_id,r.character,r.stage,COALESCE(c.started_at,r.created_at),r.created_at,'finished',r.frames,''
+        FROM runs r LEFT JOIN run_capture c ON c.run_id=r.id ORDER BY r.rowid;
     `);
+  }
+  recordAttempt({id,challenge,identity,character,stage,startedAt,status,endedAt,elapsedFrames=0,reason=''}) {
+    if(!id||!/^[a-f0-9]{64}$/.test(identity?.id||'')||!challenge?.assignments[character]||challenge.assignments[character]!==stage||!Number.isFinite(Date.parse(startedAt)))throw new Error('Invalid attempt');
+    if(status==='active'){
+      this.db.prepare('INSERT OR IGNORE INTO attempts (id,challenge_id,player_id,character,stage,started_at,status) VALUES (?,?,?,?,?,?,?)')
+        .run(id,challenge.id,identity.id,character,stage,startedAt,status);
+    }else if(['aborted','interrupted'].includes(status)){
+      this.db.prepare("UPDATE attempts SET status=?,ended_at=?,elapsed_frames=?,reason=? WHERE id=? AND challenge_id=? AND player_id=? AND status='active'")
+        .run(status,endedAt||new Date().toISOString(),Math.max(0,Math.min(216000,Math.trunc(elapsedFrames))),reason.slice(0,200),id,challenge.id,identity.id);
+    }else throw new Error('Invalid attempt status');
+  }
+  recoverAttempts() {
+    this.db.prepare("UPDATE attempts SET status='interrupted',ended_at=?,reason='Companion stopped before the result was captured' WHERE status='active'").run(new Date().toISOString());
+  }
+  attemptStats(challengeId,playerId) {
+    const rows=this.db.prepare(`SELECT character,COUNT(*) AS total,SUM(status='finished') AS finished,
+      SUM(status='aborted') AS aborted,SUM(status='interrupted') AS interrupted,SUM(status='active') AS active
+      FROM attempts WHERE challenge_id=? AND player_id=? GROUP BY character`).all(challengeId,playerId);
+    const result={total:0,finished:0,aborted:0,interrupted:0,active:0,byCharacter:{}};
+    for(const {character,...counts} of rows){result.byCharacter[character]=counts;for(const key of Object.keys(counts))result[key]+=counts[key];}
+    return result;
   }
   add({ id = randomUUID(), challenge, identity, character, stage, frames, startedAt }) {
     if (!identity || !/^[0-9a-f]{64}$/.test(identity.id) || !challenge.assignments[character] ||
         challenge.assignments[character] !== stage || !Number.isInteger(frames) || frames <= 0 || frames > 216000) {
       throw new Error('Résultat invalide.');
     }
+    this.db.exec('BEGIN');
+    try{
     this.db.prepare('INSERT OR IGNORE INTO runs VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
       .run(id, challenge.id, identity.id, identity.displayName, identity.connectCode,
         character, stage, frames, new Date().toISOString(), 'dolphin-local-experimental');
     if (typeof startedAt === 'string' && Number.isFinite(Date.parse(startedAt))) {
       this.db.prepare('INSERT OR IGNORE INTO run_capture VALUES (?, ?)').run(id, startedAt);
     }
+    this.db.prepare(`INSERT OR IGNORE INTO attempts SELECT r.id,r.challenge_id,r.player_id,r.character,r.stage,COALESCE(c.started_at,r.created_at),r.created_at,'finished',r.frames,''
+      FROM runs r LEFT JOIN run_capture c ON c.run_id=r.id WHERE r.id=?`).run(id);
+    this.db.prepare("UPDATE attempts SET status='finished',ended_at=(SELECT created_at FROM runs WHERE id=?),elapsed_frames=(SELECT frames FROM runs WHERE id=?),reason='' WHERE id=? AND challenge_id=? AND player_id=?")
+      .run(id,id,id,challenge.id,identity.id);
+    this.db.exec('COMMIT');
+    }catch(error){this.db.exec('ROLLBACK');throw error;}
     return id;
   }
   leaderboard(challengeId, character) {
@@ -82,12 +122,20 @@ export class ScoreStore {
       WHERE r.place=1 ORDER BY r.character`).all(challengeId, playerId, includeExcluded ? 1 : 0);
   }
   characterHistory(challengeId, playerId, character, offset = 0) {
-    return this.db.prepare(`SELECT r.id, r.character, r.stage, r.frames, r.created_at AS createdAt,
+    return this.db.prepare(`SELECT a.id, a.character, a.stage, r.frames, COALESCE(r.created_at,a.started_at) AS createdAt,
+      a.status AS attemptStatus,a.reason AS abortReason,a.elapsed_frames AS elapsedFrames,
       COALESCE(s.status,'local') AS submissionStatus, s.replay_name AS replayName, s.note AS reviewNote,
-      rr.sha256 IS NOT NULL AS hasReplay, x.reason AS exclusionReason FROM runs r LEFT JOIN run_exclusions x ON x.run_id=r.id
+      rr.sha256 IS NOT NULL AS hasReplay, x.reason AS exclusionReason FROM attempts a LEFT JOIN runs r ON r.id=a.id LEFT JOIN run_exclusions x ON x.run_id=r.id
       LEFT JOIN submissions s ON s.run_id=r.id LEFT JOIN run_replays rr ON rr.run_id=r.id
-      WHERE r.challenge_id=? AND r.player_id=? AND r.character=?
-      ORDER BY r.created_at DESC, r.rowid DESC LIMIT 50 OFFSET ?`).all(challengeId, playerId, character, offset);
+      WHERE a.challenge_id=? AND a.player_id=? AND a.character=?
+      ORDER BY COALESCE(r.created_at,a.started_at) DESC, a.rowid DESC LIMIT 50 OFFSET ?`).all(challengeId, playerId, character, offset);
+  }
+  runGroups(challengeId,playerId) {
+    const best=new Map(this.bestRuns(challengeId,playerId,{includeExcluded:true}).map(r=>[r.character,r]));
+    return Object.entries(this.attemptStats(challengeId,playerId).byCharacter).map(([character,counts])=>{
+      const run=best.get(character)||this.characterHistory(challengeId,playerId,character)[0];
+      return {...run,attemptStatus:best.has(character)?'finished':run.attemptStatus,attemptCount:counts.total,finishedCount:counts.finished};
+    }).sort((a,b)=>a.character.localeCompare(b.character));
   }
   personalBest(challengeId, character, playerId) {
     return this.db.prepare(`SELECT frames FROM runs WHERE challenge_id = ? AND character = ? AND NOT EXISTS(SELECT 1 FROM run_exclusions x WHERE x.run_id=runs.id)

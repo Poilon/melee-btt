@@ -133,7 +133,6 @@ function render(d) {
   $('logout').hidden = !account;
   $('create-account').hidden = account?.provider === 'password';
   text('create-account', account ? 'Add password' : 'Create account');
-  text('auth-note', 'No email required.');
   renderConnection();
   renderLeaderboard(d);
   const connected = d.capture.status === 'connected';
@@ -351,7 +350,7 @@ function showAuth(mode = 'login') {
   authMode = mode;
   const signup = mode === 'signup';
   text('auth-title', signup ? 'Create account' : 'Sign in');
-  text('auth-description', signup ? data?.identity ? 'Add a password to keep this profile and its records.' : 'Choose a unique username and a password. No email required.' : 'Use your TTRC account.');
+  text('auth-description', signup ? data?.identity ? 'Add a password to keep this profile and its records.' : 'Choose a unique username and a password.' : 'Use your TTRC account.');
   $('auth-password').minLength = signup ? 8 : 1;
   $('auth-password').autocomplete = signup ? 'new-password' : 'current-password';
   $('auth-username').minLength = signup ? 3 : 1;
