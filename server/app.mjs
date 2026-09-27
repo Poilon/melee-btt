@@ -1,6 +1,7 @@
 import { artworkFiles } from '../shared/artwork.mjs';
 import { validPlaySettings } from './play-settings.mjs';
-import { ReplayError } from './replays.mjs';
+import { ReplayError,ReplayLibrary } from './replays.mjs';
+import {verifyChallengePackage} from './online-challenge.mjs';
 import { inspectReplay, MAX_REPLAY_BYTES } from '../shared/replay.mjs';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
@@ -18,8 +19,9 @@ const files = new Map([
   ['/target.svg', ['target.svg', 'image/svg+xml']],
 ]);
 
-export function createApp({ challenge, gecko, store, getIdentity, getCapture, launch, remote, importPlayer, prepareRecorder, reviewerProxy, openReplays, replays, getPlaySettings, savePlaySettings, onboarding, account, instance, quit }) {
+export function createApp({ challenge:initialChallenge, gecko:initialGecko, getChallenge, onlineChallenge, updateChallenge, store, getIdentity, getCapture, launch, remote, importPlayer, prepareRecorder, reviewerProxy, openReplays, replays, getPlaySettings, savePlaySettings, onboarding, account, instance, quit }) {
   const server = createServer(async (req, res) => {
+    const {manifest:challenge,gecko}=getChallenge?getChallenge():{manifest:initialChallenge,gecko:initialGecko};
     const port = server.address()?.port;
     const hosts = new Set([`localhost:${port}`, `127.0.0.1:${port}`]);
     const json = (status, value) => {
@@ -36,6 +38,20 @@ export function createApp({ challenge, gecko, store, getIdentity, getCapture, la
     }
     try {
       const url = new URL(req.url, `http://${req.headers.host}`);
+      if(req.method==='POST'&&url.pathname==='/api/challenge/update'){
+        if(!req.headers.origin||req.headers['x-ttrc-action']!=='challenge')return json(403,{error:'Action not allowed.'});
+        if(!updateChallenge)return json(503,{error:'Challenge updates unavailable.'});
+        try{return json(200,await updateChallenge());}catch(error){return json(409,{error:error.message});}
+      }
+      if(req.method==='POST'&&url.pathname==='/api/submissions/disclose'){
+        if(!req.headers.origin||req.headers['x-ttrc-action']!=='disclose')return json(403,{error:'Action not allowed.'});
+        const identity=await getIdentity();if(!identity)return json(401,{error:'Sign in first.'});
+        let body='';for await(const part of req){body+=part;if(body.length>1024)return json(413,{error:'Request too large.'});}
+        const input=JSON.parse(body),run=store.run(input.id,identity.id,challenge.id);
+        if(!run||run.exclusionReason)return json(404,{error:'Submitted run not found for this player.'});
+        if(!remote?.disclose)return json(503,{error:'Sharing unavailable.'});
+        try{return json(200,await remote.disclose(run.id,input.kind,identity));}catch(error){return json(400,{error:error.message});}
+      }
       if (req.method === 'GET' && url.pathname === '/api/health') return json(200, {instance});
       if (req.method === 'POST' && url.pathname === '/api/quit') {
         if (!req.headers.origin || req.headers['x-ttrc-action'] !== 'quit') return json(403, {error:'Action not allowed.'});
@@ -67,7 +83,7 @@ export function createApp({ challenge, gecko, store, getIdentity, getCapture, la
       }
       if(url.pathname==='/api/shared/run'&&req.method==='GET'){
         if(!remote?.publicRun)return json(503,{error:'Shared replays unavailable.'});
-        try{return json(200,await remote.publicRun(url.searchParams.get('id'),url.searchParams.get('playerId')));}
+        try{return json(200,await remote.publicRun(url.searchParams.get('id'),url.searchParams.get('playerId'),false,url.searchParams.get('challenge')));}
         catch{return json(404,{error:'This run is not public or is no longer available.'});}
       }
       if(url.pathname==='/api/shared/launch'&&req.method==='POST'){
@@ -76,9 +92,13 @@ export function createApp({ challenge, gecko, store, getIdentity, getCapture, la
         let body='';for await(const part of req){body+=part;if(body.length>1024)return json(413,{error:'Request too large.'});}
         const input=JSON.parse(body);
         try{
-          const data=await remote.publicRun(input.id,input.playerId);
-          if(data.challengeId!==challenge.id)return json(409,{error:'This replay belongs to a different challenge.'});
-          const bytes=await remote.publicRun(input.id,input.playerId,true);
+          const data=await remote.publicRun(input.id,input.playerId,false,input.challengeId);
+          const bytes=await remote.publicRun(input.id,input.playerId,true,input.challengeId);
+          if(data.challengeId!==challenge.id){
+            const pack=await verifyChallengePackage(await remote.challengePackage(data.challengeId));
+            const archived=new ReplayLibrary({directory:replays.directory,cacheDirectory:replays.cacheDirectory,challenge:pack.manifest,gecko:pack.gecko,run:replays.run});
+            return json(200,await archived.launchBytes(bytes));
+          }
           return json(200,await replays.launchBytes(bytes));
         }catch(error){if(error instanceof ReplayError)throw error;return json(404,{error:'This public replay is no longer available.'});}
       }
@@ -196,6 +216,7 @@ export function createApp({ challenge, gecko, store, getIdentity, getCapture, la
           challenge, identity, player, auth: { mode: 'password', configured: true, connection: account?.status(), account: identity ? { name: identity.displayName, linked: true } : null }, capture: getCapture(), scope: 'local', character,
           remote: remote?.status(identity) || { available: false, paired: false, pending: 0 },
           settings: getPlaySettings?.() || null,
+          challengeUpdate:onlineChallenge?.status()||null,
           setup: onboarding?.get() || {ready:true},
           leaderboard: [], stats: store.stats(challenge.id),
           history: player ? store.history(challenge.id, player.id) : [],

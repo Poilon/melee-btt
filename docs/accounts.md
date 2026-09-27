@@ -69,13 +69,24 @@ public profiles and companion player files cannot assign roles. Access is checke
 on every admin API request, so revoking the role takes effect on existing sessions.
 
 Sign in normally, then open **Admin** in the website navigation (`/review`). Admins
-can see private submissions and download evidence, approve or exclude unreviewed
-runs, set or remove an end date, and close the challenge with a confirmation.
+can see private submissions and download evidence, set or remove an end date,
+and close the challenge with a confirmation. Runs are accepted automatically.
 Dates are entered in the browser's local time zone and stored in UTC.
 
 At the deadline, submissions stop and rankings/times are revealed automatically by
 the server, including when nobody has the admin page open. Without a date the
 challenge stays open until manual closure. Closure is permanent; the admin page
-cannot hide already revealed results or reopen submissions. Existing individually
-disclosed replays remain public; reveal publishes times and rankings, not all private
-replay files. The next seed is a separate publication and does not start automatically.
+cannot hide already revealed results or reopen submissions. After reveal, each player’s current valid records and their replays become public.
+Before reveal, players can share just a score or share the score and replay from the
+companion. A score-only disclosure never grants replay download access.
+
+After closing a challenge, use **Generate new challenge** with an optional seed
+(blank selects a random seed). Confirm **Generate & publish** to open the next
+challenge with the same rules and no deadline. A server-side conditional write
+prevents simultaneous publications from replacing each other. Previous results
+remain in **Previous challenges** on the site. Generation does not require a deploy.
+
+Companion v0.8.0 checks for new challenges, verifies their full contents against the
+pinned generator, and offers **Update challenge**. Close Dolphin before applying it.
+Launching Dolphin through the companion also checks and applies available updates.
+Accounts, settings, previous local scores and replays are preserved.

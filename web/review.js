@@ -44,20 +44,6 @@ function renderQueue() {
       actions.append(launch);
     }
     card.append(actions);
-    if (['pending', 'submitted'].includes(r.status)) {
-      const note = node('textarea', ''); note.placeholder = 'Review notes or rejection reason'; note.maxLength = 500; note.setAttribute('aria-label', `Review notes for ${r.displayName}`);
-      const buttons = node('div', '', 'buttons');
-      for (const [status, label] of [['approved', 'Approve run'], ['rejected', 'Exclude run']]) {
-        const button = node('button', label, status === 'approved' ? 'approve' : 'reject');
-        button.addEventListener('click', async () => {
-          button.disabled = true;
-          try { await request('decision', {id: r.id, playerId: r.playerId, status, note: note.value}); await refresh(); }
-          catch (error) { $('message').textContent = error.message; button.disabled = false; }
-        });
-        buttons.append(button);
-      }
-      card.append(note, buttons);
-    } else card.append(node('p', r.reviewNote || 'No review note.'));
     $('queue').append(card);
   }
 }
@@ -67,6 +53,8 @@ async function refresh() {
     $('access').hidden = true; $('desk').hidden = false;
     const {competition, challenge, submissions} = current;
     const closed = competition.phase === 'closed';
+    $('generate-button').disabled=!closed;
+    $('generate-note').textContent=closed?'Ready to generate a new seed.':'Close the current challenge first.';
     $('phase').textContent = `Seed ${challenge.rules.seed} · ${competition.phase.toUpperCase()}`;
     for (const id of ['close', 'deadline', 'save-deadline', 'remove-deadline']) $(id).disabled = closed;
     $('deadline-summary').textContent = closed ? `Results revealed · ${localTime(competition.closedAt)}` : competition.endsAt ? `Closes and reveals on ${localTime(competition.endsAt)}` : 'No end date. Submissions stay open until you close the challenge.';
@@ -125,3 +113,16 @@ $('confirm-close').addEventListener('click', async () => {
 });
 document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
 await refresh();
+
+let pendingSeed;
+$('generate').addEventListener('submit',event=>{
+ event.preventDefault();pendingSeed=$('new-seed').value?Number($('new-seed').value):undefined;
+ $('generate-summary').textContent=pendingSeed?`New seed: ${pendingSeed}.`:'A random seed will be generated.';
+ $('generate-error').textContent='';$('generate-confirm').showModal();
+});
+$('publish-challenge').addEventListener('click',async()=>{
+ $('publish-challenge').disabled=true;$('publish-challenge').textContent='Generating…';
+ try{const result=await request('generate',{challengeId:current.challenge.id,seed:pendingSeed,confirm:'NEW CHALLENGE'});$('generate-confirm').close();$('new-seed').value='';await refresh();$('message').textContent=`Seed ${result.challenge.rules.seed} is live. The companion can download the new challenge.`;}
+ catch(error){$('generate-error').textContent=error.message;}
+ finally{$('publish-challenge').disabled=false;$('publish-challenge').textContent='Generate & publish';}
+});

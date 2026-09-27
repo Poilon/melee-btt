@@ -8,7 +8,7 @@ import { CompanionAccount } from '../../server/account.mjs';
 import { createApp } from '../../server/app.mjs';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
-import { createCloudHandler } from '../../cloud/backend.mjs';
+import { createHostedHandler } from '../../cloud/challenges.mjs';
 import {hashPassword} from '../../cloud/password.mjs';
 const generated = await generateChallenge({ seed: 20260989, moving:true });
 // The upstream DK fixture is a vanilla course. Only this isolated test seed uses it.
@@ -27,7 +27,7 @@ const adminId = 'c'.repeat(64);
 await memory.put('usernames/test_admin.json', {id:adminId,credential:{password:await hashPassword('Admin browser test 42'),revision:'test-admin-revision'}});
 await memory.put(`profiles/${adminId}.json`, {id:adminId,slug:'test_admin',displayName:'test_admin',connectCode:'TT#00001'});
 await memory.put(`roles/${adminId}.json`, {role:'admin'});
-const publicHandler = createCloudHandler({ store: memory, challenge, gecko, origin, secret: 'test-only', reviewerKey, allowLegacySignup: true });
+const publicHandler = createHostedHandler({ store: memory, fallback:{manifest:challenge,gecko}, generate:generateChallenge, origin, secret: 'test-only', reviewerKey, allowLegacySignup: true });
 const staticFiles = { ...Object.fromEntries(artworkFiles), '/': ['index.html','text/html'], '/review': ['review.html','text/html'], ...Object.fromEntries(['app.js','time.js','review.js'].map(p=>['/'+p,[p,'text/javascript']])), ...Object.fromEntries(['style.css','review.css'].map(p=>['/'+p,[p,'text/css']])), '/target.svg':['target.svg','image/svg+xml'] };
 await new Promise(resolve => createServer(async (req, res) => {
   if (req.url.startsWith('/api/')) return publicHandler(req, res);
@@ -45,8 +45,10 @@ const dkOld=store.add({ challenge, identity: currentIdentity, character:'donkey-
 for(const id of [dkBest,dkOld])store.attachReplay(id,'b'.repeat(64),'record.slp');
 const peachPaused=store.add({challenge,identity:currentIdentity,character:'peach',stage:challenge.assignments.peach,frames:987});
 store.attachReplay(peachPaused,'b'.repeat(64),'record.slp');store.exclude(peachPaused,'Paused during the run. Excluded from records and submissions.');
+const disclosures={};
 const remote = {
-  status: () => ({ available:true,paired:true,pending:0 }),
+  status: () => ({ available:true,paired:true,pending:0,disclosures }),
+  disclose:async(id,kind)=>{const response=await fetch(origin+'/api/submissions/disclose',{method:'POST',headers:{Origin:origin,Authorization:`Bearer ${player.token}`,'Content-Type':'application/json'},body:JSON.stringify({id,public:kind!=='private',kind:kind==='private'?'replay':kind})});if(!response.ok)throw new Error('Sharing failed');disclosures[id]=kind;return response.json();},
   publicRun:async(id,playerId,replay=false)=>{const response=await fetch(`${origin}/api/shared/${replay?'replay':'run'}?id=${id}&playerId=${playerId}`);if(!response.ok)throw Error('Not public');return replay?Buffer.from(await response.arrayBuffer()):response.json();},
   browserLink:async()=>{const response=await fetch(origin+'/api/companion/browser',{method:'POST',headers:{Authorization:`Bearer ${player.token}`}});return (await response.json()).url;},
   enqueue: async (run, replay, name) => {

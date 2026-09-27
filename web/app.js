@@ -7,6 +7,8 @@ const names = {
   'game-and-watch': 'Mr. Game & Watch', marth: 'Marth', roy: 'Roy',
 };
 const $ = id => document.getElementById(id);
+const archiveId=new URLSearchParams(location.search).get('challenge');
+const apiPath=path=>{const url=new URL(`/api/${path}`,location.origin);if(archiveId)url.searchParams.set('challenge',archiveId);return url.pathname+url.search;};
 const text = (id, value) => { $(id).textContent = value; };
 const node = (tag, value, className) => { const n = document.createElement(tag); n.textContent = value; if (className) n.className = className; return n; };
 const date = iso => new Date(iso).toLocaleDateString('en-US', { day: '2-digit', month: 'short' });
@@ -23,7 +25,7 @@ function download(value, name, type = 'application/json') {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 async function action(path, body) {
-  const response = await fetch(`/api/${path}`, { method: 'POST',
+  const response = await fetch(apiPath(path), { method: 'POST',
     headers: { 'X-TTRC-Action': 'profile', ...(body ? { 'Content-Type': 'application/json' } : {}) },
     ...(body ? { body: JSON.stringify(body) } : {}) });
   const result = await response.json();
@@ -73,11 +75,17 @@ function renderCourses() {
     const button = node('button', '', `course-card${character === selection ? ' selected' : ''}${p?.best ? ' cleared' : ''}`);
     button.setAttribute('aria-label', `${names[character]} → ${names[data.challenge.assignments[character]]}`);
     button.setAttribute('aria-pressed', String(character === selection));
+    button.dataset.character = character;
+    button.setAttribute('aria-haspopup', 'dialog');
     button.append(portrait(character), node('strong', names[character]), node('span', `→ ${names[data.challenge.assignments[character]]}`),
       node('small', p?.best ? `✓ ${time(p.best)} · ${p.runs} run${p.runs === 1 ? '' : 's'}` : 'No submitted run', 'course-best'));
     const targets=data.challenge.motion?.courses[data.challenge.assignments[character]];
     if(targets){const counts=targets.reduce((a,t)=>(a[t.kind]++,a),{static:0,moving:0,teleport:0});button.append(node('small',`${counts.static} fixed · ${counts.moving} moving · ${counts.teleport} teleporting`,'course-best'));}
-    button.addEventListener('click', () => { choose(character); $('board-title').scrollIntoView({ block: 'start', behavior: 'smooth' }); });
+    button.addEventListener('click', () => {
+      choose(character);
+      renderCharacterDetails();
+      $('character-dialog').showModal();
+    });
     $('course-grid').append(button);
   }
   text('course-count', `${characters.length} course${characters.length === 1 ? '' : 's'}`);
@@ -93,7 +101,6 @@ function render(d) {
   document.querySelector('.board-footer>span:last-child').textContent = revealed ? 'Challenge closed · results revealed' : 'All participants · alphabetical order';
   text('board-title',revealed?'Leaderboard':'Participants');
   document.querySelector('.leaderboard .eyebrow').textContent=revealed?'Results':'Current seed';
-  document.querySelector('thead tr').replaceChildren(...(revealed?['RANK','PLAYER','FINAL TIME','DATE']:['PLAYER']).map(label=>{const th=node('th',label);th.scope='col';return th;}));
   text('competition-state',revealed?'Challenge closed':'Results hidden');
   text('competition-detail',revealed?'Submissions are closed. Submitted times and rankings are now visible.':'Times and rankings stay hidden until the challenge closes, except runs their owners choose to disclose.');
   if (!revealed && d.competition?.endsAt) text('competition-detail', `Closes and reveals ${new Date(d.competition.endsAt).toLocaleString('en-US', {dateStyle:'medium', timeStyle:'short'})} (your local time). Times and rankings stay hidden until then, except disclosed runs.`);
@@ -121,17 +128,7 @@ function render(d) {
   text('create-account', account ? 'Add password' : 'Create account');
   text('auth-note', 'No email required.');
   renderConnection();
-  $('scores').replaceChildren();
-  const publicRows=revealed?d.leaderboard:(d.participants||[]);
-  for (const score of publicRows) {
-    const row = document.createElement('tr'); if (score.playerId === d.player?.id) row.className = 'mine';
-    if(revealed)row.append(node('td', String(score.rank).padStart(2, '0'), `rank ${score.rank === 1 ? 'first-place' : ''}`));
-    const player = document.createElement('td'); player.append(node('span', score.displayName, 'row-name'), node('span', score.connectCode, 'row-code'));
-    row.append(player);
-    if(revealed)row.append(node('td',time(score.frames),'run-time'),node('td',date(score.createdAt),'row-date'));
-    $('scores').append(row);
-  }
-  $('board-empty').hidden = publicRows.length > 0;
+  renderLeaderboard(d);
   text('personal-character', names[selection].toUpperCase());
   const best = d.personalBest;
   const leader = d.leaderboard[0];
@@ -152,6 +149,7 @@ function render(d) {
   if ($('course-grid').dataset.key !== courseKey) { $('course-grid').dataset.key = courseKey; renderCourses(); }
   renderHistory(d);
   renderShared(d);
+  if ($('character-dialog').open) renderCharacterDetails();
   if (playerSeen !== d.player?.id) { seenRuns = undefined; playerSeen = d.player?.id; }
   if (seenRuns) {
     const fresh = d.history.find(run => !seenRuns.has(run.id));
@@ -162,6 +160,42 @@ function render(d) {
   }
   seenRuns = new Set(d.history.map(run => run.id));
 }
+let standingsView='overall';
+function pointsBreakdown(player){
+ text('points-title',player.displayName);
+ text('points-total',`${player.totalPoints} points · ${player.characterPoints} from characters + ${player.thsPoints} from THS`);
+ text('points-ths',player.thsFrames===null?`THS incomplete · ${player.completed}/${player.totalCharacters} characters submitted`:`THS: ${time(player.thsFrames)} · #${player.thsRank} · ${player.thsPoints} points`);
+ $('points-courses').replaceChildren();
+ for(const character of Object.keys(data.challenge.assignments)){
+  const score=player.courses.find(r=>r.character===character),row=node('tr');
+  row.append(node('td',names[character]),node('td',score?`#${score.rank}`:'—'),node('td',score?time(score.frames):'—','run-time'),node('td',String(score?.points||0)));$('points-courses').append(row);
+ }
+ $('points-dialog').showModal();
+}
+function renderLeaderboard(d){
+ const revealed=Boolean(d.competition?.timesRevealed),ths=standingsView==='ths';
+ $('standings-tools').hidden=!revealed;
+ text('board-title',!revealed?'Participants':ths?'Total High Score':'Leaderboard');
+ const headings=!revealed?['PLAYER']:ths?['RANK','PLAYER','TOTAL TIME','POINTS']:['RANK','PLAYER','POINTS','THS'];
+ document.querySelector('.leaderboard thead tr').replaceChildren(...headings.map(label=>{const th=node('th',label);th.scope='col';return th;}));
+ const standings=d.overallLeaderboard||[];
+ const rows=!revealed?d.participants||[]:ths?standings.filter(r=>r.thsFrames!==null).sort((a,b)=>a.thsRank-b.thsRank||a.displayName.localeCompare(b.displayName)):standings;
+ $('scores').replaceChildren();
+ for(const score of rows){
+  const row=node('tr');if(score.playerId===d.player?.id)row.className='mine';
+  const rank=ths?score.thsRank:score.rank;
+  if(revealed)row.append(node('td',String(rank).padStart(2,'0'),`rank ${rank===1?'first-place':''}`));
+  const player=node('td'),label=node(revealed?'button':'span',score.displayName,revealed?'row-name text-button':'row-name');
+  if(revealed){label.title='View points breakdown';label.addEventListener('click',()=>pointsBreakdown(score));}
+  player.append(label,node('span',revealed?`${score.completed}/${score.totalCharacters} characters · View points`:score.connectCode,'row-code'));row.append(player);
+  if(revealed&&ths)row.append(node('td',time(score.thsFrames),'run-time'),node('td',String(score.thsPoints),'run-time'));
+  else if(revealed){const total=node('td',String(score.totalPoints),'run-time'),thsCell=node('td',score.thsFrames===null?'Incomplete':time(score.thsFrames),'row-date');row.append(total,thsCell);}
+  $('scores').append(row);
+ }
+ $('board-empty').hidden=rows.length>0;
+ if(revealed){document.querySelector('#board-empty h3').textContent=ths?'No complete THS yet':'No records yet';document.querySelector('#board-empty p').textContent=ths?'Submit a valid score for every character to enter the THS standings.':'No submitted results for this challenge.';}
+}
+for(const [id,view]of [['standings-overall','overall'],['standings-ths','ths']])$(id).addEventListener('click',()=>{standingsView=view;for(const [other,mode]of [['standings-overall','overall'],['standings-ths','ths']])$(other).setAttribute('aria-pressed',String(mode===view));if(data)renderLeaderboard(data);});
 let historyKey, sharedKey, pendingDisclosure;
 function renderHistory(d) {
   const key=JSON.stringify([d.player?.id,d.challenge.id,d.history]);
@@ -195,6 +229,7 @@ function renderHistory(d) {
   }
 }
 function disclosureButton(run){
+  if(data.competition?.timesRevealed&&run.current&&run.status!=='rejected')return node('small','Public after reveal');
   const button=node('button',run.disclosed?'Make private':'Disclose run','text-button disclose-button');
   button.type='button';button.title=run.disclosed?'Remove public access to this run':'Publish this time and replay to everyone';
   button.addEventListener('click',async e=>{
@@ -214,23 +249,61 @@ function renderShared(d){
   text('shared-count',runs.length);$('shared-empty').hidden=runs.length>0;$('shared-list').replaceChildren();
   const linkId=new URLSearchParams(location.search).get('run'),linkPlayer=new URLSearchParams(location.search).get('player');
   for(const r of runs){
-    const card=node('article','','shared-run'),info=node('div','','shared-info');
+    const card=publicReplayCard(r);
     if(r.id===linkId&&r.playerId===linkPlayer)card.classList.add('shared-selected');
-    info.append(node('strong',r.displayName),node('span',`${names[r.character]} → ${names[r.stage]}`),node('small',r.status==='rejected'?'Excluded':'Submitted'));
-    const actions=node('div','','shared-actions'),query=new URLSearchParams({id:r.id,playerId:r.playerId});
-    const watch=node('a','Watch in Dolphin','button secondary');watch.href=`http://localhost:4317/?publicRun=${r.id}&playerId=${r.playerId}`;watch.target='_blank';watch.rel='noopener';watch.title='Open the companion to play this replay';
-    const download=node('a','Download .slp','text-button');download.href=`/api/shared/replay?${query}`;download.download=`${r.id}.slp`;
-    const share=node('button','Copy link','text-button');share.addEventListener('click',async()=>{const url=new URL(location.origin);url.searchParams.set('run',r.id);url.searchParams.set('player',r.playerId);url.hash='shared-runs';try{await navigator.clipboard.writeText(url.href);toast('Run link copied.');}catch{toast(url.href);}});
-    actions.append(watch,download,share);card.append(info,node('time',time(r.frames),'run-time'),actions);$('shared-list').append(card);
+    $('shared-list').append(card);
   }
 }
+function publicReplayCard(r) {
+    const card=node('article','','shared-run'),info=node('div','','shared-info');
+    info.append(node('strong',r.displayName),node('span',`${names[r.character]} → ${names[r.stage]}`),node('small',r.status==='rejected'?'Excluded':'Submitted'));
+    const actions=node('div','','shared-actions'),query=new URLSearchParams({id:r.id,playerId:r.playerId});
+    const watch=node('a','Watch in Dolphin','button secondary');watch.href=`http://localhost:4317/?publicRun=${r.id}&playerId=${r.playerId}&challenge=${data.challenge.id}`;watch.target='_blank';watch.rel='noopener';watch.title='Open the companion to play this replay';
+    const download=node('a','Download .slp','text-button');download.href=apiPath(`shared/replay?${query}`);download.download=`${r.id}.slp`;
+    const share=node('button','Copy link','text-button');share.addEventListener('click',async()=>{const url=new URL(location.origin);url.searchParams.set('run',r.id);url.searchParams.set('player',r.playerId);url.searchParams.set('challenge',data.challenge.id);url.hash='shared-runs';try{await navigator.clipboard.writeText(url.href);toast('Run link copied.');}catch{toast(url.href);}});
+    if(r.hasReplay!==false)actions.append(watch,download);
+    else actions.append(node('span','Score only · replay private','muted'));
+    actions.append(share);card.append(info,node('time',time(r.frames),'run-time'),actions);
+    return card;
+}
+let characterDetailsKey;
+function renderCharacterDetails() {
+  if (!data) return;
+  const profilePlayer=$('public-profile').dataset.player;
+  const replays=(data.sharedRuns||[]).filter(r=>r.character===selection&&(!profilePlayer||r.playerId===profilePlayer));
+  const best=data.progress?.[selection]?.best;
+  const revealed=Boolean(data.competition?.timesRevealed), ready=data.character===selection;
+  const key=JSON.stringify([data.challenge.id,selection,replays,best,revealed,ready,ready?data.leaderboard:[]]);
+  if(key===characterDetailsKey)return;characterDetailsKey=key;
+  text('character-title',names[selection]);
+  text('character-stage',`Stage: ${names[data.challenge.assignments[selection]]}`);
+  $('character-portrait').replaceChildren(portrait(selection));
+  const targets=data.challenge.motion?.courses[data.challenge.assignments[selection]];
+  if(targets){const counts=targets.reduce((a,t)=>(a[t.kind]++,a),{static:0,moving:0,teleport:0});text('character-targets',`${counts.static} fixed · ${counts.moving} moving · ${counts.teleport} teleporting`);}
+  else text('character-targets',`${data.challenge.rules.targets} fixed`);
+  text('character-best',best?time(best):'No submitted run');
+  text('character-results-note',!revealed?'Times and rankings stay hidden until the reveal. Disclosed runs are available below.':!ready?'Loading results…':data.leaderboard.length?'Final standings for this character.':'No submitted results for this character.');
+  $('character-results').replaceChildren();
+  if(revealed&&ready)for(const r of data.leaderboard){
+    const row=node('li');row.append(node('span',`#${r.rank}`,'rank'),node('strong',r.displayName),node('span',time(r.frames),'run-time'),node('span',`${r.points||0} pts`,'character-points'));$('character-results').append(row);
+  }
+  text('character-replay-count',replays.length);
+  $('character-replay-empty').hidden=replays.length>0;
+  $('character-replays').replaceChildren(...replays.map(publicReplayCard));
+}
+$('character-dialog').addEventListener('close',()=>{
+  document.querySelector(`#course-grid [data-character="${selection}"]`)?.focus({preventScroll:true});
+});
 async function refresh() {
   const requested = selection;
   try {
-    const response = await fetch(`/api/dashboard?character=${encodeURIComponent(requested)}`);
+    const response = await fetch(apiPath(`dashboard?character=${encodeURIComponent(requested)}`));
     if (!response.ok) throw new Error();
     const next = await response.json(); if (requested === selection) render(next);
-  } catch { text('capture-top', 'Site offline · reconnecting…'); $('capture-top').classList.remove('connected'); }
+  } catch {
+    text('capture-top', 'Site offline · reconnecting…'); $('capture-top').classList.remove('connected');
+    if ($('character-dialog').open && requested===selection) { characterDetailsKey=undefined; text('character-results-note','Could not refresh results. Reconnecting…'); }
+  }
 }
 function choose(character) {
   selection = character;
@@ -345,3 +418,11 @@ await refresh();
 setInterval(() => { if (!document.hidden && !busy) refresh(); }, 5000);
 setInterval(() => { if (!document.hidden) renderDeadline(); }, 1000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+
+for(const link of document.querySelectorAll('a[href="/api/challenge/code"]'))link.href=apiPath('challenge/code');
+fetch('/api/challenges').then(r=>r.ok?r.json():null).then(result=>{
+ if(!result?.challenges?.length)return;
+ const others=result.challenges.filter(c=>archiveId?c.id!==archiveId:!c.current);
+ $('challenge-archives').hidden=!others.length;
+ for(const c of others){const link=node('a',`Seed ${c.seed}${c.current?' · Current challenge':''}`);link.href=c.current?'/':`/?challenge=${c.id}`;$('archive-links').append(link);}
+}).catch(()=>{});

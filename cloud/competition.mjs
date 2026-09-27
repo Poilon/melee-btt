@@ -5,7 +5,7 @@ import { createLifecycle } from './lifecycle.mjs';
 const hash = value => createHash('sha256').update(value).digest('hex');
 const uuid = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
 const cookieValue = (req, name) => (req.headers.cookie || '').split(';').map(s => s.trim()).find(s => s.startsWith(`${name}=`))?.slice(name.length + 1);
-export function createCompetition({ store, challenge, gecko, origin, reviewerKey, endsAt, bearer, session, json, now = Date.now }) {
+export function createCompetition({ store, challenge, gecko, origin, reviewerKey, endsAt, challengeManager, bearer, session, json, now = Date.now }) {
   let cache;
   const send = (res, status, value) => { json(res, status, value); return true; };
   const parseBody = async req => {
@@ -39,7 +39,8 @@ export function createCompetition({ store, challenge, gecko, origin, reviewerKey
   };
   const shared = async () => {
     const visible=await disclosures();
-    return (await list()).filter(r=>visible.has(`${r.playerId}:${r.id}`)).map(r=>({...publicRecord(r),disclosedAt:visible.get(`${r.playerId}:${r.id}`).at})).sort((a,b)=>b.disclosedAt.localeCompare(a.disclosedAt)||a.id.localeCompare(b.id));
+    const state=await phase();
+    return (await list()).filter(r=>visible.has(`${r.playerId}:${r.id}`)||(state.timesRevealed&&r.current&&r.status!=='rejected')).map(r=>({...publicRecord(r),hasReplay:Boolean((state.timesRevealed&&r.current&&r.status!=='rejected')||(visible.has(`${r.playerId}:${r.id}`)&&visible.get(`${r.playerId}:${r.id}`).kind!=='score')),disclosedAt:visible.get(`${r.playerId}:${r.id}`)?.at||state.closedAt})).sort((a,b)=>b.disclosedAt.localeCompare(a.disclosedAt)||a.id.localeCompare(b.id));
   };
   const reviewer = async req => {
     const account = await session(req);
@@ -87,12 +88,13 @@ export function createCompetition({ store, challenge, gecko, origin, reviewerKey
       return send(res, 202, { ok: true, status: 'submitted', id: input.id });
     }
     if(path==='submissions/disclose'&&req.method==='POST'){
-      const user=await session(req);if(!user)return send(res,401,{error:'Sign in to disclose your own run.'});
+      const user=await session(req)||await bearer(req);if(!user)return send(res,401,{error:'Sign in to disclose your own run.'});
       const input=await parseBody(req);
-      if(!uuid.test(input.id||'')||typeof input.public!=='boolean')return send(res,400,{error:'Invalid disclosure request.'});
+      if(!uuid.test(input.id||'')||typeof input.public!=='boolean'||(input.kind!==undefined&&!['score','replay'].includes(input.kind)))return send(res,400,{error:'Invalid disclosure request.'});
       const record=await store.get(`submissions/${challenge.id}/${user.id}/${input.id}.json`);
       if(!record)return send(res,404,{error:'Run not found.'});
-      await store.put(`disclosures/${challenge.id}/${user.id}/${input.id}.json`,{id:input.id,playerId:user.id,public:input.public,at:new Date(now()).toISOString()},true);
+      if((!input.public||input.kind==='score')&&(await phase()).timesRevealed&&(await list()).some(r=>r.id===input.id&&r.playerId===user.id&&r.current&&r.status!=='rejected'))return send(res,409,{error:'This final record and its replay are already public after reveal.'});
+      await store.put(`disclosures/${challenge.id}/${user.id}/${input.id}.json`,{id:input.id,playerId:user.id,public:input.public,kind:input.kind||'replay',at:new Date(now()).toISOString()},true);
       return send(res,200,{ok:true,public:input.public});
     }
     if(['shared/run','shared/replay'].includes(path)&&req.method==='GET'){
@@ -100,12 +102,15 @@ export function createCompetition({ store, challenge, gecko, origin, reviewerKey
       if(!uuid.test(id||'')||!/^[a-f0-9]{64}$/.test(playerId||''))return send(res,404,{error:'Public run not found.'});
       // Read the permission directly on every request, including replay downloads.
       const visible=await store.get(`disclosures/${challenge.id}/${playerId}/${id}.json`);
-      if(!visible?.public)return send(res,404,{error:'Public run not found.'});
+      const record=(await list()).find(r=>r.id===id&&r.playerId===playerId);
+      const finalPublic=(await phase()).timesRevealed&&record?.current&&record.status!=='rejected';
+      if(!visible?.public&&!finalPublic)return send(res,404,{error:'Public run not found.'});
+      const hasReplay=Boolean(finalPublic||(visible?.public&&visible.kind!=='score'));
       if(path==='shared/run'){
-        const record=(await list()).find(r=>r.id===id&&r.playerId===playerId);
         if(!record)return send(res,404,{error:'Public run not found.'});
-        return send(res,200,{challengeId:challenge.id,run:publicRecord(record)});
+        return send(res,200,{challengeId:challenge.id,run:{...publicRecord(record),hasReplay}});
       }
+      if(!hasReplay)return send(res,404,{error:'This replay is private. Only the score was shared.'});
       const evidence=await store.get(`evidence/${challenge.id}/${playerId}/${id}.json`);
       if(!evidence)return send(res,404,{error:'Public replay not found.'});
       res.writeHead(200,{'Content-Type':'application/octet-stream','Content-Disposition':`attachment; filename="${id}.slp"`});res.end(Buffer.from(evidence.base64,'base64'));return true;
@@ -113,7 +118,8 @@ export function createCompetition({ store, challenge, gecko, origin, reviewerKey
     if (path === 'submissions/mine' && req.method === 'GET') {
       const device = await bearer(req);
       if (!device) return send(res, 401, { error: 'Player not connected.' });
-      const mine = (await list()).filter(r => r.playerId === device.id).map(r => ({ id: r.id, status: r.status, current:r.current, reviewNote: r.reviewNote, reviewedAt: r.reviewedAt }));
+      const visible=await disclosures();
+      const mine = (await list()).filter(r => r.playerId === device.id).map(r => ({ id: r.id, status: r.status, current:r.current, reviewNote: r.reviewNote, reviewedAt: r.reviewedAt,disclosure:visible.has(`${r.playerId}:${r.id}`)?visible.get(`${r.playerId}:${r.id}`).kind||'replay':'private' }));
       return send(res, 200, { submissions: mine, competition: await phase() });
     }
     if (path === 'review/login' && req.method === 'POST') {
@@ -127,6 +133,12 @@ export function createCompetition({ store, challenge, gecko, origin, reviewerKey
     if (path.startsWith('review/')) {
       const user = await reviewer(req);
       if (!user) return send(res, 401, { error: 'Sign in with an admin account to manage this challenge.' });
+      if(path==='review/generate'&&req.method==='POST'){
+        if(!challengeManager)return send(res,503,{error:'Challenge generation unavailable here.'});
+        const input=await parseBody(req);
+        try{return send(res,201,await challengeManager.regenerate(input,user.reviewer));}
+        catch(error){if(error.status)return send(res,error.status,{error:error.message});throw error;}
+      }
       if (path === 'review/queue' && req.method === 'GET') return send(res, 200, { challenge, competition: await phase(), submissions: (await list()).filter(r=>r.current||r.status==='rejected') });
       if (path === 'review/replay' && req.method === 'GET') {
         const url = new URL(req.url, origin), id = url.searchParams.get('id'), playerId = url.searchParams.get('playerId');

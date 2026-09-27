@@ -6,6 +6,7 @@ import {execFile,spawn} from 'node:child_process';
 import {promisify} from 'node:util';
 import {companionRunning,checkCompanionPort,claimCompanion} from '../server/companion-instance.mjs';
 import {verifyIso} from '../server/onboarding.mjs';
+import {loadChallenge} from '../server/challenge-loader.mjs';
 const root=fileURLToPath(new URL('../',import.meta.url)),exec=promisify(execFile);
 const runtimePath=join(root,'build/challenge/runtime.json'),port=Number(process.env.PORT||4317);
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
@@ -15,6 +16,7 @@ try {
  if(process.argv.includes('--prepare')){
   // Do not silently connect this installation to a different companion.
   await checkCompanionPort(root,port);
+  await loadChallenge(root,join(root,'build/challenge'));
   const dolphin=join(root,'Slippi Dolphin.exe'),profile=join(root,'User');
   let previous={};try{previous=JSON.parse(await readFile(runtimePath,'utf8'));}catch{}
   await exec(join(root,'runtime/python/python.exe'),[join(root,'scripts/prepare_dolphin.py'),'--record-replays','--dolphin',dolphin,'--portable','--configure-only','--controller-config',join(profile,'Config')],{windowsHide:true,timeout:90000});

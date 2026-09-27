@@ -3,6 +3,7 @@ const $ = id => document.getElementById(id), text = (id, value) => { $(id).textC
 const names = { 'dr-mario':'Dr. Mario',mario:'Mario',luigi:'Luigi',bowser:'Bowser',peach:'Peach',yoshi:'Yoshi','donkey-kong':'Donkey Kong','captain-falcon':'Captain Falcon',ganondorf:'Ganondorf',falco:'Falco',fox:'Fox',ness:'Ness','ice-climbers':'Ice Climbers',kirby:'Kirby',samus:'Samus',zelda:'Zelda',link:'Link','young-link':'Young Link',pichu:'Pichu',pikachu:'Pikachu',jigglypuff:'Jigglypuff',mewtwo:'Mewtwo','game-and-watch':'Mr. Game & Watch',marth:'Marth',roy:'Roy' };
 const make = (tag, value, css) => { const n=document.createElement(tag);n.textContent=value;if(css)n.className=css;return n; };
 let companionClosed=false;
+let sharingRun,updatingChallenge=false;
 let data, tab='all', toastTimer, seen, savingSettings=false, launchingDolphin=false, settingsRevision=0;
 const peachOptions=[['random','Random'],['turnip','Turnip'],['beam-sword','Beam Sword'],['bob-omb','Bob-omb'],['mr-saturn','Mr. Saturn']];
 for(let i=0;i<10;i++){
@@ -53,6 +54,9 @@ function render(d){
  if(companionClosed)return;
  data=d;renderAccount(d);renderSettings(d.settings);renderSetup(d.setup);const ident=d.identity,c=d.capture,connected=c.status==='connected';
  $('player-required').hidden=Boolean(ident);
+ $('challenge-update').hidden=!d.challengeUpdate?.available;
+ text('challenge-update-note',`Seed ${d.challengeUpdate?.seed||''} is ready. Close Dolphin to install it. Your previous runs are kept.`);
+ $('update-challenge').disabled=Boolean(c.dolphinRunning)||updatingChallenge;
  $('play').hidden=false;$('recorder-note').hidden=Boolean(c.native);
  $('replay-folder').hidden=!c.replayEnabled;$('recorder').hidden=Boolean(c.replayEnabled);text('recorder-state',c.native?'Dolphin records automatically. Choose your ISO with Open in Dolphin.':c.replayEnabled?'Replay-enabled profile ready. Launch Dolphin here for your next recorded attempt.':'Standard Dolphin does not create .slp files. Prepare the replay-enabled profile for new attempts.');
  $('motion-note').hidden=!d.challenge.motion;
@@ -87,12 +91,19 @@ function makeRunRow(r,group=false){
    catch(error){toast(error.message);}finally{submitting.delete(r.id);renderRuns(data);}
   });buttons.append(submit);
  }
+ if(!r.exclusionReason&&['submitted','pending','approved','superseded'].includes(r.submissionStatus)){
+  const finalPublic=data.remote?.finalRunIds?.includes(r.id);
+  const kind=finalPublic?'replay':data.remote?.disclosures?.[r.id]||'private';
+  const share=make('button',kind==='score'?'Score public':kind==='replay'?'Replay public':'Share…','quiet');
+  share.setAttribute('aria-label',`Share ${names[r.character]} run`);
+  share.addEventListener('click',()=>{sharingRun=r;for(const id of ['share-score','share-replay','share-private'])$(id).disabled=Boolean(finalPublic);text('share-summary',`${names[r.character]} · ${formatTime(r.frames)}`);text('share-status',finalPublic?'Final record: score and replay are already public.':kind==='private'?'Not disclosed.':kind==='score'?'Only the score is public.':'Score and replay are public.');$('share-dialog').showModal();});buttons.append(share);
+ }
  if(!r.hasReplay)info.append(make('small',replayHint,'muted'));
  row.append(info,buttons);return row;
 }
 function renderRuns(d){
  if(historyPlayer!==`${d.challenge.id}:${d.identity?.id}`){historyPlayer=`${d.challenge.id}:${d.identity?.id}`;expanded.clear();attempts.clear();runsKey=null;}
- const groups=d.bestRuns||[];const key=JSON.stringify([groups,tab,[...expanded],[...attempts],[...submitting]]);if(key===runsKey)return;runsKey=key;
+ const groups=d.bestRuns||[];const key=JSON.stringify([groups,d.remote?.disclosures,d.remote?.finalRunIds,tab,[...expanded],[...attempts],[...submitting]]);if(key===runsKey)return;runsKey=key;
  const visible=groups.filter(matchesTab);text('run-count',`${groups.length} character${groups.length===1?'':'s'} · ${groups.reduce((n,r)=>n+r.attemptCount,0)} runs`);$('empty').hidden=visible.length>0;$('run-list').replaceChildren();
  for(const r of visible){const group=make('section','','run-group');group.append(makeRunRow(r,true));if(expanded.has(r.character)){const list=make('div','','attempt-history');const cache=attempts.get(r.character);list.append(make('p',`All ${names[r.character]} attempts · newest first`,'eyebrow'));if(!cache||cache.loading&&!cache.rows.length)list.append(make('p','Loading attempts…','muted'));if(cache){for(const attempt of cache.rows){const row=makeRunRow(attempt);if(attempt.id===r.id)row.classList.add('best-attempt');list.append(row);}if(cache.error)list.append(make('p',cache.error,'muted'));if(cache.rows.length<r.attemptCount&&!cache.loading){const more=make('button',cache.error?'Retry':'Load older runs','quiet');more.addEventListener('click',()=>loadHistory(r.character,true));list.append(more);}}group.append(list);} $('run-list').append(group);}
 }
@@ -146,11 +157,24 @@ let replayLaunching=false;
 async function launchReplay(path,body,button){if(replayLaunching)return;replayLaunching=true;if(button)button.disabled=true;try{await post(path,body,'launch');toast('Replay opened in Dolphin Playback.');}catch(e){toast(e.message);}finally{replayLaunching=false;if(button)button.disabled=false;}}
 await refresh();const refreshTimer=setInterval(()=>{if(!document.hidden)refresh();},1500);
 
-const publicParams=new URLSearchParams(location.search),publicRun=publicParams.get('publicRun'),publicPlayer=publicParams.get('playerId');
+const publicParams=new URLSearchParams(location.search),publicRun=publicParams.get('publicRun'),publicPlayer=publicParams.get('playerId'),publicChallenge=publicParams.get('challenge');
 if(publicRun&&publicPlayer){
  $('shared-dialog').showModal();
- try{const response=await fetch(`/api/shared/run?id=${encodeURIComponent(publicRun)}&playerId=${encodeURIComponent(publicPlayer)}`),result=await response.json();if(!response.ok)throw new Error(result.error);
-  text('shared-summary',`${result.run.displayName} · ${names[result.run.character]} → ${names[result.run.stage]} · ${formatTime(result.run.frames)}`);$('shared-launch').disabled=false;
+ try{const response=await fetch(`/api/shared/run?id=${encodeURIComponent(publicRun)}&playerId=${encodeURIComponent(publicPlayer)}${publicChallenge?'&challenge='+encodeURIComponent(publicChallenge):''}`),result=await response.json();if(!response.ok)throw new Error(result.error);
+  text('shared-summary',`${result.run.displayName} · ${names[result.run.character]} → ${names[result.run.stage]} · ${formatTime(result.run.frames)}`);$('shared-launch').disabled=result.run.hasReplay===false;
  }catch(error){text('shared-error',error.message||'Public replay unavailable.');}
- $('shared-launch').addEventListener('click',()=>launchReplay('shared/launch',{id:publicRun,playerId:publicPlayer},$('shared-launch')));
+ $('shared-launch').addEventListener('click',()=>launchReplay('shared/launch',{id:publicRun,playerId:publicPlayer,challengeId:publicChallenge},$('shared-launch')));
 }
+
+
+for(const [id,kind] of [['share-score','score'],['share-replay','replay'],['share-private','private']])$(id).addEventListener('click',async()=>{
+ if(!sharingRun)return;for(const button of ['share-score','share-replay','share-private'])$(button).disabled=true;
+ try{await post('submissions/disclose',{id:sharingRun.id,kind},'disclose');text('share-status',kind==='private'?'Disclosure removed. Final records remain public after reveal.':kind==='score'?'Score shared. The replay stays private until reveal.':'Score and replay shared. Everyone can watch this run.');await refresh();}
+ catch(error){text('share-status',error.message);}
+ finally{for(const button of ['share-score','share-replay','share-private'])$(button).disabled=false;}
+});
+$('update-challenge').addEventListener('click',async()=>{
+ updatingChallenge=true;$('update-challenge').disabled=true;
+ try{const result=await post('challenge/update',{},'challenge');toast(result.updated?`Seed ${result.seed} installed.`:'Challenge is up to date.');await refresh();}
+ catch(error){toast(error.message);}finally{updatingChallenge=false;$('update-challenge').disabled=false;}
+});

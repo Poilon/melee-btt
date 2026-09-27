@@ -20,7 +20,14 @@ export class RemoteSync {
     } catch { }
     await this.flush();
   }
-  status(identity) { return { available: Boolean(this.origin), autoSubmit: true, paired: Boolean(this.pairing) && (identity === undefined || identity?.id === this.pairing.localPlayerId), pending: this.pending, lastError: this.lastError || null, lastSynced: this.lastSynced || null, competition: this.competition || null }; }
+  status(identity) { return { available: Boolean(this.origin), autoSubmit: true, paired: Boolean(this.pairing) && (identity === undefined || identity?.id === this.pairing.localPlayerId), pending: this.pending, lastError: this.lastError || null, lastSynced: this.lastSynced || null, competition: this.competition || null,disclosures:this.disclosures||{},finalRunIds:this.finalRunIds||[] }; }
+  async disclose(id,kind,identity){
+    if(!this.pairing||identity?.id!==this.pairing.localPlayerId)throw new Error('Sign in to share your own run.');
+    if(!['private','score','replay'].includes(kind))throw new Error('Choose score or replay sharing.');
+    const response=await this.fetcher(`${this.origin}/api/submissions/disclose${this.challengeId?'?challenge='+this.challengeId:''}`,{method:'POST',headers:{Origin:this.origin,Authorization:`Bearer ${this.pairing.token}`,'Content-Type':'application/json'},body:JSON.stringify({id,public:kind!=='private',kind:kind==='private'?'replay':kind}),signal:AbortSignal.timeout(10000)});
+    const result=await response.json();if(!response.ok)throw new Error(result.error||'Sharing unavailable.');
+    this.disclosures={...this.disclosures,[id]:kind};return result;
+  }
   async savePairing(pairing) {
     const file = join(this.directory, 'companion.json');
     await writeFile(`${file}.tmp`, JSON.stringify(pairing), { mode: 0o600 }); await rename(`${file}.tmp`, file);
@@ -28,6 +35,7 @@ export class RemoteSync {
   }
   async clearPairing() {
     this.pairing = null;
+    this.disclosures={};this.competition=null;this.finalRunIds=[];
     await unlink(join(this.directory, 'companion.json')).catch(error => { if (error.code !== 'ENOENT') throw error; });
   }
   async browserLink(identity) {
@@ -49,9 +57,15 @@ export class RemoteSync {
     if (result.playerId !== file.id || result.displayName !== file.displayName || result.connectCode !== file.connectCode) throw new Error('Player file was modified');
     await this.savePairing({ origin: this.origin, token: file.token, playerId: result.playerId, localPlayerId: file.id, displayName: file.displayName, connectCode: file.connectCode });
   }
-  async publicRun(id,playerId,replay=false) {
+  async challengePackage(id){
+    if(!/^[a-f0-9]{64}$/.test(id||''))throw new Error('Invalid challenge.');
+    const response=await this.fetcher(`${this.origin}/api/challenge/package?challenge=${id}`,{signal:AbortSignal.timeout(10000)});
+    if(!response.ok)throw new Error('Challenge unavailable.');return response.json();
+  }
+  async publicRun(id,playerId,replay=false,challengeId) {
     if(!/^[a-f0-9-]{36}$/.test(id||'')||!/^[a-f0-9]{64}$/.test(playerId||''))throw new Error('Invalid shared run');
-    const response=await this.fetcher(`${this.origin}/api/shared/${replay?'replay':'run'}?id=${id}&playerId=${playerId}`,{signal:AbortSignal.timeout(10000)});
+    if(challengeId&&!/^[a-f0-9]{64}$/.test(challengeId))throw new Error('Invalid challenge.');
+    const response=await this.fetcher(`${this.origin}/api/shared/${replay?'replay':'run'}?id=${id}&playerId=${playerId}${challengeId?'&challenge='+challengeId:''}`,{signal:AbortSignal.timeout(10000)});
     if(!response.ok)throw new Error('This run is not public or is no longer available.');
     if(replay){const bytes=Buffer.from(await response.arrayBuffer());if(bytes.length>2*1024*1024)throw new Error('Replay too large');return bytes;}
     return response.json();
@@ -68,10 +82,13 @@ export class RemoteSync {
   async refreshReviews() {
     if (!this.pairing || this.reviewing || Date.now() - (this.lastReviewCheck || 0) < 30000) return;
     this.reviewing = true; this.lastReviewCheck = Date.now();
+    const reviewedChallenge=this.challengeId;
     try {
-      const response = await this.fetcher(`${this.origin}/api/submissions/mine`, { headers: { Authorization: `Bearer ${this.pairing.token}` }, signal: AbortSignal.timeout(10000) });
+      const response = await this.fetcher(`${this.origin}/api/submissions/mine${this.challengeId?'?challenge='+this.challengeId:''}`, { headers: { Authorization: `Bearer ${this.pairing.token}` }, signal: AbortSignal.timeout(10000) });
       if (!response.ok) return;
-      const data = await response.json(); this.competition = data.competition;
+      const data = await response.json();if(reviewedChallenge!==this.challengeId)return;this.competition = data.competition;
+      this.disclosures=Object.fromEntries((data.submissions||[]).map(r=>[r.id,r.disclosure||'private']));
+      this.finalRunIds=data.competition?.timesRevealed?(data.submissions||[]).filter(r=>r.current&&r.status!=='rejected').map(r=>r.id):[];
       for (const r of data.submissions || []) this.onUpdate?.(r.id, r.current===false&&r.status!=='rejected'?'superseded':r.status, r.reviewNote);
     } catch {} finally { this.reviewing = false; }
   }

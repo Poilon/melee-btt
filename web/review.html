@@ -20,13 +20,15 @@
       <p class="note">Results remain available after the reveal. A new seed is published separately; closing this challenge does not start another one.</p>
       <a href="/api/challenge/code" download>Download challenge Gecko code ↓</a>
     </section>
+    <section class="challenge-panel new-challenge"><h2>New challenge</h2><p class="note">Generate a new seed with the same rules. The current challenge must be closed. Results and replays stay available in the archives.</p><form id="generate"><label for="new-seed">Seed (optional)</label><input id="new-seed" type="number" min="1" max="9007199254740991" step="1" placeholder="Random seed"><button id="generate-button">Generate new challenge</button></form><p id="generate-note" role="status"></p></section>
     <div class="stats" aria-label="Challenge statistics"><div><strong id="players-count">0</strong><span>Participants</span></div><div><strong id="records-count">0</strong><span>Current records</span></div><div><strong id="rejected-count">0</strong><span>Excluded runs</span></div></div>
     <section aria-labelledby="submissions-title"><div class="queue-heading"><h2 id="submissions-title">Submissions</h2><span id="result-count"></span></div>
-      <p class="note">Admin access includes private times and replays before the reveal. Runs count automatically; approval is optional. Download a replay to check it in Dolphin Playback.</p>
-      <div class="filters"><label>Player<input id="player-filter" type="search" placeholder="Search players"></label><label>Character<select id="character-filter"><option value="">All characters</option></select></label><label>Status<select id="status-filter"><option value="">All statuses</option><option value="submitted">Submitted</option><option value="approved">Approved</option><option value="rejected">Excluded</option></select></label></div>
+      <p class="note">Admin access includes private times and replays before the reveal. Valid submissions count automatically. Download a replay to check it in Dolphin Playback.</p>
+      <div class="filters"><label>Player<input id="player-filter" type="search" placeholder="Search players"></label><label>Character<select id="character-filter"><option value="">All characters</option></select></label><label>Status<select id="status-filter"><option value="">All statuses</option><option value="submitted">Submitted</option></select></label></div>
       <div id="queue"></div>
     </section>
   </section>
   <dialog id="confirm"><form method="dialog"><button aria-label="Close">×</button></form><h2>Reveal submitted times?</h2><p>This closes submissions and makes all current times and rankings public, excluding rejected runs. The results cannot be hidden again.</p><p id="confirm-summary"></p><p id="confirm-error" role="alert"></p><button id="confirm-close">Close & reveal</button></dialog>
+<dialog id="generate-confirm"><form method="dialog"><button aria-label="Cancel new challenge">×</button></form><h2>Publish a new challenge?</h2><p id="generate-summary"></p><p>The next challenge opens immediately, with private submissions and no end date. Companions will offer the update. Previous results are kept.</p><p id="generate-error" role="alert"></p><button id="publish-challenge">Generate & publish</button></dialog>
 </main></body>
 </html>

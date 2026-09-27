@@ -327,7 +327,7 @@ test('scheduled reveal persists, closes submissions at the exact deadline, and c
   assert.equal((await request('submissions',{method:'POST',headers:device,body:{...run,id:randomUUID()}})).status,409);
   assert.equal((await schedule(null)).status,409);
   assert.equal((await schedule(new Date(clock+60000).toISOString())).status,409);
-  assert.equal((await request(`shared/replay?id=${run.id}&playerId=${playerId}`)).status,404);
+  assert.equal((await request(`shared/replay?id=${run.id}&playerId=${playerId}`)).status,200);
   assert.equal(rows.get(`challenges/${challenge.id}/lifecycle.json`).value.endsAt,end);
 });
 
@@ -343,4 +343,36 @@ test('a concurrent schedule update cannot undo manual reveal; legacy closures re
   const at=new Date(Date.now()-60000).toISOString();rows.set(`challenges/${challenge.id}/closed.json`,{value:{at}});
   assert.equal((await request('dashboard')).data.competition.closedAt,at);
   assert.equal((await request('review/schedule',{method:'POST',headers,body:{challengeId:challenge.id,endsAt:null}})).status,409);
+});
+
+test('score-only disclosure never exposes replay bytes, and reveal publishes current final replays',async()=>{
+ const {request}=fixture();
+ const owner=await request('players/create',{method:'POST',headers:{origin},body:{displayName:'Score only'}});
+ const device={authorization:`Bearer ${owner.data.playerFile.token}`},playerId=owner.data.playerFile.id;
+ const run={id:randomUUID(),challengeId:challenge.id,geckoSha256:challenge.geckoSha256,character:'donkey-kong',stage:'donkey-kong',frames:1234,replay:replay.toString('base64')};
+ await request('submissions',{method:'POST',headers:device,body:run});
+ const share=kind=>request('submissions/disclose',{method:'POST',headers:{...device,origin},body:{id:run.id,public:true,kind}});
+ const evidence=`shared/replay?id=${run.id}&playerId=${playerId}`;
+ assert.equal((await share('score')).status,200);
+ assert.equal((await request('dashboard')).data.sharedRuns[0].hasReplay,false);assert.equal((await request(evidence)).status,404);
+ assert.equal((await share('replay')).status,200);assert.equal((await request(evidence)).status,200);
+ assert.equal((await share('score')).status,200);assert.equal((await request(evidence)).status,404);
+ await request('review/close',{method:'POST',headers:{origin,authorization:`Bearer ${reviewerKey}`},body:{challengeId:challenge.id,confirm:'REVEAL'}});
+ assert.equal((await request(evidence)).status,200);assert.equal((await request('dashboard')).data.sharedRuns[0].hasReplay,true);
+});
+
+test('reveal publishes overall points and THS only for players with every character',async()=>{
+ const {request,rows}=fixture();
+ for(const [playerId,times]of [['a'.repeat(64),[100,200,300]],['b'.repeat(64),[110,210,290]],['c'.repeat(64),[90]]]){
+  for(const [i,frames]of times.entries()){
+   const id=randomUUID(),character=Object.keys(challenge.assignments)[i];
+   rows.set(`submissions/${challenge.id}/${playerId}/${id}.json`,{value:{id,playerId,displayName:playerId[0],connectCode:'TT#1',character,stage:challenge.assignments[character],frames,createdAt:new Date().toISOString(),replay:{sha256:'fixture'}}});
+  }
+ }
+ assert.deepEqual((await request('dashboard')).data.overallLeaderboard,[]);
+ await request('review/close',{method:'POST',headers:{origin,authorization:`Bearer ${reviewerKey}`},body:{challengeId:challenge.id,confirm:'REVEAL'}});
+ const board=(await request('dashboard')).data;
+ assert.deepEqual(board.overallLeaderboard.map(r=>r.totalPoints),[39,34.5,10]);
+ assert.deepEqual(board.overallLeaderboard.map(r=>r.thsFrames),[600,610,null]);
+ assert.equal(board.leaderboard[0].points,10);
 });

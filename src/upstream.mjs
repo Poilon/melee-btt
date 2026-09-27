@@ -20,7 +20,8 @@ export async function readSources() {
   for (const name of Object.keys(sources)) {
     let data;
     try {
-      data = await readFile(new URL(`.cache/bttrandomizer/${name}`, root));
+      try { data = await readFile(new URL(`generator-sources/${name}`, root)); }
+      catch(error){if(error.code!=='ENOENT')throw error;data = await readFile(new URL(`.cache/bttrandomizer/${name}`, root));}
     } catch (error) {
       if (error.code === 'ENOENT') throw new Error('Lance d’abord npm run setup.');
       throw error;

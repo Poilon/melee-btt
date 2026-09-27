@@ -3,8 +3,8 @@ import {promisify} from 'node:util';
 import {join} from 'node:path';
 import {windowsPath} from './platform.mjs';
 const exec=promisify(execFile);
-export async function launchNative(root, executable) {
+export async function launchNative(root, executable, checkOnly=false) {
   // Check the actual executable even when Dolphin is open without a game.
-  const result=await exec('powershell.exe',['-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',await windowsPath(join(root,'scripts/launch_native.ps1')),'-Executable',await windowsPath(executable)],{windowsHide:true,timeout:15000});
+  const result=await exec('powershell.exe',['-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',await windowsPath(join(root,'scripts/launch_native.ps1')),'-Executable',await windowsPath(executable),...(checkOnly?['-CheckOnly']:[])],{windowsHide:true,timeout:15000});
   return JSON.parse(result.stdout.trim());
 }

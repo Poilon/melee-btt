@@ -33,8 +33,8 @@ See [implementation and validation](docs/target-motion.md). The downloadable Gec
 - New valid personal bests are submitted automatically with their replay. Each new best replaces the current submission for that character.
 - Paused runs are excluded from records and submissions, but remain visible with the reason and replay. If a character has no eligible clear, Your runs shows its latest excluded attempt instead of hiding it.
 - Before the reveal, the website shows participants only. Other players’ times and ranks remain private.
-- You can explicitly **Disclose run** on the website to make that specific time and replay public.
-- Runs are submitted immediately and included at reveal without prior approval. Organizers can inspect replays and exclude invalid runs. Capture is experimental; structural replay checks alone do not prove a valid record.
+- Use **Share score** or **Share replay** in the companion to publish a time alone or its time and replay before reveal.
+- Runs are submitted immediately and included at reveal without prior approval. Final personal bests and their replays become public at reveal. Capture is experimental; structural replay checks alone do not prove a valid record.
 
 The companion saves these settings automatically and applies them the next time Dolphin starts:
 
@@ -114,3 +114,20 @@ The generator comes from [Break the Targets Randomizer](https://bttrandomizer.co
 Dolphin binaries are downloaded directly from [Slippi](https://github.com/project-slippi/Ishiiruka) and [Slippi Playback](https://github.com/project-slippi/Ishiiruka-Playback); their source and licenses are available in those repositories. Node.js, Python, and JavaScript dependencies retain their bundled licenses. Character artwork sources and credits are listed in [CREDITS.txt](web/assets/melee/CREDITS.txt).
 
 This fan project is not affiliated with Nintendo, HAL Laboratory or Project Slippi.
+
+### New challenges
+
+Admin accounts can close a challenge, set its end date, and generate the next seed
+from the website. New seeds retain the same rules. Previous results remain in the
+website archives. Companion v0.8.0 downloads new challenges and verifies them with
+the pinned generator: close Dolphin, then use **Update challenge**, or launch from
+the companion. No new ZIP is needed for each seed.
+
+### Reveal scoring
+
+The overall leaderboard adds character points and THS points. Character places 1–5
+award 10, 7, 5, 3 and 1 point; later places award 0. THS is the sum of a player's
+best valid times across all 25 characters, with no entry for incomplete rosters.
+THS places 1–6 award 15, 12.5, 10, 7.5, 5 and 2.5 points, then 0. Equal times share
+a place and points (1, 1, 3); equal overall points also share a place. Times, ranks,
+THS and point breakdowns stay hidden until reveal, except individually shared runs.
