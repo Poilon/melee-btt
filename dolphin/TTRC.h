@@ -3,6 +3,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #include <string>
+#include <regex>
 #include <vector>
 #include <wx/msgdlg.h>
 #include <wx/utils.h>
@@ -12,6 +13,26 @@ inline std::wstring Root() {
   DWORD size = GetModuleFileNameW(nullptr, path.data(), static_cast<DWORD>(path.size()));
   std::wstring exe(path.data(), size);
   return exe.substr(0, exe.find_last_of(L"\\/"));
+}
+// Read the portable release version once, so app updates need no hard-coded native version.
+inline const std::string& Title() {
+  static const std::string title = [] {
+    const auto path = Root() + L"\\release.json";
+    HANDLE file = CreateFileW(path.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr,
+                              OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (file == INVALID_HANDLE_VALUE) return std::string("TTRC Dolphin");
+    char bytes[4096]; DWORD count = 0;
+    const bool ok = ReadFile(file, bytes, sizeof(bytes), &count, nullptr) != FALSE;
+    CloseHandle(file);
+    if (ok) {
+      const std::string json(bytes, count);
+      std::smatch match;
+      const std::regex version(R"ttrc("version"\s*:\s*"([0-9]+\.[0-9]+\.[0-9]+(-[a-z0-9.]+)?)")ttrc");
+      if (std::regex_search(json, match, version)) return std::string("TTRC Dolphin v") + match[1].str();
+    }
+    return std::string("TTRC Dolphin");
+  }();
+  return title;
 }
 inline std::wstring Quote(const std::wstring& value) {
   std::wstring result = L"\"";

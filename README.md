@@ -6,7 +6,7 @@ Randomized targets, shuffled character stages, and a shared seed for **Super Sma
 
 ## Play on Windows
 
-1. Download **TTRC-Windows-x64.zip** and extract the entire ZIP into a writable folder.
+1. Download **TTRC-Dolphin-v<version>-Windows-x64.zip** (the identical **TTRC-Windows-x64.zip** is kept for automatic updates and the website download) and extract the entire ZIP into a writable folder.
 2. Open **TTRC Companion.vbs**. Sign in and choose your music and rumble settings before launching Dolphin.
 3. Click **Launch Dolphin** in the companion, then **Open** in Dolphin and select your original **Melee USA 1.02** ISO. It stays in its existing folder. Dolphin checks it before starting the game.
 4. Keep the companion open for your runs and replay history. **Tools → TTRC Companion** in Dolphin also opens it.
