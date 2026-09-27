@@ -27,7 +27,7 @@ export class DolphinBridge {
       if (!verifyProfileCode(ini, this.challenge.geckoSha256)) throw new Error('Wrong profile');
       const script = await windowsPath(join(this.root, 'scripts/watch_dolphin.ps1'));
       const profile = await windowsPath(this.profile);
-      this.child = spawn('powershell.exe', ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', script, '-Profile', profile], { stdio: ['ignore', 'pipe', 'pipe'] });
+      this.child = spawn('powershell.exe', ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', script, '-Profile', profile, ...(this.nativeExecutable ? ['-Executable', await windowsPath(this.nativeExecutable)] : [])], { stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
       this.child.stderr.resume(); // Never echo process contents into API responses.
       this.lines = createInterface({ input: this.child.stdout });
       this.lines.on('line', line => {

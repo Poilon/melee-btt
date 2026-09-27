@@ -80,25 +80,30 @@ def main():
     parser.add_argument('--dolphin', type=Path, default=DEFAULT_DOLPHIN)
     parser.add_argument('--controller-config', type=Path, default=DEFAULT_CONFIG)
     parser.add_argument('--launch', action='store_true')
+    parser.add_argument('--portable', action='store_true', help='Use the User directory next to Dolphin')
+    parser.add_argument('--configure-only', action='store_true', help='Prepare portable settings before the ISO is selected in Dolphin')
     parser.add_argument('--record-replays', action='store_true', help='Use an isolated Slippi Dolphin recording profile')
     args = parser.parse_args()
     if args.record_replays and args.dolphin == DEFAULT_DOLPHIN:
         args.dolphin = DEFAULT_SLIPPI
     candidates = list((ROOT / 'Games').glob('*.iso')) or list(ROOT.glob('*.iso'))
     iso = args.iso or (candidates[0] if len(candidates) == 1 else None)
-    if iso is None:
+    if args.configure_only and (not args.portable or args.launch):
+        parser.error('--configure-only requires --portable and cannot launch a game.')
+    if iso is None and not args.configure_only:
         parser.error('Indique --iso chemin/vers/Melee.iso.')
     if not args.dolphin.is_file():
         parser.error('Dolphin.exe introuvable ; indique --dolphin.')
-    with iso.open('rb') as file:
-        header = file.read(8)
-        file.seek(0)
-        hasher = hashlib.md5()
-        for chunk in iter(lambda: file.read(1024 * 1024), b''):
-            hasher.update(chunk)
-        digest = hasher.hexdigest()
-    if header != b'GALE01\x00\x02' or digest != '0e63d4223b01d9aba596259dc155a174':
-        parser.error('Une ISO originale Melee USA 1.02 est nécessaire.')
+    if not args.configure_only:
+        with iso.open('rb') as file:
+            header = file.read(8)
+            file.seek(0)
+            hasher = hashlib.md5()
+            for chunk in iter(lambda: file.read(1024 * 1024), b''):
+                hasher.update(chunk)
+            digest = hasher.hexdigest()
+        if header != b'GALE01\x00\x02' or digest != '0e63d4223b01d9aba596259dc155a174':
+            parser.error('Une ISO originale Melee USA 1.02 est nécessaire.')
     manifest = json.loads((args.challenge / 'challenge.json').read_text())
     if not re.fullmatch('[0-9a-f]{64}', manifest.get('id', '')):
         parser.error('Identifiant de défi invalide ; régénère le défi.')
@@ -109,6 +114,8 @@ def main():
     # Every challenge owns its profile, so changing seeds cannot overwrite the
     # configuration or memory card of a previous challenge, or the normal user.
     profile = ROOT / ('build/replay-profiles' if args.record_replays else 'build/profiles') / manifest['id']
+    if args.portable:
+        profile = args.dolphin.resolve().parent / 'User'
     marker = profile / '.ttrc-profile'
     if profile.exists() and not marker.exists():
         parser.error(f'Ce dossier ne nous appartient pas : {profile}')
@@ -150,12 +157,13 @@ def main():
         config = configparser.ConfigParser(interpolation=None)
         config.optionxform = str
         config['Core'] = core
+        config['Interface'] = {'LanguageCode': 'en'}
         config['Analytics'] = {'Enabled': 'False', 'PermissionAsked': 'True'}
         with config_path.open('w') as file:
             config.write(file)
         for name in ['GCPadNew.ini', 'GCAdapter.ini']:
             source = args.controller_config / name
-            if source.exists():
+            if source.exists() and source.resolve() != (profile / 'Config' / name).resolve():
                 shutil.copyfile(source, profile / 'Config' / name)
     if args.record_replays:
         config = configparser.ConfigParser(interpolation=None, strict=False)
@@ -164,11 +172,15 @@ def main():
         if not config.has_section('Core'): config['Core'] = {}
         replay_dir = args.dolphin.resolve().parent / 'Replays'
         migrate_replays(profile / 'Replays', replay_dir)
+        if args.portable:
+            migrate_replays(ROOT / 'Dolphin/netplay/Replays', replay_dir)
         config['Core'].update({'EnableCheats': 'True', 'SlippiSaveReplays': 'True',
                               'SlippiReplayMonthFolders': 'False', 'SlippiReplayDir': windows_path(replay_dir), 'EXIDevice1': '10'})
         with config_path.open('w') as file: config.write(file)
     install_title_texture(profile)
     apply_preferences(profile, preferences)
+    if args.configure_only:
+        return
     # Force cheats on launch too, in case Dolphin previously saved them off.
     exe, user, game = map(windows_path, [args.dolphin, profile, iso])
     ps = '\n'.join([

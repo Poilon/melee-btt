@@ -1,4 +1,4 @@
-param([Parameter(Mandatory=$true)][string]$Profile)
+param([Parameter(Mandatory=$true)][string]$Profile, [string]$Executable)
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 Add-Type -Path (Join-Path $PSScriptRoot 'DolphinReader.cs')
@@ -8,7 +8,11 @@ try {
     while ($true) {
         if ($null -eq $reader) {
             $candidate = Get-CimInstance Win32_Process -Filter "name = 'Dolphin.exe' OR name = 'Slippi Dolphin.exe'" |
-                Where-Object { $_.CommandLine -and $_.CommandLine.Contains($Profile) } |
+                Where-Object { ($_.CommandLine -and $_.CommandLine.Contains($Profile)) -or
+                    ($Executable -and $_.ExecutablePath -eq $Executable -and
+                     (Test-Path (Join-Path $Profile '.ttrc-profile')) -and
+                     (Test-Path (Join-Path (Split-Path $Executable) 'portable.txt')) -and
+                     $Profile -eq (Join-Path (Split-Path $Executable) 'User')) } |
                 Select-Object -First 1
             if ($null -ne $candidate) {
                 try {

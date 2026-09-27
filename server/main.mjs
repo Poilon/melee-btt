@@ -6,6 +6,7 @@ import { promisify } from 'node:util';
 import { loadEnvFile } from 'node:process';
 import { loadChallenge } from './challenge-loader.mjs';
 import { pythonExecutable, windowsPath, bundledPlayback } from './platform.mjs';
+import { ensurePlayback } from './playback-install.mjs';
 import { Onboarding } from './onboarding.mjs';
 import { parsePlayer, playerIdentity, readPlayer, savePlayer, restoreProfilePlayer } from './player.mjs';
 import { ScoreStore } from './store.mjs';
@@ -52,12 +53,17 @@ const detector = new RunDetector(generated.manifest, run => {
 });
 const bridge = new DolphinBridge(root, generated.manifest, detector, () => identity);
 if (runtime?.profile) bridge.profile = runtime.profile;
+if (runtime?.native) bridge.nativeExecutable = runtime.dolphin;
 const exec = promisify(execFile);
 const replays = new ReplayLibrary({ directory: () => runtime?.replays, cacheDirectory: join(root, '.local/playback/replays'), challenge: generated.manifest, gecko: generated.gecko,
-  run: async (file, stage) => exec(pythonExecutable(root), [join(root, 'scripts/launch_replay.py'), '--challenge', challengeDir, '--replay', file, '--stage', String(stage), ...bundledPlayback(root), ...(runtime?.iso ? ['--iso', runtime.iso] : [])], { timeout: 30000 }),
+  run: async (file, stage) => {if(runtime?.native)await ensurePlayback(root);return exec(pythonExecutable(root), [join(root, 'scripts/launch_replay.py'), '--challenge', challengeDir, '--replay', file, '--stage', String(stage), ...bundledPlayback(root), ...(runtime?.iso ? ['--iso', runtime.iso] : [])], { timeout: 30000, windowsHide: true });},
 });
 const autoSubmit = new AutoSubmitter({store,replays,remote,challenge:generated.manifest,gecko:generated.gecko,getIdentity:()=>identity});
-async function syncRecordings(){await replays.syncRuns(store);await autoSubmit.sync();}
+async function syncRecordings(){
+  // Dolphin records the ISO selected through its native Open dialog.
+  if(runtime?.native){try{const next=JSON.parse(await readFile(join(challengeDir,'runtime.json'),'utf8'));if(next.native&&next.profile===runtime.profile)runtime.iso=next.iso;}catch{}}
+  await replays.syncRuns(store);await autoSubmit.sync();
+}
 await syncRecordings().catch(()=>{});
 const replayTimer=setInterval(()=>{syncRecordings().catch(()=>{});},2000);
 let launching = false;
@@ -81,7 +87,7 @@ const server = createApp({
     await remote.usePlayer(file); await savePlayer(playerPath, file);
     identity = playerIdentity(file); detector.reset();
   },
-  getCapture: () => ({ ...bridge.status(), replayEnabled: Boolean(runtime?.recording) }),
+  getCapture: () => ({ ...bridge.status(), native: Boolean(runtime?.native), replayEnabled: Boolean(runtime?.recording) }),
   openReplays: async () => {
     if (!runtime?.replays) throw new Error('Prepare the replay profile first');
     const path = await windowsPath(runtime.replays);
@@ -90,6 +96,7 @@ const server = createApp({
     return { ok: true };
   },
   prepareRecorder: async () => {
+    if(runtime?.native)return {message:'Replay recording is already enabled in TTRC Dolphin.'};
     await playSettings.queue;
     await exec(pythonExecutable(root), [join(root, 'scripts/prepare_dolphin.py'), '--challenge', challengeDir, '--record-replays', ...(runtime?.recording && runtime?.dolphin ? ['--dolphin', runtime.dolphin] : [])], { timeout: 30000 });
     const next = JSON.parse(await readFile(join(challengeDir, 'runtime.json'), 'utf8'));
@@ -107,6 +114,7 @@ const server = createApp({
     return response;
   },
   launch: async () => {
+    if(runtime?.native)return {status:'already-running'};
     if (bridge.status().status === 'connected') return { status: 'already-running' };
     if (launching) return { status: 'starting' };
     launching = true;

@@ -6,14 +6,14 @@ Randomized targets, shuffled character stages, and a shared seed for **Super Sma
 
 ## Play on Windows
 
-1. Download **TTRC-Windows-x64.zip** and extract the entire ZIP into a writable folder. Keep that folder; it holds your game, player profile and replays.
-2. Double-click **Start TTRC.cmd**. Keep its window open while playing; your browser opens the companion.
-3. Click **Choose Melee ISO** and select your original **USA 1.02** ISO. The companion checks it and copies it to `Games/Melee.iso`. Alternatively, place the file there yourself.
-4. Click **Set up Dolphin**. The companion downloads the official Slippi play and replay builds, verifies the downloads, and prepares a dedicated profile.
-5. [Create your player on the website](https://target-test-randomizer-challenge.vercel.app), download your `user.json`, and choose **Import player** in the companion. No Slippi or Discord account is needed.
-6. Connect your controller, click **Launch Dolphin**, and choose any character in Melee.
+1. Download **TTRC-Windows-x64.zip** and extract the entire ZIP into a writable folder.
+2. Open **Slippi Dolphin.exe**. This is the TTRC build of Dolphin; the companion starts in the background with it.
+3. Click **Open** in Dolphin and select your original **Melee USA 1.02** ISO. It stays in its existing folder. Dolphin checks it before starting the game.
+4. Open **Tools → TTRC Companion** to see your runs and settings in your browser.
+5. [Create your player on the website](https://target-test-randomizer-challenge.vercel.app), download your `user.json`, and **Import player** in the companion before starting a scored run. No Slippi or Discord account is needed.
+6. Choose any character in Melee. New valid personal bests are submitted automatically with their replay.
 
-Windows 10/11 **x64**, internet for first-time setup, and at least **2 GB** of free space are required. Node.js and Python are included; WSL is not required. GameCube adapters may need their Windows driver installed. The default play profile uses a GameCube USB adapter. Other controllers can be configured in Dolphin’s Controllers window.
+Windows 10/11 **x64**. No separate launcher, command window, WSL, Node.js or Python installation. The companion stops when you close Dolphin. Internet is required for submissions and the first replay playback, which downloads the official Slippi Playback build. GameCube adapters may need their Windows driver installed. Other controllers can be configured in Dolphin’s **Controllers** window.
 
 **The game ISO is not included.** It stays on your computer and is never uploaded. The accepted original image has MD5 `0e63d4223b01d9aba596259dc155a174`.
 
@@ -29,14 +29,15 @@ Windows 10/11 **x64**, internet for first-time setup, and at least **2 GB** of f
 
 **Game music** and **Controller rumble** can be toggled in the companion. Settings are saved automatically and apply on the next launch of Dolphin. The custom title appears on Melee’s character-select screen.
 
-Replays are stored in `Dolphin/netplay/Replays` for a portable installation, next to the recording emulator. Player data and scores stay in `.local` and `build/replay-profiles`.
+Replays are stored in **`Replays`**, next to Dolphin. The portable emulator profile and player file live in **`User`**; scores and pending uploads stay in **`.local`**.
 
 ## Updating and troubleshooting
 
-Close the companion and Dolphin, back up `.local`, `Games`, `build/replay-profiles`, and `Dolphin/netplay/Replays`, then extract the latest release into the **same TTRC folder** and replace application files. Releases do not contain your personal data, so these folders are preserved.
+Close Dolphin, back up `.local`, `User`, and `Replays`, then extract the latest release into the **same TTRC folder** and replace application files. Releases do not contain your personal data, so these folders are preserved. When upgrading from v0.1, keep `build/challenge/runtime.json`, `build/replay-profiles`, and `Dolphin/netplay/Replays` too: the native version imports your player and copies the old replays automatically on its first start.
 
 - **Wrong ISO:** use an original USA 1.02 image, not a modified or compressed image.
-- **Setup interrupted:** reopen the companion and retry **Set up Dolphin**. Completed verified downloads are kept.
+- **Dolphin cannot start TTRC:** extract the entire ZIP, use a writable folder, and close any other companion using port 4317. See `.local/startup.log` for details.
+- **Replay player download interrupted:** click Watch replay again to retry.
 - **Game is already open:** close it before applying music/rumble changes or launching another session.
 - **No controller input:** check Dolphin’s Controllers settings and your adapter driver.
 - **No score saved:** import your player before the attempt; start a fresh run and complete it without pausing. Leave the results screen so Dolphin finishes saving the replay.
@@ -58,13 +59,15 @@ npm start
 
 The public seed snapshot is in `challenges/current`. Local profiles, ISOs, player files, databases, credentials and recordings are excluded from Git. See [the architecture and review documentation](docs/website.md).
 
-Build the portable Windows ZIP on Linux:
+First run the **Build TTRC Dolphin** GitHub workflow. Download its `ttrc-dolphin` artifact into `build/dolphin-build`, then build the portable Windows ZIP on Linux:
 
 ```sh
 npm ci
 npm run setup
 node scripts/build_release.mjs
 ```
+
+The native build is pinned to Slippi commit `e7711b104b339a99385f2bb12b472d46140a7bc7`; `scripts/patch_dolphin.py` adds the startup hook, native ISO verification and companion menu. Releases include a separate **TTRC-Dolphin-Source.tar.gz** with the complete matching Dolphin source and submodules, under GPL-2.0-or-later. This is a TTRC modification, not an official Slippi release.
 
 The builder uses an explicit list of public source folders, verifies pinned runtime downloads, and audits the output for private files. Artifacts are written to `build/release`. The GitHub workflow builds and publishes the same files when a `v*` tag is pushed. Runtime and Dolphin versions/checksums are pinned in `desktop/dependencies.json`.
 

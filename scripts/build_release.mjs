@@ -7,12 +7,16 @@ import {createHash} from 'node:crypto';
 import {generateChallenge} from '../src/challenge.mjs';
 import {downloadVerified} from '../server/onboarding.mjs';
 const exec=promisify(execFile),root=resolve(import.meta.dirname,'..');
-const version=(process.env.TTRC_VERSION||'0.1.0').replace(/^v/,'');
+const version=(process.env.TTRC_VERSION||'0.2.0').replace(/^v/,'');
 if(!/^\d+\.\d+\.\d+(?:-[a-z0-9.]+)?$/.test(version))throw new Error('Invalid release version.');
 const output=join(root,'build/release'),app=join(output,'TTRC');
+const nativeBuild=resolve(process.env.TTRC_DOLPHIN_BUILD||join(root,'build/dolphin-build'));
+// A release must contain the genuine compiled native integration, not a renamed launcher.
+const nativeExe=await readFile(join(nativeBuild,'Slippi Dolphin.exe'));
+if(nativeExe.subarray(0,2).toString()!=='MZ')throw new Error('Native Dolphin build missing.');
 await rm(app,{recursive:true,force:true});await mkdir(app,{recursive:true});
 const hash=data=>createHash('sha256').update(data).digest('hex');
-for(const name of ['server','shared','src','scripts','companion','web','assets','desktop'])await cp(join(root,name),join(app,name),{recursive:true,filter:source=>!source.includes('__pycache__')});
+for(const name of ['server','shared','src','scripts','companion','web','assets','desktop'])await cp(join(root,name),join(app,name),{recursive:true,filter:source=>!source.includes('__pycache__')&&!source.endsWith('Start TTRC.cmd')&&!source.endsWith('desktop/start.mjs')});
 await cp(join(root,'package.json'),join(app,'package.json'));await cp(join(root,'package-lock.json'),join(app,'package-lock.json'));
 const saved=JSON.parse(await readFile(join(root,'challenges/current/challenge.json'),'utf8'));
 const generated=await generateChallenge(saved.rules);
@@ -20,23 +24,26 @@ if(generated.manifest.id!==saved.id||JSON.stringify(generated.manifest.assignmen
 const manifest=JSON.stringify(generated.manifest,null,2)+'\n';
 await mkdir(join(app,'build/challenge'),{recursive:true});
 await writeFile(join(app,'build/challenge/challenge.json'),manifest);await writeFile(join(app,'build/challenge/code.txt'),generated.gecko);
-await writeFile(join(app,'release.json'),JSON.stringify({version,repository:'Poilon/target-test-randomizer-challenge',challengeSha256:hash(manifest),geckoSha256:hash(generated.gecko)},null,2));
-await mkdir(join(app,'Games'),{recursive:true});
-await writeFile(join(app,'Games/PUT-YOUR-ISO-HERE.txt'),'Put your original Melee USA 1.02 ISO here as Melee.iso, or use Choose Melee ISO in the companion. The game is not included.\r\n');
-await cp(join(root,'desktop/Start TTRC.cmd'),join(app,'Start TTRC.cmd'));
-await writeFile(join(app,'READ ME.txt'),`TTRC Companion ${version}\r\n\r\n1. Extract this entire ZIP into a writable folder (not Program Files).\r\n2. Double-click Start TTRC.cmd and keep its window open.\r\n3. Choose your original Melee USA 1.02 ISO, then click Set up Dolphin.\r\n4. Create your player at https://target-test-randomizer-challenge.vercel.app and import user.json.\r\n5. Connect your controller and launch Dolphin.\r\n\r\nWindows 10/11 x64. Internet and 2 GB free space needed for first-time setup.\r\nNo WSL, Node.js, Python, or Slippi account installation required.\r\nAdapters may require their Windows driver.\r\nBack up .local, Games, build/replay-profiles and Dolphin/netplay/Replays before changing folders.\r\nUpdate: extract a newer release into the SAME folder and replace application files.\r\nYour player and recordings are not included in release ZIPs and will be kept.\r\n`);
-await writeFile(join(app,'THIRD-PARTY-NOTICES.txt'),'Node.js license: runtime/node/LICENSE\r\nPython license: runtime/python/LICENSE.txt\r\nJavaScript dependency licenses: node_modules/*/LICENSE*\r\nMelee artwork: web/assets/melee/CREDITS.txt\r\nDolphin is downloaded directly from official Slippi GitHub releases during setup.\r\nSlippi source and license: https://github.com/project-slippi/Ishiiruka and https://github.com/project-slippi/Ishiiruka-Playback\r\nGenerator and Gecko credits: README.md in the source repository. No game ISO or user data is included.\r\n');
+await writeFile(join(app,'release.json'),JSON.stringify({version,repository:'Poilon/target-test-randomizer-challenge',challengeSha256:hash(manifest),geckoSha256:hash(generated.gecko),native:true,dolphinSha256:hash(nativeExe),dolphinUpstream:'e7711b104b339a99385f2bb12b472d46140a7bc7'},null,2));
+await writeFile(join(app,'READ ME.txt'),`TTRC Dolphin ${version}\r\n\r\n1. Extract this entire ZIP into a writable folder.\r\n2. Open Slippi Dolphin.exe. No separate launcher or command window.\r\n3. Click Open in Dolphin and select your original Melee USA 1.02 ISO. It stays where it is.\r\n4. Tools > TTRC Companion opens your runs and player settings in your browser.\r\n5. Create your player on https://target-test-randomizer-challenge.vercel.app and import user.json in the companion before a scored run.\r\n\r\nThe companion starts and stops with Dolphin. Replays are saved in Replays next to Dolphin.\r\nPlayback Dolphin downloads from the official Slippi release the first time you watch a replay.\r\nWindows 10/11 x64. Your controller can be configured in Dolphin > Controllers.\r\nThe ISO is not included and is never uploaded.\r\nBack up .local, User and Replays before updating. Extract updates into the same folder.\r\nThis is a TTRC modification of Slippi Dolphin, not an official Slippi release.\r\n`);
+await writeFile(join(app,'THIRD-PARTY-NOTICES.txt'),`Dolphin: GPL-2.0-or-later, see LICENSE-Dolphin.txt.\r\nComplete matching source, including the TTRC modifications and bundled submodules:\r\nhttps://github.com/Poilon/target-test-randomizer-challenge/releases/download/v${version}/TTRC-Dolphin-Source.tar.gz\r\nBased on project-slippi/Ishiiruka e7711b104b339a99385f2bb12b472d46140a7bc7.\r\nNode.js license: runtime/node/LICENSE\r\nPython license: runtime/python/LICENSE.txt\r\nJavaScript dependency licenses: node_modules/*/LICENSE*\r\nMelee artwork: web/assets/melee/CREDITS.txt\r\nPlayback Dolphin is downloaded from the official Slippi release when first needed.\r\nNo game ISO or user data is included.\r\n`);
 const dependencies=JSON.parse(await readFile(join(root,'desktop/dependencies.json'),'utf8'));
-for(const kind of ['node','python']){
+for(const kind of ['node','python','netplay']){
  const dependency=dependencies[kind],archive=join(root,'build/downloads',kind+'.zip');
  let valid=false;try{valid=hash(await readFile(archive))===dependency.sha256;}catch{}
  if(!valid){console.log(`Downloading ${kind}…`);await downloadVerified(dependency.url,archive,dependency.sha256);}
  const temp=join(output,kind+'-unpack');await rm(temp,{recursive:true,force:true});await mkdir(temp,{recursive:true});
  await exec('unzip',['-q',archive,'-d',temp]);
- const target=join(app,'runtime',kind);await mkdir(target,{recursive:true});
+ const target=kind==='netplay'?app:join(app,'runtime',kind);await mkdir(target,{recursive:true});
  if(kind==='node'){
   const folder=(await readdir(temp))[0];
   for(const file of ['node.exe','LICENSE'])await cp(join(temp,folder,file),join(target,file));
+ }else if(kind==='netplay'){
+  await cp(temp,target,{recursive:true});
+  await rm(join(app,'User'),{recursive:true,force:true});
+  await writeFile(join(app,'Slippi Dolphin.exe'),nativeExe);
+  await cp(join(nativeBuild,'LICENSE-Dolphin.txt'),join(app,'LICENSE-Dolphin.txt'));
+  await writeFile(join(app,'portable.txt'),'');
  }else{
   await cp(temp,target,{recursive:true});
   const pth=(await readdir(target)).find(f=>f.endsWith('._pth'));
@@ -49,5 +56,7 @@ async function audit(directory){for(const entry of await readdir(directory,{with
 await audit(app);
 const zip=join(output,'TTRC-Windows-x64.zip');await rm(zip,{force:true});
 await exec('zip',['-qr',zip,'TTRC'],{cwd:output,maxBuffer:1024*1024});
-await writeFile(join(output,'SHA256SUMS.txt'),`${hash(await readFile(zip))}  TTRC-Windows-x64.zip\n`);
+const source=join(output,'TTRC-Dolphin-Source.tar.gz');
+await cp(join(nativeBuild,'TTRC-Dolphin-Source.tar.gz'),source);
+await writeFile(join(output,'SHA256SUMS.txt'),`${hash(await readFile(zip))}  TTRC-Windows-x64.zip\n${hash(await readFile(source))}  TTRC-Dolphin-Source.tar.gz\n`);
 console.log(zip);

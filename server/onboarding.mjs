@@ -40,8 +40,8 @@ export class Onboarding{
  constructor({root,challengeDir,onReady}){this.root=root;this.challengeDir=challengeDir;this.onReady=onReady;this.state={ready:false,busy:false,isoReady:false,step:'iso',message:'Choose your Melee ISO to get started.',progress:0};}
  get(){return {...this.state};}
  async initialize(runtime){
+  if(runtime?.profile&&runtime?.dolphin){try{await access(runtime.dolphin);if(runtime.iso&&!runtime.native)await access(runtime.iso);await access(join(runtime.profile,'GameSettings/GALE01.ini'));this.state={...this.state,ready:true,isoReady:true,step:'ready',message:'Ready to play.'};return;}catch{}}
   await mkdir(join(this.root,'Games'),{recursive:true});
-  if(runtime?.profile&&runtime?.dolphin){try{await access(runtime.dolphin);if(runtime.iso)await access(runtime.iso);await access(join(runtime.profile,'GameSettings/GALE01.ini'));this.state={...this.state,ready:true,isoReady:true,step:'ready',message:'Ready to play.'};return;}catch{}}
   try{await verifyIso(join(this.root,'Games/Melee.iso'));this.state.isoReady=true;this.state.step='install';this.state.message='ISO verified. Set up Dolphin to continue.';}catch{}
  }
  async chooseIso(){
