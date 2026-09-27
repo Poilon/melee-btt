@@ -3,7 +3,18 @@ import {startLoading,showSkeleton,skeletonRows} from '/loading.js';
 const $ = id => document.getElementById(id), text = (id, value) => { $(id).textContent = value; };
 const names = { 'dr-mario':'Dr. Mario',mario:'Mario',luigi:'Luigi',bowser:'Bowser',peach:'Peach',yoshi:'Yoshi','donkey-kong':'Donkey Kong','captain-falcon':'Captain Falcon',ganondorf:'Ganondorf',falco:'Falco',fox:'Fox',ness:'Ness','ice-climbers':'Ice Climbers',kirby:'Kirby',samus:'Samus',zelda:'Zelda',link:'Link','young-link':'Young Link',pichu:'Pichu',pikachu:'Pikachu',jigglypuff:'Jigglypuff',mewtwo:'Mewtwo','game-and-watch':'Mr. Game & Watch',marth:'Marth',roy:'Roy' };
 const make = (tag, value, css) => { const n=document.createElement(tag);n.textContent=value;if(css)n.className=css;return n; };
-let companionClosed=false;
+let companionClosed=false,loadedVersion,updateLoading;
+function renderUpdate(update){
+ $('app-update').hidden=!update?.supported;if(!update?.supported)return;
+ if(loadedVersion&&update.currentVersion!==loadedVersion){location.reload();return;}loadedVersion=update.currentVersion;
+ text('app-version',`TTRC ${update.currentVersion}`);
+ const messages={idle:'Automatic updates on.',checking:'Checking for updates…',current:'Up to date · automatic updates on.',downloading:`Downloading ${update.version} · ${update.progress}%`,verifying:'Verifying update…',ready:`${update.version} is ready. It will install automatically when Dolphin is closed.`,installing:'Installing update… The companion will reconnect automatically.',error:update.error||'Could not check for updates. You can keep playing.'};
+ text('app-update-message',messages[update.phase]||'Automatic updates on.');
+ $('app-update-progress').hidden=update.phase!=='downloading';$('app-update-progress').value=update.progress||0;
+ $('check-app-update').disabled=['checking','downloading','verifying','ready','installing'].includes(update.phase);
+ if(update.phase==='installing'){if(!updateLoading)updateLoading=startLoading('Installing update…');$('play').disabled=true;$('play-settings').disabled=true;$('character-settings').disabled=true;}else if(updateLoading){updateLoading();updateLoading=null;$('play').disabled=false;}
+}
+$('check-app-update').addEventListener('click',async()=>{try{await post('app-update/check',{},'update',$('check-app-update'));await refresh();}catch(e){toast(e.message);}});
 let sharingRun,updatingChallenge=false;
 let data, tab='all', toastTimer, seen, savingSettings=false, launchingDolphin=false, settingsRevision=0;
 const peachOptions=[['random','Random'],['turnip','Turnip'],['beam-sword','Beam Sword'],['bob-omb','Bob-omb'],['mr-saturn','Mr. Saturn']];
@@ -74,6 +85,7 @@ function render(d){
  const count=Object.values(d.progress||{}).filter(p=>p.best).length;$('progress-count').replaceChildren(document.createTextNode(count+' '),make('small','/ 25 cleared'));$('progress').value=count;
  for(const [character,cache]of attempts){if(cache.loading)continue;const fresh=new Map(d.history.map(r=>[r.id,r]));cache.rows=cache.rows.map(r=>fresh.get(r.id)||r);}
  text('total-attempts',d.attempts?.total??(d.bestRuns||[]).reduce((n,r)=>n+r.attemptCount,0));text('finished-attempts',d.attempts?.finished??(d.bestRuns||[]).reduce((n,r)=>n+(r.finishedCount??r.attemptCount),0));text('active-attempts',d.attempts?.active?`${d.attempts.active} in progress`:'');
+ renderUpdate(d.appUpdate);
  renderRuns(d);
  for(const best of d.bestRuns||[]){const cache=attempts.get(best.character);if(expanded.has(best.character)&&cache&&!cache.loading&&(cache.total!==best.attemptCount||cache.signature!==attemptSignature(best.character)))loadHistory(best.character,false,true);}
  if(seen){const fresh=d.history.find(r=>!seen.has(r.id));if(fresh&&!fresh.exclusionReason)toast(`Run saved: ${names[fresh.character]} · ${formatTime(fresh.frames)}. Replay syncs automatically after leaving the results screen.`);}seen=new Set(d.history.map(r=>r.id));
@@ -131,7 +143,7 @@ async function loadHistory(character,more=false,keepDepth=false){
 async function refresh({quiet=false}={}){
  const initial=!data,done=quiet?()=>{}:startLoading(initial?'Loading companion…':'Updating companion…'),clear=initial?showSkeleton($('run-list'),5):()=>{};
  if(initial)document.body.classList.add('initial-loading');
- try{const revision=settingsRevision,r=await fetch('/api/dashboard');if(!r.ok)throw new Error();const next=await r.json();if(revision!==settingsRevision||savingSettings)next.settings=data?.settings;render(next);}catch{if(!companionClosed)text('connection','Companion offline');}finally{clear();done();document.body.classList.remove('initial-loading');}
+ try{const revision=settingsRevision,r=await fetch('/api/dashboard');if(!r.ok)throw new Error();const next=await r.json();if(revision!==settingsRevision||savingSettings)next.settings=data?.settings;render(next);}catch{if(!companionClosed)text('connection',data?.appUpdate?.phase==='installing'?'Updating TTRC…':'Companion offline');}finally{clear();done();document.body.classList.remove('initial-loading');}
 }
 for(const [id,value]of [['tab-all','all'],['tab-ready','ready'],['tab-sent','sent']])$(id).addEventListener('click',()=>{tab=value;for(const b of document.querySelectorAll('.run-tabs button'))b.classList.toggle('active',b.id===id);if(data)render(data);});
 let startingSignIn = false;
@@ -163,7 +175,7 @@ $('account-cancel').addEventListener('click', async () => { try { await post('ac
 $('sign-out').addEventListener('click', async () => { try { await post('account/logout'); seen = undefined; await refresh(); } catch (error) { toast(error.message); } });
 $('website').addEventListener('click',async()=>{if(!data?.identity){location.href='https://target-test-randomizer-challenge.vercel.app';return;}try{location.href=(await post('remote/browser')).url;}catch(err){toast(err.message);}});
 $('quit-companion').addEventListener('click',async()=>{if(data?.capture?.dolphinRunning&&!confirm('Quit companion? Dolphin will stay open, but new runs will not be captured until you reopen the companion.'))return;try{await post('quit',{},'quit');companionClosed=true;clearInterval(refreshTimer);clearTimeout(toastTimer);document.body.replaceChildren(make('main','Companion closed. You can close this tab.'));}catch(error){toast(error.message);}});
-$('play').addEventListener('click',async()=>{launchingDolphin=true;$('play').disabled=true;$('play-settings').disabled=true;$('character-settings').disabled=true;try{const result=await post('launch',{},'launch');toast(result.status==='already-running'?'Dolphin is already running.':'Dolphin is starting. Choose your character in Target Test.');refresh();}catch(err){toast(err.message);}finally{launchingDolphin=false;$('play').disabled=false;renderSettings(data?.settings);}});
+$('play').addEventListener('click',async()=>{launchingDolphin=true;$('play').disabled=true;$('play-settings').disabled=true;$('character-settings').disabled=true;try{const result=await post('launch',{},'launch');toast(result.status==='updating'?'TTRC is updating. Wait for the companion to reconnect.':result.status==='already-running'?'Dolphin is already running.':'Dolphin is starting. Choose your character in Target Test.');refresh();}catch(err){toast(err.message);}finally{launchingDolphin=false;$('play').disabled=false;renderSettings(data?.settings);}});
 $('replay-folder').addEventListener('click',async()=>{try{await post('recorder/folder',{},'launch');}catch(e){toast(e.message);}});
 $('recorder').addEventListener('click',async()=>{$('recorder').disabled=true;try{const result=await post('recorder/prepare',{},'launch');text('recorder-note',result.message);toast('Replay profile prepared. Close the current Dolphin, then use Launch Dolphin.');refresh();}catch(err){text('recorder-note',err.message);}finally{$('recorder').disabled=false;}});
 $('export').addEventListener('click',()=>{if(!data?.history.length){toast('Finish a run first.');return;}const csv=['character,stage,frames,time,status',...data.history.map(r=>[r.character,r.stage,r.frames,formatTime(r.frames),r.submissionStatus].join(','))].join('\n');const u=URL.createObjectURL(new Blob([csv],{type:'text/csv'})),a=document.createElement('a');a.href=u;a.download='target-test-local-runs.csv';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);});

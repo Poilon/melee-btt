@@ -483,3 +483,16 @@ test('companion counts aborted attempts separately from finishes and updates an 
  await page.screenshot({path:'build/attempts-mobile.png',fullPage:true});
  await page.locator('#tab-sent').click();await expect(page.locator('#run-list > .run-group')).toHaveCount(1);await expect(page.locator('#total-attempts')).toHaveText('5');
 });
+
+test('companion shows download progress, deferred installation, errors and automatic version reload',async({page})=>{
+ let state={supported:true,currentVersion:'0.9.0',version:'0.10.0',phase:'downloading',progress:42},checks=0,loads=0;
+ page.on('load',()=>loads++);
+ await page.route('**/api/dashboard',async route=>{const response=await route.fetch();const d=await response.json();d.appUpdate=state;await route.fulfill({json:d});});
+ await page.route('**/api/app-update/check',async route=>{checks++;state={...state,phase:'checking'};await route.fulfill({status:202,json:state});});
+ await page.goto('/');await expect(page.locator('#app-version')).toHaveText('TTRC 0.9.0');await expect(page.locator('#app-update-message')).toContainText('42%');await expect(page.locator('#app-update-progress')).toHaveAttribute('value','42');await expect(page.locator('#check-app-update')).toBeDisabled();
+ state={...state,phase:'ready'};await expect(page.locator('#app-update-message')).toContainText('when Dolphin is closed');
+ state={...state,phase:'error',error:'Download failed. You can keep playing.'};await expect(page.locator('#check-app-update')).toBeEnabled();await page.locator('#check-app-update').click();expect(checks).toBe(1);await expect(page.locator('#app-update-message')).toContainText('Checking');
+ state={...state,phase:'installing'};await expect(page.locator('#app-update-message')).toContainText('reconnect automatically');await expect(page.locator('#play')).toBeDisabled();
+ const oldLoads=loads;state={...state,currentVersion:'0.10.0',phase:'current'};await expect.poll(()=>loads).toBeGreaterThan(oldLoads);await expect(page.locator('#app-version')).toHaveText('TTRC 0.10.0');await expect(page.locator('#app-update-message')).toContainText('Up to date');
+ await page.setViewportSize({width:390,height:844});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});

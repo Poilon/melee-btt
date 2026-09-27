@@ -23,7 +23,7 @@ const files = new Map([
   ['/favicon-admin.svg', ['favicon-admin.svg', 'image/svg+xml']],
 ]);
 
-export function createApp({ challenge:initialChallenge, gecko:initialGecko, getChallenge, onlineChallenge, updateChallenge, store, getIdentity, getCapture, launch, remote, importPlayer, prepareRecorder, reviewerProxy, openReplays, replays, getPlaySettings, savePlaySettings, onboarding, account, instance, quit }) {
+export function createApp({ challenge:initialChallenge, gecko:initialGecko, getChallenge, onlineChallenge, updateChallenge, store, getIdentity, getCapture, launch, remote, importPlayer, prepareRecorder, reviewerProxy, openReplays, replays, getPlaySettings, savePlaySettings, onboarding, account, instance, quit, appUpdates }) {
   const server = createServer(async (req, res) => {
     const {manifest:challenge,gecko}=getChallenge?getChallenge():{manifest:initialChallenge,gecko:initialGecko};
     const port = server.address()?.port;
@@ -42,6 +42,12 @@ export function createApp({ challenge:initialChallenge, gecko:initialGecko, getC
     }
     try {
       const url = new URL(req.url, `http://${req.headers.host}`);
+      if(req.method==='POST'&&url.pathname==='/api/app-update/check'){
+        if(!req.headers.origin||req.headers['x-ttrc-action']!=='update')return json(403,{error:'Action not allowed.'});
+        if(!appUpdates?.status().supported)return json(503,{error:'Updates unavailable in this installation.'});
+        appUpdates.check();return json(202,appUpdates.status());
+      }
+      if(appUpdates?.status().phase==='installing'&&req.method==='POST'&&url.pathname!=='/api/quit')return json(409,{error:'TTRC is updating. The companion will reconnect shortly.'});
       if(req.method==='POST'&&url.pathname==='/api/challenge/update'){
         if(!req.headers.origin||req.headers['x-ttrc-action']!=='challenge')return json(403,{error:'Action not allowed.'});
         if(!updateChallenge)return json(503,{error:'Challenge updates unavailable.'});
@@ -220,6 +226,7 @@ export function createApp({ challenge:initialChallenge, gecko:initialGecko, getC
           challenge, identity, player, auth: { mode: 'password', configured: true, connection: account?.status(), account: identity ? { name: identity.displayName, linked: true } : null }, capture: getCapture(), scope: 'local', character,
           remote: remote?.status(identity) || { available: false, paired: false, pending: 0 },
           settings: getPlaySettings?.() || null,
+          appUpdate: appUpdates?.status() || null,
           challengeUpdate:onlineChallenge?.status()||null,
           setup: onboarding?.get() || {ready:true},
           leaderboard: [], stats: store.stats(challenge.id),

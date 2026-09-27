@@ -5,6 +5,7 @@ import {fileURLToPath} from 'node:url';
 import {execFile,spawn} from 'node:child_process';
 import {promisify} from 'node:util';
 import {companionRunning,checkCompanionPort,claimCompanion} from '../server/companion-instance.mjs';
+import {updateLocked,recoverInstall} from './update-install.mjs';
 import {verifyIso} from '../server/onboarding.mjs';
 import {loadChallenge} from '../server/challenge-loader.mjs';
 const root=fileURLToPath(new URL('../',import.meta.url)),exec=promisify(execFile);
@@ -13,6 +14,11 @@ const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 await mkdir(join(root,'.local'),{recursive:true});
 async function writeRuntime(value){await writeFile(runtimePath+'.tmp',JSON.stringify(value));await rename(runtimePath+'.tmp',runtimePath);}
 try {
+ if(await updateLocked(root)){
+  if(!process.argv.includes('--open'))throw Error('TTRC is installing an update. Try again in a moment.');
+  const deadline=Date.now()+100000;while(await updateLocked(root)){if(Date.now()>deadline)throw Error('Update is still installing.');await delay(500);}
+ }
+ await recoverInstall(root);
  if(process.argv.includes('--prepare')){
   // Do not silently connect this installation to a different companion.
   await checkCompanionPort(root,port);
@@ -42,7 +48,11 @@ try {
   }
   await exec('powershell.exe',['-NoProfile','-NonInteractive','-Command',`Start-Process 'http://localhost:${port}'`],{windowsHide:true});
  }else if(process.argv.includes('--serve')){
-  if(await companionRunning(root,port))process.exit(0);
+  if(await companionRunning(root,port)){
+   const origin=`http://127.0.0.1:${port}`;
+   await fetch(origin+'/api/app-update/check',{method:'POST',headers:{Origin:origin,'X-TTRC-Action':'update'},signal:AbortSignal.timeout(3000)}).catch(()=>{});
+   process.exit(0);
+  }
   const release=await claimCompanion(root);
   if(!release)process.exit(0);
   try{

@@ -10,7 +10,8 @@
     "generate": "node scripts/generate.mjs",
     "test": "node --test test/*.test.mjs",
     "start": "node server/main.mjs",
-    "test:ui": "playwright test"
+    "test:ui": "playwright test",
+    "test:update:windows": "node test/windows/updater.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0"

@@ -9,6 +9,8 @@ jobs:
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
+      - name: Test Windows update installation and rollback
+        run: node test/windows/updater.mjs
       - uses: actions/checkout@v4
         with:
           repository: project-slippi/Ishiiruka

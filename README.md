@@ -139,3 +139,11 @@ best valid times across all 25 characters, with no entry for incomplete rosters.
 THS places 1–6 award 15, 12.5, 10, 7.5, 5 and 2.5 points, then 0. Equal times share
 a place and points (1, 1, 3); equal overall points also share a place. Times, ranks,
 THS and point breakdowns stay hidden until reveal, except individually shared runs.
+
+### Automatic app updates (Windows portable release)
+
+From v0.9.0, starting TTRC Dolphin or the companion checks the latest stable GitHub release in the background. A verified download installs automatically once Dolphin is closed; the companion restarts and an open companion tab reloads. Offline checks do not block play. The companion shows the installed version, progress, errors and a **Check for updates** button. Earlier versions need one final manual upgrade to v0.9.0.
+
+Updates preserve `.local`, `User`, `Replays`, `Games`, playback Dolphin and `build/challenge`, including the current seed and ISO path. Only inventoried application files are replaced. The installer runs from a separate Node copy, verifies the archive checksum and file inventory, backs up changed files under `.local/updates/backup`, and rolls back on an installation error. An interrupted file transaction is recovered on the next companion start. Downloaded updates require 1.5 GB free space. Development checkouts do not auto-update.
+
+Updater verification: `node --test test/app-updates.test.mjs`, `npm run test:ui`, and on Windows `npm run test:update:windows` (isolated installation, file-lock rollback, service restart and data preservation). The Windows build workflow runs the Windows integration test.

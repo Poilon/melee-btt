@@ -1,3 +1,4 @@
+import {AppUpdates} from './app-updates.mjs';
 import { mkdir, readFile, writeFile, rm, access } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { resolve, join } from 'node:path';
@@ -129,8 +130,12 @@ const account = new CompanionAccount({ origin: siteOrigin, accept: acceptPlayer,
   await remote.clearPairing();
 }) });
 const accountTimer = setInterval(() => { account.poll().catch(() => {}); }, 3000);
+const companionInstance=await instanceId(root);
+const appUpdates=new AppUpdates({root,port,instance:companionInstance,canInstall:()=>!launching&&!updatingChallenge&&!recordingSync&&!onboarding.get().busy});
+await appUpdates.initialize();
 const server = createApp({
-  instance: await instanceId(root), quit: shutdown,
+  appUpdates,
+  instance: companionInstance, quit: shutdown,
   getChallenge:()=>generated,onlineChallenge,updateChallenge,
   ...generated, challenge: generated.manifest, store, remote, replays, onboarding, account,
   getPlaySettings: () => playSettings.get(),
@@ -167,6 +172,7 @@ const server = createApp({
     return response;
   },
   launch: async () => {
+    if(appUpdates.status().phase==='installing')return {status:'updating'};
     if (bridge.status().status === 'connected') return { status: 'already-running' };
     if (launching) return { status: 'starting' };
     launching = true;
@@ -191,11 +197,14 @@ server.listen(port, '127.0.0.1', async () => {
   console.log(`Target Test Randomizer Challenge : http://localhost:${port}`);
   console.log(`Seed ${stored.rules.seed} — sign in through the companion to save records.`);
   await bridge.start();
+  appUpdates.start();
 });
+let shuttingDown=false;
 function shutdown() {
+  if(shuttingDown)return;shuttingDown=true;appUpdates.stop();
   clearInterval(challengeTimer);
   clearInterval(accountTimer); clearInterval(refreshIdentity); clearInterval(syncTimer); clearInterval(replayTimer); bridge.stop();
-  server.close(async () => { store.close(); await globalThis.ttrcReleaseCompanion?.(); process.exit(0); });
+  server.close(async () => { await recordingSync?.catch(()=>{}); await playSettings.queue; store.close(); await globalThis.ttrcReleaseCompanion?.(); process.exit(0); });
   server.closeIdleConnections();
 }
 process.on('SIGINT', shutdown); process.on('SIGTERM', shutdown);
