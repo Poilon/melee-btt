@@ -278,3 +278,29 @@ test('Remove GO and Fixed camera save independently and survive reload',async({p
   await page.locator('#course-search').fill('Marth');await expect(page.locator('#course-grid')).toContainText('Marth');
   expect(errors).toEqual([]);
 });
+
+test('challenge deadline is prominent, ticks, and waits for server-confirmed reveal',async({page})=>{
+  const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  const now=new Date('2026-09-27T12:00:00Z');
+  await page.clock.install({time:now});
+  let phase={phase:'open',timesRevealed:false,endsAt:'2026-09-29T15:04:05Z',closedAt:null};
+  await page.route('**/api/dashboard?*',async route=>{const response=await route.fetch(),body=await response.json();await route.fulfill({response,json:{...body,competition:phase}});});
+  await page.goto('http://localhost:4319');
+  await expect(page.locator('#deadline-countdown')).toHaveText('2d 03h 04m 05s');
+  await expect(page.locator('#deadline-date')).toHaveAttribute('datetime',phase.endsAt.replace('Z','.000Z'));
+  await expect(page.locator('#deadline-date')).toContainText('September 29, 2026');
+  await expect(page.locator('#deadline-admin')).toBeHidden();
+  const banner=await page.locator('.challenge-deadline').boundingBox(),hero=await page.locator('.hero').boundingBox();expect(banner.y+banner.height).toBeLessThan(hero.y);
+  await page.clock.fastForward(2000);await expect(page.locator('#deadline-countdown')).toHaveText('2d 03h 04m 03s');
+  await page.setViewportSize({width:390,height:844});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.screenshot({path:'build/deadline-mobile.png',fullPage:false});
+  phase={...phase,endsAt:'2026-09-27T12:00:01Z'};await page.reload();
+  await expect(page.locator('#deadline-countdown')).toHaveText('Closing…');
+  await expect(page.locator('#competition-state')).toHaveText('Results hidden');
+  phase={...phase,phase:'closed',timesRevealed:true,closedAt:phase.endsAt};await page.reload();
+  await expect(page.locator('#deadline-label')).toHaveText('Challenge ended');
+  await expect(page.locator('#deadline-countdown')).toHaveText('Results revealed');
+  phase={phase:'open',timesRevealed:false,endsAt:null,closedAt:null};await page.reload();
+  await expect(page.locator('#deadline-countdown')).toHaveText('No end date set');await expect(page.locator('#deadline-date')).toBeHidden();
+  expect(errors).toEqual([]);
+});

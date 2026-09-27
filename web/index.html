@@ -27,6 +27,11 @@
       <section class="panel connect-panel" id="connect-panel" hidden><p class="eyebrow">COMPANION CONNECTION</p><h2>Connect this companion</h2><p>Only continue if you clicked Sign in in your own TTRC Companion. Check that both windows show this code:</p><strong id="connect-verification" class="verification-code"></strong><p id="connect-status" role="status">Loading connection…</p><button id="approve-companion" class="button primary" disabled>Connect companion</button></section>
       <section class="panel" id="public-profile" hidden><p class="eyebrow">PLAYER</p><h2 id="public-name"></h2><p id="public-note">Times and rankings remain hidden until the reveal. Shared replays appear below.</p></section>
       <div class="page-heading"><p class="page-subtitle">Current challenge</p><span class="status-badge" id="capture-top">Loading challenge…</span></div>
+      <section class="challenge-deadline" aria-labelledby="deadline-label">
+        <div><h2 id="deadline-label">Challenge ends</h2><strong id="deadline-countdown" role="timer" aria-live="off">Loading…</strong></div>
+        <div class="deadline-info"><time id="deadline-date"></time><p id="deadline-note">The end date and reveal time appear here.</p></div>
+        <a id="deadline-admin" class="button secondary" href="/review" hidden>Set end date</a>
+      </section>
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-copy"><span class="seed-label"><i></i> ACTIVE SEED <strong id="seed">—</strong></span><h1 id="hero-title">Target Test<br><span>Randomizer Challenge</span></h1><p>Randomized targets and shuffled stages for all 25 characters.</p><div class="hero-actions"><button id="play" class="button primary"><span aria-hidden="true">↓</span> Download &amp; play</button><button id="copy-seed" class="button secondary">Copy seed <span aria-hidden="true">↗</span></button></div></div>
         <div class="melee-scene" aria-hidden="true"><img class="scene-samus" src="/assets/melee/samus.webp" alt="" width="300" height="300"><img class="scene-fox" src="/assets/melee/fox.webp" alt="" width="300" height="300"></div>

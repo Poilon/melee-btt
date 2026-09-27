@@ -33,6 +33,35 @@ async function action(path, body) {
 function portrait(character) {
   const img = document.createElement('img'); img.src = `/assets/melee/${character}-portrait.webp`; img.alt = ''; img.className = 'fighter-portrait'; img.width = 68; img.height = 80; img.loading = 'lazy'; return img;
 }
+function renderDeadline() {
+  if (!data) return;
+  const competition = data.competition || {};
+  const closed = competition.timesRevealed;
+  const timestamp = closed ? competition.closedAt : competition.endsAt;
+  const date = timestamp ? new Date(timestamp) : null;
+  const validDate = date && Number.isFinite(date.getTime());
+  text('deadline-label', closed ? 'Challenge ended' : 'Challenge ends');
+  $('deadline-admin').hidden = !data.auth?.account?.admin || closed;
+  text('deadline-admin', validDate ? 'Edit end date' : 'Set end date');
+  $('deadline-date').hidden = !validDate;
+  if (validDate) {
+    $('deadline-date').dateTime = date.toISOString();
+    text('deadline-date', date.toLocaleString('en-US', {month:'long', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:false, timeZoneName:'short'}));
+  } else $('deadline-date').removeAttribute('datetime');
+  if (closed) {
+    text('deadline-countdown', 'Results revealed');
+    text('deadline-note', 'Submissions are closed. Times and rankings are public.');
+  } else if (!validDate) {
+    text('deadline-countdown', 'No end date set');
+    text('deadline-note', 'The challenge stays open until an admin sets a date or closes it.');
+  } else {
+    const seconds = Math.max(0, Math.ceil((date.getTime() - Date.now()) / 1000));
+    const days = Math.floor(seconds / 86400), hours = Math.floor(seconds / 3600) % 24, minutes = Math.floor(seconds / 60) % 60;
+    const pad = value => String(value).padStart(2, '0');
+    text('deadline-countdown', seconds ? `${days}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds % 60)}s` : 'Closing…');
+    text('deadline-note', seconds ? 'Time left · submissions close and results reveal at this time.' : 'Checking the final results…');
+  }
+}
 function renderCourses() {
   if (!data) return;
   const query = $('course-search').value.trim().toLowerCase();
@@ -56,6 +85,7 @@ function renderCourses() {
 }
 function render(d) {
   data = d;
+  renderDeadline();
   const c = d.challenge, remote = d.scope === 'public', ident = d.identity;
   document.body.classList.toggle('public-site', remote);
   document.querySelector('.local-badge').replaceChildren(node('i', ''), document.createTextNode(remote ? ' Community challenge' : ' Local companion'));
@@ -313,4 +343,5 @@ if (profileSlug) {
 }
 await refresh();
 setInterval(() => { if (!document.hidden && !busy) refresh(); }, 5000);
+setInterval(() => { if (!document.hidden) renderDeadline(); }, 1000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
