@@ -10,7 +10,7 @@ Randomized targets, shuffled character stages, and a shared seed for **Super Sma
 2. Open **Slippi Dolphin.exe**. This is the TTRC build of Dolphin; the companion starts in the background with it.
 3. Click **Open** in Dolphin and select your original **Melee USA 1.02** ISO. It stays in its existing folder. Dolphin checks it before starting the game.
 4. Open **Tools → TTRC Companion** to see your runs and settings in your browser.
-5. Click **Sign in** in the companion. Continue with Google, choose a unique TTRC username, and confirm the matching connection code in your browser. No player file or Slippi account is needed.
+5. Click **Sign in** in the companion. Create an account with a unique username and a password, and confirm the matching connection code in your browser. No player file or Slippi account is needed.
 6. Choose any character in Melee. New valid personal bests are submitted automatically with their replay.
 
 Windows 10/11 **x64**. No separate launcher, command window, WSL, Node.js or Python installation. The companion stops when you close Dolphin. Internet is required for submissions and the first replay playback, which downloads the official Slippi Playback build. GameCube adapters may need their Windows driver installed. Other controllers can be configured in Dolphin’s **Controllers** window.
@@ -45,17 +45,18 @@ Close Dolphin, back up `.local`, `User`, and `Replays`, then extract the latest 
 
 ## Accounts
 
-Sign in with the same Google account on each PC to keep your TTRC profile and records.
+Sign in with the same username and password on each PC to keep your TTRC profile and records.
 Your public username is unique and permanent, with a profile at `/players/your_username`.
-Your Google name and email are not published or stored. Signing out of the website
+No email or external account is required. Passwords are stored as salted scrypt hashes. Signing out of the website
 leaves the companion connected; signing out in the companion stops new scored runs.
 
 **Existing players:** open the website using **Open challenge website** in your
-already connected companion, then **Continue with Google**. This links your existing
+already connected companion, then **Add password**. This links your existing
 player ID and keeps its records. Choose your username once. Do this before creating
-a separate TTRC account with Google; distinct existing accounts are not merged automatically.
+a separate TTRC account; distinct existing accounts are not merged automatically.
 
-Self-hosting requires Google OAuth credentials; see [Google setup](docs/google-auth.md).
+Save your password in your password manager: there is no email recovery.
+See [account setup and storage](docs/accounts.md).
 
 ## Development
 

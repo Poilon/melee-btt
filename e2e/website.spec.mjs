@@ -102,15 +102,16 @@ test('replay goes from companion to private review; public site shows only parti
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
 
-test('Google login chooses a username and connects the companion without downloading a file', async ({ page, context }) => {
+test('Unique username and password connect the companion without email or file downloads', async ({ page, context }) => {
   const errors = []; page.on('pageerror', e => errors.push(e.message));
   await page.goto('http://localhost:4319');
-  await expect(page.locator('#player-action')).toHaveText('Continue with Google');
+  await expect(page.locator('#player-action')).toHaveText('Sign in');
   await expect(page.locator('input[type=file]')).toHaveCount(0);
-  await page.locator('#player-action').click();
-  await expect(page.locator('#username-dialog')).toBeVisible();
-  await page.locator('#username').fill('Browser_Player');
-  await page.locator('#username-submit').click();
+  await page.locator('#create-account').click();
+  await expect(page.locator('input[type=email]')).toHaveCount(0);
+  await page.locator('#auth-username').fill('Browser_Player');
+  await page.locator('#auth-password').fill('Browser test password 42');
+  await page.locator('#auth-submit').click();
   await expect(page.locator('#connect-code')).toHaveText('@browser_player');
   await page.locator('#connect-code').click();
   await expect(page.locator('#public-name')).toHaveText('@browser_player');
@@ -128,10 +129,13 @@ test('Google login chooses a username and connects the companion without downloa
   expect(JSON.stringify(dashboard)).not.toContain('token');
   await popup.close();
   await page.goto('http://localhost:4319'); await page.locator('#logout').click();
-  await expect(page.locator('#player-action')).toHaveText('Continue with Google');
+  await expect(page.locator('#player-action')).toHaveText('Sign in');
   await page.locator('#player-action').click();
+  await page.locator('#auth-username').fill('BROWSER_PLAYER');
+  await page.locator('#auth-password').fill('Browser test password 42');
+  await page.locator('#auth-submit').click();
   await expect(page.locator('#connect-code')).toHaveText('@browser_player');
-  await expect(page.locator('#username-dialog')).not.toBeVisible();
+  await expect(page.locator('#auth-dialog')).not.toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   expect(errors).toEqual([]);

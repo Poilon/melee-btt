@@ -40,7 +40,7 @@ function render(d){
  $('player-required').hidden=Boolean(ident);
  $('play').hidden=Boolean(c.native);$('recorder-note').hidden=Boolean(c.native);
  $('replay-folder').hidden=!c.replayEnabled;$('recorder').hidden=Boolean(c.replayEnabled);text('recorder-state',c.native?'Dolphin records automatically. Choose your ISO with Open in Dolphin.':c.replayEnabled?'Replay-enabled profile ready. Launch Dolphin here for your next recorded attempt.':'Standard Dolphin does not create .slp files. Prepare the replay-enabled profile for new attempts.');
- text('seed',d.challenge.rules.seed);text('player-name',ident?.displayName||'Not signed in');text('player-code',ident?.slug ? `@${ident.slug}` : ident?.connectCode || 'Sign in with Google');text('avatar',ident?.displayName.slice(0,2).toUpperCase()||'?');
+ text('seed',d.challenge.rules.seed);text('player-name',ident?.displayName||'Not signed in');text('player-code',ident?.slug ? `@${ident.slug}` : ident?.connectCode || 'Username and password');text('avatar',ident?.displayName.slice(0,2).toUpperCase()||'?');
  text('check-player',`${ident?'✓':'○'} Signed in`);text('connection',connected?ident?'Dolphin connected':'Practice · no player':'Waiting for Dolphin');$('connection').classList.toggle('on',connected&&Boolean(ident));
  text('live-character',connected&&c.inGame&&names[c.character]?`${names[c.character]}${names[c.stage]?' → '+names[c.stage]:''}`:'Choose your character in Melee');
  const artCharacter=connected&&c.inGame&&Object.hasOwn(names,c.character)?c.character:'fox';

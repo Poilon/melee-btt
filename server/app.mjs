@@ -186,7 +186,7 @@ export function createApp({ challenge, gecko, store, getIdentity, getCapture, la
         const identity = await getIdentity();
         const player = identity;
         return json(200, {
-          challenge, identity, player, auth: { mode: 'google', configured: true, connection: account?.status(), account: identity ? { name: identity.displayName, linked: true } : null }, capture: getCapture(), scope: 'local', character,
+          challenge, identity, player, auth: { mode: 'password', configured: true, connection: account?.status(), account: identity ? { name: identity.displayName, linked: true } : null }, capture: getCapture(), scope: 'local', character,
           remote: remote?.status(identity) || { available: false, paired: false, pending: 0 },
           settings: getPlaySettings?.() || null,
           setup: onboarding?.get() || {ready:true},

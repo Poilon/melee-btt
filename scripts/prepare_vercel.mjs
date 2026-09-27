@@ -21,7 +21,7 @@ await writeFile(join(out, 'challenge/code.txt'), generated.gecko);
 await writeFile(join(out, 'api/index.mjs'), "export { default } from '../cloud/entry.mjs';\n");
 const pkg = JSON.parse(await readFile(join(root, 'package.json')));
 await writeFile(join(out, 'package.json'), JSON.stringify({ name: 'target-test-randomizer-challenge', private: true, type: 'module',
-  engines: { node: '24.x' }, dependencies: { jose: pkg.dependencies.jose, '@vercel/blob': pkg.dependencies['@vercel/blob'], '@slippi/slippi-js': pkg.dependencies['@slippi/slippi-js'] } }, null, 2));
+  engines: { node: '24.x' }, dependencies: { '@vercel/blob': pkg.dependencies['@vercel/blob'], '@slippi/slippi-js': pkg.dependencies['@slippi/slippi-js'] } }, null, 2));
 await writeFile(join(out, 'vercel.json'), JSON.stringify({
   framework: null, outputDirectory: 'public', installCommand: 'npm install --omit=dev', buildCommand: '',
   functions: { 'api/index.mjs': { includeFiles: 'challenge/**', maxDuration: 30 } },

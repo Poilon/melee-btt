@@ -7,8 +7,8 @@ Local companion: **http://localhost:4317**. Organizer desk on this PC:
 ## Play and submit
 
 1. Open the TTRC build of **Slippi Dolphin.exe** and select your Melee USA 1.02 ISO with **Open**.
-2. Open **Tools → TTRC Companion**, click **Sign in**, then continue with Google in your browser.
-3. Choose a unique TTRC username on first sign-in. Confirm that the website and companion show the same code, then **Connect companion**. Credentials are saved automatically; there is no player-file download/import step.
+2. Open **Tools → TTRC Companion**, click **Sign in**, then create an account with a unique username and password in your browser.
+3. Registration signs you in immediately. Confirm that the website and companion show the same code, then **Connect companion**. Credentials are saved automatically; there is no player-file download/import step.
 4. Choose your character in Dolphin and play a fresh attempt with the companion
    running. Completed runs are saved locally. Valid personal bests are submitted
    automatically once their matching replay is complete.
@@ -41,36 +41,35 @@ history. Personal bests include all stored attempts.
 
 ## Accounts and companion connection
 
-Google OpenID Connect uses authorization code + PKCE, state and nonce. The server
-validates Google's ID token signature, audience, issuer, expiry and authorized
-party. It stores a hashed Google subject mapping, never email or real name.
-Website sessions use an HttpOnly, Secure, SameSite=Lax cookie and expire after 30 days.
+Accounts use a unique username and password. No email address, Google account or
+mail service is required. Usernames are case-insensitive, permanent, and contain
+3–24 ASCII letters, numbers or underscores, starting with a letter or number.
+Create-only Blob reservations enforce uniqueness across serverless instances.
+Passwords use independent random salts and scrypt (N=32768, r=8, p=3); plaintext
+passwords are never stored. Passwords must contain 8–128 characters.
 
-The first login reserves a case-insensitive, permanent username (3–24 ASCII
-letters/numbers/underscores, starting with a letter or number). Create-only Blob
-reservations enforce uniqueness across serverless instances. `/players/<slug>`
-exposes only public identity and explicitly disclosed replays, never private records.
+Registration signs the player in immediately. Login checks are rate limited per
+IP and username. Browser sessions use HttpOnly, Secure, SameSite=Lax cookies and
+expire after 30 days. Private credentials are never included in dashboard or
+public profile responses. `/players/<slug>` exposes public identity and disclosed
+replays, while other results remain sealed. There is no email password recovery.
 
-The companion requests a ten-minute connection and shows a verification code.
-The signed-in browser explicitly approves the matching request. The companion
-polls using a private random secret; only that poll can obtain the device credential.
-A lost response can be retried without creating extra credentials. Cancel, expiry,
-sign-out and account changes stop the pending flow. A device credential lasts one year.
+The companion requests a ten-minute connection and displays a verification code.
+The signed-in browser approves the matching request explicitly. Only the companion's
+private polling secret can retrieve its device credential. Cancel and expiry stop
+pending authorization; a device credential lasts one year. Credentials are stored
+automatically under `User/Challenge/user.json` and `.local/companion.json`.
 
-Credentials remain internally managed in `User/Challenge/user.json` and
-`.local/companion.json`. No Slippi credentials are searched for, copied or uploaded.
-Signing out of the companion prevents legacy files from silently signing back in.
-Local runs and replays remain on disk, scoped to their original player ID.
+Existing profiles remain usable. Open the website from the connected companion,
+then **Add password** to retain the same player ID and all runs. Existing reserved
+usernames can only gain a password through their owner's authenticated session;
+other users cannot claim them. Conditional Blob writes protect concurrent upgrades.
+An earlier Google browser session can also prove ownership while it remains valid.
 
-For migration, **Open challenge website** from an already connected companion,
-then **Continue with Google**. Possession of that legacy session lets Google link
-to the original player ID; records and display names are retained. It never merges
-accounts by matching a display name. Existing device credentials continue working.
-Anonymous profile creation and manual player-file downloads return HTTP 410.
-
-**Open challenge website** uses a one-time, 60-second sign-in ticket in a URL
-fragment, removed before redemption. Signing out of the website does not stop
-companion uploads. See [Google OAuth deployment setup](google-auth.md).
+**Open challenge website** uses a one-time, 60-second ticket in a URL fragment,
+removed before redemption. Signing out of the website leaves the companion signed
+in. Signing out of the companion prevents old local files from restoring the session.
+See [account setup](accounts.md).
 
 ## Sealed leaderboard
 
@@ -215,7 +214,7 @@ from deployment. Cloud storage holds profiles, hashed device/session keys,
 submissions, private evidence, review decisions and challenge closure state.
 Legacy score-only uploads return HTTP 410 and cannot enter the leaderboard.
 
-Vercel environment: `BLOB_READ_WRITE_TOKEN`, `SESSION_SECRET`, `REVIEWER_KEY`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` and
+Vercel environment: `BLOB_READ_WRITE_TOKEN`, `SESSION_SECRET`, `REVIEWER_KEY` and
 optionally `CHALLENGE_ENDS_AT`. The current active seed is **20260989**. New seeds
 require generating a challenge, preparing its Dolphin profile and deploying the
 same manifest/code. Use `TTRC_CHALLENGE_DIR` for a different local challenge folder.

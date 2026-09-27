@@ -33,7 +33,7 @@ async function action(path, body) {
     headers: { 'X-TTRC-Action': 'profile', ...(body ? { 'Content-Type': 'application/json' } : {}) },
     ...(body ? { body: JSON.stringify(body) } : {}) });
   const result = await response.json();
-  if (!response.ok) throw new Error(result.error || 'Please try again.');
+  if (!response.ok) throw Object.assign(new Error(result.error || 'Please try again.'), { code: result.code, status: response.status });
   return result;
 }
 function portrait(character) {
@@ -81,19 +81,20 @@ function render(d) {
   const initials = ident ? ident.displayName.trim().split(/\s+/).slice(0, 2).map(w => Array.from(w)[0]).join('').toUpperCase() : '?';
   text('avatar', initials); text('top-avatar', initials);
   text('display-name', ident?.displayName || 'Not signed in');
-  const account = d.auth?.account, needsUsername = d.auth?.needsUsername;
+  const account = d.auth?.account;
   text('connect-code', ident?.slug ? `@${ident.slug}` : account ? 'Choose your TTRC username' : 'Sign in to save your records');
   if (ident?.slug) $('connect-code').href = `/players/${ident.slug}`; else $('connect-code').removeAttribute('href');
   text('top-name', ident?.displayName || 'My player');
   $('identity-check').hidden = !ident;
-  text('identity-note', ident?.slug ? 'Your records are linked to this account on every PC.' : account?.provider === 'legacy' ?
-    'Link Google to keep this profile and its existing records.' : 'Sign in with Google, then choose your TTRC username.');
-  text('player-action', needsUsername ? 'Choose username' : ident?.slug ? 'Open companion ↗' : 'Continue with Google');
+  text('identity-note', ident?.slug ? 'Your records are linked to this account on every PC.' : account && account.provider !== 'password' ?
+    'Add a password to keep this profile and its existing records.' : 'Choose a unique username and a password to create your account.');
+  text('player-action', ident?.slug ? 'Open companion ↗' : 'Sign in');
   $('player-action').disabled = !d.auth?.configured && !ident?.slug;
   $('logout').hidden = !account;
-  text('auth-note', !d.auth?.configured ? 'Google sign-in is being configured. Please try again later.' : 'Your Google name is not shown publicly.');
+  $('create-account').hidden = account?.provider === 'password';
+  text('create-account', account ? 'Add password' : 'Create account');
+  text('auth-note', 'No email required.');
   renderConnection();
-  if (needsUsername && !usernamePrompted) { usernamePrompted = true; $('username-dialog').showModal(); }
   $('scores').replaceChildren();
   const publicRows=revealed?d.leaderboard:(d.participants||[]);
   for (const score of publicRows) {
@@ -249,29 +250,41 @@ $('share').addEventListener('click', async () => {
   try { await navigator.clipboard.writeText(url.href); toast('Challenge link copied.'); }
   catch { toast(`Share: ${url.href}`); }
 });
-let usernamePrompted = false;
 const connectId = new URLSearchParams(location.search).get('connect');
-let connectionInfo, connectionDone = false;
-function googleSignIn() {
-  const url = new URL('/api/auth/google/start', location.origin);
-  if (/^[a-f0-9]{64}$/.test(connectId || '')) url.searchParams.set('connect', connectId);
-  location.href = url.href;
+let connectionInfo, connectionDone = false, authMode = 'login';
+function showAuth(mode = 'login') {
+  authMode = mode;
+  const signup = mode === 'signup';
+  text('auth-title', signup ? 'Create account' : 'Sign in');
+  text('auth-description', signup ? data?.identity ? 'Add a password to keep this profile and its records.' : 'Choose a unique username and a password. No email required.' : 'Use your TTRC account.');
+  $('auth-password').minLength = signup ? 8 : 1;
+  $('auth-password').autocomplete = signup ? 'new-password' : 'current-password';
+  $('auth-username').minLength = signup ? 3 : 1;
+  if (signup) $('auth-username').pattern = '[A-Za-z0-9][A-Za-z0-9_]{2,23}'; else $('auth-username').removeAttribute('pattern');
+  if (signup && data?.identity?.slug) $('auth-username').value = data.identity.slug;
+  $('username-hint').hidden = !signup; $('password-hint').hidden = !signup;
+  text('auth-submit', signup ? 'Create account' : 'Sign in');
+  $('auth-submit').disabled = false; text('auth-error', '');
+  text('auth-switch', signup ? 'Already have an account? Sign in' : 'Create account');
+  if (!$('auth-dialog').open) $('auth-dialog').showModal();
 }
+$('create-account').addEventListener('click', () => showAuth('signup'));
+$('auth-switch').addEventListener('click', () => { $('auth-password').value = ''; showAuth(authMode === 'login' ? 'signup' : 'login'); });
+$('auth-form').addEventListener('submit', async e => {
+  e.preventDefault(); if (busy) return; busy = true; $('auth-submit').disabled = true; text('auth-error', '');
+  try {
+    await action(`auth/${authMode}`, { username: $('auth-username').value, password: $('auth-password').value });
+    $('auth-password').value = ''; $('auth-dialog').close(); await refresh(); toast(authMode === 'signup' ? 'Account created.' : 'Signed in.');
+  } catch (error) { text('auth-error', error.message); }
+  finally { busy = false; $('auth-submit').disabled = false; }
+});
 $('player-action').addEventListener('click', () => {
   if (!data) return;
-  if (data.auth?.needsUsername) { $('username-dialog').showModal(); return; }
   if (data.identity?.slug) { window.open('http://localhost:4317', '_blank', 'noopener'); return; }
-  googleSignIn();
-});
-$('username').addEventListener('input', () => text('username-preview', `${location.origin}/players/${$('username').value.trim().toLowerCase()}`));
-$('username-form').addEventListener('submit', async e => {
-  e.preventDefault(); if (busy) return; busy = true; $('username-submit').disabled = true; text('username-error', '');
-  try { await action('players/username', { username: $('username').value }); $('username-dialog').close(); await refresh(); toast('Username saved.'); }
-  catch (error) { text('username-error', error.message); }
-  finally { busy = false; $('username-submit').disabled = false; }
+  showAuth();
 });
 $('logout').addEventListener('click', async () => {
-  try { await action('auth/logout'); usernamePrompted = false; await refresh(); toast('Signed out of this browser.'); }
+  try { await action('auth/logout'); await refresh(); toast('Signed out of this browser.'); }
   catch (error) { toast(error.message); }
 });
 function renderConnection() {
@@ -280,14 +293,13 @@ function renderConnection() {
   if (connectionDone) { text('connect-status', 'Connected. You can return to your companion.'); $('approve-companion').hidden = true; return; }
   if (!connectionInfo) return;
   text('connect-verification', connectionInfo.code.match(/.{4}/g).join(' '));
-  const google = data?.auth?.account?.provider === 'google', ready = google && data?.identity?.slug;
-  text('connect-status', ready ? `Connect as @${data.identity.slug}` : google ? 'Choose your username to continue.' : 'Sign in with Google to continue.');
-  text('approve-companion', ready ? 'Connect companion' : google ? 'Choose username' : 'Continue with Google');
+  const ready = data?.auth?.account?.provider === 'password' && data?.identity?.slug;
+  text('connect-status', ready ? `Connect as @${data.identity.slug}` : 'Sign in or create an account to continue.');
+  text('approve-companion', ready ? 'Connect companion' : data?.identity ? 'Add password' : 'Sign in');
   $('approve-companion').disabled = !data?.auth?.configured;
 }
 $('approve-companion').addEventListener('click', async () => {
-  if (data?.auth?.account?.provider !== 'google') { googleSignIn(); return; }
-  if (!data?.identity?.slug) { $('username-dialog').showModal(); return; }
+  if (data?.auth?.account?.provider !== 'password') { showAuth(data?.identity ? 'signup' : 'login'); return; }
   $('approve-companion').disabled = true;
   try { await action('companion/connect/approve', { id: connectId, code: connectionInfo.code }); connectionDone = true; renderConnection(); }
   catch (error) { text('connect-status', error.message); }
@@ -319,11 +331,6 @@ if (connectId) {
     if (!response.ok) throw new Error(result.error);
     connectionInfo = result;
   } catch (error) { text('connect-status', error.message); }
-}
-const authError = new URLSearchParams(location.search).get('authError');
-if (authError) {
-  toast(authError === 'configuration' ? 'Google sign-in is being configured. Please try again later.' : 'Google sign-in did not finish. Try again. If this Google account belongs to another TTRC profile, sign out before switching accounts.');
-  const clean = new URL(location); clean.searchParams.delete('authError'); history.replaceState(null, '', clean);
 }
 const profileSlug = location.pathname.match(/^\/players\/([a-z0-9_]+)$/)?.[1];
 if (profileSlug) {

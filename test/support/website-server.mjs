@@ -12,14 +12,16 @@ const generated = await generateChallenge({ seed: 20260989 });
 // The upstream DK fixture is a vanilla course. Only this isolated test seed uses it.
 const challenge = { ...generated.manifest, assignments: { ...generated.manifest.assignments, 'donkey-kong': 'donkey-kong' } }, gecko = generated.gecko;
 const origin = 'http://localhost:4319', reviewerKey = 'd'.repeat(64);
-const rows = new Map();
+const rows = new Map(), versions = new Map();
 const memory = {
   async get(path) { return rows.get(path)?.value ?? null; },
-  async put(path, value, overwrite = false) { if (!overwrite && rows.has(path)) throw new Error('Exists'); rows.set(path, { value, uploadedAt: new Date() }); },
+  async put(path, value, overwrite = false) { if (!overwrite && rows.has(path)) throw new Error('Exists'); rows.set(path, { value: structuredClone(value), uploadedAt: new Date() }); versions.set(path, (versions.get(path) || 0) + 1); },
+  async readVersion(path) { return rows.has(path) ? {value: structuredClone(rows.get(path).value), etag: versions.get(path)} : null; },
+  async writeVersion(path,value,etag) { if(versions.get(path)!==etag)return false; await this.put(path,value,true);return true; },
   async delete(path) { rows.delete(path); },
   async list(prefix) { return [...rows].filter(([p]) => p.startsWith(prefix)).map(([pathname, row]) => ({ pathname, uploadedAt: row.uploadedAt })); },
 };
-const publicHandler = createCloudHandler({ store: memory, challenge, gecko, origin, secret: 'test-only', reviewerKey, allowLegacySignup: true, google: { configured: true, authorize: ({ state }) => `${origin}/api/auth/google/callback?state=${state}&code=browser-google`, exchange: async code => code } });
+const publicHandler = createCloudHandler({ store: memory, challenge, gecko, origin, secret: 'test-only', reviewerKey, allowLegacySignup: true });
 const staticFiles = { ...Object.fromEntries(artworkFiles), '/': ['index.html','text/html'], '/review': ['review.html','text/html'], ...Object.fromEntries(['app.js','time.js','review.js'].map(p=>['/'+p,[p,'text/javascript']])), ...Object.fromEntries(['style.css','review.css'].map(p=>['/'+p,[p,'text/css']])), '/target.svg':['target.svg','image/svg+xml'] };
 await new Promise(resolve => createServer(async (req, res) => {
   if (req.url.startsWith('/api/')) return publicHandler(req, res);
