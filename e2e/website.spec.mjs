@@ -373,6 +373,8 @@ test('old challenges prompt guests to sign in and show an empty state for nonpar
  await page.locator('#auth-submit').click();
  await expect(page.locator('#old-challenges-message')).toContainText('No finished challenges yet');
  await expect(page.locator('#old-challenges-link')).toHaveAttribute('aria-current','page');
+ await page.setViewportSize({width:390,height:844});
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await page.reload();await expect(page.locator('#old-challenges-message')).toContainText('No finished challenges yet');
  await page.getByRole('link',{name:'Current challenge',exact:true}).click();
  await expect(page.locator('#current-challenge-view')).toBeVisible();
