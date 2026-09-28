@@ -24,7 +24,7 @@ test('updates select newer stable releases with exact official assets and a sing
 });
 test('installation preserves player files, challenge, settings, ISO and replay; removes only obsolete managed files',async t=>{
  const base=await temp(t),root=join(base,'installed'),stage=join(base,'stage');await fixture(root,'0.9.0');await put(root,'server/obsolete.mjs','old');await put(root,'update-manifest.json',JSON.stringify({format:1,version:'0.9.0',files:await inventory(root)}));await fixture(stage,'0.10.0');
- const protectedFiles=['.local/scores.sqlite','.local/play-settings.json','User/Challenge/user.json','User/Config/Dolphin.ini','Games/Melee.iso','Replays/test.slp','build/challenge/challenge.json','build/challenge/runtime.json'];
+ const protectedFiles=['.local/scores.sqlite','.local/play-settings.json','User/Challenge/user.json','User/Config/Dolphin.ini',`User/GC/TTRC/${'a'.repeat(64)}/MemoryCardA.USA.raw`,'Games/Melee.iso','Replays/test.slp','build/challenge/challenge.json','build/challenge/runtime.json'];
  for(const name of protectedFiles)await put(root,name,'keep me');
  await installUpdate(root,stage,'0.10.0');assert.equal(JSON.parse(await readFile(join(root,'release.json'))).version,'0.10.0');
  for(const name of protectedFiles)assert.equal(await readFile(join(root,name),'utf8'),'keep me');

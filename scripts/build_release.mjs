@@ -9,7 +9,7 @@ import {generateChallenge} from '../src/challenge.mjs';
 import {readSources} from '../src/upstream.mjs';
 import {downloadVerified} from '../server/onboarding.mjs';
 const exec=promisify(execFile),root=resolve(import.meta.dirname,'..');
-const version=(process.env.TTRC_VERSION||'0.9.1').replace(/^v/,'');
+const version=(process.env.TTRC_VERSION||'0.9.2').replace(/^v/,'');
 if(!/^\d+\.\d+\.\d+(?:-[a-z0-9.]+)?$/.test(version))throw new Error('Invalid release version.');
 const output=join(root,'build/release'),app=join(output,'TTRC');
 const nativeBuild=resolve(process.env.TTRC_DOLPHIN_BUILD||join(root,'build/dolphin-build'));
@@ -46,6 +46,8 @@ for(const kind of ['node','python','netplay']){
  }else if(kind==='netplay'){
   await cp(temp,target,{recursive:true});
   await rm(join(app,'User'),{recursive:true,force:true});
+  // This is our staging copy, never the player's separate Slippi installation.
+  await exec('python3',[join(root,'scripts/patch_memory_card.py'),join(app,'Sys/GameSettings/GALE01r2.ini')]);
   await writeFile(join(app,'Slippi Dolphin.exe'),nativeExe);
   await cp(join(nativeBuild,'LICENSE-Dolphin.txt'),join(app,'LICENSE-Dolphin.txt'));
   await writeFile(join(app,'portable.txt'),'');

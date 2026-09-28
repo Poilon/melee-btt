@@ -4,6 +4,8 @@ import shutil
 import sys
 root = Path(__file__).resolve().parents[1]
 source = Path(sys.argv[1]) / 'Source/Core/DolphinWX'
+# The Windows EXE and wx window icons both use this embedded multi-size resource.
+shutil.copyfile(root / 'assets/dolphin/target.ico', Path(sys.argv[1]) / 'Installer/Dolphin.ico')
 def replace(file, old, new):
     path = source / file
     text = path.read_text()

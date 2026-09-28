@@ -73,6 +73,31 @@ def install_title_texture(profile):
         graphics.write(file)
 
 
+def configure_memory_card(profile, challenge_id):
+    """Keep each challenge's native Melee records in its own persistent card.
+
+    Dolphin creates/formats the raw card itself on first use. Never import a
+    vanilla save: its Target Test records would belong to different courses.
+    Cards stay under User, which the app updater deliberately preserves.
+    """
+    if not re.fullmatch('[0-9a-f]{64}', challenge_id):
+        raise ValueError('Invalid challenge ID for the memory card.')
+    if not (profile / '.ttrc-profile').is_file():
+        raise ValueError('The memory card requires a TTRC profile.')
+    card = profile / 'GC/TTRC' / challenge_id / 'MemoryCardA.USA.raw'
+    card.parent.mkdir(parents=True, exist_ok=True)
+    config_path = profile / 'Config/Dolphin.ini'
+    config = configparser.ConfigParser(interpolation=None, strict=False)
+    config.optionxform = str
+    config.read(config_path)
+    if not config.has_section('Core'):
+        config['Core'] = {}
+    # EXIDEVICE_MEMORYCARD=1. Recompute the absolute path after folder moves.
+    config['Core'].update({'SlotA': '1', 'MemcardAPath': windows_path(card)})
+    with config_path.open('w') as file:
+        config.write(file)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--challenge', type=Path, default=ROOT / 'build/challenge')
@@ -122,14 +147,6 @@ def main():
     for folder in ['Config', 'GameSettings']:
         (profile / folder).mkdir(parents=True, exist_ok=True)
     marker.write_text('Target Test Randomizer Challenge\n')
-    # Import only the vanilla Melee save into this isolated memory card. This
-    # avoids the first-boot save dialog when an existing save is available.
-    save_name = '01-GALE-SuperSmashBros0110290334.gci'
-    source_save = args.controller_config.parent / 'GC/USA/Card A' / save_name
-    target_save = profile / 'GC/USA/Card A' / save_name
-    if source_save.is_file() and not target_save.exists():
-        target_save.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(source_save, target_save)
     # Build the INI from the hashed code rather than trusting a separately edited INI.
     name = 'Target Test Randomizer Challenge'
     extras = preference_codes(preferences)
@@ -176,10 +193,12 @@ def main():
         if args.portable:
             migrate_replays(ROOT / 'Dolphin/netplay/Replays', replay_dir)
         config['Core'].update({'EnableCheats': 'True', 'SlippiSaveReplays': 'True',
-                              'SlippiReplayMonthFolders': 'False', 'SlippiReplayDir': windows_path(replay_dir), 'EXIDevice1': '10'})
+                              'SlippiReplayMonthFolders': 'False', 'SlippiReplayDir': windows_path(replay_dir), 'SlotB': '10', 'EXIDevice1': '10'})
         with config_path.open('w') as file: config.write(file)
     install_title_texture(profile)
     apply_preferences(profile, preferences)
+    # Switch cards last, once the remaining profile preparation succeeded.
+    configure_memory_card(profile, manifest['id'])
     if args.configure_only:
         return
     # Force cheats on launch too, in case Dolphin previously saved them off.

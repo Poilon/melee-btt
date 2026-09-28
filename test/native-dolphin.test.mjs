@@ -30,14 +30,60 @@ with tempfile.TemporaryDirectory() as temp:
  prepare()
  profile=root/'User';config=read_ini(profile/'Config/Dolphin.ini')
  assert config['Core']['EXIDevice1']=='10' and config['Core']['SlippiSaveReplays']=='True'
+ assert config['Core']['SlotB']=='10' and config['Core']['SlotA']=='1'
+ first_card=profile/'GC/TTRC'/('a'*64)/'MemoryCardA.USA.raw'
+ assert config['Core']['MemcardAPath']==str(first_card)
+ assert not first_card.exists() # Dolphin owns creation/formatting, not the helper.
+ first_card.write_bytes(b'existing card contents')
  assert config['Core']['SlippiReplayDir']==str(root/'Replays')
  assert config['Core']['AdapterRumble0']=='False'
  assert not (challenge/'runtime.json').exists() and not (root/'Games').exists()
  pads=profile/'Config/GCPadNew.ini';pads.write_text('[GCPad1]\nButtons/A = Button 7\n')
  prepare();assert read_ini(pads)['GCPad1']['Buttons/A']=='Button 7'
+ assert first_card.read_bytes()==b'existing card contents'
+ assert read_ini(profile/'Config/Dolphin.ini')['Core']['MemcardAPath']==str(first_card)
+ # A new challenge selects an empty card without erasing the previous one.
+ (challenge/'challenge.json').write_text(json.dumps({'id':'b'*64,'geckoSha256':hashlib.sha256(code).hexdigest()}))
+ prepare()
+ second_card=profile/'GC/TTRC'/('b'*64)/'MemoryCardA.USA.raw'
+ assert read_ini(profile/'Config/Dolphin.ini')['Core']['MemcardAPath']==str(second_card)
+ assert not second_card.exists() and first_card.read_bytes()==b'existing card contents'
+ second_card.write_bytes(b'new challenge scores')
+ # Reject malformed challenges before changing the active card/configuration.
+ before=(profile/'Config/Dolphin.ini').read_bytes()
+ (challenge/'challenge.json').write_text(json.dumps({'id':'../invalid','geckoSha256':hashlib.sha256(code).hexdigest()}))
+ try: prepare();raise AssertionError('Accepted invalid challenge')
+ except SystemExit as e: assert e.code==2
+ assert (profile/'Config/Dolphin.ini').read_bytes()==before
+ (challenge/'challenge.json').write_text(json.dumps({'id':'b'*64,'geckoSha256':hashlib.sha256(code).hexdigest()}))
  relocated=Path(temp)/'Moved';shutil.move(root,relocated)
  root=relocated;p.ROOT=root;exe=root/'Slippi Dolphin.exe';challenge=root/'build/challenge'
  prepare();assert read_ini(root/'User/Config/Dolphin.ini')['Core']['SlippiReplayDir']==str(root/'Replays')
+ moved_card=root/'User/GC/TTRC'/('b'*64)/'MemoryCardA.USA.raw'
+ assert read_ini(root/'User/Config/Dolphin.ini')['Core']['MemcardAPath']==str(moved_card)
+ assert moved_card.read_bytes()==b'new challenge scores'
+ # Returning to an archived challenge restores its own records.
+ (challenge/'challenge.json').write_text(json.dumps({'id':'a'*64,'geckoSha256':hashlib.sha256(code).hexdigest()}))
+ prepare()
+ restored=root/'User/GC/TTRC'/('a'*64)/'MemoryCardA.USA.raw'
+ assert read_ini(root/'User/Config/Dolphin.ini')['Core']['MemcardAPath']==str(restored)
+ assert restored.read_bytes()==b'existing card contents'
+`],{cwd:new URL('../',import.meta.url),stdio:'pipe'});
+});
+
+test('release restores native card flow without changing other Slippi codes',()=>{
+ execFileSync('python3',['-c',String.raw`
+import sys
+sys.path.insert(0,'scripts')
+from patch_memory_card import restore_card_flow, SKIP_CARD
+prefix='[Gecko]\r\n$Required: General Codes\r\n0415EE98 38600001 # Unlock characters\r\n'
+suffix='0415D94C 4E800020\r\n$Required: Slippi Recording\r\n04000000 12345678\r\n'
+hook=SKIP_CARD.copy();hook[0]+=' #External/Skip Memcard Prompt/Skip Memcard Prompt.asm'
+original=prefix+'\r\n'.join(hook)+'\r\n'+suffix
+assert restore_card_flow(original)==prefix+suffix
+for invalid in [prefix+suffix,original+original,original.replace('2C1D000F','2C1D0010')]:
+ try:restore_card_flow(invalid);raise AssertionError('Accepted an unknown upstream layout')
+ except ValueError:pass
 `],{cwd:new URL('../',import.meta.url),stdio:'pipe'});
 });
 
