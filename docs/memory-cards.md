@@ -25,6 +25,15 @@ not automatically written into Melee. In-game records use Melee's own rules;
 they are separate from the companion's replay/pause checks and submissions.
 
 Automated tests cover profile configuration, card retention, challenge changes,
-folder relocation and the exact upstream code removal. A Windows game test is
-still needed: create a save, clear Target Test, let it save, restart and check the
-time; then change challenges and check that the displayed records are empty.
+folder relocation and the exact upstream code removal, including read-only Sys
+files from the upstream archive.
+
+Windows validation for v0.9.2 used a separate installation with no player account.
+A controlled Target Test completion set the same remaining-target count and
+stage flag as the final target hit. Melee recorded Dr. Mario at 61 frames, saved
+the card on return to character select, and reloaded that exact record after a
+complete Dolphin restart. Loading another generated challenge through the
+companion's challenge-package mechanism selected a new card with no records;
+the previous card's SHA-256 stayed unchanged. No test scores were submitted.
+The Target Test banner and the icon extracted from the compiled Windows EXE
+were also checked visually.
