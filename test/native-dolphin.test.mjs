@@ -84,6 +84,12 @@ assert restore_card_flow(original)==prefix+suffix
 for invalid in [prefix+suffix,original+original,original.replace('2C1D000F','2C1D0010')]:
  try:restore_card_flow(invalid);raise AssertionError('Accepted an unknown upstream layout')
  except ValueError:pass
+import tempfile,subprocess
+from pathlib import Path
+with tempfile.TemporaryDirectory() as temp:
+ path=Path(temp)/'GALE01r2.ini';path.write_bytes(original.encode());path.chmod(0o444)
+ subprocess.run([sys.executable,'scripts/patch_memory_card.py',str(path)],check=True)
+ assert path.read_bytes()==(prefix+suffix).encode()
 `],{cwd:new URL('../',import.meta.url),stdio:'pipe'});
 });
 

@@ -7,6 +7,7 @@ and all other General Codes. A changed upstream payload fails the build.
 """
 from pathlib import Path
 import re
+import stat
 import sys
 
 SKIP_CARD = [
@@ -37,4 +38,7 @@ def restore_card_flow(text):
 if __name__ == '__main__':
     path = Path(sys.argv[1])
     original = path.read_bytes().decode('utf-8')
-    path.write_bytes(restore_card_flow(original).encode('utf-8'))
+    patched = restore_card_flow(original).encode('utf-8')
+    # The official portable archive marks some Sys files read-only.
+    path.chmod(path.stat().st_mode | stat.S_IWUSR)
+    path.write_bytes(patched)
