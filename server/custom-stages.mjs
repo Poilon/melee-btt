@@ -51,7 +51,7 @@ export class CustomStages {
  }
  async launch(id,project=null){
   const dir=this.directory(id),runtime=this.getRuntime(),course=customStageCatalog.find(s=>s.id===id);
-  if(!runtime?.native)throw new CustomStageError('Custom stages require TTRC Dolphin.');
+  if(!runtime?.native)throw new CustomStageError('TTRC stages require TTRC Dolphin.');
   if(this.busy)throw new CustomStageError('A custom stage is already being prepared.');
   if(await this.running())return {status:'already-running'};
   this.busy=true;this.activeId=id;this.message='Checking Melee ISO…';
