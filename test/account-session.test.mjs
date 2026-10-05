@@ -36,3 +36,12 @@ test('session does not migrate foreign domains or overwrite a present invalid se
  await writeFile(legacy,JSON.stringify(player()));await mkdir(join(root,'.local'),{recursive:true});await writeFile(path,'broken');
  assert.equal(await session.load(),null);
 });
+
+test('native companion action requires the shared login and only opens the configured installation',async t=>{
+ const {root,path}=await fixture(t),course={accountFile:path,companionRoot:root,companionPort:44319},opened=[];
+ const game=new WorldsClient({root,course,fetcher:async()=>{throw Error('Companion action must stay local');},openCompanion:async value=>opened.push(value)});
+ const q={op:10,address:0x81000000,sequence:1,url:'https://untrusted.example'};
+ let reply=Buffer.from((await game.handle(q)).bytes,'base64');assert.equal(reply.readUInt32BE(0),1);assert.equal(opened.length,0);
+ await game.saveIdentity(player());reply=Buffer.from((await game.handle(q)).bytes,'base64');assert.equal(reply.readUInt32BE(0),0);assert.deepEqual(opened,[course]);
+ game.openCompanion=async()=>{throw Error('Private system error');};reply=Buffer.from((await game.handle(q)).bytes,'base64');assert.equal(reply.readUInt32BE(0),1);assert.match(reply.toString('ascii'),/Companion could not open/);assert.ok(!reply.includes(Buffer.from('Private system error')));
+});

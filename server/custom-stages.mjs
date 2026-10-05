@@ -158,7 +158,7 @@ export class CustomStages {
     if(await exists(join(this.root,'Dolphin/playback')))await shareTree(join(this.root,'Dolphin/playback'),join(bundle,'Playback'));
     catalog=await makeWorldCatalog(bundle,stage);
    }
-   await writeFile(join(bundle,'course.json'),JSON.stringify({id:id.startsWith('stage-editor')?'character-worlds':id,accountFile:await windowsPath(join(this.root,'.local/account.json')),iso:await windowsPath(iso),stageSha256:stage.stageSha256,stageHashes:stage.stageHashes,dolSha256:stage.dolSha256,onlineVersion:stage.onlineVersion,menuHashes:stage.menuHashes,courses:catalog?.courses}));
+   await writeFile(join(bundle,'course.json'),JSON.stringify({id:id.startsWith('stage-editor')?'character-worlds':id,accountFile:await windowsPath(join(this.root,'.local/account.json')),companionRoot:await windowsPath(this.root),companionPort:Number(process.env.PORT||4317),iso:await windowsPath(iso),stageSha256:stage.stageSha256,stageHashes:stage.stageHashes,dolSha256:stage.dolSha256,onlineVersion:stage.onlineVersion,menuHashes:stage.menuHashes,courses:catalog?.courses}));
    this.message=`Opening ${course.name}…`;
    const {stdout}=await this.run('powershell.exe',['-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',
     await windowsPath(join(this.root,'scripts/launch_custom_stage.ps1')),'-Executable',await windowsPath(join(bundle,'Slippi Dolphin.exe')),

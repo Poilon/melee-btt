@@ -1,4 +1,4 @@
-"""Add Leaderboard and Account to Stadium; retain the three retail modes."""
+"""Add Leaderboard, Account and Companion to Stadium; retain the three retail modes."""
 import hashlib,json,struct
 from pathlib import Path
 from build_grassland import Dat
@@ -31,12 +31,12 @@ def add_menu(source,module,relocs,label):
    p=d.u(p+4)
  walk(root)
  if len(found)!=1:raise ValueError('Unexpected menu texture animation')
- t=found[0];oldtable=d.u(t+12);table=d.alloc(60*4)
+ t=found[0];oldtable=d.u(t+12);table=d.alloc(61*4)
  for i in range(58):d.pointer(table+i*4,d.u(oldtable+i*4))
  image=d.alloc(24);d.pointer(image,d.buffer(label,32));d.put(image+4,'HHI',176,32,2);d.pointer(table+58*4,image)
  # The account label is native text, updated from the signed-in identity.
- blank=d.alloc(24);d.pointer(blank,d.buffer(bytes(176*32),32));d.put(blank+4,'HHI',176,32,2);d.pointer(table+59*4,blank)
- d.pointer(t+12,table);d.put(t+20,'H',60)
+ blank=d.alloc(24);d.pointer(blank,d.buffer(bytes(176*32),32));d.put(blank+4,'HHI',176,32,2);d.pointer(table+59*4,blank);d.pointer(table+60*4,blank)
+ d.pointer(t+12,table);d.put(t+20,'H',61)
  a=d.u(t+8);f=d.u(a+8);raw=d.data[d.u(f+16):d.u(f+16)+d.u(f+4)]
  if d.data[f+12:f+15]!=bytes([1,0x82,0]):raise ValueError('Unexpected menu image track')
  p=0
@@ -51,8 +51,8 @@ def add_menu(source,module,relocs,label):
  if packet&15!=1:raise ValueError('Expected constant texture keys')
  for _ in range((packet>>4)+1):
   value=raw[p]/4;p+=1;delta=varint();keys.append((frame,value));frame+=delta
- if any(frame in (166,168) for frame,_ in keys):raise ValueError('Online menu frames already occupied')
- keys.extend([(166,58),(168,59)]);keys.sort()
+ if any(frame in (166,168,170) for frame,_ in keys):raise ValueError('Online menu frames already occupied')
+ keys.extend([(166,58),(168,59),(170,60)]);keys.sort()
  from world_mechanics import track
  replacement=track(d,1,keys,interpolation=1);d.pointer(replacement,d.u(f));d.pointer(a+8,replacement)
  code=d.buffer(module,32)
@@ -65,12 +65,12 @@ def add_description(source,mapping):
  d=Dat(source);root=d.roots['SIS_MenuData'];count=0
  while root+count*4 in d.reloc:count+=1
  if count!=1604:raise ValueError('Unexpected menu string table')
- table=d.alloc((count+2)*4)
+ table=d.alloc((count+3)*4)
  for i in range(count):d.pointer(table+i*4,d.u(root+i*4))
  original=d.u(root+0xa8*4)
  # Copy the retail description's font/style controls up to the first glyph.
  prefix=bytes(d.data[original:original+16]) # 16 10 ... 06 00000000, followed by 18
- for index,message in enumerate(['View online records and watch replays.','Log in or manage your Custom Melee BTT account.']):
+ for index,message in enumerate(['View online records and watch replays.','Log in or manage your Custom Melee BTT account.','Open the companion in your browser.']):
   text=bytearray(prefix+b'\x18')
   for c in message:
    if c==' ':text+=b'\x1a'
@@ -91,7 +91,7 @@ def patch_dol(data,offset,hook):
   struct.pack_into('>I',data,p,after)
  data[offset(HOOK):offset(HOOK)+len(hook)]=hook
  patch(0x8022c7f8,0x4bffce2d,0x48000001|((HOOK-0x8022c7f8)&0x3fffffc))
- # The retail cursor layout supports five rows, including navigation/wrapping.
+ # Start with five rows; the archive adds Companion while signed in.
  table=0x803eb6b0+9*20
  patch(table,0x803eb5c4,LOOPS)
  p=offset(table+12)

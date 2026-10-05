@@ -11,7 +11,9 @@ typedef struct {
  volatile U req,op,character,offset,row;char username[28],password[132];U reserved[3];
  volatile U ack,status,signedIn,count,total;char error[128],identity[28],title[64];Row rows[10];volatile U heartbeat;
  U lastHeartbeat,heartbeatTick,pendingTick;Text *identityText;U context,shift,accountReturn;
+ Text *companionText;U layoutReady,originalRows,originalDescriptions,stadiumRows[18];unsigned short stadiumDescriptions[6];
 } State;
+_Static_assert(sizeof(State)<=1024,"archive state allocation");
 _Static_assert(__builtin_offsetof(State,req)==64,"request layout");
 _Static_assert(__builtin_offsetof(State,ack)==256,"response layout");
 _Static_assert(__builtin_offsetof(State,heartbeat)==856,"heartbeat layout");
@@ -34,6 +36,35 @@ _Static_assert(__builtin_offsetof(State,heartbeat)==856,"heartbeat layout");
 #define X 0x400
 #define Y 0x800
 static const char *characters[]={"Dr. Mario","Mario","Luigi","Bowser","Peach","Yoshi","Donkey Kong","Captain Falcon","Ganondorf","Falco","Fox","Ness","Ice Climbers","Kirby","Samus","Zelda","Sheik","Link","Young Link","Pichu","Pikachu","Jigglypuff","Mewtwo","Mr. Game & Watch","Marth","Roy"};
+// Extend only the Stadium's runtime layout. Gameplay DOL bytes and course IDs
+// remain unchanged; restore archive-owned pointers before leaving this menu.
+#define STADIUM ((U*)(0x803eb6b0+9*20))
+static void layout(State*s){
+ if(!s->layoutReady){
+  s->originalRows=STADIUM[0];s->originalDescriptions=STADIUM[2];
+  for(int i=0;i<15;i++)s->stadiumRows[i]=((U*)s->originalRows)[i];
+  for(int i=0;i<3;i++)s->stadiumRows[15+i]=s->stadiumRows[i];
+  for(int i=0;i<5;i++)s->stadiumDescriptions[i]=((unsigned short*)s->originalDescriptions)[i];
+  s->stadiumDescriptions[5]=1606;STADIUM[0]=(U)s->stadiumRows;STADIUM[2]=(U)s->stadiumDescriptions;s->layoutReady=1;
+ }
+ unsigned char count=s->signedIn?6:5;
+ if(((unsigned char*)STADIUM)[12]!=count){
+  // Retail cursors are allocated at menu creation. Rebuild the visual menu
+  // when its row count changes, before its animation callback sees that count.
+  U *heads=*(U**)0x804D782C;
+  for(U object=heads[7];object;object=*(U*)(object+8)){
+   unsigned char *data=*(unsigned char**)(object+0x2c);
+   if(*(unsigned short*)object==6&&data&&data[0]==9){
+    Text *description=*(Text**)(data+0xac);if(description)FREE(description);
+    *(Text**)(data+0xac)=0;((void(*)(void*))0x80390228)((void*)object);break;
+   }
+  }
+  if(!s->signedIn&&*(unsigned short*)0x804A04F2>4)*(unsigned short*)0x804A04F2=4;
+  ((unsigned char*)STADIUM)[12]=count;
+  ((void*(*)(int))0x8022B3A0)(0);s->dirty=1;
+ }
+}
+static void restoreLayout(State*s){if(s->layoutReady){STADIUM[0]=s->originalRows;STADIUM[2]=s->originalDescriptions;((unsigned char*)STADIUM)[12]=5;s->layoutReady=0;}}
 static int len(const char *p){int n=0;while(p[n]&&n<128)n++;return n;}
 static void clearPassword(State*s){for(int i=0;i<132;i++)s->password[i]=0;}
 static void request(State*s,U op){s->op=op;s->pendingTick=s->ticks;__asm__ volatile("sync":::"memory");s->req++;s->dirty=1;}
@@ -97,6 +128,9 @@ static void render(State*s){
   line(s,4,"LOG IN");line(s,7,"Finish signing in in your browser.");
   line(s,9,"Your game will connect automatically.");
   line(s,16,"A  Open browser again");line(s,17,"B  Cancel");
+ }else if(s->screen==6){
+  line(s,4,"COMPANION");line(s,7,"Opening companion in your browser.");
+  line(s,16,"A  Try again");line(s,17,"B  Back");
  }
  if(!online(s))line(s,19,"Offline - you can still play.");
  else if(s->ack!=s->req)line(s,19,s->op==4?"Opening replay...":"Loading...");
@@ -104,7 +138,7 @@ static void render(State*s){
  s->dirty=0;
 }
 __attribute__((section(".text.entry"))) int entry(int buttons,State*s){
- s->ticks++;
+ s->ticks++;layout(s);
  if(!s->text){
   if(!s->context)s->context=1+CONTEXT(0,*(void**)0x804D6BB0,7,8,0x80,7,0xff,0);
   s->text=NEW(0,s->context-1);
@@ -118,8 +152,13 @@ __attribute__((section(".text.entry"))) int entry(int buttons,State*s){
   t->x=-12.5f;t->y=4.95f;t->z=17.f;t->sx=t->sy=.045f;t->kerning=1;
   ADD(t,0.f,0.f," ");
  }
+ if(!s->companionText){
+  Text*t=NEW(0,*(unsigned char*)0x804D6BB4);s->companionText=t;
+  t->x=-12.5f;t->y=5.65f;t->z=17.f;t->sx=t->sy=.040f;t->kerning=1;ADD(t,0.f,0.f," ");
+ }
  if(s->heartbeat!=s->lastHeartbeat){if(!online(s))s->dirty=1;s->lastHeartbeat=s->heartbeat;s->heartbeatTick=s->ticks;}
  if(s->ack!=s->lastAck){s->lastAck=s->ack;s->dirty=1;if(s->op==1||s->op==2){clearPassword(s);if(s->signedIn&&s->screen==1){s->screen=s->accountReturn;s->selection=0;}}}
+ if(s->screen==6&&s->op==10&&s->ack==s->req&&!s->status){s->screen=0;s->dirty=1;}
  if(s->screen==5&&s->signedIn&&s->ack==s->req){s->screen=s->accountReturn;s->selection=0;s->dirty=1;}
  int busy=s->req!=s->ack&&s->ticks-s->pendingTick<1200;
  if(s->req==0&&online(s))request(s,6);
@@ -127,7 +166,8 @@ __attribute__((section(".text.entry"))) int entry(int buttons,State*s){
   if(s->screen==0){
    if((buttons&A)&&*(unsigned short*)0x804A04F2==3){s->screen=3;s->selection=0;s->offset=0;s->row=0;s->text->hidden=0;request(s,3);}
    else if((buttons&A)&&*(unsigned short*)0x804A04F2==4){s->accountReturn=0;s->screen=s->signedIn?4:5;s->selection=0;s->mode=0;s->text->hidden=0;if(!s->signedIn)request(s,7);}
-   else {if(buttons&(A|B)){FREE(s->identityText);FREE(s->text);s->identityText=0;s->text=0;}return buttons;}
+   else if((buttons&A)&&*(unsigned short*)0x804A04F2==5&&s->signedIn){if(!busy){s->screen=6;request(s,10);}}
+   else {if(buttons&(A|B)){restoreLayout(s);FREE(s->identityText);FREE(s->companionText);FREE(s->text);s->identityText=0;s->companionText=0;s->text=0;}return buttons;}
   }else if(s->screen==2){
    if(buttons&UP)s->key=(s->key+30)%40;if(buttons&DOWN)s->key=(s->key+10)%40;
    if(buttons&LEFT)s->key=(s->key+39)%40;if(buttons&RIGHT)s->key=(s->key+1)%40;
@@ -159,17 +199,20 @@ __attribute__((section(".text.entry"))) int entry(int buttons,State*s){
     else if(s->count){if(buttons&UP)s->selection=(s->selection+s->count-1)%s->count;if(buttons&DOWN)s->selection=(s->selection+1)%s->count;if((buttons&A)&&s->character!=26){s->row=s->selection;request(s,4);}}
    }
   }else if(s->screen==4){if(buttons&B){s->screen=s->accountReturn;s->selection=0;}else if((buttons&A)&&!busy){request(s,5);s->screen=s->accountReturn;s->selection=0;s->username[0]=0;clearPassword(s);}}
+  else if(s->screen==6){if(buttons&B){s->screen=0;s->dirty=1;}else if((buttons&A)&&!busy)request(s,10);}
   else if(s->screen==5){
    if(buttons&B){request(s,9);s->screen=s->accountReturn;s->selection=0;}
    else if((buttons&A)&&!busy)request(s,7);
   }
  }
  if(s->screen==5&&s->ack==s->req&&!s->status&&online(s)&&s->ticks-s->pendingTick>=120)request(s,8);
+ s->companionText->hidden=s->screen!=0||!s->signedIn;
+ if(!s->companionText->hidden){U color=*(unsigned short*)0x804A04F2==5?0x111111ff:0xffcc33ff;if(s->dirty||s->ticks%60==1){lineText(s->companionText,0,"Companion");COLOR(s->companionText,0,&color);}}
  s->identityText->hidden=s->screen!=0;
  if(s->screen==0){
   char name[60];FORMAT(name,s->signedIn?"Logged as %.24s":"Log in",s->identity);
   int n=len(name);float scale=s->signedIn?(n>14?.030f*14.f/(float)n:.030f):.040f;
-  s->identityText->y=s->signedIn?5.15f:4.95f;
+  s->identityText->y=s->signedIn?3.25f:4.95f;
   s->identityText->sx=s->identityText->sy=scale;
   U color=*(unsigned short*)0x804A04F2==4?0x111111ff:0xffcc33ff;
   if(s->dirty||s->ticks%60==1){lineText(s->identityText,0,name);COLOR(s->identityText,0,&color);}

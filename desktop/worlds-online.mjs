@@ -25,8 +25,13 @@ export function encodeReply({signedIn=false,identity='',error='',rows=[],total=0
 async function openBrowser(url){
  await promisify(execFile)('rundll32.exe',['url.dll,FileProtocolHandler',url],{windowsHide:true,timeout:15000});
 }
+async function openCompanion(course){
+ const port=course.companionPort||4317;
+ if(!course.companionRoot||!Number.isInteger(port)||port<1||port>65535)throw Error('Update Custom Melee BTT to open the companion.');
+ await promisify(execFile)(process.execPath,[join(course.companionRoot,'desktop/native.mjs'),'--open'],{cwd:course.companionRoot,env:{...process.env,PORT:String(port)},windowsHide:true,timeout:120000});
+}
 export class WorldsClient{
- constructor({root,course,fetcher=fetch,origin=WORLDS_ORIGIN,playReplay,openBrowser:launchBrowser=openBrowser}){this.root=root;this.course=course;this.fetcher=fetcher;this.origin=origin;this.playReplay=playReplay;this.openBrowser=launchBrowser;this.pendingLogin=null;this.identity=null;this.board=null;this.boardCache=new Map();this.sessionFile=course.accountFile||join(root,'.local/worlds-account.json');this.session=new AccountSession(this.sessionFile,{origin,legacy:course.accountFile?[join(root,'.local/worlds-account.json')]:[]});}
+ constructor({root,course,fetcher=fetch,origin=WORLDS_ORIGIN,playReplay,openBrowser:launchBrowser=openBrowser,openCompanion:launchCompanion=openCompanion}){this.root=root;this.course=course;this.fetcher=fetcher;this.origin=origin;this.playReplay=playReplay;this.openBrowser=launchBrowser;this.openCompanion=launchCompanion;this.pendingLogin=null;this.identity=null;this.board=null;this.boardCache=new Map();this.sessionFile=course.accountFile||join(root,'.local/worlds-account.json');this.session=new AccountSession(this.sessionFile,{origin,legacy:course.accountFile?[join(root,'.local/worlds-account.json')]:[]});}
  async request(path,{method='GET',body,authenticated=false,signal}={}){
   const res=await this.fetcher(this.origin+'/api/'+path,{method,headers:{...(body?{'Content-Type':'application/json'}:{}),...(authenticated&&this.identity?{Authorization:`Bearer ${this.identity.token}`}:{})},...(body?{body:JSON.stringify(body)}:{}),signal:signal?AbortSignal.any([signal,AbortSignal.timeout(20000)]):AbortSignal.timeout(20000),redirect:'error'});
   if(!res.ok){const data=await res.json().catch(()=>({}));throw Error(data.error||'Server unavailable. Try again.');}return res;
@@ -49,6 +54,9 @@ export class WorldsClient{
    if(q.op===1||q.op===2){
     const {playerFile}=await(await this.request('game/'+(q.op===1?'login':'signup'),{method:'POST',body:{username:q.username,password:q.password}})).json();
     await this.saveIdentity(playerFile);
+   }else if(q.op===10){
+    if(!this.identity)throw Error('Sign in to open the companion.');
+    try{await this.openCompanion(this.course);}catch{throw Error('Companion could not open. Press A to retry.');}
    }else if(q.op===7){
     await this.cancelLogin();
     const pending=await(await this.request('game/connect/start',{method:'POST',body:{}})).json();
