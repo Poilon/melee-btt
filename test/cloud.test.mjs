@@ -7,11 +7,52 @@ import { join } from 'node:path';
 import { createCloudHandler } from '../cloud/backend.mjs';
 import { parsePlayer, playerIdentity, readPlayer, savePlayer } from '../server/player.mjs';
 import { RemoteSync } from '../server/remote.mjs';
+import { requestOrigin } from '../cloud/origins.mjs';
+import { WorldsClient, WORLDS_ORIGIN } from '../desktop/worlds-online.mjs';
 
 const origin = 'https://test.vercel.app';
 const replay = await readFile(new URL('./fixtures/BTTDK.slp', import.meta.url));
 const reviewerKey = 'd'.repeat(64);
 const challenge = { id: 'test-seed', geckoSha256: 'test-code', rules: { seed: 42 }, assignments: { fox: 'samus', marth: 'mewtwo', 'donkey-kong': 'donkey-kong' } };
+
+test('domain migration keeps browser login and saved sessions compatible with released Dolphin clients', async()=>{
+ const canonical='https://melee-btt.com';
+ for(const clientOrigin of [WORLDS_ORIGIN,canonical,'https://www.melee-btt.com']){
+  const root=await mkdtemp(join(tmpdir(),'btt-domain-login-'));
+  const routed=requestOrigin(new URL(clientOrigin).host,canonical);
+  const {request}=fixture({origin:routed,gameAccountsOnly:true,allowLegacySignup:false});
+  let opened;
+  const fetcher=async(url,options)=>{
+   assert.equal(new URL(url).origin,clientOrigin);
+   const result=await request(new URL(url).pathname.slice(5),{method:options.method,headers:options.headers,body:options.body?JSON.parse(options.body):undefined});
+   return Response.json(result.data,{status:result.status});
+  };
+  const client=new WorldsClient({root,course:{},origin:clientOrigin,fetcher,openBrowser:async url=>{opened=new URL(url);}});
+  const query=op=>client.handle({op,address:0x81000000,sequence:op});
+  try{
+   const start=await query(7);
+   assert.equal(Buffer.from(start.bytes,'base64').readUInt32BE(0),0);
+   assert.equal(opened.origin,clientOrigin);
+   const fragment=new URLSearchParams(opened.hash.slice(1));
+   const browser={id:fragment.get('request'),browserSecret:fragment.get('key')};
+   const signup=await request('auth/signup',{method:'POST',headers:{origin:clientOrigin},body:{...browser,username:'domain_player',password:'domain-test-password-42'}});
+   assert.equal(signup.status,200);
+   const approved=await request('game/connect/approve',{method:'POST',headers:{origin:clientOrigin,cookie:signup.headers['set-cookie'].split(';')[0]},body:browser});
+   assert.equal(approved.status,200);
+   const connected=await query(8);
+   assert.equal(Buffer.from(connected.bytes,'base64').readUInt32BE(4),1);
+   assert.equal(client.identity.origin,clientOrigin);
+   const restarted=new WorldsClient({root,course:{},origin:clientOrigin,fetcher});await restarted.load();
+   assert.equal(restarted.identity.slug,'domain_player');
+  }finally{await client.cancelLogin();await rm(root,{recursive:true,force:true});}
+ }
+});
+
+test('request origin routing never trusts unknown or lookalike hosts',()=>{
+ const canonical='https://melee-btt.com';
+ for(const host of [undefined,'evil.test','melee-btt.com.evil.test','target-test-randomizer-challenge.vercel.app.evil.test','melee-btt.com@evil.test'])assert.equal(requestOrigin(host,canonical),canonical);
+ assert.equal(requestOrigin('preview.test','https://preview.test'),'https://preview.test');
+});
 function fixture(options = {}) {
   const rows = new Map(), versions = new Map();
   const store = {
