@@ -1,0 +1,26 @@
+{
+  "format": "TTRC_NATIVE_PROP_1",
+  "sourceGame": "Super Smash Bros. Melee USA 1.02",
+  "sourceArchive": "TyRoy.dat",
+  "sourceSha256": "e8c27f2e66a8ce13c732da13b5b8b8976ad7ee2fd4a71fffa0bbe1287b27f416",
+  "mapGroup": null,
+  "displayObjects": [
+    124952
+  ],
+  "aspect": 0.2500153726395167,
+  "depth": 0.09555998947376387,
+  "sourceBounds": [
+    [
+      -0.5656342955922204,
+      8.709241210193023,
+      -1.7984986942042342
+    ],
+    [
+      7.926780433171308,
+      10.832475443214156,
+      -0.9869636321167542
+    ]
+  ],
+  "triangles": 100,
+  "modelSha256": "e0eb9a378e860ad6519ba97778deecbb50542bebdeecd3fd569c55eecdb6664b"
+}

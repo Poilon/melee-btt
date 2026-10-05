@@ -1,0 +1,73 @@
+{
+  "format": "TTRC_RETAIL_MESH_1",
+  "game": "The Legend of Zelda: Ocarina of Time",
+  "source": "https://models.spriters-resource.com/nintendo_64/thelegendofzeldaocarinaoftime/asset/349262/",
+  "sourceSha256": "eb9d3c00643727765d6248f7f02a734a15e13130638b3e7e8d6bdd435c5328fb",
+  "poses": 1,
+  "period": 360,
+  "aspect": 1.911407310733317,
+  "orientationYaw": 0,
+  "wrap": 1,
+  "meshes": [
+    {
+      "vertices": 17,
+      "triangles": 16,
+      "textureSize": [
+        32,
+        32
+      ],
+      "originalTexture": "5227F7D5EAD89FCA.png",
+      "originalTextureSha256": "97a91ea1c2a55e8327a478cb7aa2ab9b5e3dcf7ec82182c8b1acc063d62f3fc3",
+      "files": {
+        "mesh-0.corners": "1ee526a2e4ab6f01ecc5ea76542f843d91567493066c7c81a34d98cd2b8e56d0",
+        "mesh-0.vertices": "3d254892ce1934cc7b67a01ca03ef814f0d25399b654630a26bd492e6ca2e2b5",
+        "mesh-0.rgba8": "c71020d602bcf5c09fa9464b1558bde9be9fe2ecabe0a018236f84cd67652335"
+      }
+    },
+    {
+      "vertices": 20,
+      "triangles": 22,
+      "textureSize": [
+        16,
+        32
+      ],
+      "originalTexture": "1F39B663F3503108.png",
+      "originalTextureSha256": "44fd974c066eff9abcfcb17d469a612584c7cabd080ac10e55fc6dd8597be805",
+      "files": {
+        "mesh-1.corners": "801dc60f5414063b2ae89dbbfa3bfe8dfbcd4a05162c6ffb482a969ff931bb74",
+        "mesh-1.vertices": "10fe87f083a4bc6c9bab2ad4b5c34f415e5c30aa6f31fec7a728f13a1d637bcf",
+        "mesh-1.rgba8": "74e9aee85ac3f3b7f5bf6c8c5c4571815f999cf2131d37e55c70d62c24cc0363"
+      }
+    },
+    {
+      "vertices": 35,
+      "triangles": 30,
+      "textureSize": [
+        16,
+        32
+      ],
+      "originalTexture": "5CBB5ED8E3932BE0.png",
+      "originalTextureSha256": "18b8aa54e954b205cdcfdf6a5924e44e4cb0027ff8750645c4d84ee812331b80",
+      "files": {
+        "mesh-2.corners": "cc4979b6132235c5abd42c4aff6024183b79a88417a27121c2561e1ff3122acb",
+        "mesh-2.vertices": "0fed2da70d5e8de683dc5b92a94ff1cc7f69b580370fe31a015bd54c7c740af3",
+        "mesh-2.rgba8": "0067856667c525527155231cbfcaec506b4c36d93b34127754bd299925b04b86"
+      }
+    },
+    {
+      "vertices": 41,
+      "triangles": 38,
+      "textureSize": [
+        8,
+        8
+      ],
+      "originalTexture": "76B589069058907A.png",
+      "originalTextureSha256": "ba0a93b412065042c52291425b655eb1e2b87654d9758fa8fbd94304d269af91",
+      "files": {
+        "mesh-3.corners": "9ebbea1d3145c1fb2328cc66ce6ead45713c951152c90ee28b7d7f6527be4171",
+        "mesh-3.vertices": "e8326b31dc2018a56d094d9f7f679d13a2582361c41f8e67709e003b5e9d8b4a",
+        "mesh-3.rgba8": "90a47680de7080c12e6b52aa27e0b2456778ffaa122b959c8141d9088886dc40"
+      }
+    }
+  ]
+}

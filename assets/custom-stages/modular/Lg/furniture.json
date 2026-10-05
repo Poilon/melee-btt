@@ -1,0 +1,49 @@
+{
+  "sprites": {
+    "piano": {
+      "file": "furniture-piano.rgba8",
+      "size": [
+        256,
+        136
+      ],
+      "sha256": "cf6fac3f008959f89305dc938f52ffc5ea9b7ddd281282e4cc74725c179e8518",
+      "aspect": 0.524812030075188,
+      "sourcePixels": [
+        35,
+        182,
+        700,
+        531
+      ]
+    },
+    "fireplace": {
+      "file": "furniture-fireplace.rgba8",
+      "size": [
+        512,
+        284
+      ],
+      "sha256": "e70fac17aa6feb5de68bfe1efbac983c95914050e2ded5f748df07efad497960",
+      "aspect": 0.5515625,
+      "sourcePixels": [
+        726,
+        68,
+        2209,
+        890
+      ]
+    },
+    "bed": {
+      "file": "furniture-bed.rgba8",
+      "size": [
+        512,
+        224
+      ],
+      "sha256": "d903e9e1175c14c32f1b92bd1329cce01ac1e89e4864e437d9fe71d8a355818a",
+      "aspect": 0.4338235294117647,
+      "sourcePixels": [
+        1367,
+        109,
+        3098,
+        828
+      ]
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "tool": "Built-in image_gen",
+  "stage": "Edit this existing dark gothic castle platform game stage. Preserve exact canvas aspect ratio, all background towers, moon, purple storm sky, ravine and current fine stone/gargoyle/banner rendering. Remove ONLY these eight floating ledges, reconstructing the naturally detailed distant castle/sky behind each without pasted rectangles: three upper-left ledges centered at approximate original pixels (220,310), (304,400), (491,295); four vertically stacked right ledges centered (1430,660), (1430,565), (1430,470), (1430,377); the high central ledge centered (832,188). KEEP every other object exactly at its current location and size: both huge bottom foundations, lower-left ledges centered (191,666),(325,576),(489,492), left inner ledge centered(680,377), central hanging solid bastion centered(832,535), right inner ledge centered(1000,376), upper-right intermediate ledge centered(1190,295), throne ledge centered(1395,190). Source coordinates refer to 1665x944 source. Do not add platforms or terrain. This is a precise scenery cleanup for collision-aligned gameplay. No text, targets, characters, UI or watermarks. Preserve dark but clearly readable foreground illuminated stone walking edges.",
+  "props": {
+    "crusher": "Use case: stylized-concept. Transparent foreground prop sprite for a dark gothic castle platform game, a single tall suspended stone execution ram. Frontal orthographic view. Narrow vertical black basalt monolith with richly carved demonic gargoyle relief, glowing purple cracks and small engraved runes, ornate aged iron cap, sharp silver beveled lower blade. Detailed hand-painted GameCube-era fantasy rendering. Readable distinct silhouette 1:3, no surrounding room, no pedestal, no hanging chain outside the object, no smoke obscuring edges. Heavy upper body and a downward pointed killing edge; same dark charcoal stone and crimson/gold ornament palette as a ruined evil king's castle. True transparent background, whole object visible with padding. No text or characters.",
+    "orb": "Use case: stylized-concept. One isolated sphere of dangerous dark magic for a richly painted 2.5D gothic castle game. Spherical purple-black core with sharp violet and magenta lightning filaments wrapping around it, hot lavender white inner highlights, clear circular body, a restrained purple flame corona close to its perimeter. Beautiful detailed textured magical object, front orthographic, strong readable silhouette against dark stone. No scene, pedestal, smoke trail, text, symbols, characters, outer frame or floor shadow. Transparent background. Entire orb visible, around 75 percent of square canvas. Not a flat icon."
+  },
+  "assets": {
+    "stage": "../worlds/Gn/painted.png",
+    "crusher": "ganon-crusher.png",
+    "orb": "ganon-orb.png"
+  },
+  "falcon": "The existing boost sprite is mirrored by the native model quad, with no raster edit."
+}

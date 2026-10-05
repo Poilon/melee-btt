@@ -16,6 +16,7 @@ function renderUpdate(update){
 }
 $('check-app-update').addEventListener('click',async()=>{try{await post('app-update/check',{},'update',$('check-app-update'));await refresh();}catch(e){toast(e.message);}});
 let sharingRun,updatingChallenge=false;
+let customLaunching=false;
 let data, tab='all', toastTimer, seen, savingSettings=false, launchingDolphin=false, settingsRevision=0;
 const peachOptions=[['random','Random'],['turnip','Turnip'],['beam-sword','Beam Sword'],['bob-omb','Bob-omb'],['mr-saturn','Mr. Saturn']];
 for(let i=0;i<10;i++){
@@ -67,9 +68,44 @@ async function post(path,body,action='profile',control) {
  const done=startLoading(labels[path]||(action==='launch'?'Opening replay…':'Loading…'),control||$(controls[path]));
  try{const r=await fetch(`/api/${path}`,{method:'POST',headers:{'X-TTRC-Action':action,'Content-Type':'application/json'},body:JSON.stringify(body||{})});const v=await r.json();if(!r.ok)throw new Error(v.error||'Please try again.');return v;}finally{done();}
 }
+function renderCustomStages(stages){
+ stages=stages?.filter(course=>course.id!=='grassland-1');
+ $('custom-stages').hidden=!stages?.length;
+ if(!stages?.length)return;
+ const list=$('custom-stage-list');
+ for(const course of stages){
+  const key=`custom-${course.id}`;let card=$(key);
+  if(!card){
+   card=make('article','','custom-stage-card');card.id=key;
+   const preview=make('a','');preview.href=course.preview+'?v=20261005';preview.target='_blank';preview.rel='noopener';preview.title='View all courses';
+   const img=make('img','');img.src=(course.thumbnail||course.preview)+'?v=20261005';img.alt=course.name;img.width=360;img.loading='lazy';preview.append(img);
+   const info=make('div','','custom-stage-info'),title=make('div','','custom-stage-title');
+   title.append(make('h3',course.id==='character-worlds'?'TTRC stages':course.name),make('span',`${course.character} · ${course.targets} targets`,'pill'));
+   const status=make('p','','muted');status.dataset.status='';status.setAttribute('role','status');
+   info.append(title,make('p',course.description),make('p',course.id==='character-worlds'?'Sign in and view records from Melee’s Leaderboard menu.':'Local play · no challenge submissions.','muted'),status);
+   if(course.id==='character-worlds'){const link=make('a','Preview Luigi’s manor ↗','custom-stage-preview');link.href='/assets/custom-stages/luigis-mansion.png?v=20261005';link.target='_blank';link.rel='noopener';info.append(link);}
+   const button=make('button','▶ Play','secondary');button.id=course.id==='grassland-1'?'play-grassland':`play-${course.id}`;
+   button.addEventListener('click',()=>launchCustomStage(course,button));card.append(preview,info,button);list.append(card);
+  }
+  const busy=customLaunching||course.busy,button=card.querySelector('button');
+  button.disabled=busy||launchingDolphin||!course.available||data?.appUpdate?.phase==='installing';
+  button.textContent=busy?'Preparing…':'▶ Play';
+  card.querySelector('[data-status]').textContent=course.message||(!course.available?'Available in TTRC Dolphin.':course.prepared?(course.id==='grassland-1'?'Choose Fox in Target Test.':'Choose any character in Target Test.'):'Prepared from your Melee ISO on first launch.');
+ }
+ for(const card of list.children)if(!stages.some(s=>card.id===`custom-${s.id}`))card.remove();
+}
+async function launchCustomStage(course,button){
+ if(customLaunching||launchingDolphin)return;
+ customLaunching=true;renderCustomStages(data?.customStages);
+ try{
+  const result=await post(`custom-stages/${course.id}/launch`,{},'launch',button);
+  toast(result.status==='already-running'?'Dolphin is already open.':`${course.id==='character-worlds'?'TTRC':course.name} is open. Choose ${course.id==='grassland-1'?'Fox':'your character'} in Target Test.`);
+ }catch(error){toast(error.message);}
+ finally{customLaunching=false;await refresh();renderCustomStages(data?.customStages);}
+}
 function render(d){
  if(companionClosed)return;
- data=d;renderAccount(d);renderSettings(d.settings);renderSetup(d.setup);const ident=d.identity,c=d.capture,connected=c.status==='connected';
+ data=d;renderCustomStages(d.customStages);renderAccount(d);renderSettings(d.settings);renderSetup(d.setup);const ident=d.identity,c=d.capture,connected=c.status==='connected';
  $('player-required').hidden=Boolean(ident);
  $('challenge-update').hidden=!d.challengeUpdate?.available;
  text('challenge-update-note',`Seed ${d.challengeUpdate?.seed||''} is ready. Close Dolphin to install it. Your previous runs are kept.`);

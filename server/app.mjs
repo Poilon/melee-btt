@@ -1,3 +1,4 @@
+import {CustomStageError} from './custom-stages.mjs';
 import { artworkFiles } from '../shared/artwork.mjs';
 import { validPlaySettings } from './play-settings.mjs';
 import { ReplayError,ReplayLibrary } from './replays.mjs';
@@ -9,8 +10,16 @@ import { stages } from '../src/challenge.mjs';
 
 const files = new Map([
   ...artworkFiles,
+  ['/assets/custom-stages/luigis-mansion.png', ['../assets/custom-stages/luigis-mansion.png', 'image/png']],
+  ['/assets/custom-stages/character-worlds-all.png', ['../assets/custom-stages/character-worlds-all.png', 'image/png']],
+  ['/assets/custom-stages/character-worlds.png', ['../assets/custom-stages/character-worlds.png', 'image/png']],
+  ['/assets/custom-stages/grassland-1.png', ['../assets/custom-stages/grassland-1.png', 'image/png']],
   ['/', ['../companion/index.html', 'text/html; charset=utf-8']],
   ['/app.js', ['../companion/app.js', 'text/javascript; charset=utf-8']],
+  ['/editor', ['editor/index.html', 'text/html; charset=utf-8']],
+  ['/editor/', ['editor/index.html', 'text/html; charset=utf-8']],
+  ['/editor/published-levels.json', ['editor/published-levels.json', 'application/json']],
+  ...['editor.js','model.js','pieces.js','native-preview.js','editor.css'].map(n=>['/editor/'+n,['editor/'+n,n.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8']]),
   ['/review', ['review.html', 'text/html; charset=utf-8']],
   ['/review.js', ['review.js', 'text/javascript; charset=utf-8']],
   ['/review.css', ['review.css', 'text/css; charset=utf-8']],
@@ -23,7 +32,7 @@ const files = new Map([
   ['/favicon-admin.svg', ['favicon-admin.svg', 'image/svg+xml']],
 ]);
 
-export function createApp({ challenge:initialChallenge, gecko:initialGecko, getChallenge, onlineChallenge, updateChallenge, store, getIdentity, getCapture, launch, remote, importPlayer, prepareRecorder, reviewerProxy, openReplays, replays, getPlaySettings, savePlaySettings, onboarding, account, instance, quit, appUpdates }) {
+export function createApp({ challenge:initialChallenge, gecko:initialGecko, getChallenge, onlineChallenge, updateChallenge, store, getIdentity, getCapture, launch, remote, importPlayer, prepareRecorder, reviewerProxy, openReplays, replays, getPlaySettings, savePlaySettings, onboarding, account, instance, quit, appUpdates, customStages, launchCustomStage }) {
   const server = createServer(async (req, res) => {
     const {manifest:challenge,gecko}=getChallenge?getChallenge():{manifest:initialChallenge,gecko:initialGecko};
     const port = server.address()?.port;
@@ -42,6 +51,26 @@ export function createApp({ challenge:initialChallenge, gecko:initialGecko, getC
     }
     try {
       const url = new URL(req.url, `http://${req.headers.host}`);
+      if(req.method==='GET'&&/^\/editor\/data\/(catalog|basic-(?:brick|wood|manor-floor)|[A-Z][a-z](?:-housing|-background|-platform-deck|-furniture-(?:piano|fireplace|bed))?|models\/(?:catalog|actors|additions|[A-Z][a-z]-(?:[0-9]+|add-(?:platform|bumper|bumper-red|boost|boost-left)|actor-(?:[0-9]+|traffic)|ship)|[a-f0-9]{20}))\.(json|png)$/.test(url.pathname)){
+        const name=url.pathname.slice('/editor/data/'.length);
+        try{const bytes=await readFile(new URL('../web/editor/data/'+name,import.meta.url));res.writeHead(200,{'Content-Type':name.endsWith('.json')?'application/json':'image/png'});return res.end(bytes);}catch{return json(404,{error:'Editor asset unavailable.'});}
+      }
+      if(req.method==='GET'&&url.pathname==='/api/editor/status')return json(200,{available:Boolean((await customStages?.list())?.some(s=>s.available)),busy:customStages?.busy||false,message:customStages?.message||''});
+      if(req.method==='POST'&&['/api/editor/test','/api/editor/build-all'].includes(url.pathname)){
+        if(!req.headers.origin||req.headers['x-ttrc-action']!=='launch')return json(403,{error:'Launch not allowed.'});
+        if(!launchCustomStage)return json(503,{error:'Open the editor from an updated TTRC Companion to test.'});
+        if(appUpdates?.status().phase==='installing')return json(409,{error:'TTRC is updating. Try again shortly.'});
+        const all=url.pathname==='/api/editor/build-all',limit=all?8*1024*1024:512*1024;
+        let body='';for await(const part of req){body+=part;if(Buffer.byteLength(body)>limit)return json(413,{error:all?'Level pack must be under 8 MB.':'Project must be under 512 KB.'});}
+        let project;try{project=JSON.parse(body);}catch{return json(400,{error:'Invalid project JSON.'});}
+        return json(200,await launchCustomStage(all?'stage-editor-all':'stage-editor',project));
+      }
+      if(req.method==='POST'&&/^\/api\/custom-stages\/[^/]+\/launch$/.test(url.pathname)){
+        if(!req.headers.origin||req.headers['x-ttrc-action']!=='launch')return json(403,{error:'Launch not allowed.'});
+        if(!launchCustomStage)return json(503,{error:'Custom stages unavailable. Update TTRC Dolphin.'});
+        if(appUpdates?.status().phase==='installing')return json(409,{error:'TTRC is updating. Try again in a moment.'});
+        return json(200,await launchCustomStage(url.pathname.split('/')[3]));
+      }
       if(req.method==='POST'&&url.pathname==='/api/app-update/check'){
         if(!req.headers.origin||req.headers['x-ttrc-action']!=='update')return json(403,{error:'Action not allowed.'});
         if(!appUpdates?.status().supported)return json(503,{error:'Updates unavailable in this installation.'});
@@ -225,6 +254,7 @@ export function createApp({ challenge:initialChallenge, gecko:initialGecko, getC
         return json(200, {
           challenge, identity, player, auth: { mode: 'password', configured: true, connection: account?.status(), account: identity ? { name: identity.displayName, linked: true } : null }, capture: getCapture(), scope: 'local', character,
           remote: remote?.status(identity) || { available: false, paired: false, pending: 0 },
+          customStages: await customStages?.list() || [],
           settings: getPlaySettings?.() || null,
           appUpdate: appUpdates?.status() || null,
           challengeUpdate:onlineChallenge?.status()||null,
@@ -250,6 +280,7 @@ export function createApp({ challenge:initialChallenge, gecko:initialGecko, getC
       }
       return json(404, { error: 'Resource not found.' });
     } catch (error) {
+      if(error instanceof CustomStageError)return json(409,{error:error.message});
       if (error instanceof ReplayError) return json(400, { error: error.message });
       // Never return exception contents: those may contain a local file or credentials.
       return json(500, { error: 'Action failed. Check that the challenge is prepared and Dolphin is available.' });

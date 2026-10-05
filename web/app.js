@@ -131,7 +131,7 @@ function render(d) {
   text('player-action', ident?.slug ? 'Open companion ↗' : 'Sign in');
   $('player-action').disabled = !d.auth?.configured && !ident?.slug;
   $('logout').hidden = !account;
-  $('create-account').hidden = account?.provider === 'password';
+  $('create-account').hidden = data?.auth?.gameAccountsOnly || account?.provider === 'password';
   text('create-account', account ? 'Add password' : 'Create account');
   renderConnection();
   renderLeaderboard(d);
@@ -348,6 +348,9 @@ const connectId = new URLSearchParams(location.search).get('connect');
 let connectionInfo, connectionDone = false, authMode = 'login';
 function showAuth(mode = 'login') {
   authMode = mode;
+  if(data?.auth?.gameAccountsOnly)mode='login';
+  authMode=mode;
+  $('auth-switch').hidden=Boolean(data?.auth?.gameAccountsOnly);
   const signup = mode === 'signup';
   text('auth-title', signup ? 'Create account' : 'Sign in');
   text('auth-description', signup ? data?.identity ? 'Add a password to keep this profile and its records.' : 'Choose a unique username and a password.' : 'Use your TTRC account.');

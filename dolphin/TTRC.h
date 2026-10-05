@@ -6,6 +6,7 @@
 #include <regex>
 #include <vector>
 #include <wx/msgdlg.h>
+#include <wx/app.h>
 #include <wx/utils.h>
 namespace TTRC {
 inline std::wstring Root() {
@@ -45,7 +46,8 @@ inline std::wstring Quote(const std::wstring& value) {
   result.append(slashes * 2, L'\\');
   return result + L"\"";
 }
-inline bool Helper(const std::wstring& arguments, bool wait) {
+inline bool Helper(const std::wstring& arguments, bool wait, DWORD* exitCode = nullptr) {
+  if (exitCode) *exitCode = 1;
   const auto root = Root();
   const auto node = root + L"\\runtime\\node\\node.exe";
   auto command = Quote(node) + L" " + Quote(root + L"\\desktop\\native.mjs") + L" " + arguments;
@@ -58,14 +60,18 @@ inline bool Helper(const std::wstring& arguments, bool wait) {
   bool ok = true;
   if (wait) {
     DWORD code = 1;
-    if (WaitForSingleObject(process.hProcess, 120000) != WAIT_OBJECT_0) {
+    if (WaitForSingleObject(process.hProcess, 360000) != WAIT_OBJECT_0) {
       TerminateProcess(process.hProcess, 1); ok = false;
-    } else { GetExitCodeProcess(process.hProcess, &code); ok = code == 0; }
+    } else { GetExitCodeProcess(process.hProcess, &code); ok = code == 0; if (exitCode) *exitCode = code; }
   }
   CloseHandle(process.hProcess); return ok;
 }
 inline bool Start() {
-  if (!Helper(L"--prepare", true) ||
+  DWORD code = 1;
+  const bool prepared = Helper(L"--prepare --play", true, &code);
+  // The helper opened the prepared TTRC game in its own profile.
+  if (code == 2) return false;
+  if (!prepared ||
       !Helper(L"--serve --parent " + std::to_wstring(GetCurrentProcessId()), false)) {
     wxMessageBox("TTRC could not start. Extract the entire release ZIP into a writable folder, "
                  "and close any other TTRC instance. Details are in .local/startup.log.",
@@ -75,9 +81,11 @@ inline bool Start() {
 }
 inline bool VerifyGame(const std::string& file) {
   const auto path = wxString::FromUTF8(file.c_str()).ToStdWstring();
-  if (Helper(L"--iso " + Quote(path), true)) return true;
-  wxMessageBox("Choose an original Melee USA 1.02 ISO. Modified ISOs and other versions "
-               "cannot be used for this challenge. Your ISO stays in its current folder.",
+  DWORD code = 1;
+  if (Helper(L"--iso " + Quote(path) + L" --play", true, &code)) return true;
+  if (code == 2) { wxTheApp->ExitMainLoop(); return false; }
+  wxMessageBox("TTRC could not prepare the game. Choose an original Melee USA 1.02 ISO "
+               "and check .local/startup.log if the problem persists. Your original ISO is unchanged.",
                "TTRC — Melee ISO", wxOK | wxICON_ERROR); return false;
 }
 inline void OpenCompanion() {

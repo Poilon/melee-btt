@@ -1,0 +1,73 @@
+{
+  "format": "TTRC_RETAIL_MESH_1",
+  "game": "Star Fox 64 3D",
+  "source": "https://models.spriters-resource.com/3ds/starfox643d/asset/357198/",
+  "sourceSha256": "717956f54d0e6e799354225867c06b7508079922bd055902387ba3fceefc2491",
+  "poses": 1,
+  "period": 360,
+  "aspect": 0.3222671814485516,
+  "orientationYaw": 90,
+  "wrap": 1,
+  "meshes": [
+    {
+      "vertices": 1543,
+      "triangles": 1055,
+      "textureSize": [
+        512,
+        256
+      ],
+      "originalTexture": "Arwing_0.png",
+      "originalTextureSha256": "26febd12fce1665641527b2daa6cdd4373a2045a9d95ff44292bb89ab9f67d01",
+      "files": {
+        "mesh-0.corners": "85d74a3b90ef9a0700b216e8850f1b5e5160fbd9872691bcdba2a2eeca2b9844",
+        "mesh-0.vertices": "80ee78fbbba9f7e8f4846fa7e67639ee8aba013ca4a5b2723d76ad0291aa5dd0",
+        "mesh-0.rgba8": "b7376473ee93c817d242eea72e633405b64175c409adb7e0c09be56c028d1c73"
+      }
+    },
+    {
+      "vertices": 18,
+      "triangles": 10,
+      "textureSize": [
+        128,
+        128
+      ],
+      "originalTexture": "ArLogos.png",
+      "originalTextureSha256": "206eaac10e3ecdd74d37d5a2caf10ddd766145bb4a437e9a40def9fc6f9fce12",
+      "files": {
+        "mesh-1.corners": "0ca0cbeff663b35d54607e4f0d1904042cd795b84031108fa56606570b143511",
+        "mesh-1.vertices": "c40dd475f7a549f91d5a80218f4d26fe97d828eb623c79997e88cf7af28b575c",
+        "mesh-1.rgba8": "8e3d3cde3b80174275d7442d9fae2c2eac28551baadc5bd149ede77d795e9eb8"
+      }
+    },
+    {
+      "vertices": 16,
+      "triangles": 10,
+      "textureSize": [
+        64,
+        64
+      ],
+      "originalTexture": "Arwing_ref.png",
+      "originalTextureSha256": "d58e06d1e6815a7d1dc2eccd31ba14945752208fdfbc83e81447cdb0bdeb855f",
+      "files": {
+        "mesh-2.corners": "0ddb96ca8b1e4c20a43df91b0b5accfdc4ea5c1dd7efabd9bdec529b61202465",
+        "mesh-2.vertices": "610ba8883e8ce378a03340d2a6ba3b1148a1288f0d757ab353e616243dfc31c2",
+        "mesh-2.rgba8": "7595d9e200e729ed3a5e99816e18a78c25a15a909748dba4cbb6c0bc18c90f8d"
+      }
+    },
+    {
+      "vertices": 8,
+      "triangles": 4,
+      "textureSize": [
+        64,
+        64
+      ],
+      "originalTexture": "Arwing_ref.png",
+      "originalTextureSha256": "d58e06d1e6815a7d1dc2eccd31ba14945752208fdfbc83e81447cdb0bdeb855f",
+      "files": {
+        "mesh-3.corners": "2887adb9b878a8aa73200ce7a045729f24f95dc9e34c5401bdf9a9d54450feef",
+        "mesh-3.vertices": "e1af10c4b746ec5a2b47dcad6e88cfc3223aa5b9f96911d62d8f0c21d1d4c136",
+        "mesh-3.rgba8": "7595d9e200e729ed3a5e99816e18a78c25a15a909748dba4cbb6c0bc18c90f8d"
+      }
+    }
+  ]
+}

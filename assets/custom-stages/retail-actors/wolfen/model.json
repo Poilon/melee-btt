@@ -1,0 +1,28 @@
+{
+  "format": "TTRC_RETAIL_MESH_1",
+  "game": "Star Fox 64 3D",
+  "source": "https://models.spriters-resource.com/3ds/starfox643d/asset/357203/",
+  "sourceSha256": "6e9557543bb892c99a7946eb3ba1be42c3c26b63ea62683414529acd1f46b00d",
+  "poses": 1,
+  "period": 360,
+  "aspect": 0.5241338184265856,
+  "orientationYaw": 90,
+  "wrap": 1,
+  "meshes": [
+    {
+      "vertices": 293,
+      "triangles": 166,
+      "textureSize": [
+        256,
+        256
+      ],
+      "originalTexture": "Wolfen.png",
+      "originalTextureSha256": "04c112deeb20eb98a2cef0d2f9ed7d92015d9d72e5ceb00fb3ecf8530748851d",
+      "files": {
+        "mesh-0.corners": "7c468225221348342c1f4e05eda89897cf1d79969842ba002f85c8fc098ba006",
+        "mesh-0.vertices": "0e52a3ce126bef37c7a53af901c625bb440465ad2f93bce68cf7b2516bd10d15",
+        "mesh-0.rgba8": "88b51eef90b3aaef6dd4d43abbd41ec88c4131bc7845716228efdc7bd1217951"
+      }
+    }
+  ]
+}

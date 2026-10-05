@@ -1,0 +1,39 @@
+{
+  "sprites": {
+    "deck": {
+      "file": "prop-deck.rgba8",
+      "size": [
+        384,
+        84
+      ],
+      "sha256": "54aa3e0fb0f51bdc5cbbbff8785da22362e216f1cd758d715a6e1655aab9224d",
+      "sourceAtlas": "technology",
+      "sourceSha256": "a468ba07de32fc25b13021d55645da4232501d4ad0c6b13757aa788899155cb2",
+      "sourcePixels": [
+        798,
+        138,
+        1511,
+        291
+      ],
+      "aspect": 0.21458625525946703,
+      "walkingInset": 0.0
+    },
+    "hazard": {
+      "file": "prop-hazard.rgba8",
+      "size": [
+        256,
+        172
+      ],
+      "sha256": "d628308d0615cf3883d3a5356f3ff4599a2da50e83e0a40640997ed0c7bc13f0",
+      "sourceAtlas": "hazard-piston.png",
+      "sourceSha256": "cab0dd16de219f6da180bd7a736aaa01771935f6010ba96b26c8e8e9de737b69",
+      "sourcePixels": [
+        132,
+        92,
+        1421,
+        963
+      ],
+      "aspect": 0.6757176105508146
+    }
+  }
+}

@@ -13,6 +13,23 @@ const runtimePath=join(root,'build/challenge/runtime.json'),port=Number(process.
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 await mkdir(join(root,'.local'),{recursive:true});
 async function writeRuntime(value){await writeFile(runtimePath+'.tmp',JSON.stringify(value));await rename(runtimePath+'.tmp',runtimePath);}
+async function ensureCompanion(){
+ if(await companionRunning(root,port))return;
+ const child=spawn(process.execPath,[fileURLToPath(import.meta.url),'--serve'],{cwd:root,detached:true,stdio:'ignore',windowsHide:true});
+ await new Promise((resolve,reject)=>{child.once('spawn',resolve);child.once('error',reject);});child.unref();
+ const deadline=Date.now()+100000;
+ while(!await companionRunning(root,port)){if(Date.now()>deadline)throw new Error('Companion did not start. See .local/startup.log.');await delay(300);}
+}
+async function playPublishedWorlds(){
+ await ensureCompanion();
+ const {CustomStages}=await import('../server/custom-stages.mjs');
+ const runtime=JSON.parse(await readFile(runtimePath,'utf8'));
+ const worlds=new CustomStages({root,getRuntime:()=>runtime});
+ const result=await worlds.launch('character-worlds');
+ if(!['started','already-running'].includes(result.status))throw Error('TTRC did not launch.');
+ // Native startup recognizes this successful handoff and closes the ISO picker.
+ process.exitCode=2;
+}
 try {
  if(await updateLocked(root)){
   if(!process.argv.includes('--open'))throw Error('TTRC is installing an update. Try again in a moment.');
@@ -34,18 +51,15 @@ try {
    if(!exists){try{await mkdir(join(profile,'Challenge'),{recursive:true});await cp(join(previous.profile,'Challenge/user.json'),player,{errorOnExist:true,force:false});}catch(error){if(error.code!=='ENOENT')throw error;}}
   }
   await writeRuntime({profile,dolphin,replays:join(root,'Replays'),recording:true,native:true,iso:previous.iso||null});
+  if(previous.iso&&process.argv.includes('--play'))await playPublishedWorlds();
  }else if(process.argv.includes('--iso')){
   const iso=resolve(process.argv[process.argv.indexOf('--iso')+1]);
   await verifyIso(iso);
   const runtime=JSON.parse(await readFile(runtimePath,'utf8'));
   await writeRuntime({...runtime,iso});
+  if(process.argv.includes('--play'))await playPublishedWorlds();
  }else if(process.argv.includes('--open')){
-  if(!await companionRunning(root,port)){
-   const child=spawn(process.execPath,[fileURLToPath(import.meta.url),'--serve'],{cwd:root,detached:true,stdio:'ignore',windowsHide:true});
-   await new Promise((resolve,reject)=>{child.once('spawn',resolve);child.once('error',reject);});child.unref();
-   const deadline=Date.now()+100000;
-   while(!await companionRunning(root,port)){if(Date.now()>deadline)throw new Error('Companion did not start. See .local/startup.log.');await delay(300);}
-  }
+  await ensureCompanion();
   await exec('powershell.exe',['-NoProfile','-NonInteractive','-Command',`Start-Process 'http://localhost:${port}'`],{windowsHide:true});
  }else if(process.argv.includes('--serve')){
   if(await companionRunning(root,port)){

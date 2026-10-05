@@ -1,0 +1,25 @@
+{
+  "format": "GX_CMPR_1",
+  "size": [
+    256,
+    256
+  ],
+  "bounds": [
+    0,
+    0,
+    64,
+    -64
+  ],
+  "tiles": [
+    {
+      "file": "texture.cmpr",
+      "rect": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "sha256": "29d352610acc8439843dfab4bd19c19db9379ba5814bc03d1ec4e094131c92f2"
+    }
+  ]
+}

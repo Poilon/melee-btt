@@ -28,11 +28,11 @@ await memory.put('usernames/test_admin.json', {id:adminId,credential:{password:a
 await memory.put(`profiles/${adminId}.json`, {id:adminId,slug:'test_admin',displayName:'test_admin',connectCode:'TT#00001'});
 await memory.put(`roles/${adminId}.json`, {role:'admin'});
 const publicHandler = createHostedHandler({ store: memory, fallback:{manifest:challenge,gecko}, generate:generateChallenge, origin, secret: 'test-only', reviewerKey, allowLegacySignup: true });
-const staticFiles = { ...Object.fromEntries(artworkFiles), '/': ['index.html','text/html'], '/review': ['review.html','text/html'], ...Object.fromEntries(['app.js','archives.js','time.js','review.js','loading.js'].map(p=>['/'+p,[p,'text/javascript']])), ...Object.fromEntries(['style.css','review.css','loading.css'].map(p=>['/'+p,[p,'text/css']])), ...Object.fromEntries(['target.svg','favicon-site.svg','favicon-admin.svg'].map(p=>['/'+p,[p,'image/svg+xml']])) };
+const staticFiles = { ...Object.fromEntries(artworkFiles), '/': ['index.html','text/html'], '/challenges.html': ['challenges.html','text/html'], '/login.html': ['login.html','text/html'], '/review': ['review.html','text/html'], ...Object.fromEntries(['login.js','worlds.js','app.js','archives.js','time.js','review.js','loading.js'].map(p=>['/'+p,[p,'text/javascript']])), ...Object.fromEntries(['login.css','worlds.css','style.css','review.css','loading.css'].map(p=>['/'+p,[p,'text/css']])), ...Object.fromEntries(['target.svg','favicon-site.svg','favicon-admin.svg'].map(p=>['/'+p,[p,'image/svg+xml']])) };
 await new Promise(resolve => createServer(async (req, res) => {
   if (req.url.startsWith('/api/')) return publicHandler(req, res);
   const path = new URL(req.url, origin).pathname;
-  const file = path.startsWith('/players/') ? staticFiles['/'] : staticFiles[path];
+  const file = path.startsWith('/players/') ? staticFiles['/challenges.html'] : staticFiles[path];
   if (!file) { res.writeHead(404); res.end(); return; }
   res.writeHead(200, { 'Content-Type': file[1] }); res.end(await readFile(new URL(`../../web/${file[0]}`, import.meta.url)));
 }).listen(4319, '127.0.0.1', resolve));

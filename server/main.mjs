@@ -1,4 +1,6 @@
 import {AppUpdates} from './app-updates.mjs';
+import {dolphinRunning} from '../desktop/update-install.mjs';
+import {CustomStages,CustomStageError} from './custom-stages.mjs';
 import { mkdir, readFile, writeFile, rm, access } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { resolve, join } from 'node:path';
@@ -131,9 +133,20 @@ const account = new CompanionAccount({ origin: siteOrigin, accept: acceptPlayer,
 }) });
 const accountTimer = setInterval(() => { account.poll().catch(() => {}); }, 3000);
 const companionInstance=await instanceId(root);
-const appUpdates=new AppUpdates({root,port,instance:companionInstance,canInstall:()=>!launching&&!updatingChallenge&&!recordingSync&&!onboarding.get().busy});
+const customStages=new CustomStages({root,getRuntime:()=>runtime});
+const appUpdates=new AppUpdates({root,port,instance:companionInstance,running:async()=>await customStages.running()||await dolphinRunning(root),canInstall:()=>!launching&&!updatingChallenge&&!recordingSync&&!onboarding.get().busy});
 await appUpdates.initialize();
 const server = createApp({
+  customStages,
+  launchCustomStage: async (id,project) => {
+    if(launching||updatingChallenge)throw new CustomStageError('Dolphin is already being prepared.');
+    launching=true;
+    try{
+      if(runtime?.native&&(await launchNative(root,runtime.dolphin,true)).status==='already-running')throw new CustomStageError('Close the ISO selection window before opening a level.');
+      await playSettings.queue;
+      return await customStages.launch(id,project);
+    }finally{launching=false;}
+  },
   appUpdates,
   instance: companionInstance, quit: shutdown,
   getChallenge:()=>generated,onlineChallenge,updateChallenge,
@@ -175,13 +188,16 @@ const server = createApp({
     if(appUpdates.status().phase==='installing')return {status:'updating'};
     if (bridge.status().status === 'connected') return { status: 'already-running' };
     if (launching) return { status: 'starting' };
+    if(await customStages.running())return {status:'already-running'};
     launching = true;
     try {
       await playSettings.queue;
       if(runtime?.native){
         if((await launchNative(root,runtime.dolphin,true)).status==='already-running')return {status:'already-running'};
-        await updateChallenge();
-        return await launchNative(root,runtime.dolphin);
+        // Published authored levels are the normal TTRC game. The root Dolphin
+        // is only needed on first launch to let the player choose their ISO.
+        runtime=JSON.parse(await readFile(join(challengeDir,'runtime.json'),'utf8'));
+        return runtime.iso?await customStages.launch('character-worlds'):await launchNative(root,runtime.dolphin);
       }
       await exec(pythonExecutable(root), [join(root, 'scripts/prepare_dolphin.py'), '--challenge', challengeDir, ...(runtime?.recording ? ['--record-replays'] : []), ...(runtime?.dolphin ? ['--dolphin', runtime.dolphin] : []), ...(runtime?.iso ? ['--iso', runtime.iso] : []), '--launch'], { timeout: 30_000 });
       runtime = JSON.parse(await readFile(join(challengeDir, 'runtime.json'), 'utf8'));

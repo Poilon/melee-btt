@@ -1,0 +1,43 @@
+{
+  "format": "TTRC_RETAIL_MESH_1",
+  "game": "The Legend of Zelda: Ocarina of Time",
+  "source": "https://models.spriters-resource.com/nintendo_64/thelegendofzeldaocarinaoftime/asset/283193/",
+  "sourceSha256": "366bdbb58f64befabfccedf0c61a3fd9c2662f303c5a950ccae1d94e78c46df4",
+  "poses": 1,
+  "period": 360,
+  "aspect": 0.8860399140375463,
+  "orientationYaw": 0,
+  "wrap": 1,
+  "meshes": [
+    {
+      "vertices": 32,
+      "triangles": 22,
+      "textureSize": [
+        32,
+        64
+      ],
+      "originalTexture": "front.png",
+      "originalTextureSha256": "c11e61a5d95e42cc682bcbc99dc55db65b3b08f83ca98cd91e3f700b41b85849",
+      "files": {
+        "mesh-0.corners": "85facaaea7645012159bb8312202075f87cdf8c3aaddb632d4bdc66c8751a9a7",
+        "mesh-0.vertices": "27395caf4543a84e29f601d7cacb5a899044b2c280a2f3d126a83f68559ad44d",
+        "mesh-0.rgba8": "1a03464384ec977732a2b6b403743b3e7a81f36c8b14db5edf4a5e7ec0ce3f47"
+      }
+    },
+    {
+      "vertices": 35,
+      "triangles": 24,
+      "textureSize": [
+        32,
+        32
+      ],
+      "originalTexture": "wood.png",
+      "originalTextureSha256": "4378b6042e2ba682aeeb4ea352c80eb523f45d473c983a4124db3b5954538b85",
+      "files": {
+        "mesh-1.corners": "5dbed1bf94fd856409836031559edfd50fdafaf88e9efea5ff4aba220c5225aa",
+        "mesh-1.vertices": "8bfdb3f3c569cbacce2d517198584a845fcef4581445239b4254ec2171ae8b41",
+        "mesh-1.rgba8": "afaae6263e582fbbae86a085cf47a8b3a4899efade25e0f19b921ece53a4d2a9"
+      }
+    }
+  ]
+}

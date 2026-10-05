@@ -1,0 +1,11 @@
+# Dk — stage renovation
+
+## Final correction prompt
+
+Use case: precise-object-edit. Edit target: supplied detailed Donkey Kong jungle stage. Keep the entire painting pixel for pixel except restore THREE missing suspended wooden log platforms needed to climb. Canvas1832x858: add a narrow detailed tied log with flat walkable TOP at y468, extending x456..641; another log TOP y359 x621..755; another log TOP y361 x1060..1216. All three are thin planks/logs 28 pixels deep with beautiful timber grain and rope binding, matching existing wood. They hover over the chasms beside the big central solid stump. Do not attach any log across the central stump. Do not create any floor below them. Keep the central solid stump, left/right docks, upper logs, deep open waterfalls, background and lighting unchanged. No characters, targets, text, UI. Exact positions of these three top edges are critical for playable collision.
+
+Mode: built-in image generation, editing the existing stage painting.
+
+## Prompt
+
+Use case: precise-object-edit. Edit target: Donkey Kong jungle treehouse stage. Keep the lush sharp detailed Donkey Kong Country style jungle, banana palms, waterfalls, cabin and warm log textures. Original1833x858. Break the entire bottom continuous log bridge into THREE SEPARATE piers: x86..445, x797..1033, x1436..1745 at original top y659. Remove bridge in x445..797 and1033..1436 completely, including rope scraps; these are two open lethal ravines. Paint coherent full distant jungle waterfalls in gaps, no rectangular pasted patches. Turn the CENTRAL foreground tree into a clearly solid squared-off massive cut timber trunk from x797..1033 top257 down to y713, with a completely flat sawn top at y257 and strong continuous straight side silhouettes, projecting roots kept inside this rectangle. This is a blocking wall that the player must go around. Keep the existing central upper log x665..1163 top160 suspended above it. All other elevated logs must stay exactly in place with clear flat top surfaces. Left and right tree trunks behind ledges must look further back, lower contrast with slight atmospheric separation so they cannot be mistaken for solid wall. Preserve original rich detailed art, no new platforms or floating untextured objects, no characters, targets, labels, HUD. Original wide framing/aspect.

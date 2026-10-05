@@ -1,0 +1,7 @@
+{
+  "tool": "Built-in image_gen",
+  "prompts": {
+    "arrow": "Use case: stylized-concept. Transparent sprite for a richly textured 2.5D racing-platformer stage. One low, flat metallic speed booster strip in strict side elevation, wide horizontal rectangle about 5:1. Bright electric cyan right-pointing arrow and two smaller right-pointing chevrons embedded in a dark navy brushed-metal chassis, gold bolts, luminous inner detail, clean readable silhouette, GameCube-era painted 3D art. Arrow unambiguously points RIGHT. No text, no scenery, no floor shadow outside sprite. Entire object isolated with transparent background, modest padding. This is a ground accelerator, NOT a tall barrier.",
+    "vine": "Use case: stylized-concept. Transparent game sprite, one long hanging jungle vine, straight vertical, with beautifully detailed twisted green and brown fibres, a few lush leaves around upper half, a large sturdy knotted loop at its bottom that an ape can grab. Strict front orthographic view, sharp hand-painted 3D platform game art, gold-green highlights and dark outlines for legibility. Entire vine from cut stem at top to bottom grab knot visible with padding. Narrow silhouette about 1:7, knot clearly outlined at bottom, no characters, no background, no ground, no text. True transparent background."
+  }
+}

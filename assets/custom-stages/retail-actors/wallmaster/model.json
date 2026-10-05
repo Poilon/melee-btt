@@ -1,0 +1,58 @@
+{
+  "format": "TTRC_RETAIL_MESH_1",
+  "game": "The Legend of Zelda: Ocarina of Time 3D",
+  "source": "https://models.spriters-resource.com/3ds/thelegendofzeldaocarinaoftime3d/asset/351779/",
+  "sourceSha256": "5bf98950aa838e0453599709e38ad01f35f8681a120feadee6be313a4335989b",
+  "poses": 1,
+  "period": 360,
+  "aspect": 0.4698186369315458,
+  "orientationYaw": 0,
+  "wrap": 1,
+  "meshes": [
+    {
+      "vertices": 9,
+      "triangles": 8,
+      "textureSize": [
+        128,
+        64
+      ],
+      "originalTexture": "fallmaster_00.png",
+      "originalTextureSha256": "80d45ceef7eb8edb810402dd54089ecc4102e18c5b628dd0b0e59ef04b40bb8d",
+      "files": {
+        "mesh-0.corners": "236f6605f69b17b5dace8e7e411d5ee07d37abd597f4a80bf08f72db42d3e46f",
+        "mesh-0.vertices": "a0b57286eeda57d9cb5b9e5a402213460a4a6454c506882773bfa97b23e0c766",
+        "mesh-0.rgba8": "3c3cccbb3a225441c7af791f1197aefe4da697f6e66ae7594cdc9103d988b125"
+      }
+    },
+    {
+      "vertices": 35,
+      "triangles": 30,
+      "textureSize": [
+        128,
+        64
+      ],
+      "originalTexture": "fallmaster_00.png",
+      "originalTextureSha256": "80d45ceef7eb8edb810402dd54089ecc4102e18c5b628dd0b0e59ef04b40bb8d",
+      "files": {
+        "mesh-1.corners": "6be66520ad8d5e43dabb15ba6c22ba65dd8c243678e4afeb216df6f8117474ea",
+        "mesh-1.vertices": "0fea588165a95a34c23b8d854955c38b7118bc6a04e455fce43a76b9ef772f2b",
+        "mesh-1.rgba8": "3c3cccbb3a225441c7af791f1197aefe4da697f6e66ae7594cdc9103d988b125"
+      }
+    },
+    {
+      "vertices": 300,
+      "triangles": 446,
+      "textureSize": [
+        128,
+        64
+      ],
+      "originalTexture": "fallmaster_00.png",
+      "originalTextureSha256": "80d45ceef7eb8edb810402dd54089ecc4102e18c5b628dd0b0e59ef04b40bb8d",
+      "files": {
+        "mesh-2.corners": "1c4d14e16261b0a0726d4dfbc7aa2c3c7884eb732268a982a40a3efe37b77673",
+        "mesh-2.vertices": "a76d13e1b79915ccebd4d0bc76f9a87c29c9bd562d8a130c6d78e47ca31840f2",
+        "mesh-2.rgba8": "3c3cccbb3a225441c7af791f1197aefe4da697f6e66ae7594cdc9103d988b125"
+      }
+    }
+  ]
+}

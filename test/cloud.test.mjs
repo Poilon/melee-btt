@@ -380,3 +380,74 @@ test('reveal publishes overall points and THS only for players with every charac
  assert.deepEqual(board.overallLeaderboard.map(r=>r.thsFrames),[600,610,null]);
  assert.equal(board.leaderboard[0].points,10);
 });
+
+test('game accounts reuse unique usernames and password checks without browser cookies',async()=>{
+ const {request,rows}=fixture({gameAccountsOnly:true,allowLegacySignup:false});
+ const post=body=>({method:'POST',body});
+ assert.equal((await request('auth/signup',{...post({username:'native_player',password:'test-password-123'}),headers:{origin}})).status,410);
+ const signup=await request('game/signup',post({username:'native_player',password:'test-password-123'}));
+ assert.equal(signup.status,200);assert.equal(signup.headers['set-cookie'],undefined);
+ const file=signup.data.playerFile;assert.equal(file.slug,'native_player');
+ assert.equal((await request('companion/me',{headers:{authorization:`Bearer ${file.token}`}})).data.playerId,file.id);
+ assert.equal((await request('game/signup',post({username:'NATIVE_PLAYER',password:'different-pass-123'}))).status,409);
+ assert.equal((await request('game/login',post({username:'native_player',password:'wrong-pass-123'}))).status,401);
+ const login=await request('game/login',post({username:'NATIVE_PLAYER',password:'test-password-123'}));
+ assert.equal(login.status,200);assert.equal(login.data.playerFile.id,file.id);assert.notEqual(login.data.playerFile.token,file.token);
+ assert.equal((await request('game/login',{...post({username:'native_player',password:'test-password-123'}),headers:{origin:'https://evil.test'}})).status,403);
+ assert.ok(!JSON.stringify([...rows]).includes(file.token));assert.ok(!JSON.stringify([...rows]).includes('test-password-123'));
+ const username=rows.get('usernames/native_player.json');username.value.credential.revision='changed';
+ assert.equal((await request('companion/me',{headers:{authorization:`Bearer ${file.token}`}})).status,401);
+});
+
+test('game login accepts an existing website account instead of reserving its name again',async()=>{
+ const {request}=fixture();
+ const credentials={username:'existing_player',password:'a-good-password-123'};
+ const old=await request('auth/signup',{method:'POST',headers:{origin},body:credentials});
+ assert.equal(old.status,200);
+ const login=await request('game/login',{method:'POST',body:credentials});
+ assert.equal(login.status,200);assert.equal(login.data.playerFile.id,old.data.profile.id);
+});
+
+test('browser game login binds the browser and Dolphin without a visible code',async()=>{
+ const {request,rows}=fixture({gameAccountsOnly:true,allowLegacySignup:false});
+ const post=(body,headers={})=>({method:'POST',body,headers});
+ const started=await request('game/connect/start',post({}));assert.equal(started.status,200);
+ const device=started.data,link=new URL(device.url),parts=new URLSearchParams(link.hash.slice(1));
+ const browser={id:parts.get('request'),browserSecret:parts.get('key')};
+ assert.equal(link.pathname,'/login.html');assert.equal(link.search,'');assert.ok(!device.url.includes(device.deviceSecret));assert.equal(device.code,undefined);
+ assert.equal((await request('game/connect/poll',post({id:device.id,deviceSecret:browser.browserSecret}))).status,403);
+ assert.equal((await request('game/connect/info',post(browser))).status,403);
+ assert.equal((await request('game/connect/info',post(browser,{origin:'https://evil.test'}))).status,403);
+ assert.equal((await request('game/connect/info',post(browser,{origin}))).data.profile,null);
+ assert.equal((await request('game/connect/approve',post(browser,{origin}))).status,401);
+ assert.equal((await request('companion/connect/info?id='+device.id)).status,410);
+ assert.equal((await request('companion/connect/poll',post({id:device.id,deviceSecret:device.deviceSecret}))).status,410);
+ const bad=await request('auth/signup',post({...browser,browserSecret:'f'.repeat(64),username:'browser_player',password:'browser-password-123'},{origin}));assert.equal(bad.status,410);
+ const signup=await request('auth/signup',post({...browser,username:'browser_player',password:'browser-password-123'},{origin}));assert.equal(signup.status,200);
+ const cookie=signup.headers['set-cookie'].split(';')[0];
+ assert.equal((await request('game/connect/info',post(browser,{origin,cookie}))).data.profile.slug,'browser_player');
+ const poll=()=>request('game/connect/poll',post({id:device.id,deviceSecret:device.deviceSecret}));
+ assert.equal((await poll()).data.status,'pending');
+ assert.equal((await request('game/connect/approve',post(browser,{origin,cookie}))).status,200);
+ const connected=await poll();assert.equal(connected.data.status,'connected');
+ const file=connected.data.playerFile;assert.equal(file.id,signup.data.profile.id);
+ assert.equal((await request('companion/me',{headers:{authorization:`Bearer ${file.token}`}})).status,200);
+ assert.equal((await poll()).data.playerFile.token,file.token);
+ assert.ok(!JSON.stringify([...rows]).includes(browser.browserSecret));assert.ok(!JSON.stringify([...rows]).includes(device.deviceSecret));
+ await request('game/connect/cancel',post({id:device.id,deviceSecret:device.deviceSecret}));
+ assert.equal((await poll()).status,410);
+ assert.equal((await request('game/connect/approve',post(browser,{origin,cookie}))).status,410);
+ // Consuming the pairing request keeps the acquired game session usable.
+ assert.equal((await request('companion/me',{headers:{authorization:`Bearer ${file.token}`}})).status,200);
+});
+
+test('expired browser links cannot create accounts or connect a game',async()=>{
+ let clock=Date.now();const {request}=fixture({gameAccountsOnly:true,now:()=>clock});
+ const post=(body,headers={})=>({method:'POST',body,headers});
+ const device=(await request('game/connect/start',post({}))).data;
+ const parts=new URLSearchParams(new URL(device.url).hash.slice(1)),browser={id:device.id,browserSecret:parts.get('key')};
+ clock+=600001;
+ assert.equal((await request('game/connect/info',post(browser,{origin}))).status,410);
+ assert.equal((await request('game/connect/poll',post({id:device.id,deviceSecret:device.deviceSecret}))).status,410);
+ assert.equal((await request('auth/signup',post({...browser,username:'expired_player',password:'browser-password-123'},{origin}))).status,410);
+});

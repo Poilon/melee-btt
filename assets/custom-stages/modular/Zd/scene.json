@@ -1,0 +1,37 @@
+{
+  "format": "GX_CMPR_1",
+  "size": [
+    2048,
+    1024
+  ],
+  "bounds": [
+    -361.76000000000005,
+    256.38,
+    361.76000000000005,
+    -105.38000000000002
+  ],
+  "sourceSha256": "66bc749c0b63546671d740941c8c04ca0702cf7a1b3311dbfb516a6bc85e0d18",
+  "tiles": [
+    {
+      "file": "background-0.cmpr",
+      "rect": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "sha256": "ae229f6633e0b4369bdec4e106d72adb8bfdd3d65f5d26709eaa2ee1971ddb2c"
+    },
+    {
+      "file": "background-1.cmpr",
+      "rect": [
+        1024,
+        0,
+        1024,
+        1024
+      ],
+      "sha256": "65a59e9b0689e712f8b23123ce87affdc66e507b1e3043a99ddf671d2fdb0227"
+    }
+  ],
+  "framing": "aspect-fit-v2"
+}

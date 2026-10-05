@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test('admin uses the normal account, schedules reveal and keeps management private', async ({page, browser}) => {
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
-  await page.goto('http://localhost:4319');
+  await page.goto('http://localhost:4319/challenges.html');
   await expect(page.locator('#admin-link')).toBeHidden();
   await page.locator('#player-action').click();
   await page.locator('#auth-username').fill('test_admin');
@@ -23,7 +23,7 @@ test('admin uses the normal account, schedules reveal and keeps management priva
   await expect(page.locator('#phase')).toContainText('OPEN');
   await page.screenshot({path:'build/admin-desktop.png',fullPage:true});
   const guestContext=await browser.newContext(),guest=await guestContext.newPage();
-  await guest.goto('http://localhost:4319');await expect(guest.locator('#admin-link')).toBeHidden();
+  await guest.goto('http://localhost:4319/challenges.html');await expect(guest.locator('#admin-link')).toBeHidden();
   await expect(guest.locator('#competition-detail')).toContainText('Closes and reveals');
   await guest.goto('http://localhost:4319/review');await expect(guest.locator('#access')).toBeVisible();await expect(guest.locator('#desk')).toBeHidden();
   await guestContext.close();
@@ -31,7 +31,7 @@ test('admin uses the normal account, schedules reveal and keeps management priva
   await page.setViewportSize({width:390,height:844});
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.screenshot({path:'build/admin-mobile.png',fullPage:true});
-  await page.goto('http://localhost:4319');await page.locator('#logout').click();await expect(page.locator('#admin-link')).toBeHidden();
+  await page.goto('http://localhost:4319/challenges.html');await page.locator('#logout').click();await expect(page.locator('#admin-link')).toBeHidden();
   await page.goto('http://localhost:4319/review');await expect(page.locator('#desk')).toBeHidden();
   expect(errors).toEqual([]);
 });
@@ -109,7 +109,7 @@ test('replay goes from companion to private review; public site shows only parti
   await expect(page.getByRole('button',{name:'Approve run'})).toHaveCount(0);
   await expect(page.getByRole('button',{name:'Exclude run'})).toHaveCount(0);
   await expect(page.locator('#queue')).toContainText('SUBMITTED');
-  await page.goto('http://localhost:4319/?character=donkey-kong');
+  await page.goto('http://localhost:4319/challenges.html?character=donkey-kong');
   await expect(page.locator('#scores')).toContainText('Browser Test');
   await expect(page.locator('#board-title')).toHaveText('Participants');
   await expect(page.locator('.leaderboard thead')).not.toContainText('RANK');
@@ -138,7 +138,7 @@ test('replay goes from companion to private review; public site shows only parti
   await manage().click();await page.getByRole('button',{name:'Disclose replay',exact:true}).click();
   await expect(page.locator('#shared-list')).toContainText('Browser Test');
   const guestContext=await page.context().browser().newContext(),guest=await guestContext.newPage();
-  await guest.goto('http://localhost:4319');await expect(guest.locator('#shared-list')).toContainText('00:19.83');
+  await guest.goto('http://localhost:4319/challenges.html');await expect(guest.locator('#shared-list')).toContainText('00:19.83');
   await expect(guest.locator('#history-list')).toBeEmpty();
   const evidence=await guest.locator('#shared-list a[download]').getAttribute('href');
   expect((await guest.request.get('http://localhost:4319'+evidence)).status()).toBe(200);
@@ -156,7 +156,7 @@ test('replay goes from companion to private review; public site shows only parti
   await page.goto('http://localhost:4318/review');
   await page.locator('#close').click();await page.locator('#confirm-close').click();
   await expect(page.locator('#phase')).toContainText('CLOSED');
-  await page.goto('http://localhost:4319/?character=donkey-kong');
+  await page.goto('http://localhost:4319/challenges.html?character=donkey-kong');
   await expect(page.locator('#board-title')).toHaveText('Leaderboard');
   await expect(page.locator('.record-group summary')).toContainText('Score and replay public after reveal');
   await expect(manage()).toHaveCount(0);
@@ -191,7 +191,7 @@ test('replay goes from companion to private review; public site shows only parti
 
 test('Unique username and password connect the companion without email or file downloads', async ({ page, context }) => {
   const errors = []; page.on('pageerror', e => errors.push(e.message));
-  await page.goto('http://localhost:4319');
+  await page.goto('http://localhost:4319/challenges.html');
   await expect(page.locator('#player-action')).toHaveText('Sign in');
   await expect(page.locator('input[type=file]')).toHaveCount(0);
   await page.locator('#create-account').click();
@@ -215,7 +215,7 @@ test('Unique username and password connect the companion without email or file d
   const dashboard = await (await page.request.get('http://localhost:4318/api/dashboard')).json();
   expect(JSON.stringify(dashboard)).not.toContain('token');
   await popup.close();
-  await page.goto('http://localhost:4319'); await page.locator('#logout').click();
+  await page.goto('http://localhost:4319/challenges.html'); await page.locator('#logout').click();
   await expect(page.locator('#player-action')).toHaveText('Sign in');
   await page.locator('#player-action').click();
   await page.locator('#auth-username').fill('BROWSER_PLAYER');
@@ -236,7 +236,7 @@ test('website groups all submitted runs, retains old bests and exports the full 
     body.history=Array.from({length:62},(_,i)=>({id:`history-${i}`,character:i<60?'fox':'marth',stage:i<60?'samus':'mewtwo',frames:i===0?600:1200+i,createdAt:new Date(1700000000000+i*1000).toISOString(),status:'pending'})).reverse();
     await route.fulfill({response,json:body});
   });
-  await page.goto('http://localhost:4319');
+  await page.goto('http://localhost:4319/challenges.html');
   await expect(page.locator('#history-count')).toHaveText('2 characters · 62 submitted runs');
   await expect(page.locator('#history-list details')).toHaveCount(2);
   const fox=page.locator('.record-group[data-character="fox"]');
@@ -308,7 +308,7 @@ test('character options persist with UCF and per-target Peach items',async({page
 test('seeded target mix is explained in the companion and on the website',async({page})=>{
  await page.goto('http://localhost:4318');
  await expect(page.locator('#motion-note')).toContainText('6–10 fixed');
- await page.goto('http://localhost:4319');
+ await page.goto('http://localhost:4319/challenges.html');
  await expect(page.locator('#target-behavior')).toHaveText('Seeded mix');
  await expect(page.locator('#course-grid')).toContainText('teleporting');
 });
@@ -326,7 +326,7 @@ test('Remove GO and Fixed camera save independently and survive reload',async({p
  test('public website drops course tools and ignores old focus and favorites preferences',async({page})=>{
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
   await page.addInitScript(()=>{localStorage.setItem('ttrc-focus','true');localStorage.setItem('ttrc-favorites','["fox"]');});
-  await page.goto('http://localhost:4319');
+  await page.goto('http://localhost:4319/challenges.html');
   await expect(page.locator('#course-grid .course-card')).toHaveCount(25);
   for(const label of ['Random course','Favorite','Share challenge','Focus mode','Selected course','Favorites only'])await expect(page.getByText(label,{exact:false})).toHaveCount(0);
   await expect(page.locator('.sidebar')).toBeVisible();
@@ -342,7 +342,7 @@ test('challenge deadline is prominent, ticks, and waits for server-confirmed rev
   await page.clock.install({time:now});
   let phase={phase:'open',timesRevealed:false,endsAt:'2026-09-29T15:04:05Z',closedAt:null};
   await page.route('**/api/dashboard?*',async route=>{const response=await route.fetch(),body=await response.json();await route.fulfill({response,json:{...body,competition:phase}});});
-  await page.goto('http://localhost:4319');
+  await page.goto('http://localhost:4319/challenges.html');
   await expect(page.locator('#deadline-countdown')).toHaveText('2d 03h 04m 05s');
   await expect(page.locator('#deadline-date')).toHaveAttribute('datetime',phase.endsAt.replace('Z','.000Z'));
   await expect(page.locator('#deadline-date')).toContainText('September 29, 2026');
@@ -373,14 +373,14 @@ test('admin generates a fresh seed and the previous challenge remains accessible
  await expect(page.locator('#generate-confirm')).toBeVisible();await page.locator('#publish-challenge').click();
  await expect(page.locator('#phase')).toContainText('20261012');await expect(page.locator('#phase')).toContainText('OPEN');
  await expect(page.locator('#generate-button')).toBeDisabled();
- await page.goto(origin);await expect(page.locator('#seed')).toHaveText('20261012');await page.locator('#challenge-archives summary').click();
+ await page.goto(origin+'/challenges.html');await expect(page.locator('#seed')).toHaveText('20261012');await page.locator('#challenge-archives summary').click();
  await page.getByRole('link',{name:`Seed ${before.challenge.rules.seed}`,exact:true}).click();
  await expect(page.locator('#seed')).toHaveText(String(before.challenge.rules.seed));await expect(page.locator('#competition-state')).toHaveText('Challenge closed');
 });
 
 test('old challenges prompt guests to sign in and show an empty state for nonparticipants',async({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('http://localhost:4319/#old-challenges');
+ await page.goto('http://localhost:4319/challenges.html#old-challenges');
  await expect(page.locator('#old-challenges-message')).toContainText('Sign in');
  await expect(page.locator('#old-challenges-list')).toBeEmpty();
  await page.locator('#old-challenges-signin').click();
@@ -405,7 +405,7 @@ test('website shows skeletons during slow loads and clears them after a characte
  base.competition={...base.competition,timesRevealed:true,phase:'closed'};
  let gate=requestGate(),fail=false;
  await page.route('**/api/dashboard?**',async route=>{await gate.wait;const character=new URL(route.request().url()).searchParams.get('character');await route.fulfill({status:fail?503:200,json:fail?{error:'Unavailable'}:{...base,character}});});
- await page.goto(origin,{waitUntil:'commit'});
+ await page.goto(origin+'/challenges.html',{waitUntil:'commit'});
  await expect(page.locator('#scores .loading-skeleton')).toBeVisible();await expect(page.locator('#loading-status')).toContainText('Loading challenge');
  gate.release();await expect(page.locator('#scores')).not.toHaveAttribute('aria-busy','true');await expect(page.locator('#loading-status')).toBeHidden();
  gate=requestGate();fail=true;
@@ -495,4 +495,23 @@ test('companion shows download progress, deferred installation, errors and autom
  state={...state,phase:'installing'};await expect(page.locator('#app-update-message')).toContainText('reconnect automatically');await expect(page.locator('#play')).toBeDisabled();
  const oldLoads=loads;state={...state,currentVersion:'0.10.0',phase:'current'};await expect.poll(()=>loads).toBeGreaterThan(oldLoads);await expect(page.locator('#app-version')).toHaveText('TTRC 0.10.0');await expect(page.locator('#app-update-message')).toContainText('Up to date');
  await page.setViewportSize({width:390,height:844});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});
+
+test('custom stage gallery previews the course, shows launch progress and reports errors',async({page})=>{
+ const base=await(await page.request.get('http://localhost:4318/api/dashboard')).json();
+ base.customStages=[{id:'grassland-1',name:'Grassland 1',character:'Fox',targets:10,preview:'/assets/custom-stages/grassland-1.png',description:'Pipes and hills.',available:true,prepared:false,busy:false},{id:'character-worlds',name:'Character Worlds',character:'All characters',targets:10,preview:'/assets/custom-stages/character-worlds.png',description:'26 themed courses.',available:true,prepared:false,busy:false}];
+ await page.route('**/api/dashboard',route=>route.fulfill({json:base}));
+ let finish;const gate=new Promise(r=>finish=r);
+ await page.route('**/api/custom-stages/grassland-1/launch',async route=>{expect(route.request().headers()['x-ttrc-action']).toBe('launch');await gate;await route.fulfill({status:409,json:{error:'Close the challenge Dolphin window before opening a custom stage.'}});});
+ await page.goto('/');await page.locator('#custom-stages summary').click();
+ await expect(page.locator('#custom-stages h3')).toHaveText(['Grassland 1','Character Worlds']);
+ await expect(page.locator('#custom-stages img').first()).toBeVisible();
+ await expect(page.locator('#play-character-worlds')).toBeEnabled();
+ await page.locator('#play-grassland').click();await expect(page.locator('#play-grassland')).toBeDisabled();
+ await expect(page.locator('#play-character-worlds')).toBeDisabled();
+ finish();await expect(page.locator('#toast')).toContainText('Close the challenge Dolphin');await expect(page.locator('#play-grassland')).toBeEnabled();
+ await page.route('**/api/custom-stages/character-worlds/launch',route=>route.fulfill({json:{status:'started'}}));
+ await page.locator('#play-character-worlds').click();await expect(page.locator('#toast')).toContainText('Character Worlds is open. Choose your character');
+ await page.setViewportSize({width:390,height:844});
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBeTruthy();
 });

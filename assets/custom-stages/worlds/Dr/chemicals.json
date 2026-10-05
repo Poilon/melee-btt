@@ -1,0 +1,89 @@
+{
+  "sourceSha256": "6e5641a98bbc731e7f6ff842b0ecd7f892f681adcdabc59d0a2821d673294ec8",
+  "sprites": {
+    "basin": {
+      "file": "chemical-basin.rgba8",
+      "size": [
+        512,
+        192
+      ],
+      "sourcePixels": [
+        18,
+        265,
+        853,
+        579
+      ],
+      "sha256": "a66a6ddfff6201cac808fdfc2da8a96ef7be54b05043caf795ebd95b1e0c7aa3"
+    },
+    "glob": {
+      "file": "chemical-glob.rgba8",
+      "size": [
+        256,
+        160
+      ],
+      "sourcePixels": [
+        876,
+        222,
+        1315,
+        499
+      ],
+      "sha256": "bd7549491415eed357cd8ddfeac6c5e62ce74d9b90857f661af336cd7a48d2c1"
+    },
+    "nozzle": {
+      "file": "chemical-nozzle.rgba8",
+      "size": [
+        192,
+        216
+      ],
+      "sourcePixels": [
+        1315,
+        165,
+        1659,
+        549
+      ],
+      "sha256": "496aeab21a3b01c609f3e71b658ab3ca88b8e940de1e50e85f7cc5d12fc424aa"
+    },
+    "cap": {
+      "file": "chemical-cap.rgba8",
+      "size": [
+        256,
+        104
+      ],
+      "sourcePixels": [
+        1703,
+        16,
+        2143,
+        194
+      ],
+      "sha256": "a4b069b531036ceb810d6fdd73519ad7f71970fd1e11744943b9fe78d5988df4"
+    },
+    "shaft": {
+      "file": "chemical-shaft.rgba8",
+      "size": [
+        64,
+        64
+      ],
+      "sourcePixels": [
+        1853,
+        214,
+        1986,
+        350
+      ],
+      "sha256": "990970cfa686fa21edd9490090278bf8b8206dfdb35964b21132322d386f8589"
+    },
+    "press": {
+      "file": "chemical-press.rgba8",
+      "size": [
+        128,
+        244
+      ],
+      "sourcePixels": [
+        1832,
+        350,
+        2014,
+        696
+      ],
+      "sha256": "f5cc1fa831e7188187394b82d354ecd948d2a63fc0e3327cf591293fed42e787"
+    }
+  }
+}

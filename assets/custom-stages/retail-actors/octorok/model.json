@@ -1,0 +1,58 @@
+{
+  "format": "TTRC_RETAIL_MESH_1",
+  "game": "The Legend of Zelda: Ocarina of Time 3D",
+  "source": "https://models.spriters-resource.com/3ds/thelegendofzeldaocarinaoftime3d/asset/351769/",
+  "sourceSha256": "9264203251e86ca77df5332ca87223093408be98774f211babeed7dbeec39fa4",
+  "poses": 1,
+  "period": 360,
+  "aspect": 0.6340681550528954,
+  "orientationYaw": 70,
+  "wrap": 1,
+  "meshes": [
+    {
+      "vertices": 67,
+      "triangles": 86,
+      "textureSize": [
+        128,
+        64
+      ],
+      "originalTexture": "octarock.png",
+      "originalTextureSha256": "d2338c553036eda11b93638f981cf1e4ebe87175327cb56006686683645d7d38",
+      "files": {
+        "mesh-0.corners": "5d099467858f16e8edcf45c7020335e2db678139720ab6dd5b7b1393ee1f6d50",
+        "mesh-0.vertices": "269cb5552191e60019bc8ed724f17653fc3a0bc940a803d90a5a477934abd08d",
+        "mesh-0.rgba8": "02c49aeeb74020c4d0c126eae397f03ae71ac70d4736c1fe99d6a41bf4b9dbab"
+      }
+    },
+    {
+      "vertices": 6,
+      "triangles": 2,
+      "textureSize": [
+        128,
+        64
+      ],
+      "originalTexture": "octarock.png",
+      "originalTextureSha256": "d2338c553036eda11b93638f981cf1e4ebe87175327cb56006686683645d7d38",
+      "files": {
+        "mesh-1.corners": "4da727294bbf08244ad4d984e50f1af0adc0c521735ccb51c9bab6cee0bd6a10",
+        "mesh-1.vertices": "3caf50f524a79cd7ad5566e7bc62d12a4e9b3a6e3ce1b49e031f2643a35552aa",
+        "mesh-1.rgba8": "02c49aeeb74020c4d0c126eae397f03ae71ac70d4736c1fe99d6a41bf4b9dbab"
+      }
+    },
+    {
+      "vertices": 119,
+      "triangles": 118,
+      "textureSize": [
+        128,
+        64
+      ],
+      "originalTexture": "octarock.png",
+      "originalTextureSha256": "d2338c553036eda11b93638f981cf1e4ebe87175327cb56006686683645d7d38",
+      "files": {
+        "mesh-2.corners": "f6104b8c4a9bc6b57905fd52192b239a7d6f3e29fc8efa41152cae71cfd3c502",
+        "mesh-2.vertices": "0b8b21a282ab1c7f97dbdb934d422984d1e0af1e267ef5736d1f5b527a804111",
+        "mesh-2.rgba8": "02c49aeeb74020c4d0c126eae397f03ae71ac70d4736c1fe99d6a41bf4b9dbab"
+      }
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "format": "TTRC_RETAIL_MESH_1",
+  "game": "Super Mario Galaxy",
+  "source": "https://models.spriters-resource.com/wii/supermariogalaxy/asset/351250/",
+  "sourceSha256": "1412c6718678d8329a0d53fd7e6381b04175d17ba846b1d0234129865ac52bb8",
+  "poses": 32,
+  "period": 128,
+  "meshes": [
+    {
+      "vertices": 151,
+      "triangles": 198,
+      "textureSize": [
+        128,
+        128
+      ],
+      "originalTexture": "PackunPetit.png",
+      "originalTextureSha256": "359aa2e923eb89775f3afa34b28a87087883a2585ffa66d3655e8a9f6f2f7262",
+      "files": {
+        "mesh-0.vertices": "0359974a3509747a361dbaa458008e621f319a82f518de617e3bd6942680fa3c",
+        "mesh-0.corners": "e07d3e2689974775d069549432e0285796ae7254645fa9e77b4c434a7e9f3313",
+        "mesh-0.rgba8": "a794b9bc151f30b99c30a338cfd6b726f367b1557d66c688719f30bce54b559d"
+      }
+    },
+    {
+      "vertices": 319,
+      "triangles": 546,
+      "textureSize": [
+        128,
+        128
+      ],
+      "originalTexture": "PackunPetit.png",
+      "originalTextureSha256": "359aa2e923eb89775f3afa34b28a87087883a2585ffa66d3655e8a9f6f2f7262",
+      "files": {
+        "mesh-1.vertices": "59e4dad97bdfbb38b75fb22a80aa012ff83b264164509193ded914091d5ec59c",
+        "mesh-1.corners": "f2d973c8b58f2dcfccba204e3dae6bf40c4c11b2b172b3128b92182f0eb25a11",
+        "mesh-1.rgba8": "a794b9bc151f30b99c30a338cfd6b726f367b1557d66c688719f30bce54b559d"
+      }
+    }
+  ]
+}

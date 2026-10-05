@@ -1,0 +1,184 @@
+[
+  {
+    "stage": "Mr",
+    "name": "Mushroom Mile",
+    "character": "Mario",
+    "revision": "c0cc7ab2a56dd073a1dfb7eca4e75741394f1dc4e51a1dde22b2b71e39d658d4",
+    "image": "/editor/data/Mr.png"
+  },
+  {
+    "stage": "Ca",
+    "name": "Mute City Circuit",
+    "character": "Captain Falcon",
+    "revision": "57bedcfab61e05aab51450e04fbb17725066723460b5c19079c4bf17c6ce36a8",
+    "image": "/editor/data/Ca.png"
+  },
+  {
+    "stage": "Cl",
+    "name": "Kokiri Canopy",
+    "character": "Young Link",
+    "revision": "4e2d34fe63bdf25e99ff94f43625fde2fd89e39be6ccce9040e8c14fd6dfbb96",
+    "image": "/editor/data/Cl.png"
+  },
+  {
+    "stage": "Dk",
+    "name": "Jungle Boardwalk",
+    "character": "Donkey Kong",
+    "revision": "27e0400b2790ee23a4e8581ddf52f2acdceb3e36f48b9eb60692d7daabc955cd",
+    "image": "/editor/data/Dk.png"
+  },
+  {
+    "stage": "Dr",
+    "name": "Capsule Clinic",
+    "character": "Dr. Mario",
+    "revision": "50fbbb9304309510747c67954c594d46175769aa295699fc36a0383d17127f92",
+    "image": "/editor/data/Dr.png"
+  },
+  {
+    "stage": "Fc",
+    "name": "Corneria Rooftops",
+    "character": "Falco",
+    "revision": "39e90674455054ee865d6b9f6da8c9b0e1ee1dae896bdc3b2235fbcdd62eb690",
+    "image": "/editor/data/Fc.png"
+  },
+  {
+    "stage": "Fx",
+    "name": "Orbital Hangar",
+    "character": "Fox",
+    "revision": "8500bbf1ef81d4a3d243fb5ef2f2b2ed90f9c9cf0f6da811ddb3ca608f31b89e",
+    "image": "/editor/data/Fx.png"
+  },
+  {
+    "stage": "Ic",
+    "name": "Summit Steps",
+    "character": "Ice Climbers",
+    "revision": "aeca061f1b8e89de78dd9c51404507b6980952e3183c6eee9e0dbc66ca6cea14",
+    "image": "/editor/data/Ic.png"
+  },
+  {
+    "stage": "Kb",
+    "name": "Dream Garden",
+    "character": "Kirby",
+    "revision": "c58f8a64c8bb6259f319aff3406b4a13879dbed3d0ae89fdcb26cc9c8d92cde5",
+    "image": "/editor/data/Kb.png"
+  },
+  {
+    "stage": "Kp",
+    "name": "Lava Keep",
+    "character": "Bowser",
+    "revision": "0866ad40fa127e96c7e9a7be9cf8508adb4cd753d27d260f5e88530fd0428001",
+    "image": "/editor/data/Kp.png"
+  },
+  {
+    "stage": "Lk",
+    "name": "Forest Sanctuary",
+    "character": "Link",
+    "revision": "c3984d39eb145edccba87632ad7d9498b0384bdce670806119fa002d02142238",
+    "image": "/editor/data/Lk.png"
+  },
+  {
+    "stage": "Lg",
+    "name": "The Crooked Manor",
+    "character": "Luigi",
+    "revision": "044e468611af1c0a1db50c8f3f7c6dd9fe75d55596ad097c500198e83b06ebbd",
+    "image": "/editor/data/Lg.png"
+  },
+  {
+    "stage": "Ms",
+    "name": "Altean Ramparts",
+    "character": "Marth",
+    "revision": "2234be6462768413b7bc01adb667cfb829fe39126bf0cea6bb9e0977ef8eb900",
+    "image": "/editor/data/Ms.png"
+  },
+  {
+    "stage": "Mt",
+    "name": "Psychic Containment",
+    "character": "Mewtwo",
+    "revision": "2eabdaa72561c926d657a08aacd1d1b89f76f712c058de0f1fd165581437094e",
+    "image": "/editor/data/Mt.png"
+  },
+  {
+    "stage": "Ns",
+    "name": "Onett After School",
+    "character": "Ness",
+    "revision": "33b2017ad50cd289a75e2a88ce32e9b6c145b2baa2042fe127524e2df1c304ee",
+    "image": "/editor/data/Ns.png"
+  },
+  {
+    "stage": "Pe",
+    "name": "Royal Gardens",
+    "character": "Peach",
+    "revision": "106a4f4e34e52e7c74c1748e1785b0520d9efd99c5df1fc4200eeea0be526809",
+    "image": "/editor/data/Pe.png"
+  },
+  {
+    "stage": "Pc",
+    "name": "Battery Workshop",
+    "character": "Pichu",
+    "revision": "cf0d0e893a09a8f9dd1b00fc974960d7bf1420f722a98de2717844569e8eb383",
+    "image": "/editor/data/Pc.png"
+  },
+  {
+    "stage": "Pk",
+    "name": "Power Plant",
+    "character": "Pikachu",
+    "revision": "1edc31ef12193e79138a99b0e4bedcfd9f0610a8ac2cafb5f66be82b2aa88a30",
+    "image": "/editor/data/Pk.png"
+  },
+  {
+    "stage": "Pr",
+    "name": "Moonlight Recital",
+    "character": "Jigglypuff",
+    "revision": "bc0995cc982bb15dc8442ae9b0d5180124509b77388f21f816fda27a9dd871a8",
+    "image": "/editor/data/Pr.png"
+  },
+  {
+    "stage": "Ss",
+    "name": "Zebes Depths",
+    "character": "Samus",
+    "revision": "b92439c06b25a80c3789e214c441ca41734b75b71f5c3fa54da7424cdd36d333",
+    "image": "/editor/data/Ss.png"
+  },
+  {
+    "stage": "Sk",
+    "name": "Shadow Shrine",
+    "character": "Sheik",
+    "revision": "072ec9551ab75c28849b7f2231a589b0831f1d02c1abbfe5bf404b3c6360e7e0",
+    "image": "/editor/data/Sk.png"
+  },
+  {
+    "stage": "Ys",
+    "name": "Eggshell Hills",
+    "character": "Yoshi",
+    "revision": "a58c985bc164fea453b930346223184b58ef78738b7d492669471b5bec5373ce",
+    "image": "/editor/data/Ys.png"
+  },
+  {
+    "stage": "Zd",
+    "name": "Temple of Light",
+    "character": "Zelda",
+    "revision": "d42a99eb1d41972edbc8818b3982c140d980a57cd27caf368fd2702d5405ff47",
+    "image": "/editor/data/Zd.png"
+  },
+  {
+    "stage": "Gw",
+    "name": "Fire Rescue",
+    "character": "Mr. Game & Watch",
+    "revision": "433a90ab887abea1b44423bfe749da75c625400e5bbab6f05532850851949d68",
+    "image": null
+  },
+  {
+    "stage": "Fe",
+    "name": "Ember Bastion",
+    "character": "Roy",
+    "revision": "fd021a3ef11d2d50194bc75cc40afd449405b3df5f993328daa2e5d5d34f07b3",
+    "image": "/editor/data/Fe.png"
+  },
+  {
+    "stage": "Gn",
+    "name": "Dark Citadel",
+    "character": "Ganondorf",
+    "revision": "4c7dc693514d5864d391a398303411d7e57a9c9e4aaf64e2873f4255625958ea",
+    "image": "/editor/data/Gn.png"
+  }
+]

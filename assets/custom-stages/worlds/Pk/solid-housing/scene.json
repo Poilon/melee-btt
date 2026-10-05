@@ -1,0 +1,38 @@
+{
+  "format": "GX_CMPR_1",
+  "size": [
+    512,
+    1024
+  ],
+  "bounds": [
+    0,
+    455,
+    339,
+    0
+  ],
+  "sourceSha256": "25e5ca12a9af97a689f140ca72ed9b4f77f82c92310c5aad387268b7d7a9b6f9",
+  "collisionTracing": {
+    "size": [
+      339,
+      455
+    ]
+  },
+  "tiles": [
+    {
+      "file": "housing.cmpr",
+      "rect": [
+        0,
+        0,
+        512,
+        1024
+      ],
+      "sha256": "d4685d91fe6955e5d8d9d087d0adb8f9ccfbc60c6e6f9723900d1990fc696e94"
+    }
+  ],
+  "sourceRect": [
+    608,
+    347,
+    947,
+    802
+  ]
+}

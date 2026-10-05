@@ -1,0 +1,39 @@
+{
+  "sprites": {
+    "deck": {
+      "file": "prop-deck.rgba8",
+      "size": [
+        384,
+        88
+      ],
+      "sha256": "3b24b17254eec8e1e98c57abd78ca13a48cc870ef543aa0bfe65f853188d1341",
+      "sourceAtlas": "nature",
+      "sourceSha256": "278f841bf7317066a9e4279ca1d258feb973d4906b8b6e13872b7e0299ac7ff9",
+      "sourcePixels": [
+        18,
+        756,
+        744,
+        924
+      ],
+      "aspect": 0.23140495867768596,
+      "walkingInset": 0.0
+    },
+    "hazard": {
+      "file": "prop-hazard.rgba8",
+      "size": [
+        256,
+        268
+      ],
+      "sha256": "6059d2007727cdaf965c19857f15b057e655642cd09182a3e7b81a245918677b",
+      "sourceAtlas": "hazard-pod.png",
+      "sourceSha256": "1b4a2d0f89fdcd66017ff3261d2828fb71fefd8c42d4eadab3323d9ba8ad13b1",
+      "sourcePixels": [
+        282,
+        16,
+        1241,
+        1015
+      ],
+      "aspect": 1.0417101147028154
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "sprites": {
+    "deck": {
+      "file": "prop-deck.rgba8",
+      "size": [
+        384,
+        84
+      ],
+      "sha256": "450295f70dffa3fbecfb329a421b471e4478a121114f54e859f2f819ef1143be",
+      "sourceAtlas": "technology",
+      "sourceSha256": "a468ba07de32fc25b13021d55645da4232501d4ad0c6b13757aa788899155cb2",
+      "sourcePixels": [
+        23,
+        470,
+        745,
+        631
+      ],
+      "aspect": 0.22299168975069253,
+      "walkingInset": 0.006211180124223602
+    },
+    "gate": {
+      "file": "prop-gate.rgba8",
+      "size": [
+        132,
+        512
+      ],
+      "sha256": "23b9aef540f8487e4f7deb22b42cc2aded2e0b944f778e7a88404f4b84a37136",
+      "sourceAtlas": "containment-gate-source.png",
+      "sourceSha256": "66cf82b9166e39e5c31400022cca07c2547d4547b19a391315113da8351d9f70",
+      "sourcePixels": [
+        318,
+        12,
+        707,
+        1518
+      ],
+      "aspect": 3.878787878787879
+    }
+  }
+}

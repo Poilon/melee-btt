@@ -1,0 +1,88 @@
+{
+  "format": "TTRC_RETAIL_MESH_1",
+  "game": "The Legend of Zelda: Ocarina of Time 3D",
+  "source": "https://models.spriters-resource.com/3ds/thelegendofzeldaocarinaoftime3d/asset/351781/",
+  "sourceSha256": "b0c119c9434ebc6701c917b1ace357749829a4b9790a32e669c7094f370b91f5",
+  "poses": 1,
+  "period": 360,
+  "aspect": 2.0678045247664283,
+  "orientationYaw": 0,
+  "wrap": 1,
+  "meshes": [
+    {
+      "vertices": 41,
+      "triangles": 42,
+      "textureSize": [
+        128,
+        128
+      ],
+      "originalTexture": "beamos_00.png",
+      "originalTextureSha256": "52964a2a7e734af183e701cb37741c1df7092e48a34a0c347bb4fcab071b4fa9",
+      "files": {
+        "mesh-0.corners": "958ed8e06edfa09575c21446f3f2d66b8faecf7fae319246846dbaf883be4099",
+        "mesh-0.vertices": "6024cd7a0c3c06591aecd0ad654be86ef4ef31a94a282acab7c8a079c695a7a5",
+        "mesh-0.rgba8": "adc73c7ffe70a6bd42521ef29de091b26e463c398edac1ec2360cad8a2e0f597"
+      }
+    },
+    {
+      "vertices": 41,
+      "triangles": 42,
+      "textureSize": [
+        128,
+        128
+      ],
+      "originalTexture": "beamos_00.png",
+      "originalTextureSha256": "52964a2a7e734af183e701cb37741c1df7092e48a34a0c347bb4fcab071b4fa9",
+      "files": {
+        "mesh-1.corners": "55f152769f0bb7cd5a0d3d869a23b4dbf3693dfbafd0586be7b0ac3bfe46166e",
+        "mesh-1.vertices": "3eb33c03857e78e3133e860e80556bc2d25de233c5daaee366644d67f0e7e5b8",
+        "mesh-1.rgba8": "adc73c7ffe70a6bd42521ef29de091b26e463c398edac1ec2360cad8a2e0f597"
+      }
+    },
+    {
+      "vertices": 9,
+      "triangles": 8,
+      "textureSize": [
+        128,
+        128
+      ],
+      "originalTexture": "beamos_00.png",
+      "originalTextureSha256": "52964a2a7e734af183e701cb37741c1df7092e48a34a0c347bb4fcab071b4fa9",
+      "files": {
+        "mesh-2.corners": "6bac481e220ef8d0267c04bb07efef62e5d15e1c037d7e15d89c93ae76368d75",
+        "mesh-2.vertices": "1d14f8203e0595ee23d31585d3ad3589d280c8cad4f9a4cf05b78925af9b8ede",
+        "mesh-2.rgba8": "adc73c7ffe70a6bd42521ef29de091b26e463c398edac1ec2360cad8a2e0f597"
+      }
+    },
+    {
+      "vertices": 17,
+      "triangles": 20,
+      "textureSize": [
+        128,
+        128
+      ],
+      "originalTexture": "beamos_00.png",
+      "originalTextureSha256": "52964a2a7e734af183e701cb37741c1df7092e48a34a0c347bb4fcab071b4fa9",
+      "files": {
+        "mesh-3.corners": "a5315bec9d8e30d5ad77c361dedc4a857ebaf551224018d7ffcc4b7e3dcff3c2",
+        "mesh-3.vertices": "d91bb3f06f42ed11b79d932bb24a365c490f82efcc1443e7651e992e5af0134f",
+        "mesh-3.rgba8": "adc73c7ffe70a6bd42521ef29de091b26e463c398edac1ec2360cad8a2e0f597"
+      }
+    },
+    {
+      "vertices": 211,
+      "triangles": 270,
+      "textureSize": [
+        128,
+        128
+      ],
+      "originalTexture": "beamos_00.png",
+      "originalTextureSha256": "52964a2a7e734af183e701cb37741c1df7092e48a34a0c347bb4fcab071b4fa9",
+      "files": {
+        "mesh-4.corners": "b6934f6f8745cee8b78ab76bc5ece4c133d77b762e36d78f3a3caeed43465b67",
+        "mesh-4.vertices": "2f2eec73d26e1bd7a29658490713f4f1ce9f8c1d30a8168512f0fae8528c2eb2",
+        "mesh-4.rgba8": "adc73c7ffe70a6bd42521ef29de091b26e463c398edac1ec2360cad8a2e0f597"
+      }
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "format": "TTRC_RETAIL_MESH_1",
+  "game": "Super Mario Galaxy",
+  "source": "https://models.spriters-resource.com/wii/supermariogalaxy/asset/283810/",
+  "sourceSha256": "57ee907d46e9c9d8af4c730374553ca72977d185c4c11d9d37546f9231838e78",
+  "poses": 32,
+  "period": 128,
+  "meshes": [
+    {
+      "vertices": 447,
+      "triangles": 846,
+      "textureSize": [
+        256,
+        128
+      ],
+      "originalTexture": "teresa.0.png",
+      "originalTextureSha256": "8fb033cf8f923314bc49c8a61a2a346e2a0d65d4fb3630db91666122c0b0d707",
+      "files": {
+        "mesh-0.vertices": "5b8f399f9e4d36e89a637b7f9ad333b53b8a5cde8f792bc8eb17901a1b6bfff2",
+        "mesh-0.corners": "0b00653a40c0b4179490644b07046b1cdcc176b6f289e2afd4638d682a2fe756",
+        "mesh-0.rgba8": "f6156803f2d802a2c1eadbd113b97af97579ba91e82515c5df11916d1d455a83"
+      }
+    }
+  ]
+}

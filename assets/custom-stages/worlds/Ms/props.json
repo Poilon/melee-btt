@@ -1,0 +1,40 @@
+{
+  "sprites": {
+    "deck": {
+      "file": "prop-deck.rgba8",
+      "size": [
+        384,
+        72
+      ],
+      "sha256": "14ceef9942cf28a1f25b3696d05534a1aa33ad94cfa0c96aa44ed8ae768a1f9e",
+      "sourceAtlas": "castle",
+      "sourceSha256": "39b220888977d2c6774f11fbacac228d64ec63875b8e50323ade5981a1c62dc1",
+      "sourcePixels": [
+        22,
+        104,
+        747,
+        237
+      ],
+      "aspect": 0.18344827586206897,
+      "walkingInset": 0.0
+    },
+    "gate": {
+      "file": "prop-gate.rgba8",
+      "size": [
+        128,
+        256
+      ],
+      "sha256": "0ae98c04d7077ab159467eddab37a2a46e4149a41143adc44011d0509fe36967",
+      "sourceAtlas": "castle",
+      "sourceSha256": "39b220888977d2c6774f11fbacac228d64ec63875b8e50323ade5981a1c62dc1",
+      "sourcePixels": [
+        1031,
+        509,
+        1275,
+        948
+      ],
+      "aspect": 1.7991803278688525,
+      "walkingInset": 0.06605922551252848
+    }
+  }
+}

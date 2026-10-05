@@ -1,0 +1,49 @@
+{
+  "format": "TTRC_RETAIL_MESH_1",
+  "game": "New Super Mario Bros. Wii",
+  "source": "https://models.spriters-resource.com/wii/newsupermariobroswii/asset/285313/",
+  "sourceSha256": "fe7f6f13bf2d12352ef3c0d8d6ce232492cf8056178f5eba28bc18e1e11e13fc",
+  "poses": 1,
+  "period": 128,
+  "meshes": [
+    {
+      "vertices": 432,
+      "triangles": 144,
+      "textureSize": [
+        512,
+        512
+      ],
+      "originalTexture": "bubble_body.png",
+      "originalTextureSha256": "8da0b3352d0091ce510e9ea061f1f65776e7484a0963b4df9ba97530b9b31a67",
+      "files": {
+        "mesh-0.vertices": "6a1e36a90fd8d130a083ab1efe9e3e398df492b2688bfd4aab179650e2ab74c0",
+        "mesh-0.corners": "26456d020739ca7c7a836bce71a39fcb4be6d57cc871b7ecf9a0e90861aa94d5",
+        "mesh-0.rgba8": "4acdb59fa288a360ffcc541ddbf84a943f80572d7eafe9ac12ab68bcf77ce84c"
+      },
+      "textureOverride": {
+        "file": "fire-body.png",
+        "sha256": "7f62da5e744c480902c4bb71af46c098b53da5fd16c8d49fb08a5d0c8a142ed7",
+        "encodingSize": [
+          512,
+          512
+        ],
+        "uvProjection": "spherical"
+      }
+    },
+    {
+      "vertices": 308,
+      "triangles": 104,
+      "textureSize": [
+        8,
+        8
+      ],
+      "originalTexture": "bubble_eye.png",
+      "originalTextureSha256": "06ad4f27b4d791e964977ed5f22434e1007664facbaea61a84652ba8bce12ff0",
+      "files": {
+        "mesh-1.vertices": "d76fa8b6403bde066c3c5896bc5f9290b4e20173d286e8e6b70c31ba53d3bbf6",
+        "mesh-1.corners": "6b89c50fdcec86b015bb380b21e0126f5384736e3d0431aadf1c80207a762504",
+        "mesh-1.rgba8": "6d6b14701ed9cc3f4c174129776a6554a285ab7b4c8ca7105d46039e9d5fb14e"
+      }
+    }
+  ]
+}

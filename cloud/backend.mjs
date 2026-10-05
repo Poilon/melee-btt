@@ -1,5 +1,6 @@
 import { createAuth, publicProfile } from './auth.mjs';
 import { currentCredential } from './password.mjs';
+import { createWorlds } from './worlds.mjs';
 import { createCompetition } from './competition.mjs';
 import { isAdmin } from './admin.mjs';
 import {overallStandings,characterPoints} from '../shared/standings.mjs';
@@ -8,7 +9,7 @@ import { createHash, randomBytes } from 'node:crypto';
 const hash = value => createHash('sha256').update(value).digest('hex');
 const random = () => randomBytes(32).toString('hex');
 const cookieValue = (req, name) => (req.headers.cookie || '').split(';').map(s => s.trim()).find(s => s.startsWith(`${name}=`))?.slice(name.length + 1);
-export function createCloudHandler({ store, challenge, gecko, origin, secret, reviewerKey, endsAt, challengeManager, now = Date.now, allowLegacySignup = false }) {
+export function createCloudHandler({ store, challenge, gecko, origin, secret, reviewerKey, endsAt, challengeManager, now = Date.now, allowLegacySignup = false, gameAccountsOnly = false, worldsCatalog }) {
   const cookie = (name, value, seconds) => `${name}=${value}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${seconds}`;
   const json = (res, status, value) => { res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' }); res.end(JSON.stringify(value)); };
   const session = async req => {
@@ -33,7 +34,8 @@ export function createCloudHandler({ store, challenge, gecko, origin, secret, re
     for await (const chunk of req) { data += chunk; if (data.length > 16_384) throw new Error('Body too large'); }
     return JSON.parse(data || '{}');
   };
-  const auth = createAuth({ store, origin, secret, session, body, cookie, json, now });
+  const auth = createAuth({ store, origin, secret, session, body, cookie, json, now, gameAccountsOnly });
+  const worlds = createWorlds({store,catalog:worldsCatalog,bearer,json,now});
   const competition = createCompetition({ store, challenge, gecko, origin, reviewerKey, endsAt, challengeManager, bearer, session, json, now });
 
   return async (req, res) => {
@@ -43,10 +45,11 @@ export function createCloudHandler({ store, challenge, gecko, origin, secret, re
       const url = new URL(req.url, origin);
       const path = url.searchParams.get('route') || url.pathname.replace(/^\/api\/?/, '');
       if (req.headers.origin && req.headers.origin !== origin) return json(res, 403, { error: 'Origin not allowed.' });
-      if (req.method === 'POST' && !['companion/browser', 'companion/connect/start', 'companion/connect/poll', 'runs', 'submissions'].includes(path) && req.headers.origin !== origin) {
+      if (req.method === 'POST' && !['worlds/submit','game/login','game/signup','game/connect/start','game/connect/poll','game/connect/cancel','companion/browser', 'companion/connect/start', 'companion/connect/poll', 'runs', 'submissions'].includes(path) && req.headers.origin !== origin) {
         return json(res, 403, { error: 'Action not allowed.' });
       }
       if (await auth(path, req, res, url)) return;
+      if (await worlds(path, req, res, url)) return;
       if (await competition.handle(path, req, res)) return;
       if(req.method==='GET'&&path==='challenges/mine'){
         const user=await session(req);
@@ -88,7 +91,7 @@ export function createCloudHandler({ store, challenge, gecko, origin, secret, re
         const mine = user ? rows.filter(r => r.playerId === user.id) : [];
         const personalBest = mine.filter(r => r.character === character).sort((a, b) => a.frames - b.frames)[0];
         return json(res, 200, { challenge, competition: phase, scope: 'public', identity, player: user ? { id: user.id } : null,
-          auth: { mode: 'password', configured: Boolean(secret), account: user ? { name: profile?.displayName || '', provider: user.provider || 'legacy', linked: Boolean(profile), admin: await isAdmin(store, user) } : null },
+          auth: { mode: 'password', gameAccountsOnly, configured: Boolean(secret), account: user ? { name: profile?.displayName || '', provider: user.provider || 'legacy', linked: Boolean(profile), admin: await isAdmin(store, user) } : null },
           capture: { status: 'remote', experimental: true },
           overallLeaderboard:phase.timesRevealed?overallStandings(rows.filter(r=>r.current),challenge.assignments):[],
           leaderboard: leaders, participants, sharedRuns, stats: { completions: rows.filter(r => r.current && r.status !== 'rejected').length, players: participants.length, characters: new Set(rows.filter(r => r.current && r.status !== 'rejected').map(r => r.character)).size },

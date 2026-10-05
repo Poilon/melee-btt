@@ -1,0 +1,691 @@
+{
+  "version": 1,
+  "textures": [
+    {
+      "stage": "Ca",
+      "file": "tex1_1024x1024_56a249b5a71b2107_14.png",
+      "source": "background.png",
+      "sha256": "10ad3bfc58f8dc964359a3672b4ad305c445ca07a3602edcf46c838b1a8e5f69",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Ca",
+      "file": "tex1_1024x1024_c67c18dcfef1ba4b_14.png",
+      "source": "background.png",
+      "sha256": "d9fcb1388482ecc7143acc8e484e0c58f81a8f6674e9fddaf6960fa8c0b82444",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Cl",
+      "file": "tex1_1024x1024_e934e818f8ba9e8d_14.png",
+      "source": "background.png",
+      "sha256": "7442ec208fdf2eb3f05a5bdc102706c74654a98eb1e8b80983628314e98b175c",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Cl",
+      "file": "tex1_1024x1024_bf2c24d82b857985_14.png",
+      "source": "background.png",
+      "sha256": "7b547d52f0436c3b5c58d66d3ddbf0d3b082482365fd74b32eb14a48ee18de3c",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Dk",
+      "file": "tex1_1024x1024_d2aee1bfa0819731_14.png",
+      "source": "background.png",
+      "sha256": "05fdad6d9c5ff51bbe553b987d86f3cbcfc8be94c03e0e0a60a12c63411a4d61",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Dk",
+      "file": "tex1_1024x1024_c41cb730eb399e13_14.png",
+      "source": "background.png",
+      "sha256": "355b7720b0e2f2877f1dec64d0bcb6814ad8b37d0063c3989fe258caf39dc406",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Dr",
+      "file": "tex1_1024x1024_d93165ee09adef57_14.png",
+      "source": "background.png",
+      "sha256": "ed6902f0e1718426405f18571feadad04e488565ec4502f3a3b1526cf3e32ef4",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Dr",
+      "file": "tex1_1024x1024_9362901a956053dd_14.png",
+      "source": "background.png",
+      "sha256": "26da6d88190ea96455b12f2fb504b192686538bb7270ddbbacb5a4d4ff17ab4f",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Fc",
+      "file": "tex1_1024x1024_63c643b48888e83c_14.png",
+      "source": "background.png",
+      "sha256": "9044af7fb5d729d00a377113dc1ea49dac70a911df24d4e3272ac6e65d1378ab",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Fc",
+      "file": "tex1_1024x1024_f7a8e7bdc420dc96_14.png",
+      "source": "background.png",
+      "sha256": "d6f8241c0be780ae23196bdfac43a8ceb4468bfdb237ca604dfb9b5ff6ef3b71",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Fe",
+      "file": "tex1_1024x1024_cda4107ef03f4c04_14.png",
+      "source": "background.png",
+      "sha256": "52b2514a7d85772950d0cd322f2e429963e875899dfee0c78280f4e499212f46",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Fe",
+      "file": "tex1_1024x1024_2bc52ce49dcd85c8_14.png",
+      "source": "background.png",
+      "sha256": "fe9af24b6512f2a37812e6c7e09dd5d82c295fd7d3074768d14fbea154dd5f31",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Fx",
+      "file": "tex1_1024x1024_7c65883ff4a7680d_14.png",
+      "source": "background-hd.png",
+      "sha256": "a234612b782818fb5fd5a61b4f20af3a163138ce2cf8cf343c84dcd30a6c47aa",
+      "sourceSize": [
+        4096,
+        2048
+      ],
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "stage": "Fx",
+      "file": "tex1_1024x1024_5e234ada0a028c6e_14.png",
+      "source": "background-hd.png",
+      "sha256": "ab2332c10e6d189c10cd625b4098d8fc01cd68b018f6a615af892a413a57e937",
+      "sourceSize": [
+        4096,
+        2048
+      ],
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "stage": "Gn",
+      "file": "tex1_1024x1024_8b45695e33536541_14.png",
+      "source": "background.png",
+      "sha256": "09c5c8f74ffe2f9cdd139fb800a0f09995af61e0742bc69a9740b51c191bf1ba",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Gn",
+      "file": "tex1_1024x1024_e987d38f71c10e7f_14.png",
+      "source": "background.png",
+      "sha256": "74f2c687d2a27ed43fd1b2da2d686cf7d341857448109fe100c5bbc3d204a63a",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Ic",
+      "file": "tex1_1024x1024_13eb42be52a24ddc_14.png",
+      "source": "background.png",
+      "sha256": "f3c1aa46968a7cd34cb6350a9a55bf247e9cf16424c8f25a10785c4cb9d2f8cc",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Ic",
+      "file": "tex1_1024x1024_03d3e5b6f2188fd5_14.png",
+      "source": "background.png",
+      "sha256": "b33e45a345c08651d53cadb3e0c89fcdc2c248082248c04d4b60afc7b5daa769",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Kb",
+      "file": "tex1_1024x1024_5f4e491d211af8c1_14.png",
+      "source": "background.png",
+      "sha256": "892c4939e30f9936a875fc110194d9367d5cda29a222be40d131d957bb55ee8d",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Kb",
+      "file": "tex1_1024x1024_89bf0a607e8ad530_14.png",
+      "source": "background.png",
+      "sha256": "1e4d20ea4be1df957927560d01a07fa59ff217a9834c9a7b601e423f348e7b45",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Kp",
+      "file": "tex1_1024x1024_5da22618b03a95d8_14.png",
+      "source": "background.png",
+      "sha256": "0ec2f0f1c16970d848e212d9910b7fe19774b4f7dc3fff4ff9b05331b1e77fc3",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Kp",
+      "file": "tex1_1024x1024_b4e67dc09e6f6d0d_14.png",
+      "source": "background.png",
+      "sha256": "e735f7c2344d4685f42c371982c9a409f12e5b20caf4b6e153c09bc53108cd69",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Lg",
+      "file": "tex1_1024x1024_5e7d8c57f83b61e1_14.png",
+      "source": "background.png",
+      "sha256": "f4a2fdb82e97dd2d96b1984e76909852392f03faeff5b29188c55b3ec2cbb53d",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "stage": "Lk",
+      "file": "tex1_1024x1024_6ddb0889b031646f_14.png",
+      "source": "background.png",
+      "sha256": "f8a588aa973a76b7346236fefa192fe2bfcddce792e4a7ca6b8017607b98f9a5",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Lk",
+      "file": "tex1_1024x1024_aac72a8e88aedee4_14.png",
+      "source": "background.png",
+      "sha256": "19c19b8dc51b9eeb129f580b5ca9429027851127b34202892a04f9bf6b20e2b5",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Mr",
+      "file": "tex1_1024x1024_1b058ba4a3d7884e_14.png",
+      "source": "background.png",
+      "sha256": "ef1201feeb53cdf70def42fc080f6b88e13e498840ff0ed8249c501ffc2162bb",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Mr",
+      "file": "tex1_1024x1024_225660ad64391a1b_14.png",
+      "source": "background.png",
+      "sha256": "91c39192dda857d3953581f5d0db31d694b5393b3d53006b403e87e94603ed48",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Ms",
+      "file": "tex1_1024x1024_0376cf90e7adcef4_14.png",
+      "source": "background.png",
+      "sha256": "24156e26bc6a05a4f64b9a238a59c2cde312b36cdf00b18222f7c6a112a764ba",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Ms",
+      "file": "tex1_1024x1024_0687e74804f3fdf9_14.png",
+      "source": "background.png",
+      "sha256": "fe6546ca2c766ce2bfa0ec2e5fc63d5d848ab1005f96a67b6426d55ac53928a6",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Mt",
+      "file": "tex1_1024x1024_2f2e9355b19c42f4_14.png",
+      "source": "background.png",
+      "sha256": "be884554ea56d85f06dd84b514cca1de1d1f2ee8f6893ad8ce0e404508289d0a",
+      "sourceSize": [
+        1672,
+        941
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Mt",
+      "file": "tex1_1024x1024_f0ac0ccfda0fb58d_14.png",
+      "source": "background.png",
+      "sha256": "c38aef0f2ca8922ef262a432ce031a8a6ef2a233b76c05c6c29b57156381b934",
+      "sourceSize": [
+        1672,
+        941
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Ns",
+      "file": "tex1_1024x1024_c262eb63e09ce9fc_14.png",
+      "source": "background.png",
+      "sha256": "afd2716e54f63abe6f254ed24c76fdd742307281dde72956339464779017b304",
+      "sourceSize": [
+        1944,
+        809
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Ns",
+      "file": "tex1_1024x1024_bb6083dd9a93214c_14.png",
+      "source": "background.png",
+      "sha256": "5332b546e29c8ab4b37f1a5335424193d3785cc5352dffb803c6ad19bc6eecc3",
+      "sourceSize": [
+        1944,
+        809
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Pc",
+      "file": "tex1_1024x1024_5d1bf67c66095951_14.png",
+      "source": "background.png",
+      "sha256": "4ca8cd4c00e5966c6c561464654972bf0cfb7ded0e6105e73aec80b62b70cecf",
+      "sourceSize": [
+        1672,
+        941
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Pc",
+      "file": "tex1_1024x1024_2c6e91f5afc69c66_14.png",
+      "source": "background.png",
+      "sha256": "33f717029ad03db0970f807a67f56ffe4ae7d1bf162778c02318f3b3a49f2650",
+      "sourceSize": [
+        1672,
+        941
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Pe",
+      "file": "tex1_1024x1024_228067d710b8673f_14.png",
+      "source": "background.png",
+      "sha256": "ac9ea17f3a5976de27543b184c4838d4de64f0f0d80f3611a52ded38333c06c4",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Pe",
+      "file": "tex1_1024x1024_da02f0955bebb47e_14.png",
+      "source": "background.png",
+      "sha256": "25f754bb24a7c4357c2ea10927a71e06ea9b9fd31e953927fd40c6d6a56ba8db",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Pk",
+      "file": "tex1_1024x1024_765038530cc65dd1_14.png",
+      "source": "background.png",
+      "sha256": "8f23f6e7e99d2534a8bfd00dddf9b2639b0f92535b07d02b75be822969eee885",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Pk",
+      "file": "tex1_1024x1024_9da49ada1b2f82bb_14.png",
+      "source": "background.png",
+      "sha256": "1cee63a627c2c6175244e70bb14c3c4f832f857241a3bf606170c9d2c6e59c2e",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Pr",
+      "file": "tex1_1024x1024_67955739879e82a7_14.png",
+      "source": "background.png",
+      "sha256": "74e3194c0d6d4c57f947435b2cb8db376aa4bea10256a2a045337f8ef13262da",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Pr",
+      "file": "tex1_1024x1024_9767710aa3ebe6e5_14.png",
+      "source": "background.png",
+      "sha256": "9d61577b8b348a7f342c2f6b2d982f138e8179934fa68f4b84b766564f2d6ff8",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Sk",
+      "file": "tex1_1024x1024_8e20d9b04c0e2dc4_14.png",
+      "source": "background.png",
+      "sha256": "cc7ecd2f8cabfc38dbcc60183dece5e0d4fa24f76363f996208046f0ffc7dac2",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Sk",
+      "file": "tex1_1024x1024_74e91ec5c6d869cb_14.png",
+      "source": "background.png",
+      "sha256": "e1795eacf6a903c1a287cde3e0e8c7ef8e7869d646544e91087fc5be78d7ee14",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Ss",
+      "file": "tex1_1024x1024_6ccb4a973eedd881_14.png",
+      "source": "background.png",
+      "sha256": "6ac8011d2a078894c7b65c72acc004c857cfefb0a298dd39a40cd28515f76abf",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Ss",
+      "file": "tex1_1024x1024_c246664919bca897_14.png",
+      "source": "background.png",
+      "sha256": "39c3f57301004c29254421d98de1a080178bd674ba7b6a84c7a644b310a6b257",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Ys",
+      "file": "tex1_1024x1024_8922c2b54ff1a0c1_14.png",
+      "source": "background.png",
+      "sha256": "0babbe51792ff0bbc27970e7028457ab1b77ee8839e840f757d20571bffc0279",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Ys",
+      "file": "tex1_1024x1024_6dfaf73b496bf86f_14.png",
+      "source": "background.png",
+      "sha256": "52b834db08413520ad66f040ce253b4ecbdfc52661f2b662122ad66dfb84c94f",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Zd",
+      "file": "tex1_1024x1024_f2f35c5f83ccf043_14.png",
+      "source": "background.png",
+      "sha256": "1d2f8787ce748ea24f18ae32dfbcb3af7f4e942a06e90aa1439b9a3f0e51a96c",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "stage": "Zd",
+      "file": "tex1_1024x1024_2a92dfb58b9b6812_14.png",
+      "source": "background.png",
+      "sha256": "da63c844cadf32edb5c314333368bba59a49244e0f2c38162f5507bd7626b962",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "size": [
+        1024,
+        1024
+      ]
+    }
+  ]
+}

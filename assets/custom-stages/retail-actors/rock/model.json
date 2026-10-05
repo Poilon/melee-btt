@@ -1,0 +1,28 @@
+{
+  "format": "TTRC_RETAIL_MESH_1",
+  "game": "The Legend of Zelda: Ocarina of Time 3D",
+  "source": "https://models.spriters-resource.com/3ds/thelegendofzeldaocarinaoftime3d/asset/351769/",
+  "sourceSha256": "82f050970ee70e71efc20d1a33e24f7fcb5c7bc1ca416f6aab9b68a5b6d86263",
+  "poses": 1,
+  "period": 360,
+  "aspect": 1.0313772972467627,
+  "orientationYaw": 0,
+  "wrap": 1,
+  "meshes": [
+    {
+      "vertices": 35,
+      "triangles": 34,
+      "textureSize": [
+        64,
+        32
+      ],
+      "originalTexture": "oc_rockball_model.png",
+      "originalTextureSha256": "5cc59748c458ec448ab9865e4ebe6f8f96b30594333ddf7aa68b8f5b165bb687",
+      "files": {
+        "mesh-0.corners": "ebf48249459887815798b4766b30a1f7ae2823d364e76cab0a63736eaa0a43c7",
+        "mesh-0.vertices": "22ad0969eb3383f65a0630675b049e00b21c6508f6ab28564e5c2a9b86fadca9",
+        "mesh-0.rgba8": "f398ccbf6fb9a1e47e6b9dd5e484228ebda73d3b05306b830fbf29a35df02f30"
+      }
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "sprites": {
+    "deck": {
+      "file": "prop-deck.rgba8",
+      "size": [
+        384,
+        104
+      ],
+      "sha256": "c0a52014f272599661dfa3216cfbc38eb3e9079c16a845522bd63a6ceb3ab438",
+      "sourceAtlas": "nature",
+      "sourceSha256": "278f841bf7317066a9e4279ca1d258feb973d4906b8b6e13872b7e0299ac7ff9",
+      "sourcePixels": [
+        16,
+        110,
+        747,
+        308
+      ],
+      "aspect": 0.2708618331053352,
+      "walkingInset": 0.010101010101010102
+    },
+    "hazard": {
+      "file": "prop-hazard.rgba8",
+      "size": [
+        256,
+        232
+      ],
+      "sha256": "a0288d1ee66bca69982db2a25476493d0518470290cec30d623ec199f33825ad",
+      "sourceAtlas": "hazards.png",
+      "sourceSha256": "f99c645bae1086c529036450c5d30e415115a54c01868c6d7a54d37f6975c5ba",
+      "sourcePixels": [
+        836,
+        22,
+        1412,
+        540
+      ],
+      "aspect": 0.8993055555555556
+    },
+    "vine": {
+      "file": "prop-vine.rgba8",
+      "size": [
+        160,
+        1024
+      ],
+      "sha256": "5147a3326c5a8f4fb6d167e3a1e96ee3538c1a0e61fa881b05e9dad51f6651c3",
+      "sourceAtlas": "dk-vine.png",
+      "sourceSha256": "8d3d466b4593c0da88ad3392e2aae9627bece733fa512df2691c9dc750f1552b",
+      "sourcePixels": [
+        351,
+        12,
+        612,
+        1643
+      ],
+      "aspect": 6.24904214559387
+    },
+    "thorn": {
+      "file": "prop-thorn.rgba8",
+      "size": [
+        192,
+        200
+      ],
+      "sha256": "8f5919affffed42d834f083720b5f65fd4cb799082cdcc8de5f1f9b76ed1cc97",
+      "sourceAtlas": "hazard-pod.png",
+      "sourceSha256": "1b4a2d0f89fdcd66017ff3261d2828fb71fefd8c42d4eadab3323d9ba8ad13b1",
+      "sourcePixels": [
+        282,
+        16,
+        1241,
+        1015
+      ],
+      "aspect": 1.0417101147028154
+    }
+  }
+}

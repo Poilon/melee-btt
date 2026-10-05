@@ -1,0 +1,56 @@
+{
+  "sprites": {
+    "deck": {
+      "file": "prop-deck.rgba8",
+      "size": [
+        384,
+        76
+      ],
+      "sha256": "9a3d07673b2fcc6264c779f77b1aa3e986b042ee660a631b70241613677e49b8",
+      "sourceAtlas": "technology",
+      "sourceSha256": "a468ba07de32fc25b13021d55645da4232501d4ad0c6b13757aa788899155cb2",
+      "sourcePixels": [
+        21,
+        143,
+        745,
+        290
+      ],
+      "aspect": 0.20303867403314918,
+      "walkingInset": 0.006802721088435374
+    },
+    "hazard": {
+      "file": "prop-hazard.rgba8",
+      "size": [
+        256,
+        128
+      ],
+      "sha256": "04cc52ec2055490747036ed93f8e9dcf77ad47f4df06e5151449e436b5ec3fee",
+      "sourceAtlas": "hazards.png",
+      "sourceSha256": "f99c645bae1086c529036450c5d30e415115a54c01868c6d7a54d37f6975c5ba",
+      "sourcePixels": [
+        733,
+        585,
+        1523,
+        986
+      ],
+      "aspect": 0.5075949367088608
+    },
+    "boost": {
+      "file": "prop-boost.rgba8",
+      "size": [
+        512,
+        68
+      ],
+      "sha256": "5fad90cdfe5b91f2b3862c19c29e99998d987f933ed0681f44fbcf29cc26c455",
+      "sourceAtlas": "falcon-boost.png",
+      "sourceSha256": "792608c02c22bc1571dc9d8a0262180671b902dd6188c6633b4423c1cf391a40",
+      "sourcePixels": [
+        9,
+        261,
+        1975,
+        527
+      ],
+      "aspect": 0.1353001017293998
+    }
+  }
+}

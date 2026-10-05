@@ -1,0 +1,22 @@
+{
+  "sprites": {
+    "deck": {
+      "file": "prop-deck.rgba8",
+      "size": [
+        384,
+        88
+      ],
+      "sha256": "35270813a4f1823962d64baf712bdc0b4f0eae66e05faea6764283e4f4c015ee",
+      "sourceAtlas": "nature",
+      "sourceSha256": "278f841bf7317066a9e4279ca1d258feb973d4906b8b6e13872b7e0299ac7ff9",
+      "sourcePixels": [
+        787,
+        757,
+        1517,
+        928
+      ],
+      "aspect": 0.23424657534246576,
+      "walkingInset": 0.017543859649122806
+    }
+  }
+}

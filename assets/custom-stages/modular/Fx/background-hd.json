@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "source": "background.png",
+  "sourceSize": [
+    1774,
+    887
+  ],
+  "size": [
+    4096,
+    2048
+  ],
+  "method": "Eight overlapping imagegen detail edits of the original artwork, optical-flow registration, low-frequency lighting matching, feathered assembly.",
+  "sha256": "caed1b54361a1e488dce13d43703e17dcd1c82191df0f039c63d0420e03086af",
+  "tiles": [
+    {
+      "region": "0-0",
+      "generatedFile": "exec-fd221914-4568-4ebe-8963-4e8cc7f86977.png",
+      "sha256": "dec4226d6d3174aae28959c513a009aedb2a71bcaf7676c7a4da1fe905debf60"
+    },
+    {
+      "region": "0-1",
+      "generatedFile": "exec-27c8ded0-6838-4230-bb9c-a8d545932d25.png",
+      "sha256": "f13cd4ebf5a7062e56c3f3cf4855d82ebc69474a37433c8263499a4047b55060"
+    },
+    {
+      "region": "0-2",
+      "generatedFile": "exec-4f612757-c7c1-472a-accf-1d75392dc986.png",
+      "sha256": "bedf1f962f399f2680e7217cd47c444554c6534110b0a851acc45cdd71baf4ea"
+    },
+    {
+      "region": "0-3",
+      "generatedFile": "exec-fbfb611c-236c-4ead-b3d1-1e373b743b04.png",
+      "sha256": "9c9e5942e74a3198b461df332d46501b1763bc85934fa6179ba4a1450fba0532"
+    },
+    {
+      "region": "1-0",
+      "generatedFile": "exec-64dd5308-a846-4dc5-bf1e-4bd9824b0d9c.png",
+      "sha256": "73d2702a7bcdc5ca1d5e4f2d046ba804bda9909c98e39347d429944732d54c23"
+    },
+    {
+      "region": "1-1",
+      "generatedFile": "exec-99a5c926-f495-4349-b711-4d7c6cede30a.png",
+      "sha256": "a3ad60e499ea546597fc581be7d9d9956e7d725bbe3adcb73d7666c6da669d75"
+    },
+    {
+      "region": "1-2",
+      "generatedFile": "exec-0451c7dd-9b49-4110-96c0-d85462a9f632.png",
+      "sha256": "ae3506b5d6935438515b45a924a08e9521363f507e23553c671a78a3674d1345"
+    },
+    {
+      "region": "1-3",
+      "generatedFile": "exec-15a10c7a-990f-4e2a-a042-2bff7d8279e4.png",
+      "sha256": "61f77feecb42d2b03d14a959025b6d45c061d092a4f420cfc3b548d862608aae"
+    }
+  ]
+}

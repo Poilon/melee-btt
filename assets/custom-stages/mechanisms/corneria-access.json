@@ -1,0 +1,46 @@
+{
+  "purpose": "Structural access audit only. Observed native Corneria proxy positions in BTT; never used to drive aircraft.",
+  "source": "native-btt-flight.json, original grCorneria routines in USA 1.02",
+  "samples": [
+    [
+      226.7179,
+      198.228271
+    ],
+    [
+      173.376,
+      198.737854
+    ],
+    [
+      125.351234,
+      196.307922
+    ],
+    [
+      73.381485,
+      196.543579
+    ],
+    [
+      21.8528461,
+      196.846741
+    ],
+    [
+      -30.2378178,
+      195.683044
+    ],
+    [
+      -80.682785,
+      194.330872
+    ],
+    [
+      -132.735291,
+      194.071365
+    ],
+    [
+      -191.56311,
+      194.422241
+    ],
+    [
+      -257.146942,
+      194.071533
+    ]
+  ]
+}

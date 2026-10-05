@@ -1,0 +1,13 @@
+{
+  "mode": "built-in image_gen editing",
+  "prompts": [
+    {
+      "suffix": "Fx",
+      "prompt": "Use case: precise-object-edit. Edit the provided existing game stage painting, retain its exact composition and all detailed surfaces, 1656x950 landscape. This is a side-view playable Star Fox hangar. Make real open bottomless gaps in the lower floor at pixel x390 to650 and x1060 to1255 (floor at y752): remove those entire vertical floor/support segments all the way to bottom of image and show distant blue space/planet behind, matching the actual background, no pasted rectangle or stretched patch. Also cut a gap in the long high bridge at y300, from x730 to990, removing its beams/supports beneath that span so the gap is clearly traversable. Keep the rest of every platform EXACTLY where it is, including all blue walking edges, left and right decks, central box, central round window and small top platform. No new platforms. No character, no targets, no UI. Keep sharp elaborate original metal textures and lighting."
+    },
+    {
+      "suffix": "Cl",
+      "prompt": "Use case: precise-object-edit. Edit the provided existing side-view Kokiri tree village game level, keep exact framing and scale, 1460x1077. Preserve the giant central SOLID wooden wall from x650 to809 y255 to878, top platform x563..897 at y168, beautiful forest/background and all architecture detail. Remove only four redundant foreground branch platforms: left branch x408..595 y701, left branch x408..595 y524, right branch x865..1051 y612, right branch x865..1051 y344; reconstruct forest behind each seamlessly, no pasted patches. Retain remaining branch platforms exactly where they are, same walking top edge. In the long bottom platform at y878, cut two truly open gaps: x260..570 and x900..1210, all floor thickness and supports removed down to bottom so forest abyss is visible. Keep small left starting island x98..260, central island x570..900 below tree, and right island x1210..1364. Make cut ends naturally detailed wooden ends with vines. No new platforms, no characters, no targets, no UI. High detail, sharp textures, maintain beautiful sunlight."
+    }
+  ]
+}

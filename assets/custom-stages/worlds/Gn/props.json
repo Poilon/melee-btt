@@ -1,0 +1,56 @@
+{
+  "sprites": {
+    "deck": {
+      "file": "prop-deck.rgba8",
+      "size": [
+        384,
+        84
+      ],
+      "sha256": "34999a007820076eb782870fbb6973a545551da0dd3fe0e186816d6244409056",
+      "sourceAtlas": "castle",
+      "sourceSha256": "39b220888977d2c6774f11fbacac228d64ec63875b8e50323ade5981a1c62dc1",
+      "sourcePixels": [
+        31,
+        330,
+        722,
+        482
+      ],
+      "aspect": 0.2199710564399421,
+      "walkingInset": 0.0
+    },
+    "crusher": {
+      "file": "prop-crusher.rgba8",
+      "size": [
+        192,
+        764
+      ],
+      "sha256": "994605ef3f9a5917f3aaee755ba430178097d942dc35ff49cb17209ed3f10b10",
+      "sourceAtlas": "ganon-crusher.png",
+      "sourceSha256": "2fe35860fe01d4c04c9cc461f041883ac0fd886d5e0f3009e3a38568521e6586",
+      "sourcePixels": [
+        92,
+        0,
+        632,
+        2151
+      ],
+      "aspect": 3.9833333333333334
+    },
+    "orb": {
+      "file": "prop-orb.rgba8",
+      "size": [
+        256,
+        256
+      ],
+      "sha256": "d821b0e2862df3270e37c16445c1c4d8c3e8433f54e9acdbf2a3a4b20c73ab98",
+      "sourceAtlas": "ganon-orb.png",
+      "sourceSha256": "0f2874c22c9949f13c58f09bff2cc34348dac2cdd8a60f11265b78e9eeb7810c",
+      "sourcePixels": [
+        49,
+        39,
+        1217,
+        1207
+      ],
+      "aspect": 1.0
+    }
+  }
+}

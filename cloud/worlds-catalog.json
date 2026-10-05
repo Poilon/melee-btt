@@ -1,0 +1,265 @@
+{
+  "format": "ttrc-worlds-v1",
+  "courses": [
+    {
+      "character": "dr-mario",
+      "suffix": "Dr",
+      "stageId": 37,
+      "name": "Capsule Clinic",
+      "stageSha256": "226e55008e297886d2bf4056ddf26d6d5fad4918586dc470880ebd29705fd690",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "eced9426ce914b671b8403d52778d888f6d9675bfeda0dd2293b4dfad34554a4"
+    },
+    {
+      "character": "mario",
+      "suffix": "Mr",
+      "stageId": 33,
+      "name": "Mushroom Mile",
+      "stageSha256": "1ef49bcfc28e2ec01f0f953b0261a99ae01eea27898872b68a54addf53411acd",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "419c0860ddd8939d5d85e0399572663af0398ebf7550e7926554c7449fc67821"
+    },
+    {
+      "character": "luigi",
+      "suffix": "Lg",
+      "stageId": 44,
+      "name": "The Crooked Manor",
+      "stageSha256": "d6c64e050fddc79c4a2ffcadca4fd0f4e75bcb8c1406fd4874fb473d76abbdc8",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "2564c46c1fc0fccb37370ac1e5249026ec2a3fce50753e8c6fcde91318a9ec4d"
+    },
+    {
+      "character": "bowser",
+      "suffix": "Kp",
+      "stageId": 42,
+      "name": "Lava Keep",
+      "stageSha256": "25e2f12577cf82b1ba1b40225ed7aa504359cd8c7c1735f2e5cf9791e2ac7fc0",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "ab2edfb28ca16bc0bcf80a23520dbf2470a28459781bb088a92c8887b92dba09"
+    },
+    {
+      "character": "peach",
+      "suffix": "Pe",
+      "stageId": 48,
+      "name": "Royal Gardens",
+      "stageSha256": "6bbb867fa48f7f533b85f9e3fc3c10ce2e300d404ae7f29bf2b06a136d85ea40",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "b5cf7f766a2ec42ffa9fc36d13b1b2733e947834274ef0ad8b40406e40bad14e"
+    },
+    {
+      "character": "yoshi",
+      "suffix": "Ys",
+      "stageId": 54,
+      "name": "Eggshell Hills",
+      "stageSha256": "2d1195482eb6c5748c567bb1a1546e9b96821484c899812bce55fae09c6ff2a7",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "f2b843efa90f40162911ea65b68a3ae6522d6009db9068c460a1c843bca43102"
+    },
+    {
+      "character": "donkey-kong",
+      "suffix": "Dk",
+      "stageId": 36,
+      "name": "Jungle Boardwalk",
+      "stageSha256": "ba6137937cb9248c359f475f14f3fbab6f96dbd533172f56c5fe28ff14056354",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "64885b2035cec3fec71a7d278ec21a6936dadca870d67d3e85b747fda87b9fc3"
+    },
+    {
+      "character": "captain-falcon",
+      "suffix": "Ca",
+      "stageId": 34,
+      "name": "Mute City Circuit",
+      "stageSha256": "a494a3c304e8cb85a62c4ebb1d3d5b91626b401503bbc4395cc148af3622593f",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "267dc3ccad9bd0ea53b89421d8a747d8953ec76a33d306bfb1df48d39b6a7d85"
+    },
+    {
+      "character": "ganondorf",
+      "suffix": "Gn",
+      "stageId": 58,
+      "name": "Dark Citadel",
+      "stageSha256": "7e149364398d6f8c7a16e4198ae52f9481de786b5fe39a72457687d7ed7675ac",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "5d536905da796ad34cd422ee31cceee45a8f9fd8331541ecd175bf1b3af2f08b"
+    },
+    {
+      "character": "falco",
+      "suffix": "Fc",
+      "stageId": 38,
+      "name": "Corneria Rooftops",
+      "stageSha256": "83d738e8a4505dd9005149a92362ffc1028cfd74662a3fdefeff1930a82559b3",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "a1f8ba3a2d9a10b291f6d3e25d6bff8f0467255054201f6c9912ddf27c3a29d0"
+    },
+    {
+      "character": "fox",
+      "suffix": "Fx",
+      "stageId": 39,
+      "name": "Orbital Hangar",
+      "stageSha256": "fa78e0e5eba228cf63962bb38760b0b078dfcdc2787257ebdf91eaa741fb6301",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "0de58da3d83dc2bd4eacd35b4290cd6fd161494865c6942a21872176f4fb5890"
+    },
+    {
+      "character": "ness",
+      "suffix": "Ns",
+      "stageId": 47,
+      "name": "Onett After School",
+      "stageSha256": "98345e0e137346600023e550f5f40068760452829f36d1806d0d9677a915e139",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "6457d8f9cbb1cee565de6c728e2031ac2bc24b6d27352373dbc773298150e429"
+    },
+    {
+      "character": "ice-climbers",
+      "suffix": "Ic",
+      "stageId": 40,
+      "name": "Summit Steps",
+      "stageSha256": "8b6abd4d7eb2248685a6203dafbb03438f4a5216d5a9c48aab58bdd1a865e47f",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "97b86392df3ad620207e2841c75634152df1f301f220775359e44fdb2645b574"
+    },
+    {
+      "character": "kirby",
+      "suffix": "Kb",
+      "stageId": 41,
+      "name": "Dream Garden",
+      "stageSha256": "30a37c0c226913454f6ccccadf9e96c42bc3be88e62f92dbe05d83ec40fd4ac7",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "a689704ebff48471f9fd8f5779e93bdc4d51a9b2e953ed9cc9c486a5c631b4ca"
+    },
+    {
+      "character": "samus",
+      "suffix": "Ss",
+      "stageId": 52,
+      "name": "Zebes Depths",
+      "stageSha256": "309a2107db952a78b620e339e2a594833a2167d9c6e575105370d4adb55f27d3",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "2c322c958eae74fa70171ba95eb35b8b2165383f226e6068ea07b7fcb060aa2e"
+    },
+    {
+      "character": "zelda",
+      "suffix": "Zd",
+      "stageId": 55,
+      "name": "Temple of Light",
+      "stageSha256": "7d1a15079ce1498ada1568daddd09b9785efb35da3b04232c0c7de7bfdca3cf8",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "44d669faf5ad48e85e147da1eb082297450affe27a47c5df562db9d28236f012"
+    },
+    {
+      "character": "sheik",
+      "suffix": "Sk",
+      "stageId": 53,
+      "name": "Shadow Shrine",
+      "stageSha256": "9d3dcbb51e99de451a6a1efa14623be84572b0b8a3e7a7e0285ea5073775f8a1",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "48e6ba002e44f9d65311cd091e69607a4610923d62fa527c1d6a21fa74121f88"
+    },
+    {
+      "character": "link",
+      "suffix": "Lk",
+      "stageId": 43,
+      "name": "Forest Sanctuary",
+      "stageSha256": "0781201e9b968a41d3af51fecaeb804d8fad9a4f141899a5dd5bf39215e4864e",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "da9aec6afab4e0291522c0c718474ae0f570a7906454ccc46f53a4a8e50b865f"
+    },
+    {
+      "character": "young-link",
+      "suffix": "Cl",
+      "stageId": 35,
+      "name": "Kokiri Canopy",
+      "stageSha256": "514ca5d507f7d74e0db71ab0ccefa7ea0339da8a5b6c91cc347a516d42c61254",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "bcfdf9d527813f5348b8e2efa768aea6c2d60f482ecfffb8fa11ca89f3e92ee2"
+    },
+    {
+      "character": "pichu",
+      "suffix": "Pc",
+      "stageId": 49,
+      "name": "Battery Workshop",
+      "stageSha256": "9e1157c6e8ba1d9dca9f519adf9fe551e28cf0320f4bb0e9b74b0014a8f8eb26",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "31886ccb3f67eef49c4e761e251db27816f2e8bb70c0fb9739fa5dfe75d2f78e"
+    },
+    {
+      "character": "pikachu",
+      "suffix": "Pk",
+      "stageId": 50,
+      "name": "Power Plant",
+      "stageSha256": "7bb5177f4bac75f13cd40d0c39e9c680dabf3f5425cf7ba3cbea0b46f94573cc",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "ac2f8e7476b854032371b6b3a925a320f18f7fab3271de3865f47a661766b190"
+    },
+    {
+      "character": "jigglypuff",
+      "suffix": "Pr",
+      "stageId": 51,
+      "name": "Moonlight Recital",
+      "stageSha256": "f8c896d5a4ffc4f3b82d9fd675a8838b31fceb6f330088b919306b2cea26f311",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "b83d78eaf35b8ff18cbc490324130105c7da2568e6df2ac842f4756e53282595"
+    },
+    {
+      "character": "mewtwo",
+      "suffix": "Mt",
+      "stageId": 46,
+      "name": "Psychic Containment",
+      "stageSha256": "0fb1a59bd637cdaa05438e78388aeeb37cd168b28ea091a17faef456ba6c21a8",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "ff6e4fd193637d397dcc6f8c302f7cc2598bf8a4f4ed096e96c7d0383af1d728"
+    },
+    {
+      "character": "game-and-watch",
+      "suffix": "Gw",
+      "stageId": 56,
+      "name": "Fire Rescue",
+      "stageSha256": "cb935845cc2b919aea845c08e53abe5768d56c15faf8cd10516b697ff7c79ad3",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "f9c366c8191c294e3821f38c894ede97e879baa5691b77e1737131044bd3c419"
+    },
+    {
+      "character": "marth",
+      "suffix": "Ms",
+      "stageId": 45,
+      "name": "Altean Ramparts",
+      "stageSha256": "8cf8254929645d85ee7e02f73b8915884a714df289ae197f6eefbb7e7d616534",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "37c028ce101c846e6459c3837a747be51f397ccde84d7e1c73358b6d24411609"
+    },
+    {
+      "character": "roy",
+      "suffix": "Fe",
+      "stageId": 57,
+      "name": "Ember Bastion",
+      "stageSha256": "564f6763c53868a80549af1c91d3219cf7502e5006eb289c2dcacb409316fabe",
+      "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
+      "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
+      "id": "35af2fd92e028173f8d2f35187a260b8ffca7faa68927f184017910ffb525a4e"
+    }
+  ]
+}

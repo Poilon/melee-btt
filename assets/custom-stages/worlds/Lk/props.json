@@ -1,0 +1,22 @@
+{
+  "sprites": {
+    "gate": {
+      "file": "prop-gate.rgba8",
+      "size": [
+        128,
+        256
+      ],
+      "sha256": "fd37f345d5397b642f5e8c3536264ac9532d8bf572a267392e250f4ca67b0d4e",
+      "sourceAtlas": "castle",
+      "sourceSha256": "39b220888977d2c6774f11fbacac228d64ec63875b8e50323ade5981a1c62dc1",
+      "sourcePixels": [
+        260,
+        524,
+        508,
+        947
+      ],
+      "aspect": 1.7056451612903225,
+      "walkingInset": 0.028368794326241134
+    }
+  }
+}

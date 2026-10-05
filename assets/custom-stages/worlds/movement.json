@@ -1,0 +1,2693 @@
+{
+  "source": "Melee USA 1.02 / HSDLib command layouts",
+  "scope": "Ballistic attributes and bone-local hitbox data; not a full animation or collision simulation.",
+  "characters": {
+    "Mr": {
+      "jumpVelocity": 2.3,
+      "airJumpMultiplier": 1.0,
+      "gravity": 0.095,
+      "terminalVelocity": 1.7,
+      "airSpeed": 0.86,
+      "runSpeed": 1.5,
+      "modelScale": 1.1,
+      "jumps": 2,
+      "ballisticJumpApex": 29.0,
+      "ballisticAirJumpApex": 29.0,
+      "source": "PlMr.dat",
+      "sourceSha256": "929cdf08c31bc75156ccef05238f2b16dc4d0b187ed1bb4f0a628a2466fb7f7a",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 2.3438,
+          "hitboxEvents": 3
+        },
+        "Attack12": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 2.3438,
+          "hitboxEvents": 3
+        },
+        "Attack13": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 2
+        },
+        "AttackDash": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 1.9918,
+          "hitboxEvents": 4
+        },
+        "AttackS3Hi": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.5156,
+          "hitboxEvents": 3
+        },
+        "AttackS3S": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.5156,
+          "hitboxEvents": 3
+        },
+        "AttackS3Lw": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.5156,
+          "hitboxEvents": 3
+        },
+        "AttackHi3": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackLw3": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 2.7344,
+          "hitboxEvents": 3
+        },
+        "AttackS4Hi": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 16.9922,
+          "hitboxEvents": 3
+        },
+        "AttackS4S": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 16.165,
+          "hitboxEvents": 3
+        },
+        "AttackS4Lw": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 13.3614,
+          "hitboxEvents": 3
+        },
+        "AttackHi4": {
+          "maxRadius": 3.125,
+          "maxBoneLocalOffset": 2.5701,
+          "hitboxEvents": 1
+        },
+        "AttackLw4": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 12.2347,
+          "hitboxEvents": 4
+        },
+        "AttackAirN": {
+          "maxRadius": 2.7344,
+          "maxBoneLocalOffset": 0.7812,
+          "hitboxEvents": 4
+        },
+        "AttackAirF": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.125,
+          "hitboxEvents": 2
+        },
+        "AttackAirB": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 3.125,
+          "hitboxEvents": 4
+        },
+        "AttackAirHi": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 3.125,
+          "hitboxEvents": 2
+        },
+        "AttackAirLw": {
+          "maxRadius": 5.8594,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 3
+        }
+      },
+      "character": "Mario"
+    },
+    "Ca": {
+      "jumpVelocity": 3.1,
+      "airJumpMultiplier": 0.9,
+      "gravity": 0.13,
+      "terminalVelocity": 2.9,
+      "airSpeed": 1.12,
+      "runSpeed": 2.3,
+      "modelScale": 0.97,
+      "jumps": 2,
+      "ballisticJumpApex": 38.52,
+      "ballisticAirJumpApex": 31.35,
+      "source": "PlCa.dat",
+      "sourceSha256": "4cf61a52737d464df9298fd15573345fb3b9a15c79ab47dce4fd2e3e707917af",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 15.6067,
+          "hitboxEvents": 3
+        },
+        "Attack12": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 19.4147,
+          "hitboxEvents": 3
+        },
+        "Attack13": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 4.2969,
+          "hitboxEvents": 4
+        },
+        "Attack100Loop": {
+          "maxRadius": 3.4922,
+          "maxBoneLocalOffset": 7.3203,
+          "hitboxEvents": 2
+        },
+        "AttackDash": {
+          "maxRadius": 5.8594,
+          "maxBoneLocalOffset": 0.7812,
+          "hitboxEvents": 2
+        },
+        "AttackS3Hi": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 5.0781,
+          "hitboxEvents": 3
+        },
+        "AttackS3HiS": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 5.0781,
+          "hitboxEvents": 3
+        },
+        "AttackS3S": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 5.0781,
+          "hitboxEvents": 3
+        },
+        "AttackS3LwS": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 5.0781,
+          "hitboxEvents": 3
+        },
+        "AttackS3Lw": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 5.0781,
+          "hitboxEvents": 3
+        },
+        "AttackHi3": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 5.8594,
+          "hitboxEvents": 2
+        },
+        "AttackLw3": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 5.8594,
+          "hitboxEvents": 3
+        },
+        "AttackS4Hi": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 2
+        },
+        "AttackS4S": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 2
+        },
+        "AttackS4Lw": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 2
+        },
+        "AttackHi4": {
+          "maxRadius": 5.4688,
+          "maxBoneLocalOffset": 11.9061,
+          "hitboxEvents": 7
+        },
+        "AttackLw4": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 5.0781,
+          "hitboxEvents": 4
+        },
+        "AttackAirN": {
+          "maxRadius": 5.4688,
+          "maxBoneLocalOffset": 5.8594,
+          "hitboxEvents": 6
+        },
+        "AttackAirF": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 4.2969,
+          "hitboxEvents": 4
+        },
+        "AttackAirB": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 6
+        },
+        "AttackAirHi": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 5.8594,
+          "hitboxEvents": 6
+        },
+        "AttackAirLw": {
+          "maxRadius": 6.6406,
+          "maxBoneLocalOffset": 5.6876,
+          "hitboxEvents": 3
+        }
+      },
+      "character": "Captain Falcon"
+    },
+    "Cl": {
+      "jumpVelocity": 2.62,
+      "airJumpMultiplier": 0.88,
+      "gravity": 0.11,
+      "terminalVelocity": 2.13,
+      "airSpeed": 1.0,
+      "runSpeed": 1.6,
+      "modelScale": 0.96,
+      "jumps": 2,
+      "ballisticJumpApex": 32.52,
+      "ballisticAirJumpApex": 25.318,
+      "source": "PlCl.dat",
+      "sourceSha256": "8714518ba47b4fb3eb622ad2bf51e054ffc53d567dcb810971eb3546c5c29f32",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 5.4688,
+          "hitboxEvents": 4
+        },
+        "Attack12": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 5.4688,
+          "hitboxEvents": 4
+        },
+        "Attack13": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 5.4688,
+          "hitboxEvents": 4
+        },
+        "Attack100Loop": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 4
+        },
+        "AttackDash": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 5.4688,
+          "hitboxEvents": 4
+        },
+        "AttackS3": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 5.4688,
+          "hitboxEvents": 4
+        },
+        "AttackHi3": {
+          "maxRadius": 4.1016,
+          "maxBoneLocalOffset": 3.5156,
+          "hitboxEvents": 4
+        },
+        "AttackLw3": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 5.9626,
+          "hitboxEvents": 4
+        },
+        "AttackS41": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 5.4688,
+          "hitboxEvents": 4
+        },
+        "AttackHi4": {
+          "maxRadius": 6.4453,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 16
+        },
+        "AttackLw4": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 5.9626,
+          "hitboxEvents": 8
+        },
+        "AttackAirN": {
+          "maxRadius": 4.3242,
+          "maxBoneLocalOffset": 3.5156,
+          "hitboxEvents": 6
+        },
+        "AttackAirF": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 5.4688,
+          "hitboxEvents": 8
+        },
+        "AttackAirB": {
+          "maxRadius": 5.1562,
+          "maxBoneLocalOffset": 2.9922,
+          "hitboxEvents": 6
+        },
+        "AttackAirHi": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 5.0781,
+          "hitboxEvents": 3
+        },
+        "AttackAirLw": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 10.2311,
+          "hitboxEvents": 3
+        },
+        "AttackS42": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 5.4688,
+          "hitboxEvents": 4
+        }
+      },
+      "character": "Young Link"
+    },
+    "Dk": {
+      "jumpVelocity": 2.7,
+      "airJumpMultiplier": 0.91,
+      "gravity": 0.1,
+      "terminalVelocity": 2.4,
+      "airSpeed": 1.0,
+      "runSpeed": 1.6,
+      "modelScale": 1.0,
+      "jumps": 2,
+      "ballisticJumpApex": 37.8,
+      "ballisticAirJumpApex": 31.425,
+      "source": "PlDk.dat",
+      "sourceSha256": "c6cd090eda7e96da6fbd6d5dd4296a91eab7cab99c5b007244b090f5de799d6f",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 4.6562,
+          "hitboxEvents": 3
+        },
+        "Attack12": {
+          "maxRadius": 4.6562,
+          "maxBoneLocalOffset": 4.6562,
+          "hitboxEvents": 3
+        },
+        "AttackDash": {
+          "maxRadius": 5.9883,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 4
+        },
+        "AttackS3Hi": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 3.125,
+          "hitboxEvents": 4
+        },
+        "AttackS3S": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 3.125,
+          "hitboxEvents": 4
+        },
+        "AttackS3Lw": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 3.125,
+          "hitboxEvents": 4
+        },
+        "AttackHi3": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 4.8828,
+          "hitboxEvents": 3
+        },
+        "AttackLw3": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 5.9883,
+          "hitboxEvents": 3
+        },
+        "AttackS4S": {
+          "maxRadius": 5.4688,
+          "maxBoneLocalOffset": 25.6336,
+          "hitboxEvents": 4
+        },
+        "AttackHi4": {
+          "maxRadius": 6.8359,
+          "maxBoneLocalOffset": 5.9883,
+          "hitboxEvents": 2
+        },
+        "AttackLw4": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 5.4688,
+          "hitboxEvents": 4
+        },
+        "AttackAirN": {
+          "maxRadius": 4.6562,
+          "maxBoneLocalOffset": 5.9883,
+          "hitboxEvents": 6
+        },
+        "AttackAirF": {
+          "maxRadius": 7.0312,
+          "maxBoneLocalOffset": 7.3203,
+          "hitboxEvents": 8
+        },
+        "AttackAirB": {
+          "maxRadius": 5.8594,
+          "maxBoneLocalOffset": 17.7051,
+          "hitboxEvents": 4
+        },
+        "AttackAirHi": {
+          "maxRadius": 7.8125,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 1
+        },
+        "AttackAirLw": {
+          "maxRadius": 7.0312,
+          "maxBoneLocalOffset": 3.3203,
+          "hitboxEvents": 3
+        }
+      },
+      "character": "Donkey Kong"
+    },
+    "Dr": {
+      "jumpVelocity": 2.3,
+      "airJumpMultiplier": 1.0,
+      "gravity": 0.095,
+      "terminalVelocity": 1.7,
+      "airSpeed": 0.9,
+      "runSpeed": 1.5,
+      "modelScale": 1.1,
+      "jumps": 2,
+      "ballisticJumpApex": 29.0,
+      "ballisticAirJumpApex": 29.0,
+      "source": "PlDr.dat",
+      "sourceSha256": "dbd729b1e038a6da6a90a732416aca164f5e55dc2ec7024555a6eaa0a926bb8c",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 2.3438,
+          "hitboxEvents": 3
+        },
+        "Attack12": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 2.3438,
+          "hitboxEvents": 3
+        },
+        "Attack13": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 2
+        },
+        "AttackDash": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 4.0217,
+          "hitboxEvents": 3
+        },
+        "AttackS3Hi": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.5156,
+          "hitboxEvents": 3
+        },
+        "AttackS3S": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.5156,
+          "hitboxEvents": 3
+        },
+        "AttackS3Lw": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.5156,
+          "hitboxEvents": 3
+        },
+        "AttackHi3": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 6
+        },
+        "AttackLw3": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 2.7344,
+          "hitboxEvents": 3
+        },
+        "AttackS4Hi": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 13.0085,
+          "hitboxEvents": 3
+        },
+        "AttackS4S": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 11.9572,
+          "hitboxEvents": 3
+        },
+        "AttackS4Lw": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 9.959,
+          "hitboxEvents": 3
+        },
+        "AttackHi4": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 2.9749,
+          "hitboxEvents": 4
+        },
+        "AttackLw4": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 10.3792,
+          "hitboxEvents": 4
+        },
+        "AttackAirN": {
+          "maxRadius": 3.125,
+          "maxBoneLocalOffset": 0.7812,
+          "hitboxEvents": 4
+        },
+        "AttackAirF": {
+          "maxRadius": 4.4922,
+          "maxBoneLocalOffset": 3.125,
+          "hitboxEvents": 2
+        },
+        "AttackAirB": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 3.125,
+          "hitboxEvents": 4
+        },
+        "AttackAirHi": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 3.125,
+          "hitboxEvents": 2
+        },
+        "AttackAirLw": {
+          "maxRadius": 5.4688,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 3
+        }
+      },
+      "character": "Dr. Mario"
+    },
+    "Fc": {
+      "jumpVelocity": 4.1,
+      "airJumpMultiplier": 0.94,
+      "gravity": 0.17,
+      "terminalVelocity": 3.1,
+      "airSpeed": 0.83,
+      "runSpeed": 1.5,
+      "modelScale": 1.1,
+      "jumps": 2,
+      "ballisticJumpApex": 51.5,
+      "ballisticAirJumpApex": 45.632,
+      "source": "PlFc.dat",
+      "sourceSha256": "c3c21545bff00fc1d0926f0fb3913cefedbbb7f4af1b928d2e73eed6cff5188c",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 4.6562,
+          "hitboxEvents": 2
+        },
+        "Attack12": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 4.6562,
+          "hitboxEvents": 2
+        },
+        "Attack100Loop": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 4.2969,
+          "hitboxEvents": 3
+        },
+        "AttackDash": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 2
+        },
+        "AttackS3Hi": {
+          "maxRadius": 3.125,
+          "maxBoneLocalOffset": 4.1016,
+          "hitboxEvents": 3
+        },
+        "AttackS3HiS": {
+          "maxRadius": 3.125,
+          "maxBoneLocalOffset": 4.1016,
+          "hitboxEvents": 3
+        },
+        "AttackS3S": {
+          "maxRadius": 3.125,
+          "maxBoneLocalOffset": 4.1016,
+          "hitboxEvents": 3
+        },
+        "AttackS3LwS": {
+          "maxRadius": 3.125,
+          "maxBoneLocalOffset": 4.1016,
+          "hitboxEvents": 3
+        },
+        "AttackS3Lw": {
+          "maxRadius": 3.125,
+          "maxBoneLocalOffset": 4.1016,
+          "hitboxEvents": 3
+        },
+        "AttackHi3": {
+          "maxRadius": 5.4688,
+          "maxBoneLocalOffset": 2.6562,
+          "hitboxEvents": 2
+        },
+        "AttackLw3": {
+          "maxRadius": 3.125,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 3
+        },
+        "AttackS4": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 4.1016,
+          "hitboxEvents": 6
+        },
+        "AttackHi4": {
+          "maxRadius": 4.6562,
+          "maxBoneLocalOffset": 2.3281,
+          "hitboxEvents": 4
+        },
+        "AttackLw4": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 3.2031,
+          "hitboxEvents": 4
+        },
+        "AttackAirN": {
+          "maxRadius": 3.4961,
+          "maxBoneLocalOffset": 2.3281,
+          "hitboxEvents": 6
+        },
+        "AttackAirF": {
+          "maxRadius": 5.1562,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 10
+        },
+        "AttackAirB": {
+          "maxRadius": 4.9922,
+          "maxBoneLocalOffset": 3.9922,
+          "hitboxEvents": 6
+        },
+        "AttackAirHi": {
+          "maxRadius": 5.4688,
+          "maxBoneLocalOffset": 3.125,
+          "hitboxEvents": 6
+        },
+        "AttackAirLw": {
+          "maxRadius": 5.9883,
+          "maxBoneLocalOffset": 2.0006,
+          "hitboxEvents": 4
+        }
+      },
+      "character": "Falco"
+    },
+    "Fx": {
+      "jumpVelocity": 3.68,
+      "airJumpMultiplier": 1.2,
+      "gravity": 0.23,
+      "terminalVelocity": 2.8,
+      "airSpeed": 0.83,
+      "runSpeed": 2.2,
+      "modelScale": 0.96,
+      "jumps": 2,
+      "ballisticJumpApex": 31.28,
+      "ballisticAirJumpApex": 44.62,
+      "source": "PlFx.dat",
+      "sourceSha256": "846b075d3379de041ecfb5504f5442484c23783422a0851851c96489d697b690",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 3.3281,
+          "maxBoneLocalOffset": 4.6562,
+          "hitboxEvents": 2
+        },
+        "Attack12": {
+          "maxRadius": 3.3281,
+          "maxBoneLocalOffset": 4.6562,
+          "hitboxEvents": 2
+        },
+        "Attack100Loop": {
+          "maxRadius": 3.3281,
+          "maxBoneLocalOffset": 5.0781,
+          "hitboxEvents": 3
+        },
+        "AttackDash": {
+          "maxRadius": 3.8281,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 4
+        },
+        "AttackS3Hi": {
+          "maxRadius": 3.125,
+          "maxBoneLocalOffset": 4.1016,
+          "hitboxEvents": 3
+        },
+        "AttackS3HiS": {
+          "maxRadius": 3.125,
+          "maxBoneLocalOffset": 4.1016,
+          "hitboxEvents": 3
+        },
+        "AttackS3S": {
+          "maxRadius": 3.125,
+          "maxBoneLocalOffset": 4.1016,
+          "hitboxEvents": 3
+        },
+        "AttackS3LwS": {
+          "maxRadius": 3.125,
+          "maxBoneLocalOffset": 4.1016,
+          "hitboxEvents": 3
+        },
+        "AttackS3Lw": {
+          "maxRadius": 3.125,
+          "maxBoneLocalOffset": 4.1016,
+          "hitboxEvents": 3
+        },
+        "AttackHi3": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 2.6562,
+          "hitboxEvents": 4
+        },
+        "AttackLw3": {
+          "maxRadius": 3.125,
+          "maxBoneLocalOffset": 5.4688,
+          "hitboxEvents": 3
+        },
+        "AttackS4": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 4.1016,
+          "hitboxEvents": 6
+        },
+        "AttackHi4": {
+          "maxRadius": 4.6562,
+          "maxBoneLocalOffset": 2.3281,
+          "hitboxEvents": 4
+        },
+        "AttackLw4": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 3.2031,
+          "hitboxEvents": 4
+        },
+        "AttackAirN": {
+          "maxRadius": 3.4961,
+          "maxBoneLocalOffset": 2.3281,
+          "hitboxEvents": 6
+        },
+        "AttackAirF": {
+          "maxRadius": 5.1562,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 10
+        },
+        "AttackAirB": {
+          "maxRadius": 4.9922,
+          "maxBoneLocalOffset": 3.9922,
+          "hitboxEvents": 6
+        },
+        "AttackAirHi": {
+          "maxRadius": 4.8828,
+          "maxBoneLocalOffset": 5.4688,
+          "hitboxEvents": 6
+        },
+        "AttackAirLw": {
+          "maxRadius": 5.9883,
+          "maxBoneLocalOffset": 2.0006,
+          "hitboxEvents": 2
+        }
+      },
+      "character": "Fox"
+    },
+    "Ic": {
+      "jumpVelocity": 2.6,
+      "airJumpMultiplier": 1.0,
+      "gravity": 0.1,
+      "terminalVelocity": 1.6,
+      "airSpeed": 0.7,
+      "runSpeed": 1.4,
+      "modelScale": 1.15,
+      "jumps": 2,
+      "ballisticJumpApex": 35.1,
+      "ballisticAirJumpApex": 35.1,
+      "source": "PlPp.dat",
+      "sourceSha256": "5dd044b2ac5003f18dfca6e3a5197724f383419b4fc31bd4cb0a6205052507c0",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 2
+        },
+        "Attack12": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 2
+        },
+        "AttackDash": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 2
+        },
+        "AttackS3Hi": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 2
+        },
+        "AttackS3HiS": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 2
+        },
+        "AttackS3S": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 2
+        },
+        "AttackS3LwS": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 2
+        },
+        "AttackS3Lw": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 2
+        },
+        "AttackHi3": {
+          "maxRadius": 5.4688,
+          "maxBoneLocalOffset": 5.0781,
+          "hitboxEvents": 4
+        },
+        "AttackLw3": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 2
+        },
+        "AttackS4": {
+          "maxRadius": 5.4688,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 2
+        },
+        "AttackHi4": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 2
+        },
+        "AttackLw4": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 2
+        },
+        "AttackAirN": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 2
+        },
+        "AttackAirF": {
+          "maxRadius": 5.8594,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 3
+        },
+        "AttackAirB": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 2
+        },
+        "AttackAirHi": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 4
+        },
+        "AttackAirLw": {
+          "maxRadius": 5.4688,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 2
+        }
+      },
+      "character": "Ice Climbers"
+    },
+    "Kb": {
+      "jumpVelocity": 2.0,
+      "airJumpMultiplier": 0.0,
+      "gravity": 0.08,
+      "terminalVelocity": 1.6,
+      "airSpeed": 0.78,
+      "runSpeed": 1.4,
+      "modelScale": 0.92,
+      "jumps": 6,
+      "ballisticJumpApex": 26.0,
+      "ballisticAirJumpApex": 0,
+      "source": "PlKb.dat",
+      "sourceSha256": "bae86007bbdcdd6bea67ddc0309280c47f7e94557de0f7d5469b5c19d0755cd7",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 3.125,
+          "maxBoneLocalOffset": 1.6406,
+          "hitboxEvents": 2
+        },
+        "Attack12": {
+          "maxRadius": 3.125,
+          "maxBoneLocalOffset": 1.6406,
+          "hitboxEvents": 2
+        },
+        "Attack100Loop": {
+          "maxRadius": 1.7578,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 2
+        },
+        "AttackDash": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 5.5243,
+          "hitboxEvents": 2
+        },
+        "AttackS3Hi": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 4.2969,
+          "hitboxEvents": 2
+        },
+        "AttackS3S": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 4.2969,
+          "hitboxEvents": 2
+        },
+        "AttackS3Lw": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 4.2969,
+          "hitboxEvents": 2
+        },
+        "AttackHi3": {
+          "maxRadius": 5.4688,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 4
+        },
+        "AttackLw3": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 4.9922,
+          "hitboxEvents": 2
+        },
+        "AttackS4Hi": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 3.125,
+          "hitboxEvents": 6
+        },
+        "AttackS4S": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 3.125,
+          "hitboxEvents": 6
+        },
+        "AttackS4Lw": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 3.125,
+          "hitboxEvents": 6
+        },
+        "AttackHi4": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 4.6562,
+          "hitboxEvents": 9
+        },
+        "AttackLw4": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 4
+        },
+        "AttackAirN": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 1.9961,
+          "hitboxEvents": 1
+        },
+        "AttackAirF": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 11.3163,
+          "hitboxEvents": 6
+        },
+        "AttackAirB": {
+          "maxRadius": 6.3203,
+          "maxBoneLocalOffset": 9.4166,
+          "hitboxEvents": 4
+        },
+        "AttackAirHi": {
+          "maxRadius": 4.3242,
+          "maxBoneLocalOffset": 3.9922,
+          "hitboxEvents": 1
+        },
+        "AttackAirLw": {
+          "maxRadius": 6.0547,
+          "maxBoneLocalOffset": 5.1975,
+          "hitboxEvents": 2
+        }
+      },
+      "character": "Kirby"
+    },
+    "Kp": {
+      "jumpVelocity": 2.8,
+      "airJumpMultiplier": 1.0,
+      "gravity": 0.13,
+      "terminalVelocity": 1.9,
+      "airSpeed": 0.8,
+      "runSpeed": 1.5,
+      "modelScale": 0.69,
+      "jumps": 2,
+      "ballisticJumpApex": 31.57,
+      "ballisticAirJumpApex": 31.57,
+      "source": "PlKp.dat",
+      "sourceSha256": "a21afa0e015957170f48305fd9414c041955ccf6991ea1b18a6f9142e063d24d",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "Attack12": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackDash": {
+          "maxRadius": 6.25,
+          "maxBoneLocalOffset": 20.762,
+          "hitboxEvents": 3
+        },
+        "AttackS3Hi": {
+          "maxRadius": 5.8594,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackS3S": {
+          "maxRadius": 5.8594,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackS3Lw": {
+          "maxRadius": 5.8594,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackHi3": {
+          "maxRadius": 6.6406,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 2
+        },
+        "AttackLw3": {
+          "maxRadius": 5.4688,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 4
+        },
+        "AttackS4": {
+          "maxRadius": 7.8125,
+          "maxBoneLocalOffset": 2.3438,
+          "hitboxEvents": 2
+        },
+        "AttackHi4": {
+          "maxRadius": 8.2031,
+          "maxBoneLocalOffset": 14.4531,
+          "hitboxEvents": 4
+        },
+        "AttackLw4": {
+          "maxRadius": 12.5,
+          "maxBoneLocalOffset": 20.044,
+          "hitboxEvents": 5
+        },
+        "AttackAirN": {
+          "maxRadius": 9.7656,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 1
+        },
+        "AttackAirF": {
+          "maxRadius": 6.25,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackAirB": {
+          "maxRadius": 8.5938,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 2
+        },
+        "AttackAirHi": {
+          "maxRadius": 8.5938,
+          "maxBoneLocalOffset": 2.3438,
+          "hitboxEvents": 1
+        },
+        "AttackAirLw": {
+          "maxRadius": 9.375,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 1
+        }
+      },
+      "character": "Bowser"
+    },
+    "Lk": {
+      "jumpVelocity": 2.5,
+      "airJumpMultiplier": 0.88,
+      "gravity": 0.11,
+      "terminalVelocity": 2.13,
+      "airSpeed": 1.0,
+      "runSpeed": 1.3,
+      "modelScale": 1.22,
+      "jumps": 2,
+      "ballisticJumpApex": 29.67,
+      "ballisticAirJumpApex": 23.1,
+      "source": "PlLk.dat",
+      "sourceSha256": "9f7c804278054b2cc7dfe0c4b87d69bcf1511df9fd673190c2ce84cc68e76bc8",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 4
+        },
+        "Attack12": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 4
+        },
+        "Attack13": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 4
+        },
+        "Attack100Loop": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 4
+        },
+        "AttackDash": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 4
+        },
+        "AttackS3": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 4
+        },
+        "AttackHi3": {
+          "maxRadius": 4.1016,
+          "maxBoneLocalOffset": 3.5156,
+          "hitboxEvents": 4
+        },
+        "AttackLw3": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 5.9626,
+          "hitboxEvents": 4
+        },
+        "AttackS41": {
+          "maxRadius": 4.8828,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 4
+        },
+        "AttackHi4": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 3.5156,
+          "hitboxEvents": 12
+        },
+        "AttackLw4": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 5.9626,
+          "hitboxEvents": 8
+        },
+        "AttackAirN": {
+          "maxRadius": 4.3242,
+          "maxBoneLocalOffset": 3.5156,
+          "hitboxEvents": 6
+        },
+        "AttackAirF": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 8
+        },
+        "AttackAirB": {
+          "maxRadius": 5.1562,
+          "maxBoneLocalOffset": 2.9922,
+          "hitboxEvents": 6
+        },
+        "AttackAirHi": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 3.125,
+          "hitboxEvents": 3
+        },
+        "AttackAirLw": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 10.2776,
+          "hitboxEvents": 3
+        },
+        "AttackS42": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.5156,
+          "hitboxEvents": 4
+        }
+      },
+      "character": "Link"
+    },
+    "Lg": {
+      "jumpVelocity": 2.4,
+      "airJumpMultiplier": 0.9,
+      "gravity": 0.069,
+      "terminalVelocity": 1.6,
+      "airSpeed": 0.68,
+      "runSpeed": 1.34,
+      "modelScale": 1.25,
+      "jumps": 2,
+      "ballisticJumpApex": 42.945,
+      "ballisticAirJumpApex": 34.896,
+      "source": "PlLg.dat",
+      "sourceSha256": "bbd86022d8a43109c69194a2361fb83d9705fa7c9e1723615e06c1e20bf7f1aa",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 2.3438,
+          "hitboxEvents": 3
+        },
+        "Attack12": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 2.3438,
+          "hitboxEvents": 3
+        },
+        "Attack13": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 10.3128,
+          "hitboxEvents": 1
+        },
+        "AttackDash": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 11.0485,
+          "hitboxEvents": 12
+        },
+        "AttackS3Hi": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.5156,
+          "hitboxEvents": 3
+        },
+        "AttackS3S": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.5156,
+          "hitboxEvents": 3
+        },
+        "AttackS3Lw": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.5156,
+          "hitboxEvents": 3
+        },
+        "AttackHi3": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackLw3": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 2.7344,
+          "hitboxEvents": 3
+        },
+        "AttackS4Hi": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 15.7466,
+          "hitboxEvents": 3
+        },
+        "AttackS4S": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 15.4148,
+          "hitboxEvents": 3
+        },
+        "AttackS4Lw": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 14.4055,
+          "hitboxEvents": 3
+        },
+        "AttackHi4": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 2.9749,
+          "hitboxEvents": 1
+        },
+        "AttackLw4": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 12.2347,
+          "hitboxEvents": 4
+        },
+        "AttackAirN": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 0.7812,
+          "hitboxEvents": 4
+        },
+        "AttackAirF": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.125,
+          "hitboxEvents": 2
+        },
+        "AttackAirB": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 3.125,
+          "hitboxEvents": 2
+        },
+        "AttackAirHi": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 3.125,
+          "hitboxEvents": 2
+        },
+        "AttackAirLw": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 3
+        }
+      },
+      "character": "Luigi"
+    },
+    "Ms": {
+      "jumpVelocity": 2.4,
+      "airJumpMultiplier": 0.88,
+      "gravity": 0.085,
+      "terminalVelocity": 2.2,
+      "airSpeed": 0.9,
+      "runSpeed": 1.8,
+      "modelScale": 1.15,
+      "jumps": 2,
+      "ballisticJumpApex": 35.09,
+      "ballisticAirJumpApex": 27.3,
+      "source": "PlMs.dat",
+      "sourceSha256": "0c4b7e49c8d18bfb3f5fd8c463d7c00b70292fa971b1ee94caf99548ba5b45b2",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 4
+        },
+        "Attack12": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 4
+        },
+        "AttackDash": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 5.0781,
+          "hitboxEvents": 4
+        },
+        "AttackS31": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 4
+        },
+        "AttackHi3": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 8
+        },
+        "AttackLw3": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 4
+        },
+        "AttackS4": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 5.0781,
+          "hitboxEvents": 4
+        },
+        "AttackHi4": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 8.6026,
+          "hitboxEvents": 4
+        },
+        "AttackLw4": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 8
+        },
+        "AttackAirN": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.5156,
+          "hitboxEvents": 8
+        },
+        "AttackAirF": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 4
+        },
+        "AttackAirB": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 4
+        },
+        "AttackAirHi": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 4
+        },
+        "AttackAirLw": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 3.5156,
+          "hitboxEvents": 4
+        }
+      },
+      "character": "Marth"
+    },
+    "Mt": {
+      "jumpVelocity": 2.3,
+      "airJumpMultiplier": 1.0,
+      "gravity": 0.082,
+      "terminalVelocity": 1.5,
+      "airSpeed": 1.2,
+      "runSpeed": 1.4,
+      "modelScale": 1.0,
+      "jumps": 2,
+      "ballisticJumpApex": 33.408,
+      "ballisticAirJumpApex": 33.408,
+      "source": "PlMt.dat",
+      "sourceSha256": "c59ce7ec4f303f9b647a8f1205a1be8a4d6466a984649df2dd7f038e1db631ed",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 15.636,
+          "hitboxEvents": 2
+        },
+        "Attack100Loop": {
+          "maxRadius": 6.25,
+          "maxBoneLocalOffset": 4.5721,
+          "hitboxEvents": 2
+        },
+        "AttackDash": {
+          "maxRadius": 4.4922,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 6
+        },
+        "AttackS3Hi": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackS3S": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackS3Lw": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackHi3": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 8
+        },
+        "AttackLw3": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackS4": {
+          "maxRadius": 4.8828,
+          "maxBoneLocalOffset": 22.1281,
+          "hitboxEvents": 2
+        },
+        "AttackHi4": {
+          "maxRadius": 6.8359,
+          "maxBoneLocalOffset": 23.4375,
+          "hitboxEvents": 8
+        },
+        "AttackLw4": {
+          "maxRadius": 8.5938,
+          "maxBoneLocalOffset": 13.9426,
+          "hitboxEvents": 2
+        },
+        "AttackAirN": {
+          "maxRadius": 10.9375,
+          "maxBoneLocalOffset": 11.5944,
+          "hitboxEvents": 5
+        },
+        "AttackAirF": {
+          "maxRadius": 5.4688,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 2
+        },
+        "AttackAirB": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackAirHi": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackAirLw": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        }
+      },
+      "character": "Mewtwo"
+    },
+    "Ns": {
+      "jumpVelocity": 2.5,
+      "airJumpMultiplier": 0.85,
+      "gravity": 0.09,
+      "terminalVelocity": 1.83,
+      "airSpeed": 0.93,
+      "runSpeed": 1.4,
+      "modelScale": 1.0,
+      "jumps": 2,
+      "ballisticJumpApex": 35.98,
+      "ballisticAirJumpApex": 26.16,
+      "source": "PlNs.dat",
+      "sourceSha256": "a190a1df18783d3ec2adbc44e6b63b395e75152e264f2f1d80843375a64a1070",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 3.3375,
+          "hitboxEvents": 3
+        },
+        "Attack12": {
+          "maxRadius": 3.3203,
+          "maxBoneLocalOffset": 0.5312,
+          "hitboxEvents": 2
+        },
+        "Attack13": {
+          "maxRadius": 4.6562,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 2
+        },
+        "AttackDash": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 24.6682,
+          "hitboxEvents": 5
+        },
+        "AttackS3Hi": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 2.7734,
+          "hitboxEvents": 2
+        },
+        "AttackS3HiS": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 2.7734,
+          "hitboxEvents": 2
+        },
+        "AttackS3S": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 2.7734,
+          "hitboxEvents": 2
+        },
+        "AttackS3LwS": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 2.7734,
+          "hitboxEvents": 2
+        },
+        "AttackS3Lw": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 2.7734,
+          "hitboxEvents": 2
+        },
+        "AttackHi3": {
+          "maxRadius": 5.8594,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 2
+        },
+        "AttackLw3": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 4.2969,
+          "hitboxEvents": 3
+        },
+        "AttackS4": {
+          "maxRadius": 3.3203,
+          "maxBoneLocalOffset": 8.9844,
+          "hitboxEvents": 4
+        },
+        "AttackHi4": {
+          "maxRadius": 2.3438,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 1
+        },
+        "AttackLw4": {
+          "maxRadius": 2.3438,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 1
+        },
+        "AttackAirN": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 0.332,
+          "hitboxEvents": 6
+        },
+        "AttackAirF": {
+          "maxRadius": 6.6406,
+          "maxBoneLocalOffset": 10.4676,
+          "hitboxEvents": 4
+        },
+        "AttackAirB": {
+          "maxRadius": 4.8242,
+          "maxBoneLocalOffset": 2.8405,
+          "hitboxEvents": 4
+        },
+        "AttackAirHi": {
+          "maxRadius": 5.8242,
+          "maxBoneLocalOffset": 3.3281,
+          "hitboxEvents": 1
+        },
+        "AttackAirLw": {
+          "maxRadius": 5.3242,
+          "maxBoneLocalOffset": 1.1049,
+          "hitboxEvents": 1
+        }
+      },
+      "character": "Ness"
+    },
+    "Pe": {
+      "jumpVelocity": 2.2,
+      "airJumpMultiplier": 0.7,
+      "gravity": 0.08,
+      "terminalVelocity": 1.5,
+      "airSpeed": 1.1,
+      "runSpeed": 1.3,
+      "modelScale": 1.15,
+      "jumps": 2,
+      "ballisticJumpApex": 31.36,
+      "ballisticAirJumpApex": 15.6,
+      "source": "PlPe.dat",
+      "sourceSha256": "f1e42fd826e7af28683cbf587f32d9c3c249b492487d124f888f8a0073b07de8",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 1.1719,
+          "hitboxEvents": 4
+        },
+        "Attack12": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 1.1719,
+          "hitboxEvents": 4
+        },
+        "AttackDash": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 11.0485,
+          "hitboxEvents": 4
+        },
+        "AttackS3": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 5.8594,
+          "hitboxEvents": 6
+        },
+        "AttackHi3": {
+          "maxRadius": 5.4688,
+          "maxBoneLocalOffset": 1.9531,
+          "hitboxEvents": 1
+        },
+        "AttackLw3": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 1.9531,
+          "hitboxEvents": 4
+        },
+        "AttackHi4": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 9.3179,
+          "hitboxEvents": 4
+        },
+        "AttackLw4": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 7.9672,
+          "hitboxEvents": 4
+        },
+        "AttackAirN": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 6
+        },
+        "AttackAirF": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 2
+        },
+        "AttackAirB": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 2
+        },
+        "AttackAirHi": {
+          "maxRadius": 4.1602,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackAirLw": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 4
+        },
+        "AttackS4": {
+          "maxRadius": 4.4922,
+          "maxBoneLocalOffset": 4.1016,
+          "hitboxEvents": 3
+        }
+      },
+      "character": "Peach"
+    },
+    "Pc": {
+      "jumpVelocity": 2.6,
+      "airJumpMultiplier": 1.0,
+      "gravity": 0.11,
+      "terminalVelocity": 1.9,
+      "airSpeed": 0.85,
+      "runSpeed": 1.72,
+      "modelScale": 0.5,
+      "jumps": 2,
+      "ballisticJumpApex": 32.04,
+      "ballisticAirJumpApex": 32.04,
+      "source": "PlPc.dat",
+      "sourceSha256": "b4683893f3face7492dfbb1141c0f17e8cb8a4cb9599657a4a997c462119f169",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 4.3242,
+          "maxBoneLocalOffset": 4.7137,
+          "hitboxEvents": 2
+        },
+        "AttackDash": {
+          "maxRadius": 4.4922,
+          "maxBoneLocalOffset": 4.7137,
+          "hitboxEvents": 2
+        },
+        "AttackS3Hi": {
+          "maxRadius": 4.6562,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackS3S": {
+          "maxRadius": 4.6562,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackS3Lw": {
+          "maxRadius": 4.6562,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackHi3": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 7.2582,
+          "hitboxEvents": 3
+        },
+        "AttackLw3": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 7.4231,
+          "hitboxEvents": 3
+        },
+        "AttackS4": {
+          "maxRadius": 5.3242,
+          "maxBoneLocalOffset": 23.1361,
+          "hitboxEvents": 6
+        },
+        "AttackHi4": {
+          "maxRadius": 5.4688,
+          "maxBoneLocalOffset": 4.7137,
+          "hitboxEvents": 2
+        },
+        "AttackLw4": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 13.7164,
+          "hitboxEvents": 3
+        },
+        "AttackAirN": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 0.332,
+          "hitboxEvents": 6
+        },
+        "AttackAirF": {
+          "maxRadius": 6.4883,
+          "maxBoneLocalOffset": 2.2164,
+          "hitboxEvents": 2
+        },
+        "AttackAirB": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 1.9531,
+          "hitboxEvents": 6
+        },
+        "AttackAirHi": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 7.4231,
+          "hitboxEvents": 9
+        },
+        "AttackAirLw": {
+          "maxRadius": 5.4883,
+          "maxBoneLocalOffset": 2.2164,
+          "hitboxEvents": 2
+        }
+      },
+      "character": "Pichu"
+    },
+    "Pk": {
+      "jumpVelocity": 2.6,
+      "airJumpMultiplier": 1.0,
+      "gravity": 0.11,
+      "terminalVelocity": 1.9,
+      "airSpeed": 0.85,
+      "runSpeed": 1.8,
+      "modelScale": 0.9,
+      "jumps": 2,
+      "ballisticJumpApex": 32.04,
+      "ballisticAirJumpApex": 32.04,
+      "source": "PlPk.dat",
+      "sourceSha256": "4befcf5d68af080ad6a18364d126b62f852e3c7f0f3ee3070168aa156bda184b",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 4.3242,
+          "maxBoneLocalOffset": 2.2164,
+          "hitboxEvents": 2
+        },
+        "AttackDash": {
+          "maxRadius": 4.4922,
+          "maxBoneLocalOffset": 2.3804,
+          "hitboxEvents": 2
+        },
+        "AttackS3Hi": {
+          "maxRadius": 4.6562,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackS3S": {
+          "maxRadius": 4.6562,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackS3Lw": {
+          "maxRadius": 4.6562,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackHi3": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 7.4117,
+          "hitboxEvents": 3
+        },
+        "AttackLw3": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 7.4231,
+          "hitboxEvents": 3
+        },
+        "AttackS4": {
+          "maxRadius": 5.3242,
+          "maxBoneLocalOffset": 21.7701,
+          "hitboxEvents": 6
+        },
+        "AttackHi4": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 7.4231,
+          "hitboxEvents": 9
+        },
+        "AttackLw4": {
+          "maxRadius": 9.7656,
+          "maxBoneLocalOffset": 10.0049,
+          "hitboxEvents": 4
+        },
+        "AttackAirN": {
+          "maxRadius": 4.3242,
+          "maxBoneLocalOffset": 0.332,
+          "hitboxEvents": 6
+        },
+        "AttackAirF": {
+          "maxRadius": 6.4883,
+          "maxBoneLocalOffset": 2.2164,
+          "hitboxEvents": 2
+        },
+        "AttackAirB": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 4
+        },
+        "AttackAirHi": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 1.6573,
+          "hitboxEvents": 6
+        },
+        "AttackAirLw": {
+          "maxRadius": 5.4883,
+          "maxBoneLocalOffset": 2.2164,
+          "hitboxEvents": 2
+        }
+      },
+      "character": "Pikachu"
+    },
+    "Pr": {
+      "jumpVelocity": 1.6,
+      "airJumpMultiplier": 0.0,
+      "gravity": 0.064,
+      "terminalVelocity": 1.3,
+      "airSpeed": 1.35,
+      "runSpeed": 1.1,
+      "modelScale": 0.94,
+      "jumps": 6,
+      "ballisticJumpApex": 20.8,
+      "ballisticAirJumpApex": 0,
+      "source": "PlPr.dat",
+      "sourceSha256": "17ff81bf214584db3619fffffb97727925ad5f03ce37c80141dd1bff783fb42e",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 1.6406,
+          "hitboxEvents": 3
+        },
+        "Attack12": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 1.6406,
+          "hitboxEvents": 3
+        },
+        "AttackDash": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 3.5156,
+          "hitboxEvents": 2
+        },
+        "AttackS3Hi": {
+          "maxRadius": 3.125,
+          "maxBoneLocalOffset": 0.7812,
+          "hitboxEvents": 2
+        },
+        "AttackS3S": {
+          "maxRadius": 3.125,
+          "maxBoneLocalOffset": 0.7812,
+          "hitboxEvents": 2
+        },
+        "AttackS3Lw": {
+          "maxRadius": 3.125,
+          "maxBoneLocalOffset": 0.7812,
+          "hitboxEvents": 2
+        },
+        "AttackHi3": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 2.7344,
+          "hitboxEvents": 4
+        },
+        "AttackLw3": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 1.5625,
+          "hitboxEvents": 3
+        },
+        "AttackS4": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 1.9531,
+          "hitboxEvents": 4
+        },
+        "AttackHi4": {
+          "maxRadius": 5.8594,
+          "maxBoneLocalOffset": 4.9411,
+          "hitboxEvents": 2
+        },
+        "AttackLw4": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 0.625,
+          "hitboxEvents": 4
+        },
+        "AttackAirN": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 2.3438,
+          "hitboxEvents": 4
+        },
+        "AttackAirF": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 2.7621,
+          "hitboxEvents": 4
+        },
+        "AttackAirB": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 1.9531,
+          "hitboxEvents": 3
+        },
+        "AttackAirHi": {
+          "maxRadius": 5.4688,
+          "maxBoneLocalOffset": 1.5625,
+          "hitboxEvents": 1
+        },
+        "AttackAirLw": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 4.0706,
+          "hitboxEvents": 4
+        }
+      },
+      "character": "Jigglypuff"
+    },
+    "Ss": {
+      "jumpVelocity": 2.1,
+      "airJumpMultiplier": 0.9,
+      "gravity": 0.066,
+      "terminalVelocity": 1.4,
+      "airSpeed": 0.89,
+      "runSpeed": 1.4,
+      "modelScale": 0.88,
+      "jumps": 2,
+      "ballisticJumpApex": 34.464,
+      "ballisticAirJumpApex": 28.014,
+      "source": "PlSs.dat",
+      "sourceSha256": "8fc0047354d551c8854e9834a3aad08e377f9855ab2572f47d0b41adbf347c22",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 19.4058,
+          "hitboxEvents": 3
+        },
+        "Attack12": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 4.2969,
+          "hitboxEvents": 2
+        },
+        "AttackDash": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 2
+        },
+        "AttackS3Hi": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 7.0312,
+          "hitboxEvents": 4
+        },
+        "AttackS3HiS": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 7.0312,
+          "hitboxEvents": 4
+        },
+        "AttackS3S": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 7.0312,
+          "hitboxEvents": 4
+        },
+        "AttackS3LwS": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 7.0312,
+          "hitboxEvents": 4
+        },
+        "AttackS3Lw": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 7.0312,
+          "hitboxEvents": 4
+        },
+        "AttackHi3": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 6.25,
+          "hitboxEvents": 4
+        },
+        "AttackLw3": {
+          "maxRadius": 5.8594,
+          "maxBoneLocalOffset": 18.815,
+          "hitboxEvents": 3
+        },
+        "AttackS4Hi": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 5.8594,
+          "hitboxEvents": 3
+        },
+        "AttackS4HiS": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 5.8594,
+          "hitboxEvents": 3
+        },
+        "AttackS4S": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 5.8594,
+          "hitboxEvents": 3
+        },
+        "AttackS4LwS": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 5.8594,
+          "hitboxEvents": 3
+        },
+        "AttackS4Lw": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 5.8594,
+          "hitboxEvents": 3
+        },
+        "AttackHi4": {
+          "maxRadius": 7.0312,
+          "maxBoneLocalOffset": 7.4219,
+          "hitboxEvents": 10
+        },
+        "AttackLw4": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 7.8125,
+          "hitboxEvents": 4
+        },
+        "AttackAirN": {
+          "maxRadius": 4.6562,
+          "maxBoneLocalOffset": 1.6641,
+          "hitboxEvents": 4
+        },
+        "AttackAirF": {
+          "maxRadius": 5.8242,
+          "maxBoneLocalOffset": 6.6562,
+          "hitboxEvents": 4
+        },
+        "AttackAirB": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.6602,
+          "hitboxEvents": 3
+        },
+        "AttackAirHi": {
+          "maxRadius": 6.25,
+          "maxBoneLocalOffset": 3.474,
+          "hitboxEvents": 9
+        },
+        "AttackAirLw": {
+          "maxRadius": 4.1602,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 2
+        }
+      },
+      "character": "Samus"
+    },
+    "Sk": {
+      "jumpVelocity": 2.8,
+      "airJumpMultiplier": 1.1,
+      "gravity": 0.12,
+      "terminalVelocity": 2.13,
+      "airSpeed": 0.8,
+      "runSpeed": 1.8,
+      "modelScale": 1.4,
+      "jumps": 2,
+      "ballisticJumpApex": 34.08,
+      "ballisticAirJumpApex": 41.08,
+      "source": "PlSk.dat",
+      "sourceSha256": "b75ee373521c4deb97ea8863e4d07e37b589dc7756c9e375e750e2043075ce89",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.125,
+          "hitboxEvents": 3
+        },
+        "Attack12": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.125,
+          "hitboxEvents": 3
+        },
+        "Attack100Loop": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 3.9062,
+          "hitboxEvents": 3
+        },
+        "AttackDash": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 5.9498,
+          "hitboxEvents": 4
+        },
+        "AttackS3": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 3.8281,
+          "hitboxEvents": 3
+        },
+        "AttackHi3": {
+          "maxRadius": 5.4688,
+          "maxBoneLocalOffset": 2.8125,
+          "hitboxEvents": 4
+        },
+        "AttackLw3": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 2.7344,
+          "hitboxEvents": 2
+        },
+        "AttackS4": {
+          "maxRadius": 5.4688,
+          "maxBoneLocalOffset": 2.7344,
+          "hitboxEvents": 6
+        },
+        "AttackHi4": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 2.9297,
+          "hitboxEvents": 6
+        },
+        "AttackLw4": {
+          "maxRadius": 4.3242,
+          "maxBoneLocalOffset": 3.125,
+          "hitboxEvents": 7
+        },
+        "AttackAirN": {
+          "maxRadius": 3.4961,
+          "maxBoneLocalOffset": 2.3281,
+          "hitboxEvents": 8
+        },
+        "AttackAirF": {
+          "maxRadius": 5.4688,
+          "maxBoneLocalOffset": 2.3281,
+          "hitboxEvents": 1
+        },
+        "AttackAirB": {
+          "maxRadius": 4.9922,
+          "maxBoneLocalOffset": 3.9922,
+          "hitboxEvents": 8
+        },
+        "AttackAirHi": {
+          "maxRadius": 4.1602,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 4
+        },
+        "AttackAirLw": {
+          "maxRadius": 5.9883,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 2
+        }
+      },
+      "character": "Sheik"
+    },
+    "Ys": {
+      "jumpVelocity": 2.5,
+      "airJumpMultiplier": 1.3,
+      "gravity": 0.093,
+      "terminalVelocity": 1.93,
+      "airSpeed": 1.2,
+      "runSpeed": 1.6,
+      "modelScale": 1.05,
+      "jumps": 2,
+      "ballisticJumpApex": 34.857,
+      "ballisticAirJumpApex": 58.415,
+      "source": "PlYs.dat",
+      "sourceSha256": "95649bbf535503832190c9f34f400f27ad9c17523cebed88c1925bad1884f52b",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 5.4688,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 2
+        },
+        "Attack12": {
+          "maxRadius": 5.4688,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 2
+        },
+        "AttackDash": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 11.075,
+          "hitboxEvents": 2
+        },
+        "AttackS3Hi": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 2.3438,
+          "hitboxEvents": 3
+        },
+        "AttackS3HiS": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 2.3438,
+          "hitboxEvents": 3
+        },
+        "AttackS3S": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 2.3438,
+          "hitboxEvents": 3
+        },
+        "AttackS3LwS": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 2.3438,
+          "hitboxEvents": 3
+        },
+        "AttackS3Lw": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 2.3438,
+          "hitboxEvents": 3
+        },
+        "AttackHi3": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 4.3673,
+          "hitboxEvents": 3
+        },
+        "AttackLw3": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 0.7812,
+          "hitboxEvents": 3
+        },
+        "AttackS4Hi": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 2.3438,
+          "hitboxEvents": 3
+        },
+        "AttackS4S": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 2.3438,
+          "hitboxEvents": 3
+        },
+        "AttackS4Lw": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 2.3438,
+          "hitboxEvents": 3
+        },
+        "AttackHi4": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 3.4939,
+          "hitboxEvents": 2
+        },
+        "AttackLw4": {
+          "maxRadius": 4.9922,
+          "maxBoneLocalOffset": 0.7812,
+          "hitboxEvents": 6
+        },
+        "AttackAirN": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 0.332,
+          "hitboxEvents": 6
+        },
+        "AttackAirF": {
+          "maxRadius": 7.0312,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 1
+        },
+        "AttackAirB": {
+          "maxRadius": 4.8828,
+          "maxBoneLocalOffset": 2.3438,
+          "hitboxEvents": 12
+        },
+        "AttackAirHi": {
+          "maxRadius": 7.8125,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 2
+        },
+        "AttackAirLw": {
+          "maxRadius": 7.0312,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 2
+        }
+      },
+      "character": "Yoshi"
+    },
+    "Zd": {
+      "jumpVelocity": 2.1,
+      "airJumpMultiplier": 0.86,
+      "gravity": 0.073,
+      "terminalVelocity": 1.4,
+      "airSpeed": 0.95,
+      "runSpeed": 1.1,
+      "modelScale": 1.26,
+      "jumps": 2,
+      "ballisticJumpApex": 31.262,
+      "ballisticAirJumpApex": 23.25,
+      "source": "PlZd.dat",
+      "sourceSha256": "e523bb0fe551f64aa6ae5b3ae59cd1e62434baeded076d4a5e1ea993e122a79a",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 5.4688,
+          "maxBoneLocalOffset": 14.9564,
+          "hitboxEvents": 8
+        },
+        "AttackDash": {
+          "maxRadius": 5.6641,
+          "maxBoneLocalOffset": 12.2035,
+          "hitboxEvents": 4
+        },
+        "AttackS3Hi": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackS3HiS": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackS3S": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackS3LwS": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackS3Lw": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackHi3": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 2
+        },
+        "AttackLw3": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 1.9531,
+          "hitboxEvents": 4
+        },
+        "AttackS4S": {
+          "maxRadius": 5.4688,
+          "maxBoneLocalOffset": 14.0027,
+          "hitboxEvents": 8
+        },
+        "AttackHi4": {
+          "maxRadius": 5.8594,
+          "maxBoneLocalOffset": 14.8438,
+          "hitboxEvents": 12
+        },
+        "AttackLw4": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 3.125,
+          "hitboxEvents": 4
+        },
+        "AttackAirN": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 8.5671,
+          "hitboxEvents": 8
+        },
+        "AttackAirF": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackAirB": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 3
+        },
+        "AttackAirHi": {
+          "maxRadius": 5.4688,
+          "maxBoneLocalOffset": 18.0746,
+          "hitboxEvents": 1
+        },
+        "AttackAirLw": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 2
+        }
+      },
+      "character": "Zelda"
+    },
+    "Gw": {
+      "jumpVelocity": 2.3,
+      "airJumpMultiplier": 1.0,
+      "gravity": 0.095,
+      "terminalVelocity": 1.7,
+      "airSpeed": 1.0,
+      "runSpeed": 1.5,
+      "modelScale": 1.02,
+      "jumps": 2,
+      "ballisticJumpApex": 29.0,
+      "ballisticAirJumpApex": 29.0,
+      "source": "PlGw.dat",
+      "sourceSha256": "1c057a2882b7b42f3184b96ddf5221cae50e69652b00f6c78819c819804e0a1f",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 6.25,
+          "hitboxEvents": 3
+        },
+        "Attack100Loop": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 6.25,
+          "hitboxEvents": 3
+        },
+        "AttackDash": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 4.3673,
+          "hitboxEvents": 1
+        },
+        "AttackS3": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 6.9877,
+          "hitboxEvents": 4
+        },
+        "AttackHi3": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 3.6014,
+          "hitboxEvents": 3
+        },
+        "AttackLw3": {
+          "maxRadius": 6.25,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 2
+        },
+        "AttackS4": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 17.1342,
+          "hitboxEvents": 6
+        },
+        "AttackHi4": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 2.9749,
+          "hitboxEvents": 1
+        },
+        "AttackLw4": {
+          "maxRadius": 5.4688,
+          "maxBoneLocalOffset": 11.1174,
+          "hitboxEvents": 4
+        },
+        "AttackAirN": {
+          "maxRadius": 11.7188,
+          "maxBoneLocalOffset": 12.1094,
+          "hitboxEvents": 1
+        },
+        "AttackAirF": {
+          "maxRadius": 6.25,
+          "maxBoneLocalOffset": 13.2179,
+          "hitboxEvents": 4
+        },
+        "AttackAirB": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 15.8973,
+          "hitboxEvents": 2
+        },
+        "AttackAirHi": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 15.6299,
+          "hitboxEvents": 4
+        },
+        "AttackAirLw": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 4.3673,
+          "hitboxEvents": 3
+        }
+      },
+      "character": "Mr. Game & Watch"
+    },
+    "Fe": {
+      "jumpVelocity": 2.6,
+      "airJumpMultiplier": 0.88,
+      "gravity": 0.114,
+      "terminalVelocity": 2.4,
+      "airSpeed": 0.9,
+      "runSpeed": 1.61,
+      "modelScale": 1.08,
+      "jumps": 2,
+      "ballisticJumpApex": 30.958,
+      "ballisticAirJumpApex": 24.108,
+      "source": "PlFe.dat",
+      "sourceSha256": "5d8ec1eb2821e8700ee3ed8020d1b57ca5f857468dad3eddfc28bbc398169648",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 5.4688,
+          "hitboxEvents": 4
+        },
+        "AttackDash": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 5.4688,
+          "hitboxEvents": 4
+        },
+        "AttackS31": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 5.4688,
+          "hitboxEvents": 4
+        },
+        "AttackHi3": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 5.4688,
+          "hitboxEvents": 8
+        },
+        "AttackLw3": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 5.4688,
+          "hitboxEvents": 4
+        },
+        "AttackS4": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 5.4688,
+          "hitboxEvents": 4
+        },
+        "AttackHi4": {
+          "maxRadius": 5.8594,
+          "maxBoneLocalOffset": 7.8125,
+          "hitboxEvents": 6
+        },
+        "AttackLw4": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 5.4688,
+          "hitboxEvents": 8
+        },
+        "AttackAirN": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 5.4688,
+          "hitboxEvents": 8
+        },
+        "AttackAirF": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 5.4688,
+          "hitboxEvents": 4
+        },
+        "AttackAirB": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 5.4688,
+          "hitboxEvents": 4
+        },
+        "AttackAirHi": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 5.4688,
+          "hitboxEvents": 4
+        },
+        "AttackAirLw": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 5.4688,
+          "hitboxEvents": 4
+        }
+      },
+      "character": "Roy"
+    },
+    "Gn": {
+      "jumpVelocity": 2.6,
+      "airJumpMultiplier": 0.95,
+      "gravity": 0.13,
+      "terminalVelocity": 2.0,
+      "airSpeed": 0.78,
+      "runSpeed": 1.35,
+      "modelScale": 1.08,
+      "jumps": 2,
+      "ballisticJumpApex": 27.3,
+      "ballisticAirJumpApex": 24.7,
+      "source": "PlGn.dat",
+      "sourceSha256": "5e38291dae0e0cb70e1d337ea824081f5f9a19a592a2427c7525b3ef3f8f2388",
+      "attacks": {
+        "Attack11": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 15.8829,
+          "hitboxEvents": 3
+        },
+        "AttackDash": {
+          "maxRadius": 5.8594,
+          "maxBoneLocalOffset": 0.7812,
+          "hitboxEvents": 2
+        },
+        "AttackS3Hi": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 5.0781,
+          "hitboxEvents": 3
+        },
+        "AttackS3HiS": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 5.0781,
+          "hitboxEvents": 3
+        },
+        "AttackS3S": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 5.0781,
+          "hitboxEvents": 3
+        },
+        "AttackS3LwS": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 5.0781,
+          "hitboxEvents": 3
+        },
+        "AttackS3Lw": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 5.0781,
+          "hitboxEvents": 3
+        },
+        "AttackHi3": {
+          "maxRadius": 7.0312,
+          "maxBoneLocalOffset": 5.0024,
+          "hitboxEvents": 3
+        },
+        "AttackLw3": {
+          "maxRadius": 3.9062,
+          "maxBoneLocalOffset": 5.8594,
+          "hitboxEvents": 3
+        },
+        "AttackS4Hi": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 2
+        },
+        "AttackS4S": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 2
+        },
+        "AttackS4Lw": {
+          "maxRadius": 3.5156,
+          "maxBoneLocalOffset": 0.0,
+          "hitboxEvents": 2
+        },
+        "AttackHi4": {
+          "maxRadius": 5.8594,
+          "maxBoneLocalOffset": 5.8594,
+          "hitboxEvents": 6
+        },
+        "AttackLw4": {
+          "maxRadius": 4.2969,
+          "maxBoneLocalOffset": 5.8594,
+          "hitboxEvents": 5
+        },
+        "AttackAirN": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 5.8594,
+          "hitboxEvents": 6
+        },
+        "AttackAirF": {
+          "maxRadius": 5.0781,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 3
+        },
+        "AttackAirB": {
+          "maxRadius": 5.4688,
+          "maxBoneLocalOffset": 4.6875,
+          "hitboxEvents": 3
+        },
+        "AttackAirHi": {
+          "maxRadius": 4.6875,
+          "maxBoneLocalOffset": 5.8594,
+          "hitboxEvents": 6
+        },
+        "AttackAirLw": {
+          "maxRadius": 6.6406,
+          "maxBoneLocalOffset": 5.6876,
+          "hitboxEvents": 3
+        }
+      },
+      "character": "Ganondorf"
+    }
+  }
+}

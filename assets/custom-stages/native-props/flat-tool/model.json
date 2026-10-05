@@ -1,0 +1,26 @@
+{
+  "format": "TTRC_NATIVE_PROP_1",
+  "sourceGame": "Super Smash Bros. Melee USA 1.02",
+  "sourceArchive": "GrFz.dat",
+  "sourceSha256": "93e2f393730b8614433ee5cb3cbf07385b6f57aa02a32579f97603b6b523c375",
+  "mapGroup": "itemdata",
+  "displayObjects": [
+    295608
+  ],
+  "aspect": 0.7771428571428571,
+  "depth": 0.0,
+  "sourceBounds": [
+    [
+      -4.25,
+      -3.1875,
+      0.0
+    ],
+    [
+      3.953125,
+      3.1875,
+      0.0
+    ]
+  ],
+  "triangles": 27,
+  "modelSha256": "232b795b8d4bc0f82c06e9dcda26a1a37e276c3a2d9a9ecdd0f4ca525b17b0b4"
+}
