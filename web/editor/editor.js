@@ -197,7 +197,7 @@ async function collectPack(){
  const pack=createStagePack(await allBases(),drafts,project?.stage);
  if(new Blob([JSON.stringify(pack)]).size>PACK_LIMIT)throw Error('Level pack must be under 8 MB.');return pack;
 }
-function downloadPack(pack){const url=URL.createObjectURL(new Blob([JSON.stringify(pack,null,2)+'\n'],{type:'application/json'})),a=el('a');a.href=url;a.download='TTRC-all-levels.ttrc.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function downloadPack(pack){const url=URL.createObjectURL(new Blob([JSON.stringify(pack,null,2)+'\n'],{type:'application/json'})),a=el('a');a.href=url;a.download='Custom-Melee-BTT-all-levels.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 async function importDocument(incoming){
  if(incoming?.format!=='TTRC_STAGE_PACK'){
   if(!catalog.some(c=>c.stage===incoming?.stage))throw Error('Unknown stage.');
