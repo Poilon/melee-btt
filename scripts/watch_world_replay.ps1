@@ -20,7 +20,7 @@ try{
    $s=$reader.Sample($ReplayPid)|ConvertFrom-Json
    if($s.major -eq 14 -and $s.minor -eq 1 -and $s.stageId -ge 40 -and $s.stageId -le 65){$played=$true}
    if($played -and $s.major -eq 14 -and $s.minor -eq 3){$ended++}else{$ended=0}
-   if($viewer.MainWindowHandle -ne [IntPtr]::Zero){[WorldReplayWindow]::SetWindowText($viewer.MainWindowHandle,'TTRC - Replay')|Out-Null}
+   if($viewer.MainWindowHandle -ne [IntPtr]::Zero){[WorldReplayWindow]::SetWindowText($viewer.MainWindowHandle,'Custom Melee BTT - Replay')|Out-Null}
    if($ended -ge 5){break}
   }catch{if($reader){$reader.Dispose();$reader=$null}}
   Start-Sleep -Milliseconds 200;$viewer.Refresh()

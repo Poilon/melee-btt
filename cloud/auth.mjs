@@ -84,7 +84,7 @@ export function createAuth({ store, origin, secret, session, body, cookie, json,
       if (!secret) return json(res, 503, { error: 'Sign-in unavailable. Please try again later.' }), true;
       if (await limited(req, path, 30, 900000)) return json(res, 429, { error: 'Too many attempts. Try again in 15 minutes.' }), true;
       const input = await body(req), username = normalizeUsername(input.username);
-      if(gameAccountsOnly&&!inGame&&path==='auth/signup'&&!await browserRequest(input))return json(res,410,{error:'Start account creation with Log in in TTRC Dolphin.'}),true;
+      if(gameAccountsOnly&&!inGame&&path==='auth/signup'&&!await browserRequest(input))return json(res,410,{error:'Start account creation with Log in in Custom Melee BTT Dolphin.'}),true;
       if (path === 'auth/login') {
         if (username && await limited(req, 'login-name', 20, 900000, username)) return json(res, 429, { error: 'Too many attempts. Try again in 15 minutes.' }), true;
         const account = username ? await store.get(`usernames/${username}.json`) : null;

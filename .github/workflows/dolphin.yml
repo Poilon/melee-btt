@@ -1,4 +1,4 @@
-name: Build TTRC Dolphin
+name: Build Custom Melee BTT Dolphin
 on:
   workflow_call:
   workflow_dispatch:

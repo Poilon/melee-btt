@@ -104,7 +104,7 @@ export function createCloudHandler({ store, challenge, gecko, origin, secret, re
         });
       }
       if (req.method === 'GET' && path === 'challenge/code') {
-        res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8', 'Content-Disposition': `attachment; filename="TTRC-${challenge.rules.seed}.txt"` });
+        res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8', 'Content-Disposition': `attachment; filename="Custom-Melee-BTT-${challenge.rules.seed}.txt"` });
         return res.end(gecko);
       }
       if (req.method === 'POST' && path === 'auth/logout') {

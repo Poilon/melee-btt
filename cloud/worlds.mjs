@@ -58,11 +58,11 @@ export function createWorlds({store,catalog={format:'ttrc-worlds-v1',courses:[]}
    if(!record)return send(res,404,{error:'Replay not found.'});
    const evidence=await store.get(`worlds/replays/${course.id}/${player}/${id}.json`);
    if(!evidence||sha256(Buffer.from(evidence.base64,'base64'))!==record.replay.sha256)return send(res,404,{error:'Replay unavailable.'});
-   res.writeHead(200,{'Content-Type':'application/octet-stream','Content-Disposition':`attachment; filename="TTRC-${course.character}-${id}.slp"`,'X-TTRC-Course':course.id,'X-TTRC-SHA256':record.replay.sha256});
+   res.writeHead(200,{'Content-Type':'application/octet-stream','Content-Disposition':`attachment; filename="Custom-Melee-BTT-${course.character}-${id}.slp"`,'X-TTRC-Course':course.id,'X-TTRC-SHA256':record.replay.sha256});
    res.end(Buffer.from(evidence.base64,'base64'));return true;
   }
   if(path==='worlds/submit'&&req.method==='POST'){
-   const player=await bearer(req);if(!player?.username)return send(res,401,{error:'Sign in in TTRC Dolphin.'});
+   const player=await bearer(req);if(!player?.username)return send(res,401,{error:'Sign in in Custom Melee BTT Dolphin.'});
    let input,bytes,replay,course;
    try{
     input=await readBody(req);course=getCourse(input.courseId);
