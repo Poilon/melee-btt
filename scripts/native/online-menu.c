@@ -61,7 +61,7 @@ static char keychar(State*s,int key){
 }
 static void render(State*s){
  char b[120];for(int i=0;i<20;i++)line(s,i,"");
- line(s,0,"TARGET TEST RANDOMIZER CHALLENGE");
+ line(s,0,"CUSTOM MELEE BTT");
  FORMAT(b,"%s",s->signedIn?s->identity:"Not signed in");line(s,1,b);
  if(s->screen==0){s->text->hidden=1;s->dirty=0;return; }else if(s->screen==1){
   line(s,3,s->mode?"CREATE ACCOUNT":"SIGN IN");

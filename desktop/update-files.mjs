@@ -5,7 +5,7 @@ import {readdir,readFile,lstat} from 'node:fs/promises';
 import {join} from 'node:path';
 export const repository='Poilon/target-test-randomizer-challenge';
 export const managedDirectories=new Set(['server','shared','src','scripts','companion','web','assets','desktop','generator-sources','runtime','node_modules','Sys','Languages']);
-export const managedFiles=new Set(['Slippi Dolphin.exe','OpenAL32.dll','WebView2Loader.dll','slippi_rust_extensions.dll','slippi_rust_extensions.dll.lib','TTRC Companion.vbs','package.json','package-lock.json','release.json','READ ME.txt','THIRD-PARTY-NOTICES.txt','LICENSE-Dolphin.txt','license.txt','FIX-VCRUNTIME140-ERROR.txt']);
+export const managedFiles=new Set(['Slippi Dolphin.exe','OpenAL32.dll','WebView2Loader.dll','slippi_rust_extensions.dll','slippi_rust_extensions.dll.lib','TTRC Companion.vbs','Custom Melee BTT Companion.vbs','package.json','package-lock.json','release.json','READ ME.txt','THIRD-PARTY-NOTICES.txt','LICENSE-Dolphin.txt','license.txt','FIX-VCRUNTIME140-ERROR.txt']);
 export function allowedPath(path){
  if(typeof path!=='string'||path.includes('\\')||path.includes(':')||path.startsWith('/')||path.split('/').some(p=>!p||p==='.'||p==='..'||/[. ]$/.test(p)))return false;
  if(/(?:^|\/)(?:\.local|\.git|user.*\.json|\.env.*|reviewer\.key)$/i.test(path)||/\.(?:iso|gcm|rvz|slp|sqlite|db)$/i.test(path))return false;

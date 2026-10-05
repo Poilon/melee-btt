@@ -325,6 +325,8 @@ def build_stage(source, art=None, targets=TARGETS, spawn=SPAWN, sky=(139,216,238
     if hasattr(art,"world_scale"):
         from native_encounters import install as install_retail
         install_retail(d,art)
+        from world_items import install as install_items
+        install_items(d,art)
     return d.finish(),art
 
 

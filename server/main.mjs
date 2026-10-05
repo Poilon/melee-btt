@@ -79,7 +79,7 @@ const autoSubmit = new AutoSubmitter({store,replays,remote,challenge:generated.m
 let updatingChallenge=false,recordingSync;
 async function updateChallenge(){
   if(updatingChallenge)throw new Error('Challenge update already in progress.');
-  if(!runtime?.native)throw new Error('Set up TTRC Dolphin before updating the challenge.');
+  if(!runtime?.native)throw new Error('Set up Custom Melee BTT Dolphin before updating the challenge.');
   updatingChallenge=true;
   const previous=generated;
   try{
@@ -167,7 +167,7 @@ const server = createApp({
     return { ok: true };
   },
   prepareRecorder: async () => {
-    if(runtime?.native)return {message:'Replay recording is already enabled in TTRC Dolphin.'};
+    if(runtime?.native)return {message:'Replay recording is already enabled in Custom Melee BTT Dolphin.'};
     await playSettings.queue;
     await exec(pythonExecutable(root), [join(root, 'scripts/prepare_dolphin.py'), '--challenge', challengeDir, '--record-replays', ...(runtime?.recording && runtime?.dolphin ? ['--dolphin', runtime.dolphin] : [])], { timeout: 30000 });
     const next = JSON.parse(await readFile(join(challengeDir, 'runtime.json'), 'utf8'));
@@ -194,7 +194,7 @@ const server = createApp({
       await playSettings.queue;
       if(runtime?.native){
         if((await launchNative(root,runtime.dolphin,true)).status==='already-running')return {status:'already-running'};
-        // Published authored levels are the normal TTRC game. The root Dolphin
+        // Published authored levels are the normal Custom Melee BTT game. The root Dolphin
         // is only needed on first launch to let the player choose their ISO.
         runtime=JSON.parse(await readFile(join(challengeDir,'runtime.json'),'utf8'));
         return runtime.iso?await customStages.launch('character-worlds'):await launchNative(root,runtime.dolphin);
@@ -210,7 +210,7 @@ const server = createApp({
   },
 });
 server.listen(port, '127.0.0.1', async () => {
-  console.log(`Target Test Randomizer Challenge : http://localhost:${port}`);
+  console.log(`Custom Melee BTT : http://localhost:${port}`);
   console.log(`Seed ${stored.rules.seed} — sign in through the companion to save records.`);
   await bridge.start();
   appUpdates.start();

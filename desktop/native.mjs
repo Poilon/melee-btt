@@ -6,6 +6,7 @@ import {execFile,spawn} from 'node:child_process';
 import {promisify} from 'node:util';
 import {companionRunning,checkCompanionPort,claimCompanion} from '../server/companion-instance.mjs';
 import {updateLocked,recoverInstall} from './update-install.mjs';
+import {migrateLauncher} from './brand-migration.mjs';
 import {verifyIso} from '../server/onboarding.mjs';
 import {loadChallenge} from '../server/challenge-loader.mjs';
 const root=fileURLToPath(new URL('../',import.meta.url)),exec=promisify(execFile);
@@ -26,16 +27,17 @@ async function playPublishedWorlds(){
  const runtime=JSON.parse(await readFile(runtimePath,'utf8'));
  const worlds=new CustomStages({root,getRuntime:()=>runtime});
  const result=await worlds.launch('character-worlds');
- if(!['started','already-running'].includes(result.status))throw Error('TTRC did not launch.');
+ if(!['started','already-running'].includes(result.status))throw Error('Custom Melee BTT did not launch.');
  // Native startup recognizes this successful handoff and closes the ISO picker.
  process.exitCode=2;
 }
 try {
  if(await updateLocked(root)){
-  if(!process.argv.includes('--open'))throw Error('TTRC is installing an update. Try again in a moment.');
+  if(!process.argv.includes('--open'))throw Error('Custom Melee BTT is installing an update. Try again in a moment.');
   const deadline=Date.now()+100000;while(await updateLocked(root)){if(Date.now()>deadline)throw Error('Update is still installing.');await delay(500);}
  }
  await recoverInstall(root);
+ await migrateLauncher(root);
  if(process.argv.includes('--prepare')){
   // Do not silently connect this installation to a different companion.
   await checkCompanionPort(root,port);

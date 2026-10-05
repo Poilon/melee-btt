@@ -1,6 +1,10 @@
 {
   "version": 1,
   "relocations": [
+    6780,
+    6784,
+    6788,
+    6792,
     6796,
     6800,
     6804,
@@ -97,16 +101,12 @@
     7168,
     7172,
     7176,
-    7180,
-    7184,
-    7188,
-    7192,
-    7196
+    7180
   ],
   "hashes": {
-    "online-menu.c": "7aa4755a52bc12cf788844fcb4d37b35d092dab09e8b20cdc66ad9273de90796",
+    "online-menu.c": "f3ab57a1ddfcc5de8e9ff22d9d633cb001a24d45d016fc1a616e99a35a3a0b8e",
     "online-menu-hook.s": "a217d831dca5480adfdfabc32d06ffd4a514afed9dfd8f90b3eae0b5f2d663e7",
-    "online-menu.bin": "e3ece8ceccc4dd5f48fd36b303095a458a3923033f9dabd38af346d552d02deb",
+    "online-menu.bin": "32487f0418acd86804d289b12e3e126bf1604bc49d2b4b209afb63c76f40139d",
     "online-menu-hook.bin": "ec90f9add416eafa51bef36e60f5127ffa7a263ec97e1eeabef1daa95139871e",
     "leaderboard-label.ia4": "73e2f2a039c9e9079838e297a8c6cc1720d08b8e37b9c64bfe212eba4a2a6041"
   }

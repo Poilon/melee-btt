@@ -9,7 +9,7 @@ export class RemoteSync {
     if (origin) {
       const url = new URL(origin);
       if (url.protocol !== 'https:' || url.username || url.password || url.pathname !== '/' || url.search || url.hash ||
-          !url.hostname.endsWith('.vercel.app')) throw new Error('Le site doit être une URL HTTPS Vercel.');
+          (!url.hostname.endsWith('.vercel.app')&&!['melee-btt.com','www.melee-btt.com'].includes(url.hostname))) throw new Error('Use the official Custom Melee BTT HTTPS website.');
       this.origin = url.origin;
     }
   }

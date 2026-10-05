@@ -23,5 +23,5 @@ test('cancelled and missing links explain how to restart; mobile form stays with
  const device=await start(request);await page.setViewportSize({width:390,height:844});await page.goto(device.url);await expect(page.getByLabel('Username')).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await page.screenshot({path:'build/online-menu/browser-mobile.png',fullPage:true});
  await request.post(origin+'/api/game/connect/cancel',{data:{id:device.id,deviceSecret:device.deviceSecret}});await page.reload();await expect(page.getByRole('alert')).toContainText('expired');await expect(page.getByLabel('Username')).toBeHidden();
- await page.goto(origin+'/login.html');await expect(page.getByRole('alert')).toContainText('Select Log in in TTRC Dolphin');
+ await page.goto(origin+'/login.html');await expect(page.getByRole('alert')).toContainText('Select Log in in Custom Melee BTT Dolphin');
 });

@@ -7,7 +7,7 @@ let companionClosed=false,loadedVersion,updateLoading;
 function renderUpdate(update){
  $('app-update').hidden=!update?.supported;if(!update?.supported)return;
  if(loadedVersion&&update.currentVersion!==loadedVersion){location.reload();return;}loadedVersion=update.currentVersion;
- text('app-version',`TTRC Beta v${update.currentVersion}`);
+ text('app-version',`Custom Melee BTT Beta v${update.currentVersion}`);
  const messages={idle:'Automatic updates on.',checking:'Checking for updates…',current:'Up to date · automatic updates on.',downloading:`Downloading ${update.version} · ${update.progress}%`,verifying:'Verifying update…',ready:`${update.version} is ready. It will install automatically when Dolphin is closed.`,installing:'Installing update… The companion will reconnect automatically.',error:update.error||'Could not check for updates. You can keep playing.'};
  text('app-update-message',messages[update.phase]||'Automatic updates on.');
  $('app-update-progress').hidden=update.phase!=='downloading';$('app-update-progress').value=update.progress||0;
@@ -80,7 +80,7 @@ function renderCustomStages(stages){
    const preview=make('a','');preview.href=course.preview+'?v=20261005';preview.target='_blank';preview.rel='noopener';preview.title='View all courses';
    const img=make('img','');img.src=(course.thumbnail||course.preview)+'?v=20261005';img.alt=course.name;img.width=360;img.loading='lazy';preview.append(img);
    const info=make('div','','custom-stage-info'),title=make('div','','custom-stage-title');
-   title.append(make('h3',course.id==='character-worlds'?'TTRC stages':course.name),make('span',`${course.character} · ${course.targets} targets`,'pill'));
+   title.append(make('h3',course.id==='character-worlds'?'Custom Melee BTT stages':course.name),make('span',`${course.character} · ${course.targets} targets`,'pill'));
    const status=make('p','','muted');status.dataset.status='';status.setAttribute('role','status');
    info.append(title,make('p',course.description),make('p',course.id==='character-worlds'?'Sign in and view records from Melee’s Leaderboard menu.':'Local play · no challenge submissions.','muted'),status);
    if(course.id==='character-worlds'){const link=make('a','Preview Luigi’s manor ↗','custom-stage-preview');link.href='/assets/custom-stages/luigis-mansion.png?v=20261005';link.target='_blank';link.rel='noopener';info.append(link);}
@@ -90,7 +90,7 @@ function renderCustomStages(stages){
   const busy=customLaunching||course.busy,button=card.querySelector('button');
   button.disabled=busy||launchingDolphin||!course.available||data?.appUpdate?.phase==='installing';
   button.textContent=busy?'Preparing…':'▶ Play';
-  card.querySelector('[data-status]').textContent=course.message||(!course.available?'Available in TTRC Dolphin.':course.prepared?(course.id==='grassland-1'?'Choose Fox in Target Test.':'Choose any character in Target Test.'):'Prepared from your Melee ISO on first launch.');
+  card.querySelector('[data-status]').textContent=course.message||(!course.available?'Available in Custom Melee BTT Dolphin.':course.prepared?(course.id==='grassland-1'?'Choose Fox in Target Test.':'Choose any character in Target Test.'):'Prepared from your Melee ISO on first launch.');
  }
  for(const card of list.children)if(!stages.some(s=>card.id===`custom-${s.id}`))card.remove();
 }
@@ -99,7 +99,7 @@ async function launchCustomStage(course,button){
  customLaunching=true;renderCustomStages(data?.customStages);
  try{
   const result=await post(`custom-stages/${course.id}/launch`,{},'launch',button);
-  toast(result.status==='already-running'?'Dolphin is already open.':`${course.id==='character-worlds'?'TTRC':course.name} is open. Choose ${course.id==='grassland-1'?'Fox':'your character'} in Target Test.`);
+  toast(result.status==='already-running'?'Dolphin is already open.':`${course.id==='character-worlds'?'Custom Melee BTT':course.name} is open. Choose ${course.id==='grassland-1'?'Fox':'your character'} in Target Test.`);
  }catch(error){toast(error.message);}
  finally{customLaunching=false;await refresh();renderCustomStages(data?.customStages);}
 }
@@ -179,7 +179,7 @@ async function loadHistory(character,more=false,keepDepth=false){
 async function refresh({quiet=false}={}){
  const initial=!data,done=quiet?()=>{}:startLoading(initial?'Loading companion…':'Updating companion…'),clear=initial?showSkeleton($('run-list'),5):()=>{};
  if(initial)document.body.classList.add('initial-loading');
- try{const revision=settingsRevision,r=await fetch('/api/dashboard');if(!r.ok)throw new Error();const next=await r.json();if(revision!==settingsRevision||savingSettings)next.settings=data?.settings;render(next);}catch{if(!companionClosed)text('connection',data?.appUpdate?.phase==='installing'?'Updating TTRC…':'Companion offline');}finally{clear();done();document.body.classList.remove('initial-loading');}
+ try{const revision=settingsRevision,r=await fetch('/api/dashboard');if(!r.ok)throw new Error();const next=await r.json();if(revision!==settingsRevision||savingSettings)next.settings=data?.settings;render(next);}catch{if(!companionClosed)text('connection',data?.appUpdate?.phase==='installing'?'Updating Custom Melee BTT…':'Companion offline');}finally{clear();done();document.body.classList.remove('initial-loading');}
 }
 for(const [id,value]of [['tab-all','all'],['tab-ready','ready'],['tab-sent','sent']])$(id).addEventListener('click',()=>{tab=value;for(const b of document.querySelectorAll('.run-tabs button'))b.classList.toggle('active',b.id===id);if(data)render(data);});
 let startingSignIn = false;
@@ -211,7 +211,7 @@ $('account-cancel').addEventListener('click', async () => { try { await post('ac
 $('sign-out').addEventListener('click', async () => { try { await post('account/logout'); seen = undefined; await refresh(); } catch (error) { toast(error.message); } });
 $('website').addEventListener('click',async()=>{if(!data?.identity){location.href='https://target-test-randomizer-challenge.vercel.app';return;}try{location.href=(await post('remote/browser')).url;}catch(err){toast(err.message);}});
 $('quit-companion').addEventListener('click',async()=>{if(data?.capture?.dolphinRunning&&!confirm('Quit companion? Dolphin will stay open, but new runs will not be captured until you reopen the companion.'))return;try{await post('quit',{},'quit');companionClosed=true;clearInterval(refreshTimer);clearTimeout(toastTimer);document.body.replaceChildren(make('main','Companion closed. You can close this tab.'));}catch(error){toast(error.message);}});
-$('play').addEventListener('click',async()=>{launchingDolphin=true;$('play').disabled=true;$('play-settings').disabled=true;$('character-settings').disabled=true;try{const result=await post('launch',{},'launch');toast(result.status==='updating'?'TTRC is updating. Wait for the companion to reconnect.':result.status==='already-running'?'Dolphin is already running.':'Dolphin is starting. Choose your character in Target Test.');refresh();}catch(err){toast(err.message);}finally{launchingDolphin=false;$('play').disabled=false;renderSettings(data?.settings);}});
+$('play').addEventListener('click',async()=>{launchingDolphin=true;$('play').disabled=true;$('play-settings').disabled=true;$('character-settings').disabled=true;try{const result=await post('launch',{},'launch');toast(result.status==='updating'?'Custom Melee BTT is updating. Wait for the companion to reconnect.':result.status==='already-running'?'Dolphin is already running.':'Dolphin is starting. Choose your character in Target Test.');refresh();}catch(err){toast(err.message);}finally{launchingDolphin=false;$('play').disabled=false;renderSettings(data?.settings);}});
 $('replay-folder').addEventListener('click',async()=>{try{await post('recorder/folder',{},'launch');}catch(e){toast(e.message);}});
 $('recorder').addEventListener('click',async()=>{$('recorder').disabled=true;try{const result=await post('recorder/prepare',{},'launch');text('recorder-note',result.message);toast('Replay profile prepared. Close the current Dolphin, then use Launch Dolphin.');refresh();}catch(err){text('recorder-note',err.message);}finally{$('recorder').disabled=false;}});
 $('export').addEventListener('click',()=>{if(!data?.history.length){toast('Finish a run first.');return;}const csv=['character,stage,frames,time,status',...data.history.map(r=>[r.character,r.stage,r.frames,formatTime(r.frames),r.submissionStatus].join(','))].join('\n');const u=URL.createObjectURL(new Blob([csv],{type:'text/csv'})),a=document.createElement('a');a.href=u;a.download='target-test-local-runs.csv';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);});

@@ -5,9 +5,9 @@
     <path d="M32 6v12m0 28v12M6 32h12m28 0h12"/>
   </g>
   <g fill="white" font-family="DejaVu Sans" font-weight="bold" font-size="72">
-    <text x="200" y="88">TARGET TEST</text>
-    <text x="200" y="192">RANDOMIZER</text>
-    <text x="200" y="296">CHALLENGE</text>
+    <text x="200" y="88">CUSTOM</text>
+    <text x="200" y="192">MELEE</text>
+    <text x="200" y="296">BTT</text>
   </g>
   <text x="94" y="280" text-anchor="middle" fill="#ffcd66" font-family="DejaVu Sans" font-weight="bold" font-size="42">BETA</text>
 </svg>

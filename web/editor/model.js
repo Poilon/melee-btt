@@ -33,10 +33,10 @@ function validate(p,base){
  if(!pt(p.spawn))fail('Invalid spawn position.');
  const assets=new Map((base.pieces||[]).map(a=>[a.id,a]));
  if(base.modular){if(!Array.isArray(p.platformAssets)||p.platformAssets.length!==p.platforms.length||p.platformAssets.some(k=>assets.get(k)?.kind!=='platform'))fail('Every platform needs a valid texture asset.');if(p.solids.some(s=>assets.get(s.asset)?.kind!=='solid'))fail('Every solid needs a valid texture asset.');}
- const native=p.nativeActors||[],allowed=new Set((base.project.nativeActors||[]).map(a=>a.kind));
+ const native=p.nativeActors||[],allowed=new Set([29,...(base.project.nativeActors||[]).map(a=>a.kind)]);
  if(!Array.isArray(native)||native.length>16)fail('At most 16 native actors.');
  else for(const a of native)if(!allowed.has(a.kind)||!finite(a.x,-1500,1500)||!finite(a.y,-1500,1500)||typeof a.name!=='string'||a.name.length>80)fail('Invalid native actor.');
- if(p.stage==='Ns'&&(native.length!==1||native[0]?.kind!=='traffic'))fail('Keep one native traffic lane.');
+ if(p.stage==='Ns'&&native.filter(a=>a.kind==='traffic').length!==1)fail('Keep one native traffic lane.');
  const sources=new Set();
  for(const s of p.solids){if(s.source!=null){if(!Number.isInteger(s.source)||s.source<0||s.source>=base.project.solids.length||sources.has(s.source))fail('Invalid or duplicate original wall reference.');sources.add(s.source);}if(!Array.isArray(s.points)||s.points.length<4||s.points.length>24||!s.points.every(pt)||!finite(s.material,0,31))fail('Invalid solid outline.');}
  for(const f of p.platforms)if(!Array.isArray(f)||f.length!==4||!finite(f[0])||!finite(f[1])||!finite(f[2],2,800)||!finite(f[3],0,31))fail('Invalid one-way platform.');

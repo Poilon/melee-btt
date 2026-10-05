@@ -122,7 +122,7 @@ function render(d) {
   text('display-name', ident?.displayName || 'Not signed in');
   const account = d.auth?.account;
   $('admin-link').hidden = !account?.admin;
-  text('connect-code', ident?.slug ? `@${ident.slug}` : account ? 'Choose your TTRC username' : 'Sign in to save your records');
+  text('connect-code', ident?.slug ? `@${ident.slug}` : account ? 'Choose your Custom Melee BTT username' : 'Sign in to save your records');
   if (ident?.slug) $('connect-code').href = `/players/${ident.slug}`; else $('connect-code').removeAttribute('href');
   text('top-name', ident?.displayName || 'My player');
   $('identity-check').hidden = !ident;
@@ -341,8 +341,8 @@ async function play() {
 $('play').addEventListener('click', play); $('empty-play').addEventListener('click', play);
 $('copy-seed').addEventListener('click', async () => {
   if (!data) return;
-  try { await navigator.clipboard.writeText(data.challenge.motion?`TTRC ${data.challenge.rules.seed} · seeded motion · ${data.challenge.id}`:data.challenge.bttSeed); toast(data.challenge.motion?'TTRC challenge copied. Use Get Gecko code for the complete moving-target rules.':'BTT seed copied, including the course settings.'); }
-  catch { toast(data.challenge.motion?`TTRC seed: ${data.challenge.rules.seed} · seeded motion`:`BTT seed: ${data.challenge.bttSeed}`); }
+  try { await navigator.clipboard.writeText(data.challenge.motion?`Custom Melee BTT ${data.challenge.rules.seed} · seeded motion · ${data.challenge.id}`:data.challenge.bttSeed); toast(data.challenge.motion?'Custom Melee BTT challenge copied. Use Get Gecko code for the complete moving-target rules.':'BTT seed copied, including the course settings.'); }
+  catch { toast(data.challenge.motion?`Custom Melee BTT seed: ${data.challenge.rules.seed} · seeded motion`:`BTT seed: ${data.challenge.bttSeed}`); }
 });
 const connectId = new URLSearchParams(location.search).get('connect');
 let connectionInfo, connectionDone = false, authMode = 'login';
@@ -353,7 +353,7 @@ function showAuth(mode = 'login') {
   $('auth-switch').hidden=Boolean(data?.auth?.gameAccountsOnly);
   const signup = mode === 'signup';
   text('auth-title', signup ? 'Create account' : 'Sign in');
-  text('auth-description', signup ? data?.identity ? 'Add a password to keep this profile and its records.' : 'Choose a unique username and a password.' : 'Use your TTRC account.');
+  text('auth-description', signup ? data?.identity ? 'Add a password to keep this profile and its records.' : 'Choose a unique username and a password.' : 'Use your Custom Melee BTT account.');
   $('auth-password').minLength = signup ? 8 : 1;
   $('auth-password').autocomplete = signup ? 'new-password' : 'current-password';
   $('auth-username').minLength = signup ? 3 : 1;
@@ -431,7 +431,7 @@ if (profileSlug) {
   try {
     const response = await fetch(`/api/players/profile?slug=${encodeURIComponent(profileSlug)}`), result = await response.json();
     if (!response.ok) throw new Error(result.error);
-    text('public-name', `@${result.profile.slug}`); document.title = `@${result.profile.slug} · TTRC`;
+    text('public-name', `@${result.profile.slug}`); document.title = `@${result.profile.slug} · Custom Melee BTT`;
     $('public-profile').dataset.player = result.profile.id;
   } catch (error) { text('public-name', 'Player not found'); text('public-note', error.message); }finally{done();}
 }

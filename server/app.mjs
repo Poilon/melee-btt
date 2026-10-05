@@ -58,8 +58,8 @@ export function createApp({ challenge:initialChallenge, gecko:initialGecko, getC
       if(req.method==='GET'&&url.pathname==='/api/editor/status')return json(200,{available:Boolean((await customStages?.list())?.some(s=>s.available)),busy:customStages?.busy||false,message:customStages?.message||''});
       if(req.method==='POST'&&['/api/editor/test','/api/editor/build-all'].includes(url.pathname)){
         if(!req.headers.origin||req.headers['x-ttrc-action']!=='launch')return json(403,{error:'Launch not allowed.'});
-        if(!launchCustomStage)return json(503,{error:'Open the editor from an updated TTRC Companion to test.'});
-        if(appUpdates?.status().phase==='installing')return json(409,{error:'TTRC is updating. Try again shortly.'});
+        if(!launchCustomStage)return json(503,{error:'Open the editor from an updated Custom Melee BTT Companion to test.'});
+        if(appUpdates?.status().phase==='installing')return json(409,{error:'Custom Melee BTT is updating. Try again shortly.'});
         const all=url.pathname==='/api/editor/build-all',limit=all?8*1024*1024:512*1024;
         let body='';for await(const part of req){body+=part;if(Buffer.byteLength(body)>limit)return json(413,{error:all?'Level pack must be under 8 MB.':'Project must be under 512 KB.'});}
         let project;try{project=JSON.parse(body);}catch{return json(400,{error:'Invalid project JSON.'});}
@@ -67,8 +67,8 @@ export function createApp({ challenge:initialChallenge, gecko:initialGecko, getC
       }
       if(req.method==='POST'&&/^\/api\/custom-stages\/[^/]+\/launch$/.test(url.pathname)){
         if(!req.headers.origin||req.headers['x-ttrc-action']!=='launch')return json(403,{error:'Launch not allowed.'});
-        if(!launchCustomStage)return json(503,{error:'Custom stages unavailable. Update TTRC Dolphin.'});
-        if(appUpdates?.status().phase==='installing')return json(409,{error:'TTRC is updating. Try again in a moment.'});
+        if(!launchCustomStage)return json(503,{error:'Custom stages unavailable. Update Custom Melee BTT Dolphin.'});
+        if(appUpdates?.status().phase==='installing')return json(409,{error:'Custom Melee BTT is updating. Try again in a moment.'});
         return json(200,await launchCustomStage(url.pathname.split('/')[3]));
       }
       if(req.method==='POST'&&url.pathname==='/api/app-update/check'){
@@ -76,7 +76,7 @@ export function createApp({ challenge:initialChallenge, gecko:initialGecko, getC
         if(!appUpdates?.status().supported)return json(503,{error:'Updates unavailable in this installation.'});
         appUpdates.check();return json(202,appUpdates.status());
       }
-      if(appUpdates?.status().phase==='installing'&&req.method==='POST'&&url.pathname!=='/api/quit')return json(409,{error:'TTRC is updating. The companion will reconnect shortly.'});
+      if(appUpdates?.status().phase==='installing'&&req.method==='POST'&&url.pathname!=='/api/quit')return json(409,{error:'Custom Melee BTT is updating. The companion will reconnect shortly.'});
       if(req.method==='POST'&&url.pathname==='/api/challenge/update'){
         if(!req.headers.origin||req.headers['x-ttrc-action']!=='challenge')return json(403,{error:'Action not allowed.'});
         if(!updateChallenge)return json(503,{error:'Challenge updates unavailable.'});
@@ -268,7 +268,7 @@ export function createApp({ challenge:initialChallenge, gecko:initialGecko, getC
         });
       }
       if (req.method === 'GET' && url.pathname === '/api/challenge/code') {
-        res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8', 'Content-Disposition': `attachment; filename="TTRC-${challenge.rules.seed}.txt"` });
+        res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8', 'Content-Disposition': `attachment; filename="Custom-Melee-BTT-${challenge.rules.seed}.txt"` });
         return res.end(gecko);
       }
       if (req.method === 'POST' && url.pathname === '/api/launch') {

@@ -13,9 +13,15 @@ export const WORLD_CHARACTERS = [
 ].map(([id,name,externalId,suffix])=>({id,name,externalId,suffix,stageId:33+['Mr','Ca','Cl','Dk','Dr','Fc','Fx','Ic','Kb','Kp','Lk','Lg','Ms','Mt','Ns','Pe','Pc','Pk','Pr','Ss','Sk','Ys','Zd','Gw','Fe','Gn'].indexOf(suffix)}));
 export const sha256 = value => createHash('sha256').update(value).digest('hex');
 export const isHash = value => typeof value==='string' && /^[a-f0-9]{64}$/.test(value);
+// The Warp Star host is a no-op unless the archive opts in. Pin the exact
+// reviewed executable so unchanged levels retain records; ISO verification
+// still uses the real dolSha256. Any other executable gets a new revision.
+const compatibleEngines = new Map([
+ ['3282b4f53589c1dea328dff85b1bb3a069a675e094712f58476af599c9a1dd8f','ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6'],
+]);
 export function worldCourseId({character,stageSha256,dolSha256,rulesSha256}) {
  if(!WORLD_CHARACTERS.some(c=>c.id===character)||![stageSha256,dolSha256,rulesSha256].every(isHash))throw Error('Invalid world revision.');
- return sha256(JSON.stringify(['ttrc-world-v1',character,stageSha256,dolSha256,rulesSha256]));
+ return sha256(JSON.stringify(['ttrc-world-v1',character,stageSha256,compatibleEngines.get(dolSha256)||dolSha256,rulesSha256]));
 }
 export function validateWorldCatalog(catalog) {
  if(catalog?.format!=='ttrc-worlds-v1'||!Array.isArray(catalog.courses))throw Error('Invalid world catalog.');

@@ -106,7 +106,7 @@ export class WorldsClient{
  }
 }
 export async function serveWorlds({root,course,pid,playReplay,onSample,client:providedClient}){
- if(process.platform!=='win32'||!Number.isInteger(pid)||pid<1)throw Error('TTRC Dolphin process required.');
+ if(process.platform!=='win32'||!Number.isInteger(pid)||pid<1)throw Error('Custom Melee BTT Dolphin process required.');
  const client=providedClient||new WorldsClient({root,course,playReplay});await client.load();
  const capture=providedClient?null:new WorldCapture({root,course,client});
  const timer=capture?setInterval(()=>capture.sync().catch(()=>{}),1500):null;

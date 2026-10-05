@@ -70,7 +70,7 @@ def add_description(source,mapping):
  original=d.u(root+0xa8*4)
  # Copy the retail description's font/style controls up to the first glyph.
  prefix=bytes(d.data[original:original+16]) # 16 10 ... 06 00000000, followed by 18
- for index,message in enumerate(['View online records and watch replays.','Log in or manage your TTRC account.']):
+ for index,message in enumerate(['View online records and watch replays.','Log in or manage your Custom Melee BTT account.']):
   text=bytearray(prefix+b'\x18')
   for c in message:
    if c==' ':text+=b'\x1a'

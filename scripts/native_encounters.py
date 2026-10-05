@@ -63,7 +63,7 @@ def install(d,art):
         for off,v in ((0x44,180.),(0x48,90.),(0x54,4.),(0x58,2.)):
             d.put(params+off,'f',v)
         # Native front traffic lane: exact car models, at the host street height.
-        root=d.u(groups+156);lane=getattr(art,'native_actor_edits',[dict(x=0,y=f[0][2])])[0];d.put(root+44,'2f',lane['x']*scale,lane['y']*scale)
+        root=d.u(groups+156);lane=next((a for a in getattr(art,'native_actor_edits',[]) if a['kind']=='traffic'),dict(x=0,y=f[0][2]));d.put(root+44,'2f',lane['x']*scale,lane['y']*scale)
     elif s=='Ic':
         src=SOURCES['GrIm.dat'];q=src.d.u(src.d.roots['itemdata'])
         assert src.d.u(q)==0xd9
@@ -71,7 +71,7 @@ def install(d,art):
         actors=[(0x2e,-67,f[3][2]+2),(0x2e,8,f[8][2]+2),(0xd9,0,f[9][2]+2)]
     elif s=='Sk':
         actors=[(0x2c,-68,f[3][2]+2),(0x2c,53,f[6][2]+2)]
-    if s in ('Ic','Sk') and hasattr(art,'native_actor_edits'):actors=[(a['kind'],a['x'],a['y']) for a in art.native_actor_edits]
+    if s in ('Ic','Sk') and hasattr(art,'native_actor_edits'):actors=[(a['kind'],a['x'],a['y']) for a in art.native_actor_edits if a['kind']!=29]
     d.put(cfg+8,'I',len(actors))
     if actors:
         rows=d.alloc(16*len(actors));d.pointer(cfg+12,rows)

@@ -140,3 +140,10 @@ test('capture retries previously rejected settings and continues after a transie
  saved.lastAttemptAt=0;await capture.save(saved);client.request=async(path,options)=>{assert.equal(path,'worlds/submit');assert.equal(options.body.frames,1066);assert.equal(options.authenticated,true);};await capture.sync();
  saved=JSON.parse(await readFile(join(capture.directory,run.id+'.json')));assert.equal(saved.submitted,true);assert.equal(saved.lastError,undefined);assert.equal(client.boardCache.size,0);
 });
+
+test('reviewed optional item host preserves unchanged courses but never hides stage or rules changes',()=>{
+ const old={character:'fox',stageSha256:'a'.repeat(64),dolSha256:'ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6',rulesSha256:'b'.repeat(64)};
+ const next={...old,dolSha256:'3282b4f53589c1dea328dff85b1bb3a069a675e094712f58476af599c9a1dd8f'};
+ assert.equal(worldCourseId(old),worldCourseId(next));
+ for(const field of ['stageSha256','rulesSha256','dolSha256'])assert.notEqual(worldCourseId(old),worldCourseId({...next,[field]:'d'.repeat(64)}));
+});

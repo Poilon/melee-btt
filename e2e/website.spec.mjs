@@ -489,11 +489,11 @@ test('companion shows download progress, deferred installation, errors and autom
  page.on('load',()=>loads++);
  await page.route('**/api/dashboard',async route=>{const response=await route.fetch();const d=await response.json();d.appUpdate=state;await route.fulfill({json:d});});
  await page.route('**/api/app-update/check',async route=>{checks++;state={...state,phase:'checking'};await route.fulfill({status:202,json:state});});
- await page.goto('/');await expect(page.locator('#app-version')).toHaveText('TTRC Beta v0.9.0');await expect(page.locator('#app-update-message')).toContainText('42%');await expect(page.locator('#app-update-progress')).toHaveAttribute('value','42');await expect(page.locator('#check-app-update')).toBeDisabled();
+ await page.goto('/');await expect(page.locator('#app-version')).toHaveText('Custom Melee BTT Beta v0.9.0');await expect(page.locator('#app-update-message')).toContainText('42%');await expect(page.locator('#app-update-progress')).toHaveAttribute('value','42');await expect(page.locator('#check-app-update')).toBeDisabled();
  state={...state,phase:'ready'};await expect(page.locator('#app-update-message')).toContainText('when Dolphin is closed');
  state={...state,phase:'error',error:'Download failed. You can keep playing.'};await expect(page.locator('#check-app-update')).toBeEnabled();await page.locator('#check-app-update').click();expect(checks).toBe(1);await expect(page.locator('#app-update-message')).toContainText('Checking');
  state={...state,phase:'installing'};await expect(page.locator('#app-update-message')).toContainText('reconnect automatically');await expect(page.locator('#play')).toBeDisabled();
- const oldLoads=loads;state={...state,currentVersion:'0.10.0',phase:'current'};await expect.poll(()=>loads).toBeGreaterThan(oldLoads);await expect(page.locator('#app-version')).toHaveText('TTRC Beta v0.10.0');await expect(page.locator('#app-update-message')).toContainText('Up to date');
+ const oldLoads=loads;state={...state,currentVersion:'0.10.0',phase:'current'};await expect.poll(()=>loads).toBeGreaterThan(oldLoads);await expect(page.locator('#app-version')).toHaveText('Custom Melee BTT Beta v0.10.0');await expect(page.locator('#app-update-message')).toContainText('Up to date');
  await page.setViewportSize({width:390,height:844});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
 
@@ -504,14 +504,14 @@ test('TTRC gallery hides the prototype, previews published stages and reports la
  let finish;const gate=new Promise(r=>finish=r);
  await page.route('**/api/custom-stages/character-worlds/launch',async route=>{expect(route.request().headers()['x-ttrc-action']).toBe('launch');await gate;await route.fulfill({status:409,json:{error:'Close the ISO selection window before opening a level.'}});});
  await page.goto('/');await page.locator('#custom-stages summary').click();
- await expect(page.locator('#custom-stages h3')).toHaveText(['TTRC stages']);
+ await expect(page.locator('#custom-stages h3')).toHaveText(['Custom Melee BTT stages']);
  await expect(page.locator('#custom-stages img').first()).toBeVisible();await expect(page.locator('#play-grassland')).toHaveCount(0);await expect(page.getByRole('link',{name:'Open stage editor ↗',exact:true})).toHaveCount(0);
  await expect(page.locator('#play-character-worlds')).toBeEnabled();
  await page.locator('#play-character-worlds').click();await expect(page.locator('#play-character-worlds')).toBeDisabled();
  await expect(page.locator('#play-character-worlds')).toBeDisabled();
  finish();await expect(page.locator('#toast')).toContainText('Close the ISO selection window');await expect(page.locator('#play-character-worlds')).toBeEnabled();
  await page.route('**/api/custom-stages/character-worlds/launch',route=>route.fulfill({json:{status:'started'}}));
- await page.locator('#play-character-worlds').click();await expect(page.locator('#toast')).toContainText('TTRC is open. Choose your character');
+ await page.locator('#play-character-worlds').click();await expect(page.locator('#toast')).toContainText('Custom Melee BTT is open. Choose your character');
  await page.setViewportSize({width:390,height:844});
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBeTruthy();
 });

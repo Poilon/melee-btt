@@ -12,7 +12,7 @@ export async function companionRunning(root, port) {
   try { response = await fetch(`http://127.0.0.1:${port}/api/health`, {signal: AbortSignal.timeout(1500)}); }
   catch { return false; }
   const health = await response.json().catch(() => null);
-  if (!response.ok || health?.instance !== await instanceId(root)) throw new Error('Port ' + port + ' is used by another application or TTRC folder. Close that companion first.');
+  if (!response.ok || health?.instance !== await instanceId(root)) throw new Error('Port ' + port + ' is used by another application or Custom Melee BTT folder. Close that companion first.');
   return true;
 }
 export async function checkCompanionPort(root, port) {

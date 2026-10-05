@@ -2,3 +2,5 @@
 
 /* Shared beta label; visible without relying on color. */
 .beta-badge,.brand .beta-badge{display:inline-flex;align-items:center;flex:none;width:max-content;vertical-align:middle;margin-left:6px;padding:4px 7px;border:1px solid #b99755;border-radius:4px;background:#30291b;color:#ffdb91;font:700 10px/1.2 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+
+.brand{font-size:20px;letter-spacing:.4px}@media(max-width:650px){header{align-items:flex-start;gap:14px;flex-wrap:wrap}.brand{font-size:18px;gap:8px}.brand img{width:26px;height:26px}}

@@ -52,9 +52,9 @@ def validate(p,base):
  if len(p['targets'])!=10:raise ProjectError('Target Test needs exactly ten targets')
  p=copy.deepcopy(p);p['spawn']=point(p['spawn'])
  actors=p.get('nativeActors',[])
- allowed={a['kind'] for a in base['project'].get('nativeActors',[])}
+ allowed={29,*[a['kind'] for a in base['project'].get('nativeActors',[])]}
  if not isinstance(actors,list) or len(actors)>16:raise ProjectError('At most 16 native actors')
- if p['stage']=='Ns' and (len(actors)!=1 or not isinstance(actors[0],dict) or actors[0].get('kind')!='traffic'):raise ProjectError('Keep one native traffic lane')
+ if p['stage']=='Ns' and sum(isinstance(a,dict) and a.get('kind')=='traffic' for a in actors)!=1:raise ProjectError('Keep one native traffic lane')
  for a in actors:
   if not isinstance(a,dict) or a.get('kind') not in allowed:raise ProjectError('Unsupported native actor')
   number(a.get('x'),-1500,1500);number(a.get('y'),-1500,1500)

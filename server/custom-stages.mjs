@@ -12,7 +12,7 @@ const exec=promisify(execFile);
 export const customStageCatalog=Object.freeze([
  {id:'character-worlds',name:'Character Worlds',builder:'build_character_worlds.py',character:'All characters',targets:10,preview:'/assets/custom-stages/character-worlds-all.png',thumbnail:'/assets/custom-stages/character-worlds.png',description:'26 worlds with moving platforms, hazards and target cycles. Choose your character in Target Test. For Sheik, select Zelda and hold A while starting.'},
  {id:'stage-editor',name:'Editor Playtest',builder:'build_character_worlds.py',character:'Selected character',targets:10},
- {id:'stage-editor-all',name:'TTRC Edited Worlds',builder:'build_character_worlds.py',character:'All characters',targets:10},
+ {id:'stage-editor-all',name:'Custom Melee BTT Edited Worlds',builder:'build_character_worlds.py',character:'All characters',targets:10},
  {id:'grassland-1',name:'Grassland 1',builder:'build_grassland.py',character:'Fox',targets:10,preview:'/assets/custom-stages/grassland-1.png',description:'Pipes, coloured blocks and a route through the hills.'},
 ]);
 export class CustomStageError extends Error {}
@@ -51,16 +51,16 @@ export class CustomStages {
  }
  async launch(id,project=null){
   const dir=this.directory(id),runtime=this.getRuntime(),course=customStageCatalog.find(s=>s.id===id);
-  if(!runtime?.native)throw new CustomStageError('TTRC stages require TTRC Dolphin.');
+  if(!runtime?.native)throw new CustomStageError('Custom Melee BTT stages require Custom Melee BTT Dolphin.');
   if(this.busy)throw new CustomStageError('A custom stage is already being prepared.');
   if(await this.running())return {status:'already-running'};
   this.busy=true;this.activeId=id;this.message='Checking Melee ISO…';
   try{
    // Re-read the native selection, which can change without restarting the companion.
    const latest=JSON.parse(await readFile(join(this.root,'build/challenge/runtime.json'),'utf8'));
-   if(!latest.iso)throw new CustomStageError('Open your Melee ISO once in TTRC Dolphin, then try again.');
+   if(!latest.iso)throw new CustomStageError('Open your Melee ISO once in Custom Melee BTT Dolphin, then try again.');
    const source=await localPath(latest.iso);
-   const info=await stat(source).catch(()=>{throw new CustomStageError('Your Melee ISO is unavailable. Select it again in TTRC Dolphin.');});
+   const info=await stat(source).catch(()=>{throw new CustomStageError('Your Melee ISO is unavailable. Select it again in Custom Melee BTT Dolphin.');});
    const online=id==='character-worlds'||id==='stage-editor-all';
    const builder=join(this.root,'scripts',course.builder);
    const hash=createHash('sha256').update(await readFile(builder)).update(await readFile(join(this.root,'scripts/build_grassland.py')));
@@ -68,7 +68,7 @@ export class CustomStages {
     for(const name of ['character_mansion.py','character_fire.py','character_layouts.py','character_routes.py','target_encounters.py','character_encounters.py','world_props.py','stage_access.py','painted_surfaces.py','stage_texture.py','world_mechanics.py','world_gameplay.py','world_challenge.py','doc_chemicals.py','stage_entities.py','retail_actors.py'])hash.update(await readFile(join(this.root,'scripts',name)));
     hash.update(await readFile(join(this.root,'assets/custom-stages/mechanisms/corneria-access.json')));
     const actors=join(this.root,'assets/custom-stages/retail-actors');
-    for(const name of ['modular_stage.py','floor_gaps.py','solid_readability.py','native_encounters.py','native/world-retail.s','native/world-retail.bin','native_props.py','roster_mechanisms.py','native/world-wind.s','native/world-wind.bin'])hash.update(await readFile(join(this.root,'scripts',name)));
+    for(const name of ['modular_stage.py','floor_gaps.py','solid_readability.py','native_encounters.py','native/world-retail.s','native/world-retail.bin','world_items.py','native/world-items.bin','native_props.py','roster_mechanisms.py','native/world-wind.s','native/world-wind.bin'])hash.update(await readFile(join(this.root,'scripts',name)));
     const modular=join(this.root,'assets/custom-stages/modular');
     for(const stage of (await readdir(modular)).sort()){
      const dir=join(modular,stage);

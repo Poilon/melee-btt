@@ -3918,7 +3918,14 @@
         "platform-2",
         "platform-3"
       ],
-      "nativeActors": [],
+      "nativeActors": [
+        {
+          "kind": 29,
+          "name": "Warp Star",
+          "x": -142,
+          "y": 40
+        }
+      ],
       "revision": "c58f8a64c8bb6259f319aff3406b4a13879dbed3d0ae89fdcb26cc9c8d92cde5"
     },
     {

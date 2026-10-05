@@ -535,6 +535,8 @@ def patch_callbacks(prefix):
     patch_wind(data,offset)
     from native_encounters import patch_callback as patch_retail
     patch_retail(data,offset)
+    from world_items import patch_callback as patch_items
+    patch_items(data,offset)
     return bytes(data)
 
 
@@ -684,7 +686,7 @@ def main():
             manifest['onlineVersion']=1
             manifest['menuHashes']={name:hashlib.sha256(data).hexdigest() for name,data in menus.items()}
             callback=lambda data:online_patch(patch_callbacks(data))
-        write_iso(args.iso,args.output,archives,callback,b'TTRC - Character Worlds (26 Target Test courses)')
+        write_iso(args.iso,args.output,archives,callback,b'Custom Melee BTT - 26 Target Test worlds')
         manifest['dolSha256']=dol_digest(args.output)
     args.output.with_suffix('.json').write_text(json.dumps(manifest,indent=2)+'\n')
     if previews:

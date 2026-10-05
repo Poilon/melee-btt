@@ -24,7 +24,7 @@ async function connect(){
 async function init(){
  $('error').textContent='';$('retry').hidden=true;loading(true,$('retry'));
  try{
-  if(!valid(connection?.id)||!valid(connection?.browserSecret))throw Error('Select Log in in TTRC Dolphin to open this page.');
+  if(!valid(connection?.id)||!valid(connection?.browserSecret))throw Error('Select Log in in Custom Melee BTT Dolphin to open this page.');
   const {profile}=await api('game/connect/info',connection);authenticated=Boolean(profile);
   $('status').textContent='';$('form').hidden=authenticated;$('account').hidden=!authenticated;
   if(profile)$('continue').textContent=`Continue as ${profile.slug}`;

@@ -1,18 +1,20 @@
-# Target Test Randomizer Challenge — Beta
+# Custom Melee BTT — Beta
 
-TTRC is currently in **beta**.
-Randomized targets, shuffled character stages, and a shared seed for **Super Smash Bros. Melee USA 1.02**. The original stages and physics are kept: Fox can play Samus’s course, Marth can play Mewtwo’s, and so on.
+Custom Melee BTT is currently in **beta**.
+26 authored Target Test worlds for **Super Smash Bros. Melee USA 1.02**, with character-specific terrain, native Melee objects, online leaderboards and replays in the game.
 
-**[Challenge website](https://target-test-randomizer-challenge.vercel.app)** · **[Download the latest Windows release](https://github.com/Poilon/target-test-randomizer-challenge/releases/latest)**
+**[Website & installation guide](https://melee-btt.com/#downloads)** · **[Latest Windows release](https://github.com/Poilon/target-test-randomizer-challenge/releases/latest)**
 
 ## Play on Windows
 
-1. Download **TTRC-Dolphin-v<version>-Windows-x64.zip** (the identical **TTRC-Windows-x64.zip** is kept for automatic updates and the website download) and extract the entire ZIP into a writable folder.
-2. Open **TTRC Companion.vbs**. Sign in and choose your music and rumble settings before launching Dolphin.
-3. Click **Launch Dolphin** in the companion, then **Open** in Dolphin and select your original **Melee USA 1.02** ISO. It stays in its existing folder. Dolphin checks it before starting the game.
-4. Keep the companion open for your runs and replay history. **Tools → TTRC Companion** in Dolphin also opens it.
-5. Click **Sign in** in the companion. Create an account with a unique username and a password, and confirm the matching connection code in your browser. No player file or Slippi account is needed.
-6. Choose any character in Melee. New valid personal bests are submitted automatically with their replay.
+1. Download **Custom-Melee-BTT-Windows-x64.zip** and use **Extract All…**. Keep the entire **Custom Melee BTT** folder together.
+2. Open **Slippi Dolphin.exe**. On first launch, select your original **Melee USA v1.02 ISO**. The 26 published levels are built automatically; your original ISO stays unchanged.
+3. Set up Port 1 in Dolphin’s **Controllers** window.
+4. In Melee’s **Stadium** menu, choose **Log in**. Create a username/password account or sign in in the browser page that opens, then return to the game. It shows **Logged as your username**.
+5. Choose **Target Test**, then a character. Completed eligible records submit automatically while signed in and online. **Start, then Z** restarts the level.
+6. Open **Leaderboard** in Stadium to view records and play replays. **Start** in that menu opens Total time; all 26 characters are required.
+
+**Custom Melee BTT Companion.vbs** opens optional settings and the level editor. **Test in Dolphin** in the online editor requires the local companion to be running. Published levels and editor playtests have separate records.
 
 Windows 10/11 **x64**. The companion launcher is a small readable Windows script; no command window, WSL, Node.js or Python installation is needed. The companion stays running when Dolphin closes. Use **Quit companion** to stop it. Opening **Slippi Dolphin.exe** directly still starts the companion if needed. Internet is required for submissions and the first replay playback, which downloads the official Slippi Playback build. GameCube adapters may need their Windows driver installed. Other controllers can be configured in Dolphin’s **Controllers** window.
 
@@ -24,7 +26,7 @@ Every stage has **10 targets**, with a seeded mix of **6–10 fixed targets**, *
 
 Moving targets travel back and forth. Teleporting targets alternate between two positions with several seconds at each. Both return to their original positions regularly. Resetting a run restarts its timing; every player gets the same behavior. This is a challenge rule, not a local preference.
 
-See [implementation and validation](docs/target-motion.md). The downloadable Gecko code contains the complete rules; a BTT seed alone does not include TTRC's custom movement.
+See [implementation and validation](docs/target-motion.md). The downloadable Gecko code contains the complete rules; a BTT seed alone does not include Custom Melee BTT's custom movement.
 
 ## Records and replays
 
@@ -53,10 +55,10 @@ Replays are stored in **`Replays`**, next to Dolphin. The portable emulator prof
 
 ## Updating and troubleshooting
 
-Close Dolphin and click **Quit companion**, back up `.local`, `User`, and `Replays`, then extract the latest release into the **same TTRC folder** and replace application files. Releases do not contain your personal data, so these folders are preserved. When upgrading from v0.1, keep `build/challenge/runtime.json`, `build/replay-profiles`, and `Dolphin/netplay/Replays` too: the native version imports your player and copies the old replays automatically on its first start.
+Close Dolphin and click **Quit companion**, back up `.local`, `User`, and `Replays`, then extract the latest release into the **same Custom Melee BTT folder** and replace application files. Releases do not contain your personal data, so these folders are preserved. When upgrading from v0.1, keep `build/challenge/runtime.json`, `build/replay-profiles`, and `Dolphin/netplay/Replays` too: the native version imports your player and copies the old replays automatically on its first start.
 
 - **Wrong ISO:** use an original USA 1.02 image, not a modified or compressed image.
-- **Dolphin cannot start TTRC:** extract the entire ZIP, use a writable folder, and close any other companion using port 4317. See `.local/startup.log` for details.
+- **Dolphin cannot start Custom Melee BTT:** extract the entire ZIP, use a writable folder, and close any other companion using port 4317. See `.local/startup.log` for details.
 - **Replay player download interrupted:** click Watch replay again to retry.
 - **Game is already open:** close it before applying music/rumble changes or launching another session.
 - **No controller input:** check Dolphin’s Controllers settings and your adapter driver.
@@ -66,7 +68,7 @@ Close Dolphin and click **Quit companion**, back up `.local`, `User`, and `Repla
 
 ## Accounts
 
-Sign in with the same username and password on each PC to keep your TTRC profile and records.
+Sign in with the same username and password on each PC to keep your Custom Melee BTT profile and records.
 Your public username is unique and permanent, with a profile at `/players/your_username`.
 No email or external account is required. Passwords are stored as salted scrypt hashes. Signing out of the website
 leaves the companion connected; signing out in the companion stops new scored runs.
@@ -74,7 +76,7 @@ leaves the companion connected; signing out in the companion stops new scored ru
 **Existing players:** open the website using **Open challenge website** in your
 already connected companion, then **Add password**. This links your existing
 player ID and keeps its records. Choose your username once. Do this before creating
-a separate TTRC account; distinct existing accounts are not merged automatically.
+a separate Custom Melee BTT account; distinct existing accounts are not merged automatically.
 
 Save your password in your password manager: there is no email recovery.
 See [account setup and storage](docs/accounts.md).
@@ -95,7 +97,7 @@ npm start
 
 The public seed snapshot is in `challenges/current`. Local profiles, ISOs, player files, databases, credentials and recordings are excluded from Git. See [the architecture and review documentation](docs/website.md).
 
-First run the **Build TTRC Dolphin** GitHub workflow. Download its `ttrc-dolphin` artifact into `build/dolphin-build`, then build the portable Windows ZIP on Linux:
+First run the **Build Custom Melee BTT Dolphin** GitHub workflow. Download its `ttrc-dolphin` artifact into `build/dolphin-build`, then build the portable Windows ZIP on Linux:
 
 ```sh
 npm ci
@@ -103,7 +105,7 @@ npm run setup
 node scripts/build_release.mjs
 ```
 
-The native build is pinned to Slippi commit `e7711b104b339a99385f2bb12b472d46140a7bc7`; `scripts/patch_dolphin.py` adds the startup hook, native ISO verification and companion menu. Releases include a separate **TTRC-Dolphin-Source.tar.gz** with the complete matching Dolphin source and submodules, under GPL-2.0-or-later. This is a TTRC modification, not an official Slippi release.
+The native build is pinned to Slippi commit `e7711b104b339a99385f2bb12b472d46140a7bc7`; `scripts/patch_dolphin.py` adds the startup hook, native ISO verification and companion menu. Releases include a separate **Custom Melee BTT-Dolphin-Source.tar.gz** with the complete matching Dolphin source and submodules, under GPL-2.0-or-later. This is a Custom Melee BTT modification, not an official Slippi release.
 
 The builder uses an explicit list of public source folders, verifies pinned runtime downloads, and audits the output for private files. Artifacts are written to `build/release`. The GitHub workflow builds and publishes the same files when a `v*` tag is pushed. Runtime and Dolphin versions/checksums are pinned in `desktop/dependencies.json`.
 
@@ -143,7 +145,7 @@ THS and point breakdowns stay hidden until reveal, except individually shared ru
 
 ### Automatic app updates (Windows portable release)
 
-From v0.9.0, starting TTRC Dolphin or the companion checks the latest stable GitHub release in the background. A verified download installs automatically once Dolphin is closed; the companion restarts and an open companion tab reloads. Offline checks do not block play. The companion shows the installed version, progress, errors and a **Check for updates** button. Earlier versions need one final manual upgrade to v0.9.0.
+From v0.9.0, starting Custom Melee BTT Dolphin or the companion checks the latest stable GitHub release in the background. A verified download installs automatically once Dolphin is closed; the companion restarts and an open companion tab reloads. Offline checks do not block play. The companion shows the installed version, progress, errors and a **Check for updates** button. Earlier versions need one final manual upgrade to v0.9.0.
 
 Updates preserve `.local`, `User`, `Replays`, `Games`, playback Dolphin and `build/challenge`, including the current seed and ISO path. Only inventoried application files are replaced. The installer runs from a separate Node copy, verifies the archive checksum and file inventory, backs up changed files under `.local/updates/backup`, and rolls back on an installation error. An interrupted file transaction is recovered on the next companion start. Downloaded updates require 1.5 GB free space. Development checkouts do not auto-update.
 

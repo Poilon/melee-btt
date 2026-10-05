@@ -43,7 +43,7 @@ export function createArchivesView({signIn,toast}){
   const code=node('textarea','','archive-code');code.readOnly=true;code.spellcheck=false;code.setAttribute('aria-label',`Gecko code for seed ${challenge.seed}`);
   const status=node('p','Loading Gecko code…','section-note');status.setAttribute('role','status');
   const retry=node('button','Retry loading code','text-button');retry.hidden=true;
-  const download=node('a','Download .txt','text-button');download.href=api(challenge.id,'challenge/code');download.download=`TTRC-${challenge.seed}.txt`;
+  const download=node('a','Download .txt','text-button');download.href=api(challenge.id,'challenge/code');download.download=`Custom-Melee-BTT-${challenge.seed}.txt`;
   let loading=false;
   async function loadCode(){
    if(loading||code.value)return;loading=true;retry.hidden=true;status.textContent='Loading Gecko code…';
