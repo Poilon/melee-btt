@@ -3,7 +3,8 @@ import {createHash} from 'node:crypto';
 import {createReadStream} from 'node:fs';
 import {readdir,readFile,lstat} from 'node:fs/promises';
 import {join} from 'node:path';
-export const repository='Poilon/target-test-randomizer-challenge';
+export const repository='Poilon/melee-btt';
+export const releaseRepositories=new Set([repository,'Poilon/target-test-randomizer-challenge']);
 export const managedDirectories=new Set(['server','shared','src','scripts','companion','web','assets','desktop','generator-sources','runtime','node_modules','Sys','Languages']);
 export const managedFiles=new Set(['Slippi Dolphin.exe','OpenAL32.dll','WebView2Loader.dll','slippi_rust_extensions.dll','slippi_rust_extensions.dll.lib','TTRC Companion.vbs','Custom Melee BTT Companion.vbs','package.json','package-lock.json','release.json','READ ME.txt','THIRD-PARTY-NOTICES.txt','LICENSE-Dolphin.txt','license.txt','FIX-VCRUNTIME140-ERROR.txt']);
 export function allowedPath(path){
@@ -27,7 +28,7 @@ export async function inventory(root){
 export async function verifyUpdate(root,version){
  const manifest=JSON.parse(await readFile(join(root,'update-manifest.json'),'utf8'));
  const release=JSON.parse(await readFile(join(root,'release.json'),'utf8'));
- if(manifest.format!==1||manifest.version!==version||release.version!==version||release.repository!==repository||!release.native)throw Error('Update version does not match the release.');
+ if(manifest.format!==1||manifest.version!==version||release.version!==version||!releaseRepositories.has(release.repository)||!release.native)throw Error('Update version does not match the release.');
  const files=manifest.files;if(!files||Object.keys(files).length>20000)throw Error('Invalid update manifest.');
  for(const required of ['release.json','Slippi Dolphin.exe','desktop/native.mjs','server/main.mjs','runtime/node/node.exe'])if(!files[required])throw Error('Incomplete update.');
  const actual=await inventory(root);

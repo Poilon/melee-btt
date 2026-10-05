@@ -73,3 +73,25 @@ test('ZIP extraction rejects traversal, duplicate Windows names and symlinks bef
   await assert.rejects(exec('python3',[extractor,archive,destination]));await assert.rejects(readFile(join(destination,'TTRC/web/app.js')),{code:'ENOENT'});
  }
 });
+
+test('repository rename accepts only exact official old and new release URLs',()=>{
+ for(const repo of [repository,'Poilon/target-test-randomizer-challenge']){
+  const release=metadata('0.10.0');for(const asset of release.assets)asset.browser_download_url=`https://github.com/${repo}/releases/download/v0.10.0/${asset.name}`;
+  assert.equal(releaseAssets(release,'0.9.4').version,'0.10.0');
+ }
+ for(const repo of ['other/melee-btt','Poilon/melee-btt-fake','Poilon/melee-btt/../evil']){
+  const release=metadata('0.10.0');release.assets[0].browser_download_url=`https://github.com/${repo}/releases/download/v0.10.0/${release.assets[0].name}`;
+  assert.throws(()=>releaseAssets(release,'0.9.4'));
+ }
+});
+test('repository rename keeps installed legacy manifests supported and rejects other repositories',async t=>{
+ const root=await temp(t);await fixture(root,'0.9.4');
+ for(const repo of ['Poilon/target-test-randomizer-challenge',repository,'other/melee-btt']){
+  await put(root,'release.json',JSON.stringify({version:'0.9.4',repository:repo,native:true}));
+  await put(root,'update-manifest.json',JSON.stringify({format:1,version:'0.9.4',files:await inventory(root)}));
+  const manager=new AppUpdates({root,enabled:true});await manager.initialize();
+  assert.equal(manager.status().supported,repo!=='other/melee-btt');
+  if(repo==='other/melee-btt')await assert.rejects(verifyUpdate(root,'0.9.4'));
+  else await verifyUpdate(root,'0.9.4');
+ }
+});

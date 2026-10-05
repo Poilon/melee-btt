@@ -2,7 +2,7 @@ import {readFile,mkdir,rm,cp,statfs} from 'node:fs/promises';
 import {join} from 'node:path';
 import {execFile,spawn} from 'node:child_process';
 import {promisify} from 'node:util';
-import {repository,verifyUpdate} from '../desktop/update-files.mjs';
+import {repository,releaseRepositories,verifyUpdate} from '../desktop/update-files.mjs';
 import {atomicJSON,dolphinRunning,updateLocked} from '../desktop/update-install.mjs';
 import {downloadVerified} from './onboarding.mjs';
 const exec=promisify(execFile),archiveName='TTRC-Windows-x64.zip';
@@ -13,7 +13,7 @@ export function newerVersion(next,current){
 export function releaseAssets(release,current){
  const version=release.tag_name?.replace(/^v/,'');
  if(release.draft||release.prerelease||!newerVersion(version,current))return null;
- const asset=name=>release.assets?.find(a=>a.name===name&&a.state==='uploaded'&&a.browser_download_url===`https://github.com/${repository}/releases/download/v${version}/${name}`);
+ const asset=name=>release.assets?.find(a=>a.name===name&&a.state==='uploaded'&&[...releaseRepositories].some(repo=>a.browser_download_url===`https://github.com/${repo}/releases/download/v${version}/${name}`));
  const archive=asset(archiveName),checksums=asset('SHA256SUMS.txt');
  if(!archive||!checksums||archive.size<=0||archive.size>500_000_000)throw Error('The release download is not ready yet.');
  return {version,archive,checksums};
@@ -34,7 +34,7 @@ export class AppUpdates{
  async initialize(){
   let release;try{release=JSON.parse(await readFile(join(this.root,'release.json'),'utf8'));}catch{return;}
   this.state.currentVersion=release.version;
-  this.state.supported=this.enabled&&release.native===true&&release.repository===repository;if(!this.state.supported)return;
+  this.state.supported=this.enabled&&release.native===true&&releaseRepositories.has(release.repository);if(!this.state.supported)return;
   await mkdir(this.base,{recursive:true});
   try{
    const result=JSON.parse(await readFile(join(this.base,'result.json'),'utf8'));

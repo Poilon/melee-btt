@@ -3,7 +3,7 @@
 Custom Melee BTT is currently in **beta**.
 26 authored Target Test worlds for **Super Smash Bros. Melee USA 1.02**, with character-specific terrain, native Melee objects, online leaderboards and replays in the game.
 
-**[Website & installation guide](https://melee-btt.com/#downloads)** · **[Latest Windows release](https://github.com/Poilon/target-test-randomizer-challenge/releases/latest)**
+**[Website & installation guide](https://melee-btt.com/#downloads)** · **[Latest Windows release](https://github.com/Poilon/melee-btt/releases/latest)**
 
 ## Play on Windows
 
