@@ -1,5 +1,5 @@
 // Shared entry point for native Dolphin and the independent companion launcher.
-import {readFile,writeFile,mkdir,appendFile,rename,cp,access} from 'node:fs/promises';
+import {readFile,writeFile,mkdir,appendFile,rename,cp,access,open} from 'node:fs/promises';
 import {join,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {execFile,spawn} from 'node:child_process';
@@ -19,10 +19,12 @@ await mkdir(join(root,'.local'),{recursive:true});
 async function writeRuntime(value){await writeFile(runtimePath+'.tmp',JSON.stringify(value));await rename(runtimePath+'.tmp',runtimePath);}
 async function ensureCompanion(){
  if(await companionRunning(root,port))return;
- const child=spawn(process.execPath,[fileURLToPath(import.meta.url),'--serve'],{cwd:root,detached:true,stdio:'ignore',windowsHide:true});
- await new Promise((resolve,reject)=>{child.once('spawn',resolve);child.once('error',reject);});child.unref();
+ const log=await open(join(root,'.local/companion-startup.log'),'a');let child;
+ try{child=spawn(process.execPath,[fileURLToPath(import.meta.url),'--serve'],{cwd:root,detached:true,stdio:['ignore',log.fd,log.fd],windowsHide:true});
+ await new Promise((resolve,reject)=>{child.once('spawn',resolve);child.once('error',reject);});}finally{await log.close();}
+ child.unref();
  const deadline=Date.now()+100000;
- while(!await companionRunning(root,port)){if(Date.now()>deadline)throw new Error('Companion did not start. See .local/startup.log.');await delay(300);}
+ while(!await companionRunning(root,port)){if(child.exitCode!==null&&child.exitCode!==0)throw Error('Companion stopped during startup. See .local/companion-startup.log.');if(Date.now()>deadline)throw new Error('Companion did not start. See .local/companion-startup.log.');await delay(300);}
 }
 async function playPublishedWorlds(){
  await progress?.show('Starting the companion...');

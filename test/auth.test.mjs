@@ -104,17 +104,19 @@ test('companion requires account consent and the private device secret; cancella
   const f = fixture(), a = await f.account('desktop');
   let accepted, release, delayed = false;
   const account = new CompanionAccount({ origin, accept: async file => { accepted = file; }, signOut: async () => { accepted = null; },
-    fetcher: async (url, init) => { const result = await f.request(new URL(url).pathname.slice(5), post(null, JSON.parse(init.body))); if (delayed) await new Promise(r => { release = r; }); return Response.json(result.data, { status: result.status }); } });
+    fetcher: async (url, init) => { const result = await f.request(new URL(url).pathname.slice(5), post(null, JSON.parse(init.body))); if (delayed && url.endsWith('/poll')) await new Promise(r => { release = r; }); return Response.json(result.data, { status: result.status }); } });
   const pending = await account.start(); assert.equal(pending.deviceSecret, undefined);
-  const id = new URL(pending.url).searchParams.get('connect');
-  assert.equal((await f.request('companion/connect/approve', post(null, { id, code: pending.code }))).status, 401);
-  assert.equal((await f.request('companion/connect/poll', post(null, { id, deviceSecret: 'wrong' }))).status, 403);
-  assert.equal((await f.request('companion/connect/approve', post(a.cookie, { id, code: 'WRONG' }))).status, 400);
-  await f.request('companion/connect/approve', post(a.cookie, { id, code: pending.code }));
+  const browserFor = pending => {const fragment=new URLSearchParams(new URL(pending.url).hash.slice(1));return {id:fragment.get('request'),browserSecret:fragment.get('key')};};
+  const browser=browserFor(pending),id=browser.id;
+  assert.equal(pending.code,undefined);
+  assert.equal((await f.request('game/connect/approve', post(null, browser))).status,401);
+  assert.equal((await f.request('game/connect/poll', post(null, {id,deviceSecret:'wrong'}))).status,403);
+  assert.equal((await f.request('game/connect/approve', post(a.cookie, {...browser,browserSecret:'wrong'}))).status,410);
+  await f.request('game/connect/approve',post(a.cookie,browser));
   delayed = true; const polling = account.poll(); while (!release) await new Promise(r => setImmediate(r));
   account.cancel(); release(); await polling; assert.equal(accepted, undefined);
   delayed = false; const next = await account.start();
-  await f.request('companion/connect/approve', post(a.cookie, { id: new URL(next.url).searchParams.get('connect'), code: next.code }));
+  await f.request('game/connect/approve',post(a.cookie,browserFor(next)));
   await account.poll(); assert.equal(accepted.id, a.id); assert.deepEqual(account.status(), { status: 'connected' });
   assert.ok(!JSON.stringify([...f.rows]).includes(accepted.token));
   const me = await f.request('companion/me', { headers: { authorization: `Bearer ${accepted.token}` } }); assert.equal(me.status, 200);

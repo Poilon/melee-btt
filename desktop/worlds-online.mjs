@@ -1,12 +1,12 @@
-import {readFile,writeFile,mkdir,rename,rm,stat} from 'node:fs/promises';
+import {writeFile,mkdir} from 'node:fs/promises';
 import {join} from 'node:path';
 import {spawn,execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 import {createInterface} from 'node:readline';
-import {randomUUID} from 'node:crypto';
 import {WorldCapture} from './worlds-capture.mjs';
 import {WORLD_CHARACTERS,sha256,isHash} from '../shared/worlds.mjs';
-export const WORLDS_ORIGIN='https://target-test-randomizer-challenge.vercel.app';
+import {AccountSession,SITE_ORIGIN} from '../shared/account-session.mjs';
+export const WORLDS_ORIGIN=SITE_ORIGIN;
 const string=(b,start,size)=>b.toString('ascii',start,start+size).split('\0')[0];
 export function parseMailbox(value){
  if(typeof value!=='string')return null;
@@ -22,18 +22,17 @@ export function encodeReply({signedIn=false,identity='',error='',rows=[],total=0
  rows.slice(0,10).forEach((r,i)=>{const at=236+i*36;text(at,r.username,28);b.writeUInt32BE(r.frames,at+28);b.writeUInt32BE(r.rank,at+32);});
  return b.toString('base64');
 }
-async function atomic(path,value){await mkdir(join(path,'..'),{recursive:true});const temp=path+'.'+randomUUID()+'.tmp';await writeFile(temp,JSON.stringify(value),{mode:0o600});await rename(temp,path);}
 async function openBrowser(url){
  await promisify(execFile)('rundll32.exe',['url.dll,FileProtocolHandler',url],{windowsHide:true,timeout:15000});
 }
 export class WorldsClient{
- constructor({root,course,fetcher=fetch,origin=WORLDS_ORIGIN,playReplay,openBrowser:launchBrowser=openBrowser}){this.root=root;this.course=course;this.fetcher=fetcher;this.origin=origin;this.playReplay=playReplay;this.openBrowser=launchBrowser;this.pendingLogin=null;this.identity=null;this.board=null;this.boardCache=new Map();this.sessionFile=join(root,'.local/worlds-account.json');}
+ constructor({root,course,fetcher=fetch,origin=WORLDS_ORIGIN,playReplay,openBrowser:launchBrowser=openBrowser}){this.root=root;this.course=course;this.fetcher=fetcher;this.origin=origin;this.playReplay=playReplay;this.openBrowser=launchBrowser;this.pendingLogin=null;this.identity=null;this.board=null;this.boardCache=new Map();this.sessionFile=course.accountFile||join(root,'.local/worlds-account.json');this.session=new AccountSession(this.sessionFile,{origin,legacy:course.accountFile?[join(root,'.local/worlds-account.json')]:[]});}
  async request(path,{method='GET',body,authenticated=false,signal}={}){
   const res=await this.fetcher(this.origin+'/api/'+path,{method,headers:{...(body?{'Content-Type':'application/json'}:{}),...(authenticated&&this.identity?{Authorization:`Bearer ${this.identity.token}`}:{})},...(body?{body:JSON.stringify(body)}:{}),signal:signal?AbortSignal.any([signal,AbortSignal.timeout(20000)]):AbortSignal.timeout(20000),redirect:'error'});
   if(!res.ok){const data=await res.json().catch(()=>({}));throw Error(data.error||'Server unavailable. Try again.');}return res;
  }
  async load(){
-  try{const saved=JSON.parse(await readFile(this.sessionFile,'utf8'));if(saved.origin===this.origin&&isHash(saved.token)&&isHash(saved.id))this.identity=saved;}catch{}
+  this.identity=await this.session.load();
  }
  async cancelLogin(){
   const pending=this.pendingLogin;this.pendingLogin=null;
@@ -41,11 +40,12 @@ export class WorldsClient{
  }
  async saveIdentity(playerFile){
   if(playerFile?.origin!==this.origin||!isHash(playerFile.token)||!isHash(playerFile.id))throw Error('Invalid account response.');
-  await atomic(this.sessionFile,playerFile);this.identity=playerFile;
+  this.identity=await this.session.save(playerFile);
  }
  async handle(q,{signal}={}){
   let error='',status=0;
   try{
+   await this.load();
    if(q.op===1||q.op===2){
     const {playerFile}=await(await this.request('game/'+(q.op===1?'login':'signup'),{method:'POST',body:{username:q.username,password:q.password}})).json();
     await this.saveIdentity(playerFile);
@@ -63,10 +63,10 @@ export class WorldsClient{
     if(this.pendingLogin!==pending)throw Error('Sign-in cancelled.');
     if(result.status==='connected'){await this.saveIdentity(result.playerFile);await this.cancelLogin();}
     else if(result.status!=='pending')throw Error('Invalid sign-in response.');
-   }else if(q.op===9){await this.cancelLogin();this.identity=null;await rm(this.sessionFile,{force:true});
-   }else if(q.op===5){this.identity=null;await rm(this.sessionFile,{force:true});}
+   }else if(q.op===9){await this.cancelLogin();this.identity=null;await this.session.clear();
+   }else if(q.op===5){this.identity=null;await this.session.clear();}
    else if(q.op===6){
-    if(this.identity){try{await this.request('companion/me',{authenticated:true});}catch(e){if(/expired|not found|sign in/i.test(e.message)){this.identity=null;await rm(this.sessionFile,{force:true});}throw e;}}
+    if(this.identity){try{await this.request('companion/me',{authenticated:true});}catch(e){if(/expired|not found|sign in/i.test(e.message)){this.identity=null;await this.session.clear();}throw e;}}
    }else if(q.op===3){
     this.board=null;
     const isTotal=q.character===WORLD_CHARACTERS.length;
@@ -108,15 +108,20 @@ export class WorldsClient{
 export async function serveWorlds({root,course,pid,playReplay,onSample,client:providedClient}){
  if(process.platform!=='win32'||!Number.isInteger(pid)||pid<1)throw Error('Custom Melee BTT Dolphin process required.');
  const client=providedClient||new WorldsClient({root,course,playReplay});await client.load();
+ const sessionTimer=setInterval(()=>client.load().catch(()=>{}),1500);
  const capture=providedClient?null:new WorldCapture({root,course,client});
  const timer=capture?setInterval(()=>capture.sync().catch(()=>{}),1500):null;
  const child=spawn('powershell.exe',['-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',join(root,'scripts/watch_online.ps1'),'-Root',root,'-DolphinPid',String(pid)],{windowsHide:true,stdio:['pipe','pipe','pipe']});
- child.stderr.resume();const lines=createInterface({input:child.stdout});let current='',active=null;
+ child.stderr.resume();const lines=createInterface({input:child.stdout});let current='',active=null,lastIdentity='';
  lines.on('line',line=>{
   let message;try{message=JSON.parse(line);}catch{return;}
   if(message.sample){onSample?.(message.sample,client.identity);capture?.detector.sample(message.sample,client.identity);}else capture?.detector.reset();
   const q=parseMailbox(message.mailbox);
-  if(!q||q.sequence===q.ack||!q.sequence)return;
+  if(!q){lastIdentity='';return;}
+  const name=client.identity?.slug||client.identity?.displayName||'';
+  const signature=q.address+':'+(client.identity?.id||'')+':'+name;
+  if(signature!==lastIdentity&&!child.stdin.destroyed){lastIdentity=signature;child.stdin.write(JSON.stringify({type:'identity',signedIn:Boolean(client.identity),identity:name})+'\n');}
+  if(q.sequence===q.ack||!q.sequence)return;
   const key=q.address+':'+q.sequence;if(key===current)return;
   // Navigation may replace a pending read immediately. Account writes and replay
   // launches remain serialized; only the latest selection can receive a reply.
@@ -126,5 +131,5 @@ export async function serveWorlds({root,course,pid,playReplay,onSample,client:pr
    if(current===key&&!task.controller.signal.aborted&&!child.stdin.destroyed)child.stdin.write(JSON.stringify(reply)+'\n');
   }).catch(()=>{}).finally(()=>{q.password='';if(active===task)active=null;});
  });
- try{await new Promise((resolve,reject)=>{child.once('error',reject);child.once('exit',resolve);});}finally{active?.controller.abort();clearInterval(timer);lines.close();child.stdin.end();}
+ try{await new Promise((resolve,reject)=>{child.once('error',reject);child.once('exit',resolve);});}finally{active?.controller.abort();clearInterval(timer);clearInterval(sessionTimer);lines.close();child.stdin.end();}
 }

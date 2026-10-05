@@ -17,7 +17,7 @@ const challenge = { id: 'test-seed', geckoSha256: 'test-code', rules: { seed: 42
 
 test('domain migration keeps browser login and saved sessions compatible with released Dolphin clients', async()=>{
  const canonical='https://melee-btt.com';
- for(const clientOrigin of [WORLDS_ORIGIN,canonical,'https://www.melee-btt.com']){
+ for(const clientOrigin of ['https://target-test-randomizer-challenge.vercel.app',canonical,WORLDS_ORIGIN]){
   const root=await mkdtemp(join(tmpdir(),'btt-domain-login-'));
   const routed=requestOrigin(new URL(clientOrigin).host,canonical);
   const {request}=fixture({origin:routed,gameAccountsOnly:true,allowLegacySignup:false});

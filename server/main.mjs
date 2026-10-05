@@ -1,4 +1,5 @@
 import {clearOldScores} from './score-reset.mjs';
+import {AccountSession,SITE_ORIGIN} from '../shared/account-session.mjs';
 import {AppUpdates} from './app-updates.mjs';
 import {dolphinRunning} from '../desktop/update-install.mjs';
 import {CustomStages,CustomStageError} from './custom-stages.mjs';
@@ -12,7 +13,7 @@ import { loadChallenge } from './challenge-loader.mjs';
 import { pythonExecutable, windowsPath, bundledPlayback } from './platform.mjs';
 import { ensurePlayback } from './playback-install.mjs';
 import { Onboarding } from './onboarding.mjs';
-import { parsePlayer, playerIdentity, readPlayer, savePlayer, restoreProfilePlayer } from './player.mjs';
+import { parsePlayer, playerIdentity, readPlayer, savePlayer } from './player.mjs';
 import { ScoreStore } from './store.mjs';
 import { RunDetector } from './telemetry.mjs';
 import { DolphinBridge } from './bridge.mjs';
@@ -38,7 +39,7 @@ await playSettings.initialize();
 const store = new ScoreStore(process.env.TTRC_DB || join(root, '.local/scores.sqlite'));
 await clearOldScores(root,store);
 store.recoverAttempts();
-const siteOrigin = process.env.TTRC_SITE_URL || 'https://target-test-randomizer-challenge.vercel.app';
+const siteOrigin = process.env.TTRC_SITE_URL || SITE_ORIGIN;
 const remote = new RemoteSync(join(root, '.local'), siteOrigin);
 remote.challengeId=generated.manifest.id;
 const onlineChallenge=new OnlineChallenge(siteOrigin,generated.manifest.id);
@@ -54,14 +55,16 @@ let playerPath = profilePlayerPath(runtime);
 let identity = null;
 const signedOutPath = join(root, '.local/signed-out');
 let signedOut = await access(signedOutPath).then(() => true, () => false);
+const session=new AccountSession(join(root,'.local/account.json'),{origin:siteOrigin,legacy:[join(root,'.local/custom-stages/character-worlds/Dolphin/.local/worlds-account.json'),...(!signedOut?[playerPath]:[])]});
 let playerQueue = Promise.resolve();
 function withPlayerLock(fn) { const next = playerQueue.then(fn); playerQueue = next.catch(() => {}); return next; }
 async function refreshPlayer() { return withPlayerLock(async () => {
-  if (signedOut) { identity = null; return; }
   try {
-    const previous = runtime?.recording ? join(root, 'build/profiles', stored.id, 'user.json') : null;
-    const file = await restoreProfilePlayer(playerPath, previous, siteOrigin, file => remote.usePlayer(file));
+    const file = await session.load();
+    if(file){parsePlayer(file,siteOrigin);signedOut=false;}
+    else if(identity){await remote.clearPairing();detector.reset();}
     identity = file ? playerIdentity(file) : null;
+    if(file)await remote.usePlayer(file).catch(()=>{});
   } catch { identity = null; }
 }); }
 await refreshPlayer();
@@ -123,12 +126,13 @@ const onboarding = new Onboarding({ root, challengeDir, onReady: async next => {
 await onboarding.initialize(runtime);
 const acceptPlayer = value => withPlayerLock(async () => {
   const file = parsePlayer(value, siteOrigin);
-  await remote.usePlayer(file); await savePlayer(playerPath, file);
+  await remote.usePlayer(file); await session.save(file); await savePlayer(playerPath, file);
   await rm(signedOutPath, { force: true }); signedOut = false;
   identity = playerIdentity(file); detector.reset();
 });
 const account = new CompanionAccount({ origin: siteOrigin, accept: acceptPlayer, signOut: () => withPlayerLock(async () => {
   await writeFile(signedOutPath, 'signed out\n', { mode: 0o600 });
+  await session.clear();
   signedOut = true; identity = null; detector.reset();
   await rm(playerPath, { force: true });
   await remote.clearPairing();

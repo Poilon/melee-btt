@@ -39,5 +39,10 @@ public sealed class OnlineMemory : IDisposable {
   Write(p+260,bytes);Write(p+256,Bytes(sequence));return true;
  }
  public void Heartbeat(uint tick){uint p=Locate();if(p!=0)Write(p+856,Bytes(tick));}
+ public void Identity(bool signedIn,string name){
+  uint p=Locate();if(p==0)return;
+  byte[] text=new byte[28];var encoded=System.Text.Encoding.ASCII.GetBytes(name??"");
+  Array.Copy(encoded,text,Math.Min(encoded.Length,27));Write(p+404,text);Write(p+264,Bytes(signedIn?1u:0u));
+ }
  public void Dispose(){if(process!=IntPtr.Zero){CloseHandle(process);process=IntPtr.Zero;}}
 }

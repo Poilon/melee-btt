@@ -152,13 +152,13 @@ export class CustomStages {
     for(const name of ['custom-stage-native.mjs','worlds-online.mjs','worlds-capture.mjs','worlds-playback.mjs','launch-progress.mjs','dependencies.json'])await copyFile(join(this.root,'desktop',name),join(bundle,'desktop',name));
     await mkdir(join(bundle,'server'),{recursive:true});
     for(const name of ['playback-install.mjs','onboarding.mjs','platform.mjs'])await copyFile(join(this.root,'server',name),join(bundle,'server',name));
-    for(const name of ['worlds.mjs','replay.mjs','characters.mjs','score-season.mjs'])await shareFile(join(this.root,'shared',name),join(bundle,'shared',name));
+    for(const name of ['worlds.mjs','replay.mjs','characters.mjs','score-season.mjs','account-session.mjs'])await shareFile(join(this.root,'shared',name),join(bundle,'shared',name));
     for(const name of ['watch_online.ps1','watch_world_replay.ps1','OnlineMemory.cs','DolphinReader.cs','extract_dolphin.ps1','launch_progress.ps1'])await shareFile(join(this.root,'scripts',name),join(bundle,'scripts',name));
     await shareTree(join(this.root,'node_modules'),join(bundle,'node_modules'));
     if(await exists(join(this.root,'Dolphin/playback')))await shareTree(join(this.root,'Dolphin/playback'),join(bundle,'Playback'));
     catalog=await makeWorldCatalog(bundle,stage);
    }
-   await writeFile(join(bundle,'course.json'),JSON.stringify({id:id.startsWith('stage-editor')?'character-worlds':id,iso:await windowsPath(iso),stageSha256:stage.stageSha256,stageHashes:stage.stageHashes,dolSha256:stage.dolSha256,onlineVersion:stage.onlineVersion,menuHashes:stage.menuHashes,courses:catalog?.courses}));
+   await writeFile(join(bundle,'course.json'),JSON.stringify({id:id.startsWith('stage-editor')?'character-worlds':id,accountFile:await windowsPath(join(this.root,'.local/account.json')),iso:await windowsPath(iso),stageSha256:stage.stageSha256,stageHashes:stage.stageHashes,dolSha256:stage.dolSha256,onlineVersion:stage.onlineVersion,menuHashes:stage.menuHashes,courses:catalog?.courses}));
    this.message=`Opening ${course.name}…`;
    const {stdout}=await this.run('powershell.exe',['-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',
     await windowsPath(join(this.root,'scripts/launch_custom_stage.ps1')),'-Executable',await windowsPath(join(bundle,'Slippi Dolphin.exe')),

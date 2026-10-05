@@ -14,7 +14,8 @@ try{
    if($pending.IsCompleted){
     $line=$pending.Result;if($null -eq $line){break}
     $reply=$line|ConvertFrom-Json
-    $null=$memory.Reply([uint32]$reply.address,[uint32]$reply.sequence,[string]$reply.bytes)
+    if($reply.type-eq 'identity'){$memory.Identity([bool]$reply.signedIn,[string]$reply.identity)}
+    else{$null=$memory.Reply([uint32]$reply.address,[uint32]$reply.sequence,[string]$reply.bytes)}
     $pending=[OnlineMemory]::NextInput()
    }
    $tick++;$memory.Heartbeat([uint32]$tick)

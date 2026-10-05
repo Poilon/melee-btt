@@ -207,9 +207,10 @@ test('Unique username and password connect the companion without email or file d
   await expect(page.locator('#player-name')).toHaveText('Not signed in');
   const popupEvent = context.waitForEvent('page'); await page.locator('#sign-in').click();
   const popup = await popupEvent; await popup.waitForLoadState();
-  await expect(popup.locator('#connect-verification')).toHaveText(await page.locator('#account-code').innerText());
-  await popup.locator('#approve-companion').click();
-  await expect(popup.locator('#connect-status')).toContainText('Connected');
+  await expect(popup).toHaveURL(/\/login\.html/);
+  await expect(popup.locator('#continue')).toHaveText('Continue as browser_player');
+  await popup.locator('#continue').click();
+  await expect(popup.locator('#title')).toHaveText('Connected');
   await expect(page.locator('#player-code')).toHaveText('@browser_player');
   await expect(page.locator('#account-connection')).not.toBeVisible();
   const dashboard = await (await page.request.get('http://localhost:4318/api/dashboard')).json();

@@ -189,8 +189,7 @@ function renderAccount(d) {
  $('account-connection').hidden = !connection || ['idle', 'connected'].includes(connection.status);
  if (!connection || connection.status === 'idle') return;
  if (connection.status === 'connected') return;
- text('account-code', connection.code?.match(/.{4}/g)?.join(' ') || '');
- text('account-status', connection.error || 'Waiting for confirmation…');
+ text('account-status', connection.error || 'Finish signing in in your browser. Dolphin and the companion will connect automatically.');
  $('account-link').hidden = connection.status !== 'pending';
  if (connection.url) $('account-link').href = connection.url;
 }
@@ -209,7 +208,7 @@ async function signIn() {
 for (const id of ['sign-in','sign-in-required']) $(id).addEventListener('click', signIn);
 $('account-cancel').addEventListener('click', async () => { try { await post('account/cancel'); await refresh(); } catch (error) { toast(error.message); } });
 $('sign-out').addEventListener('click', async () => { try { await post('account/logout'); seen = undefined; await refresh(); } catch (error) { toast(error.message); } });
-$('website').addEventListener('click',async()=>{if(!data?.identity){location.href='https://target-test-randomizer-challenge.vercel.app';return;}try{location.href=(await post('remote/browser')).url;}catch(err){toast(err.message);}});
+$('website').addEventListener('click',()=>{window.open('https://www.melee-btt.com/','_blank','noopener');});
 $('quit-companion').addEventListener('click',async()=>{if(data?.capture?.dolphinRunning&&!confirm('Quit companion? Dolphin will stay open, but new runs will not be captured until you reopen the companion.'))return;try{await post('quit',{},'quit');companionClosed=true;clearInterval(refreshTimer);clearTimeout(toastTimer);document.body.replaceChildren(make('main','Companion closed. You can close this tab.'));}catch(error){toast(error.message);}});
 $('play').addEventListener('click',async()=>{launchingDolphin=true;$('play').disabled=true;$('play-settings').disabled=true;$('character-settings').disabled=true;try{const result=await post('launch',{},'launch');toast(result.status==='updating'?'Custom Melee BTT is updating. Wait for the companion to reconnect.':result.status==='already-running'?'Dolphin is already running.':'Dolphin is starting. Choose your character in Target Test.');refresh();}catch(err){toast(err.message);}finally{launchingDolphin=false;$('play').disabled=false;renderSettings(data?.settings);}});
 $('replay-folder').addEventListener('click',async()=>{try{await post('recorder/folder',{},'launch');}catch(e){toast(e.message);}});
