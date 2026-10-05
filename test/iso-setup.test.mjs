@@ -14,3 +14,9 @@ test('cancelling initial or missing-file setup never launches or saves an ISO',a
  assert.equal(await ensureGameIso({root:'test',select:async()=>null,verify:async()=>{throw Error('Should not verify');}}),null);
  assert.equal(await ensureGameIso({root:'test',remembered:'missing.iso',select:async()=>null,verify:async()=>{throw Error('Missing');}}),null);
 });
+test('launch progress hides for file selection and resumes before the selected ISO is verified',async()=>{
+ const events=[];
+ const iso=await ensureGameIso({root:'test',remembered:'missing.iso',onPhase:async phase=>events.push(phase),verify:async path=>{events.push(path);if(path==='missing.iso')throw Error('Missing');},select:async()=>{events.push('picker');return 'new.iso';}});
+ assert.equal(iso,'new.iso');
+ assert.deepEqual(events,['verify','missing.iso','select','picker','verify','new.iso']);
+});

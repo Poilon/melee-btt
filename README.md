@@ -8,7 +8,7 @@ Custom Melee BTT is currently in **beta**.
 ## Play on Windows
 
 1. Download **Custom-Melee-BTT-Windows-x64.zip** and use **Extract All…**. Keep the entire **Custom Melee BTT** folder together.
-2. Open **Slippi Dolphin.exe**. On first launch, click **Choose ISO** and select your original **Melee USA v1.02 ISO**. The setup window checks its full checksum before enabling **Launch game**. Every launch checks the ISO again; if it is missing or changed, setup reopens. The 26 published levels are built automatically; your original ISO stays unchanged.
+2. Open **Slippi Dolphin.exe**. On first launch, click **Choose ISO** and select your original **Melee USA v1.02 ISO**. The setup window checks its full checksum before enabling **Launch game**. Every launch checks the ISO again; if it is missing or changed, setup reopens. The 26 published levels are built automatically; a loading window shows the current step and elapsed time until Dolphin opens. Your original ISO stays unchanged.
 3. Set up Port 1 in Dolphin’s **Controllers** window.
 4. In Melee’s **Stadium** menu, choose **Log in**. Create a username/password account or sign in in the browser page that opens, then return to the game. It shows **Logged as your username**.
 5. Choose **Target Test**, then a character. Completed eligible records submit automatically while signed in and online. **Start, then Z** restarts the level.

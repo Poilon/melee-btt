@@ -7,12 +7,14 @@ import {promisify} from 'node:util';
 import {companionRunning,checkCompanionPort,claimCompanion} from '../server/companion-instance.mjs';
 import {updateLocked,recoverInstall} from './update-install.mjs';
 import {ensureGameIso} from './iso-setup.mjs';
+import {LaunchProgress} from './launch-progress.mjs';
 import {migrateLauncher} from './brand-migration.mjs';
 import {verifyIso} from '../server/onboarding.mjs';
 import {loadChallenge} from '../server/challenge-loader.mjs';
 const root=fileURLToPath(new URL('../',import.meta.url)),exec=promisify(execFile);
 const runtimePath=join(root,'build/challenge/runtime.json'),port=Number(process.env.PORT||4317);
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+const progress=process.argv.includes('--play')?new LaunchProgress(root):null;
 await mkdir(join(root,'.local'),{recursive:true});
 async function writeRuntime(value){await writeFile(runtimePath+'.tmp',JSON.stringify(value));await rename(runtimePath+'.tmp',runtimePath);}
 async function ensureCompanion(){
@@ -23,10 +25,11 @@ async function ensureCompanion(){
  while(!await companionRunning(root,port)){if(Date.now()>deadline)throw new Error('Companion did not start. See .local/startup.log.');await delay(300);}
 }
 async function playPublishedWorlds(){
+ await progress?.show('Starting the companion...');
  await ensureCompanion();
  const {CustomStages}=await import('../server/custom-stages.mjs');
  const runtime=JSON.parse(await readFile(runtimePath,'utf8'));
- const worlds=new CustomStages({root,getRuntime:()=>runtime});
+ const worlds=new CustomStages({root,getRuntime:()=>runtime,onProgress:message=>{if(message)progress?.show(message);}});
  const result=await worlds.launch('character-worlds');
  if(!['started','already-running'].includes(result.status))throw Error('Custom Melee BTT did not launch.');
  // Native startup recognizes this successful handoff and closes the ISO picker.
@@ -46,10 +49,11 @@ try {
   const dolphin=join(root,'Slippi Dolphin.exe'),profile=join(root,'User');
   let previous={};try{previous=JSON.parse(await readFile(runtimePath,'utf8'));}catch{}
   if(process.argv.includes('--play')){
-   const iso=await ensureGameIso({root,remembered:previous.iso});
-   if(!iso){process.exitCode=3;process.exit(3);}
+   const iso=await ensureGameIso({root,remembered:previous.iso,onPhase:phase=>progress.show(phase==='verify'?'Verifying the complete Melee USA 1.02 checksum...':'')});
+   if(!iso){await progress.close();process.exit(3);}
    previous.iso=iso;
   }
+  await progress?.show('Preparing Dolphin and controller settings...');
   await exec(join(root,'runtime/python/python.exe'),[join(root,'scripts/prepare_dolphin.py'),'--record-replays','--dolphin',dolphin,'--portable','--configure-only','--controller-config',join(profile,'Config')],{windowsHide:true,timeout:90000});
   await writeFile(join(root,'portable.txt'),'');
   // Upgrade the player's own v0.1 profile without overwriting an imported player.
@@ -62,6 +66,7 @@ try {
   if(previous.iso&&process.argv.includes('--play'))await playPublishedWorlds();
  }else if(process.argv.includes('--iso')){
   const iso=resolve(process.argv[process.argv.indexOf('--iso')+1]);
+  await progress?.show('Verifying the complete Melee USA 1.02 checksum...');
   await verifyIso(iso);
   const runtime=JSON.parse(await readFile(runtimePath,'utf8'));
   await writeRuntime({...runtime,iso});
@@ -88,5 +93,8 @@ try {
  }else throw new Error('Unknown native action');
 }catch(error){
  await appendFile(join(root,'.local/startup.log'),`${new Date().toISOString()} ${error.stack||error}\n`);
+ await progress?.close();
  process.exit(1);
+}finally{
+ await progress?.close();
 }

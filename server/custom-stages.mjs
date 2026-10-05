@@ -33,7 +33,9 @@ async function shareTree(source,target){
  }
 }
 export class CustomStages {
- constructor({root,getRuntime,run=exec}){this.root=root;this.getRuntime=getRuntime;this.run=run;this.busy=false;this.message='';this.activeId=null;}
+ constructor({root,getRuntime,run=exec,onProgress=()=>{}}){this.root=root;this.getRuntime=getRuntime;this.run=run;this.onProgress=onProgress;this.busy=false;this.message='';this.activeId=null;}
+ get message(){return this._message;}
+ set message(value){this._message=value;this.onProgress?.(value);}
  directory(id='grassland-1'){if(!customStageCatalog.some(s=>s.id===id))throw new CustomStageError('Unknown custom stage.');return join(this.root,'.local/custom-stages',id);}
  async list(){
   const available=Boolean(this.getRuntime()?.native);
@@ -61,6 +63,7 @@ export class CustomStages {
    if(!latest.iso)throw new CustomStageError('Open your Melee ISO once in Custom Melee BTT Dolphin, then try again.');
    const source=await localPath(latest.iso);
    const info=await stat(source).catch(()=>{throw new CustomStageError('Your Melee ISO is unavailable. Select it again in Custom Melee BTT Dolphin.');});
+   this.message='Checking level files and saved build...';
    const online=id==='character-worlds'||id==='stage-editor-all';
    const builder=join(this.root,'scripts',course.builder);
    const hash=createHash('sha256').update(await readFile(builder)).update(await readFile(join(this.root,'scripts/build_grassland.py')));
@@ -117,6 +120,7 @@ export class CustomStages {
    const iso=join(dir,course.name+'.iso'),stamp=join(dir,'prepared.json');
    let cached;try{cached=JSON.parse(await readFile(stamp,'utf8'));}catch{}
    if(cached?.fingerprint!==fingerprint||!await exists(iso)){
+    this.message='Verifying the source ISO before building levels...';
     await verifyIso(source).catch(()=>{throw new CustomStageError('Use an original Melee USA 1.02 ISO to prepare this course.');});
     this.message=`Building ${course.name}… First launch only.`;
     await mkdir(dir,{recursive:true});
