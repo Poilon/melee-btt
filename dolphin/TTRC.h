@@ -46,7 +46,7 @@ inline std::wstring Quote(const std::wstring& value) {
   result.append(slashes * 2, L'\\');
   return result + L"\"";
 }
-inline bool Helper(const std::wstring& arguments, bool wait, DWORD* exitCode = nullptr) {
+inline bool Helper(const std::wstring& arguments, bool wait, DWORD* exitCode = nullptr, DWORD timeout = 360000) {
   if (exitCode) *exitCode = 1;
   const auto root = Root();
   const auto node = root + L"\\runtime\\node\\node.exe";
@@ -60,7 +60,7 @@ inline bool Helper(const std::wstring& arguments, bool wait, DWORD* exitCode = n
   bool ok = true;
   if (wait) {
     DWORD code = 1;
-    if (WaitForSingleObject(process.hProcess, 360000) != WAIT_OBJECT_0) {
+    if (WaitForSingleObject(process.hProcess, timeout) != WAIT_OBJECT_0) {
       TerminateProcess(process.hProcess, 1); ok = false;
     } else { GetExitCodeProcess(process.hProcess, &code); ok = code == 0; if (exitCode) *exitCode = code; }
   }
@@ -68,9 +68,9 @@ inline bool Helper(const std::wstring& arguments, bool wait, DWORD* exitCode = n
 }
 inline bool Start() {
   DWORD code = 1;
-  const bool prepared = Helper(L"--prepare --play", true, &code);
+  const bool prepared = Helper(L"--prepare --play", true, &code, INFINITE);
   // The helper opened the prepared TTRC game in its own profile.
-  if (code == 2) return false;
+  if (code == 2 || code == 3) return false;
   if (!prepared ||
       !Helper(L"--serve --parent " + std::to_wstring(GetCurrentProcessId()), false)) {
     wxMessageBox("Custom Melee BTT could not start. Extract the entire release ZIP into a writable folder, "
