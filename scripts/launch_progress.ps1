@@ -34,6 +34,8 @@ $timer=New-Object System.Windows.Forms.Timer;$timer.Interval=200
 $timer.Add_Tick({
  if($owner.HasExited){$form.Close();return}
  try{$state=Get-Content -LiteralPath $StatusFile -Raw -Encoding UTF8|ConvertFrom-Json}catch{return}
+ if($state.heading){$heading.Text=$state.heading}
+ if($state.detail){$detail.Text=$state.detail}
  if($state.message-ne $script:lastMessage){
   $script:lastMessage=$state.message
   if($state.message){$status.Text=$state.message;$form.Show();[void][LaunchWindow]::ShowWindow($form.Handle,5)}else{$form.Hide()}

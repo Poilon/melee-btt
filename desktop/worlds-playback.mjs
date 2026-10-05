@@ -1,19 +1,27 @@
-import {mkdir,readFile,writeFile,access,copyFile} from 'node:fs/promises';
+import {mkdir,readFile,writeFile,copyFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {spawn} from 'node:child_process';
 import {randomUUID} from 'node:crypto';
 import {isHash} from '../shared/worlds.mjs';
 import {verifyCourseIso} from './custom-stage-native.mjs';
+import {ensurePlayback} from '../server/playback-install.mjs';
+import {LaunchProgress} from './launch-progress.mjs';
 const section=(ini,name)=>ini.match(new RegExp('\\['+name+'\\]([^]*?)(?=\\n\\[|$)'))?.[1]||'';
 const value=(ini,name,key,fallback)=>section(ini,name).match(new RegExp('(?:^|\\n)'+key+' *= *([^\\r\\n]*)'))?.[1]?.trim()||fallback;
 export function createWorldPlayback(root,course,parentPid){
- let running=null;
+ let running=null,opening=false;
  return async(path,recorded)=>{
-  if(running)throw Error('Close the current replay first.');
+  if(running||opening)throw Error('Close the current replay first.');
+  opening=true;
+  const progress=new LaunchProgress(root,{heading:'Opening your replay',detail:'The replay player is installed once, then reused.'});
+  try{
   const local=course.courses?.find(c=>c.id===recorded.id);
   if(!local||!isHash(recorded.id)||local.dolSha256!==course.dolSha256||local.stageSha256!==course.stageHashes?.[`GrT${local.suffix}.dat`])throw Error('This replay needs another level version.');
+  await progress.show('Checking the replay level version...');
   await verifyCourseIso(course.iso,{[`GrT${local.suffix}.dat`]:local.stageSha256},local.dolSha256);
-  const exe=join(root,'Playback/Slippi Dolphin.exe');await access(exe).catch(()=>{throw Error('Replay player is not installed.');});
+  await ensurePlayback(root,{directory:'Playback',onProgress:message=>progress.show(message)});
+  const exe=join(root,'Playback/Slippi Dolphin.exe');
+  await progress.show('Opening the replay...');
   const profile=join(root,'.local/worlds-playback',recorded.id);
   await mkdir(join(profile,'Config'),{recursive:true});await mkdir(join(profile,'GameSettings'),{recursive:true});
   const original=await readFile(join(root,'User/Config/Dolphin.ini'),'utf8');
@@ -30,5 +38,6 @@ export function createWorldPlayback(root,course,parentPid){
   await new Promise((resolve,reject)=>{child.once('spawn',resolve);child.once('error',()=>{running=null;reject(Error('Replay player could not start.'));});});
   const watcher=spawn('powershell.exe',['-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',join(root,'scripts/watch_world_replay.ps1'),'-Root',root,'-ReplayPid',String(child.pid),'-ParentPid',String(parentPid||0)],{windowsHide:true,stdio:'ignore'});
   watcher.on('error',()=>{});
+  }finally{opening=false;await progress.close();}
  };
 }

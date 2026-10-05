@@ -149,9 +149,11 @@ export class CustomStages {
     '--source-profile',runtime.profile,'--iso',iso,'--course-id',id.startsWith('stage-editor')?'character-worlds':id,'--name',course.name,...(online?['--online']:[]),...(id==='stage-editor'?['--character',String(customEditorStageIds.indexOf(project.stage))]:[])],{timeout:30000,windowsHide:true});
    let catalog;
    if(online){
-    for(const name of ['custom-stage-native.mjs','worlds-online.mjs','worlds-capture.mjs','worlds-playback.mjs'])await copyFile(join(this.root,'desktop',name),join(bundle,'desktop',name));
+    for(const name of ['custom-stage-native.mjs','worlds-online.mjs','worlds-capture.mjs','worlds-playback.mjs','launch-progress.mjs','dependencies.json'])await copyFile(join(this.root,'desktop',name),join(bundle,'desktop',name));
+    await mkdir(join(bundle,'server'),{recursive:true});
+    for(const name of ['playback-install.mjs','onboarding.mjs','platform.mjs'])await copyFile(join(this.root,'server',name),join(bundle,'server',name));
     for(const name of ['worlds.mjs','replay.mjs','characters.mjs','score-season.mjs'])await shareFile(join(this.root,'shared',name),join(bundle,'shared',name));
-    for(const name of ['watch_online.ps1','watch_world_replay.ps1','OnlineMemory.cs','DolphinReader.cs'])await shareFile(join(this.root,'scripts',name),join(bundle,'scripts',name));
+    for(const name of ['watch_online.ps1','watch_world_replay.ps1','OnlineMemory.cs','DolphinReader.cs','extract_dolphin.ps1','launch_progress.ps1'])await shareFile(join(this.root,'scripts',name),join(bundle,'scripts',name));
     await shareTree(join(this.root,'node_modules'),join(bundle,'node_modules'));
     if(await exists(join(this.root,'Dolphin/playback')))await shareTree(join(this.root,'Dolphin/playback'),join(bundle,'Playback'));
     catalog=await makeWorldCatalog(bundle,stage);
