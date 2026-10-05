@@ -21,7 +21,7 @@ inline const std::string& Title() {
     const auto path = Root() + L"\\release.json";
     HANDLE file = CreateFileW(path.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr,
                               OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-    if (file == INVALID_HANDLE_VALUE) return std::string("TTRC Dolphin");
+    if (file == INVALID_HANDLE_VALUE) return std::string("TTRC Dolphin Beta");
     char bytes[4096]; DWORD count = 0;
     const bool ok = ReadFile(file, bytes, sizeof(bytes), &count, nullptr) != FALSE;
     CloseHandle(file);
@@ -29,9 +29,9 @@ inline const std::string& Title() {
       const std::string json(bytes, count);
       std::smatch match;
       const std::regex version(R"ttrc("version"\s*:\s*"([0-9]+\.[0-9]+\.[0-9]+(-[a-z0-9.]+)?)")ttrc");
-      if (std::regex_search(json, match, version)) return std::string("TTRC Dolphin v") + match[1].str();
+      if (std::regex_search(json, match, version)) return std::string("TTRC Dolphin Beta v") + match[1].str();
     }
-    return std::string("TTRC Dolphin");
+    return std::string("TTRC Dolphin Beta");
   }();
   return title;
 }

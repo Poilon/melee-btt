@@ -20,7 +20,7 @@ replace('Main.cpp', '\tUICommon::SetUserDirectory(m_user_path.ToStdString());',
 replace('Main.cpp', 'StrToWxStr(scm_rev_str), window_geometry', 'StrToWxStr(TTRC::Title()), window_geometry')
 replace('Globals.h', '\tIDM_MEMCARD,', '\tIDM_TTRC_COMPANION,\n\tIDM_MEMCARD,')
 replace('MainMenuBar.cpp', '\tauto* const tools_menu = new wxMenu;',
-        '\tauto* const tools_menu = new wxMenu;\n\ttools_menu->Append(IDM_TTRC_COMPANION, _("TTRC Companion"));\n\ttools_menu->AppendSeparator();')
+        '\tauto* const tools_menu = new wxMenu;\n\ttools_menu->Append(IDM_TTRC_COMPANION, _("TTRC Companion Beta"));\n\ttools_menu->AppendSeparator();')
 replace('FrameTools.cpp', '\t// Tools menu', '\t// Tools menu\n\tBind(wxEVT_MENU, &TTRC::OnCompanion, IDM_TTRC_COMPANION);')
 replace('FrameTools.cpp', '\tm_bGameLoading = true;', '\tif (!TTRC::VerifyGame(filename)) return;\n\tm_bGameLoading = true;')
 print('TTRC native integration applied.')
