@@ -90,6 +90,8 @@ def prepare(bundle, source, iso, course_id='grassland-1', course_name='Grassland
     code += '$Recommended: Normal Lag Reduction\n$Recommended: Apply Delay to all In-Game Scenes\n$Recommended: Lagless FoD\n'
     (profile / 'GameSettings/GALE01.ini').write_text(code)
     apply_preferences(profile, prefs)
+    from prepare_dolphin import install_title_texture
+    install_title_texture(profile)
     if course_id == 'character-worlds':
         from background_textures import install
         install(profile)

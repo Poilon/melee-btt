@@ -35,3 +35,6 @@
 .custom-stages>p{padding:0 16px;font-size:12px}.custom-stage-card+.custom-stage-card{border-top:1px solid var(--line);padding-top:16px}
 
 .custom-stage-preview{display:inline-block;font-size:12px;margin-top:10px;color:var(--mint)}
+
+/* Shared beta label; visible without relying on color. */
+.beta-badge,.brand .beta-badge{display:inline-flex;align-items:center;flex:none;width:max-content;vertical-align:middle;margin-left:6px;padding:4px 7px;border:1px solid #b99755;border-radius:4px;background:#30291b;color:#ffdb91;font:700 10px/1.2 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}

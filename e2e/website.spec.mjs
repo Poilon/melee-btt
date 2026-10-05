@@ -489,11 +489,11 @@ test('companion shows download progress, deferred installation, errors and autom
  page.on('load',()=>loads++);
  await page.route('**/api/dashboard',async route=>{const response=await route.fetch();const d=await response.json();d.appUpdate=state;await route.fulfill({json:d});});
  await page.route('**/api/app-update/check',async route=>{checks++;state={...state,phase:'checking'};await route.fulfill({status:202,json:state});});
- await page.goto('/');await expect(page.locator('#app-version')).toHaveText('TTRC 0.9.0');await expect(page.locator('#app-update-message')).toContainText('42%');await expect(page.locator('#app-update-progress')).toHaveAttribute('value','42');await expect(page.locator('#check-app-update')).toBeDisabled();
+ await page.goto('/');await expect(page.locator('#app-version')).toHaveText('TTRC Beta v0.9.0');await expect(page.locator('#app-update-message')).toContainText('42%');await expect(page.locator('#app-update-progress')).toHaveAttribute('value','42');await expect(page.locator('#check-app-update')).toBeDisabled();
  state={...state,phase:'ready'};await expect(page.locator('#app-update-message')).toContainText('when Dolphin is closed');
  state={...state,phase:'error',error:'Download failed. You can keep playing.'};await expect(page.locator('#check-app-update')).toBeEnabled();await page.locator('#check-app-update').click();expect(checks).toBe(1);await expect(page.locator('#app-update-message')).toContainText('Checking');
  state={...state,phase:'installing'};await expect(page.locator('#app-update-message')).toContainText('reconnect automatically');await expect(page.locator('#play')).toBeDisabled();
- const oldLoads=loads;state={...state,currentVersion:'0.10.0',phase:'current'};await expect.poll(()=>loads).toBeGreaterThan(oldLoads);await expect(page.locator('#app-version')).toHaveText('TTRC 0.10.0');await expect(page.locator('#app-update-message')).toContainText('Up to date');
+ const oldLoads=loads;state={...state,currentVersion:'0.10.0',phase:'current'};await expect.poll(()=>loads).toBeGreaterThan(oldLoads);await expect(page.locator('#app-version')).toHaveText('TTRC Beta v0.10.0');await expect(page.locator('#app-update-message')).toContainText('Up to date');
  await page.setViewportSize({width:390,height:844});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
 

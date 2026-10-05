@@ -7,7 +7,7 @@ let companionClosed=false,loadedVersion,updateLoading;
 function renderUpdate(update){
  $('app-update').hidden=!update?.supported;if(!update?.supported)return;
  if(loadedVersion&&update.currentVersion!==loadedVersion){location.reload();return;}loadedVersion=update.currentVersion;
- text('app-version',`TTRC ${update.currentVersion}`);
+ text('app-version',`TTRC Beta v${update.currentVersion}`);
  const messages={idle:'Automatic updates on.',checking:'Checking for updates…',current:'Up to date · automatic updates on.',downloading:`Downloading ${update.version} · ${update.progress}%`,verifying:'Verifying update…',ready:`${update.version} is ready. It will install automatically when Dolphin is closed.`,installing:'Installing update… The companion will reconnect automatically.',error:update.error||'Could not check for updates. You can keep playing.'};
  text('app-update-message',messages[update.phase]||'Automatic updates on.');
  $('app-update-progress').hidden=update.phase!=='downloading';$('app-update-progress').value=update.progress||0;

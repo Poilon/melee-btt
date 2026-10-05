@@ -9,4 +9,5 @@
     <text x="200" y="192">RANDOMIZER</text>
     <text x="200" y="296">CHALLENGE</text>
   </g>
+  <text x="94" y="280" text-anchor="middle" fill="#ffcd66" font-family="DejaVu Sans" font-weight="bold" font-size="42">BETA</text>
 </svg>

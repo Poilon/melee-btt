@@ -7,3 +7,6 @@
 .route-actions{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}.route-actions button{font-size:11px}#route-placement{position:absolute;top:12px;left:12px;right:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:#17211cf2;border:1px solid var(--accent);border-radius:6px;padding:9px 12px;box-shadow:0 3px 14px #0005;font-size:12px}#route-placement[hidden]{display:none}#scene.placing-stops{cursor:crosshair}#scene.over-stop{cursor:grab}
 
 .pack-actions{display:grid;gap:6px;margin:14px 0}.pack-actions button{white-space:normal;text-align:left}
+
+/* Shared beta label; visible without relying on color. */
+.beta-badge,.brand .beta-badge{display:inline-flex;align-items:center;flex:none;width:max-content;vertical-align:middle;margin-left:6px;padding:4px 7px;border:1px solid #b99755;border-radius:4px;background:#30291b;color:#ffdb91;font:700 10px/1.2 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}

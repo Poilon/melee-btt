@@ -26,7 +26,7 @@ jobs:
           path: build/dolphin-build
       - run: node scripts/build_release.mjs
         env:
-          TTRC_VERSION: ${{ github.ref_type == 'tag' && github.ref_name || '0.9.3' }}
+          TTRC_VERSION: ${{ github.ref_type == 'tag' && github.ref_name || '0.9.4' }}
       - uses: actions/upload-artifact@v4
         with:
           name: TTRC-Windows-x64
@@ -39,4 +39,4 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" build/release/TTRC-Windows-x64.zip build/release/TTRC-Dolphin-v*-Windows-x64.zip build/release/SHA256SUMS.txt build/release/TTRC-Dolphin-Source.tar.gz --generate-notes --title "TTRC Dolphin $GITHUB_REF_NAME"
+        run: gh release create "$GITHUB_REF_NAME" build/release/TTRC-Windows-x64.zip build/release/TTRC-Dolphin-v*-Windows-x64.zip build/release/SHA256SUMS.txt build/release/TTRC-Dolphin-Source.tar.gz --generate-notes --title "TTRC Dolphin Beta $GITHUB_REF_NAME"

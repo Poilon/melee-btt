@@ -1,5 +1,6 @@
-# Target Test Randomizer Challenge
+# Target Test Randomizer Challenge — Beta
 
+TTRC is currently in **beta**.
 Randomized targets, shuffled character stages, and a shared seed for **Super Smash Bros. Melee USA 1.02**. The original stages and physics are kept: Fox can play Samus’s course, Marth can play Mewtwo’s, and so on.
 
 **[Challenge website](https://target-test-randomizer-challenge.vercel.app)** · **[Download the latest Windows release](https://github.com/Poilon/target-test-randomizer-challenge/releases/latest)**
