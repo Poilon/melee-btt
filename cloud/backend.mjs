@@ -9,7 +9,7 @@ import { createHash, randomBytes } from 'node:crypto';
 const hash = value => createHash('sha256').update(value).digest('hex');
 const random = () => randomBytes(32).toString('hex');
 const cookieValue = (req, name) => (req.headers.cookie || '').split(';').map(s => s.trim()).find(s => s.startsWith(`${name}=`))?.slice(name.length + 1);
-export function createCloudHandler({ store, challenge, gecko, origin, secret, reviewerKey, endsAt, challengeManager, now = Date.now, allowLegacySignup = false, gameAccountsOnly = false, worldsCatalog }) {
+export function createCloudHandler({ store, challenge, gecko, origin, secret, reviewerKey, endsAt, challengeManager, now = Date.now, allowLegacySignup = false, gameAccountsOnly = false, worldsCatalog, worldsChallenges }) {
   const cookie = (name, value, seconds) => `${name}=${value}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${seconds}`;
   const json = (res, status, value) => { res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' }); res.end(JSON.stringify(value)); };
   const session = async req => {
@@ -35,7 +35,7 @@ export function createCloudHandler({ store, challenge, gecko, origin, secret, re
     return JSON.parse(data || '{}');
   };
   const auth = createAuth({ store, origin, secret, session, body, cookie, json, now, gameAccountsOnly });
-  const worlds = createWorlds({store,catalog:worldsCatalog,bearer,json,now});
+  const worlds = createWorlds({store,catalog:worldsCatalog,challenges:worldsChallenges,bearer,json,now});
   const competition = createCompetition({ store, challenge, gecko, origin, reviewerKey, endsAt, challengeManager, bearer, session, json, now });
 
   return async (req, res) => {

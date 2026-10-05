@@ -1,3 +1,4 @@
+import {clearOldScores} from './score-reset.mjs';
 import {AppUpdates} from './app-updates.mjs';
 import {dolphinRunning} from '../desktop/update-install.mjs';
 import {CustomStages,CustomStageError} from './custom-stages.mjs';
@@ -35,6 +36,7 @@ await mkdir(join(root, '.local'), { recursive: true });
 const playSettings = new PlaySettings(join(root, '.local/play-settings.json'));
 await playSettings.initialize();
 const store = new ScoreStore(process.env.TTRC_DB || join(root, '.local/scores.sqlite'));
+await clearOldScores(root,store);
 store.recoverAttempts();
 const siteOrigin = process.env.TTRC_SITE_URL || 'https://target-test-randomizer-challenge.vercel.app';
 const remote = new RemoteSync(join(root, '.local'), siteOrigin);

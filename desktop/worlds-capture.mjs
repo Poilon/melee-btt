@@ -1,8 +1,9 @@
-import {readFile,writeFile,mkdir,readdir,rename,stat} from 'node:fs/promises';
+import {readFile,writeFile,mkdir,readdir,rename,stat,unlink} from 'node:fs/promises';
 import {join} from 'node:path';
 import {randomUUID} from 'node:crypto';
 import {createRequire} from 'node:module';
 import {WORLD_CHARACTERS,sha256,worldRulesHash} from '../shared/worlds.mjs';
+import {SCORE_SEASON_START} from '../shared/score-season.mjs';
 import {inspectReplay,MAX_REPLAY_BYTES} from '../shared/replay.mjs';
 const {SlippiGame}=createRequire(import.meta.url)('@slippi/slippi-js');
 export class WorldRunDetector{
@@ -22,13 +23,13 @@ export class WorldRunDetector{
  }
 }
 export class WorldCapture{
- constructor({root,course,client}){this.root=root;this.course=course;this.client=client;this.directory=join(root,'.local/world-runs');this.busy=false;this.detector=new WorldRunDetector(course.courses||[],run=>this.save(run).catch(()=>{}));}
+ constructor({root,course,client,scoreCutoff=Date.parse(SCORE_SEASON_START)}){this.scoreCutoff=scoreCutoff;this.root=root;this.course=course;this.client=client;this.directory=join(root,'.local/world-runs');this.busy=false;this.detector=new WorldRunDetector(course.courses||[],run=>this.save(run).catch(()=>{}));}
  async save(run){await mkdir(this.directory,{recursive:true});const path=join(this.directory,run.id+'.json');const temp=path+'.'+randomUUID()+'.tmp';await writeFile(temp,JSON.stringify(run),{mode:0o600});await rename(temp,path);}
  async sync(){
   if(this.busy||!this.client.identity)return;this.busy=true;
   try{
    const files=await readdir(this.directory).catch(()=>[]),runs=[];
-   for(const file of files.filter(n=>/^[a-f0-9-]+\.json$/.test(n))){const r=JSON.parse(await readFile(join(this.directory,file),'utf8'));if(!r.submitted&&(!r.excluded||(r.excluded==='Different game settings'&&r.rulesValidationVersion!==2))&&r.playerId===this.client.identity.id&&(!r.lastError||Date.now()-(r.lastAttemptAt||0)>30000))runs.push(r);}
+   for(const file of files.filter(n=>/^[a-f0-9-]+\.json$/.test(n))){const r=JSON.parse(await readFile(join(this.directory,file),'utf8'));if(r.startedAt<this.scoreCutoff){await unlink(join(this.directory,file));continue;}if(!r.submitted&&(!r.excluded||(r.excluded==='Different game settings'&&r.rulesValidationVersion!==2))&&r.playerId===this.client.identity.id&&(!r.lastError||Date.now()-(r.lastAttemptAt||0)>30000))runs.push(r);}
    if(!runs.length)return;
    const dir=join(this.root,'Replays'),replays=[];
    const names=await readdir(dir).catch(()=>[]);

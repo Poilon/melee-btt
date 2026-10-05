@@ -38,7 +38,7 @@ export function createArchivesView({signIn,toast}){
    }));empty.hidden=rows.length>0;
   }
   overall.addEventListener('click',()=>board('overall'));ths.addEventListener('click',()=>board('ths'));board('overall');
-  const open=node('a','Open challenge & replays →','text-button');open.href=`/challenges.html?challenge=${challenge.id}`;
+  const open=node('a','Open challenge & replays →','text-button');open.href=`/legacy-challenge.html?challenge=${challenge.id}`;
   const codeHeading=node('div','','panel-heading'),codeTitle=node('h3','Gecko code'),copy=node('button','Copy Gecko code','button secondary');copy.disabled=true;codeHeading.append(codeTitle,copy);
   const code=node('textarea','','archive-code');code.readOnly=true;code.spellcheck=false;code.setAttribute('aria-label',`Gecko code for seed ${challenge.seed}`);
   const status=node('p','Loading Gecko code…','section-note');status.setAttribute('role','status');

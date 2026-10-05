@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0c1017">
+  <meta name="description" content="The current Custom Melee BTT challenge, its courses, and your personal bests.">
+  <title>Custom Melee BTT · Beta</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon-site.svg"><link rel="stylesheet" href="/style.css">
+  <script type="module" src="/app.js"></script>
+<link rel="stylesheet" href="/loading.css"></head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <aside class="sidebar">
+    <a class="brand" href="#main"><img src="/target.svg" width="40" height="40" alt=""><span>CUSTOM MELEE<small>BTT · BETA</small></span></a>
+    <div class="nav-label">Navigation</div>
+    <nav aria-label="Main navigation">
+      <a class="nav-active" href="#main"><span aria-hidden="true">◎</span> Current challenge <i></i></a>
+      <a href="#parcours"><span aria-hidden="true">▦</span> Courses <b>25</b></a>
+      <a href="#records"><span aria-hidden="true">◷</span> My records</a>
+      <a id="old-challenges-link" href="#old-challenges"><span aria-hidden="true">◴</span> Old challenges</a>
+      <a href="/editor"><span aria-hidden="true">▧</span> Stage editor</a>
+      <a id="admin-link" href="/review" hidden><span aria-hidden="true">⚙</span> Admin</a>
+    </nav>
+    <div class="sidebar-bottom"><div class="edition">MELEE <span>NTSC 1.02</span></div><span class="local-badge"><i></i> Local companion</span></div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar"><span>Melee <span class="slash">/</span> <strong>Target Test</strong> <span class="beta-badge">Beta</span></span><a href="#profil" class="top-profile"><span id="top-avatar" class="avatar mini">?</span><span id="top-name">My profile</span></a></header>
+    <main id="main">
+      <section class="panel connect-panel" id="connect-panel" hidden><p class="eyebrow">COMPANION CONNECTION</p><h2>Connect this companion</h2><p>Only continue if you clicked Sign in in your own Custom Melee BTT Companion. Check that both windows show this code:</p><strong id="connect-verification" class="verification-code"></strong><p id="connect-status" role="status">Loading connection…</p><button id="approve-companion" class="button primary" disabled>Connect companion</button></section>
+      <section class="panel" id="public-profile" hidden><p class="eyebrow">PLAYER</p><h2 id="public-name"></h2><p id="public-note">Times and rankings remain hidden until the reveal. Shared replays appear below.</p></section>
+      <section id="old-challenges" aria-labelledby="old-challenges-title" hidden>
+        <div class="archive-heading"><div><h1 id="old-challenges-title">Old challenges</h1><p>Finished challenges you participated in.</p></div><span id="old-challenges-count" class="small-badge" hidden></span></div>
+        <div id="old-challenges-state" class="panel archive-state"><p id="old-challenges-message" role="status">Loading your challenges…</p><button id="old-challenges-signin" class="button primary" hidden>Sign in</button><button id="old-challenges-retry" class="button secondary" hidden>Try again</button></div>
+        <div id="old-challenges-list"></div>
+      </section>
+      <div id="current-challenge-view">
+      <div class="page-heading"><p class="page-subtitle">Current challenge</p><span class="status-badge" id="capture-top">Loading challenge…</span></div>
+      <section class="challenge-deadline" aria-labelledby="deadline-label">
+        <div><h2 id="deadline-label">Challenge ends</h2><strong id="deadline-countdown" role="timer" aria-live="off">Loading…</strong></div>
+        <div class="deadline-info"><time id="deadline-date"></time><p id="deadline-note">The end date and reveal time appear here.</p></div>
+        <a id="deadline-admin" class="button secondary" href="/review" hidden>Set end date</a>
+      </section>
+      <details id="challenge-archives" hidden><summary>Previous challenges</summary><nav id="archive-links" aria-label="Challenge archives"></nav></details>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy"><span class="seed-label"><i></i> ACTIVE SEED <strong id="seed">—</strong></span><h1 id="hero-title">Custom Melee<br><span>BTT Beta</span></h1><p>Randomized targets and shuffled stages for all 25 characters.</p><div class="hero-actions"><button id="play" class="button primary"><span aria-hidden="true">↓</span> Download &amp; play</button><button id="copy-seed" class="button secondary">Copy seed <span aria-hidden="true">↗</span></button></div></div>
+        <div class="melee-scene" aria-hidden="true"><img class="scene-samus" src="/assets/melee/samus.webp" alt="" width="300" height="300"><img class="scene-fox" src="/assets/melee/fox.webp" alt="" width="300" height="300"></div>
+        <div class="course-preview"><span>Seed settings</span><dl><div><dt>Targets per stage</dt><dd id="target-count">10</dd></div><div><dt>Target behavior</dt><dd id="target-behavior">Fixed</dd></div><div><dt>Fox’s stage</dt><dd id="hero-stage">Samus</dd></div></dl></div>
+      </section>
+      <section class="stats" aria-label="Challenge statistics"><div><span class="stat-icon">▦</span><span><strong id="stat-courses">25</strong><small>Courses</small></span></div><div><span class="stat-icon">◎</span><span><strong id="stat-players">0</strong><small>Challenge participants</small></span></div><div><span class="stat-icon">⚑</span><span><strong id="stat-runs">0</strong><small>Submitted runs</small></span></div><div><span class="stat-icon blue">↻</span><span><strong>Unlimited</strong><small>Attempts per course</small></span></div></section>
+      <section class="sealed-banner"><span class="sealed-icon">◈</span><div><strong id="competition-state">Results hidden</strong><p id="competition-detail">Rankings and times stay hidden until the reveal.</p></div></section><div class="content-grid">
+        <section class="panel leaderboard" aria-labelledby="board-title"><div class="panel-heading"><div><p class="eyebrow">Current seed</p><h2 id="board-title">Participants</h2></div><span class="small-badge">SEED <span id="board-seed">—</span></span></div>
+
+          <div id="standings-tools" hidden><div class="standings-tabs"><button id="standings-overall" class="text-button" aria-pressed="true">Overall points</button><button id="standings-ths" class="text-button" aria-pressed="false">Total High Score</button></div><p>Characters: 10 / 7 / 5 / 3 / 1 points for places 1–5. THS: 15 / 12.5 / 10 / 7.5 / 5 / 2.5 for places 1–6, then 0. THS requires all 25 characters. Ties share places and points.</p></div>
+          <div class="table-wrap"><table><thead><tr><th scope="col">PLAYER</th></tr></thead><tbody id="scores"></tbody></table></div>
+          <div class="empty-state" id="board-empty"><div class="empty-target" aria-hidden="true">◎</div><h3>No participants yet</h3><p>The companion submits valid personal bests automatically.</p><button class="text-button" id="empty-play">How to play <span aria-hidden="true">→</span></button></div>
+          <div class="board-footer"><span><i class="live-dot"></i> Updates automatically</span><span>All participants · alphabetical order</span></div>
+        </section>
+        <aside class="right-column">
+          <section class="panel profile-panel" id="profil" aria-labelledby="profile-title"><h2 id="profile-title">Player profile</h2><div class="identity"><span class="avatar" id="avatar">?</span><div><strong id="display-name">Not signed in</strong><a id="connect-code" class="muted">Sign in to save your records</a></div><span id="identity-check" class="identity-check" hidden>✓</span></div><p id="identity-note" class="muted">Sign in with your username and password.</p><button class="button primary full" id="player-action">Sign in</button><button class="button secondary full" id="create-account">Create account</button><button class="text-button" id="logout" hidden>Sign out</button></section>
+        </aside>
+      </div>
+      <section class="panel shared-runs" id="shared-runs" aria-labelledby="shared-title"><div class="panel-heading"><h2 id="shared-title">Public replays</h2><span class="small-badge" id="shared-count">0</span></div><p class="section-note">Final records are public after reveal. Before then, only disclosed runs appear here.</p><p id="shared-empty" class="muted">No public replays.</p><div id="shared-list"></div></section>
+      <section class="panel journey" aria-labelledby="journey-title"><div class="panel-heading"><div><h2 id="journey-title">Your progress</h2></div><strong id="progress-count">0 / 25</strong></div><progress id="progress-bar" max="25" value="0" aria-label="Completed courses"></progress><div class="journey-details"><span id="progress-note">No courses submitted.</span><span id="total-best">Combined best: —</span></div></section>
+      <section class="panel courses" id="parcours" aria-labelledby="courses-title"><div class="panel-heading"><div><h2 id="courses-title">Character stages</h2></div><span class="small-badge">25 COURSES</span></div><p class="section-note">Select a character to see its course and your records. Each stage keeps its original platforms.</p><div class="course-tools"><input id="course-search" type="search" placeholder="Find a character or stage…" aria-label="Search courses"><span id="course-count" class="muted">25 courses</span></div><p id="course-empty" class="muted" hidden>No matching courses. Try another search.</p><div class="course-grid" id="course-grid"></div></section>
+      <section class="panel history" id="records" aria-labelledby="history-title"><div class="panel-heading"><div><h2 id="history-title">Your runs</h2></div><button class="text-button" id="export-runs">Export all runs ↓</button></div><div id="history-empty" class="history-empty">Your automatic submissions will appear here, grouped by character.</div><p id="history-count" class="section-note"></p><div id="history-list"></div></section>
+      <footer class="footer"><span><img src="/target.svg" width="22" height="22" alt=""> CUSTOM MELEE BTT</span><p>Scores stay private until reveal · <a href="/assets/melee/CREDITS.txt">Artwork credits</a></p><a href="/api/challenge/code" download>Download Gecko code ↗</a></footer>
+      </div>
+    </main>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <dialog id="points-dialog" aria-labelledby="points-title"><form method="dialog"><button class="close-dialog" aria-label="Close points breakdown" autofocus>×</button></form><h2 id="points-title"></h2><p id="points-total"></p><p id="points-ths"></p><div class="table-wrap"><table><thead><tr><th>Character</th><th>Place</th><th>Time</th><th>Points</th></tr></thead><tbody id="points-courses"></tbody></table></div></dialog>
+  <dialog id="character-dialog" aria-labelledby="character-title">
+    <form method="dialog"><button class="close-dialog" aria-label="Close character details" autofocus>×</button></form>
+    <div class="character-heading"><div id="character-portrait"></div><div><p class="eyebrow">CHARACTER</p><h2 id="character-title"></h2><p id="character-stage"></p></div></div>
+    <dl class="character-facts"><div><dt>Targets</dt><dd id="character-targets"></dd></div><div><dt>Your best</dt><dd id="character-best"></dd></div></dl>
+    <section id="character-results-section"><h3>Results</h3><p id="character-results-note" class="section-note"></p><ol id="character-results"></ol></section>
+    <section><h3>Public replays <span id="character-replay-count" class="small-badge">0</span></h3><p class="section-note">Final records are public after reveal; before then, only disclosed replays appear here. Watch in Dolphin opens your running companion.</p><p id="character-replay-empty">No public replays for this character yet.</p><div id="character-replays"></div></section>
+  </dialog>
+  <dialog id="disclose-dialog" aria-labelledby="disclose-title"><form method="dialog"><button class="close-dialog" aria-label="Close disclosure settings">×</button></form><h2 id="disclose-title">Disclose score or replay</h2><p id="disclose-summary"></p><p id="disclose-status" role="status"></p><div class="disclosure-choices"><div><button class="button secondary full" id="disclose-score">Disclose score</button><p>Publish the time. Keep the .slp replay private.</p></div><div><button class="button primary full" id="disclose-replay">Disclose replay</button><p>Publish the time and let everyone watch or download the .slp.</p></div></div><button class="text-button" id="disclose-private">Make private</button><p class="section-note">Applies only to this attempt. Final records and their replays become public at reveal. Downloaded copies cannot be recalled.</p><p id="disclose-error" role="alert"></p></dialog>
+  <dialog id="play-guide"><form method="dialog"><button class="close-dialog" aria-label="Close">×</button></form><p class="eyebrow">WINDOWS 10 / 11 · 64-BIT</p><h2>Get Custom Melee BTT Dolphin Beta</h2><p>Download the ZIP, extract it, and open <strong>Custom Melee BTT Companion.vbs</strong>. The companion runs independently of Dolphin.</p><a id="download-companion" class="button primary full" href="https://github.com/Poilon/melee-btt/releases/latest/download/Custom-Melee-BTT-Windows-x64.zip">Download for Windows ↓</a><ol class="guide-steps"><li><strong>Set up your session.</strong> Choose music and rumble settings in the companion, then click Launch Dolphin. Click Open and select your original Melee USA 1.02 ISO. It stays in its current folder.</li><li><strong>Keep the companion open.</strong> Your runs and replay history stay here, even after closing Dolphin. Use Quit companion when you are done.</li><li><strong>Sign in from the companion.</strong> Create an account with a username and password, then confirm the connection code. Choose your character in Melee and play.</li></ol><a class="button secondary full" href="http://localhost:4317" target="_blank" rel="noopener">Already running? Open companion ↗</a><p><a href="https://github.com/Poilon/melee-btt/releases/latest" target="_blank" rel="noopener">Release notes and checksums ↗</a></p><p>GameCube adapters may need their Windows driver installed. The ISO is not included. Replays are saved next to Dolphin. The replay player downloads on first use. New personal bests upload privately with their replays.</p></dialog>
+  <dialog id="auth-dialog" aria-labelledby="auth-title"><form method="dialog"><button class="close-dialog" aria-label="Close">×</button></form><h2 id="auth-title">Sign in</h2><p id="auth-description">Use your Custom Melee BTT account.</p><form id="auth-form"><label for="auth-username">Username</label><input id="auth-username" name="username" required autocomplete="username" maxlength="24" placeholder="Your username" autocapitalize="none" spellcheck="false"><p id="username-hint" class="muted" hidden>3–24 letters, numbers or underscores. Usernames are unique and permanent.</p><label for="auth-password">Password</label><input id="auth-password" type="password" name="password" required autocomplete="current-password" maxlength="128"><p id="password-hint" class="muted" hidden>At least 8 characters. Save your password in your password manager.</p><button id="auth-submit" type="submit" class="button primary full">Sign in</button></form><p id="auth-error" role="alert"></p><div class="auth-actions"><button id="auth-switch" class="text-button">Create account</button></div></dialog>
+</body>
+</html>

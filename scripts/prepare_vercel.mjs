@@ -27,8 +27,8 @@ await writeFile(join(out, 'package.json'), JSON.stringify({ name: 'target-test-r
   engines: { node: '24.x' }, dependencies: { '@vercel/blob': pkg.dependencies['@vercel/blob'], '@slippi/slippi-js': pkg.dependencies['@slippi/slippi-js'] } }, null, 2));
 await writeFile(join(out, 'vercel.json'), JSON.stringify({
   framework: null, outputDirectory: 'public', installCommand: 'npm install --omit=dev', buildCommand: '',
-  functions: { 'api/index.mjs': { includeFiles: '{challenge/**,generator-sources/**,src/gecko/**,cloud/worlds-catalog.json}', maxDuration: 30 } },
-  rewrites: [{ source: '/editor', destination: '/editor/index.html' }, { source: '/review', destination: '/review.html' }, { source: '/players/:slug', destination: '/challenges.html' }, { source: '/api/:route*', destination: '/api/index?route=:route*' }],
+  functions: { 'api/index.mjs': { includeFiles: '{challenge/**,generator-sources/**,src/gecko/**,cloud/worlds-catalog.json,cloud/worlds-first-challenge.json}', maxDuration: 30 } },
+  rewrites: [{ source: '/editor', destination: '/editor/index.html' }, { source: '/review', destination: '/review.html' }, { source: '/players/:slug', destination: '/legacy-challenge.html' }, { source: '/api/:route*', destination: '/api/index?route=:route*' }],
   headers: [{ source: '/(.*)', headers: [
     { key: 'X-Content-Type-Options', value: 'nosniff' },
     { key: 'Referrer-Policy', value: 'no-referrer' },

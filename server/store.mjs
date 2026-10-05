@@ -40,6 +40,18 @@ export class ScoreStore {
         FROM runs r LEFT JOIN run_capture c ON c.run_id=r.id ORDER BY r.rowid;
     `);
   }
+  clearScoresBefore(cutoff) {
+    if(!Number.isFinite(Date.parse(cutoff)))throw Error('Invalid score reset date');
+    this.db.exec('BEGIN IMMEDIATE');
+    try {
+      this.db.exec('CREATE TEMP TABLE reset_score_ids (id TEXT PRIMARY KEY)');
+      this.db.prepare('INSERT INTO reset_score_ids SELECT r.id FROM runs r LEFT JOIN run_capture c ON c.run_id=r.id WHERE r.created_at < ? OR c.started_at < ?').run(cutoff,cutoff);
+      for(const table of ['submissions','run_exclusions','run_replays','run_capture'])this.db.exec(`DELETE FROM ${table} WHERE run_id IN (SELECT id FROM reset_score_ids)`);
+      this.db.exec('DELETE FROM runs WHERE id IN (SELECT id FROM reset_score_ids)');
+      this.db.prepare('DELETE FROM attempts WHERE started_at < ? OR id IN (SELECT id FROM reset_score_ids)').run(cutoff);
+      this.db.exec('DROP TABLE reset_score_ids; COMMIT');
+    } catch(error){this.db.exec('ROLLBACK');throw error;}
+  }
   recordAttempt({id,challenge,identity,character,stage,startedAt,status,endedAt,elapsedFrames=0,reason=''}) {
     if(!id||!/^[a-f0-9]{64}$/.test(identity?.id||'')||!challenge?.assignments[character]||challenge.assignments[character]!==stage||!Number.isFinite(Date.parse(startedAt)))throw new Error('Invalid attempt');
     if(status==='active'){

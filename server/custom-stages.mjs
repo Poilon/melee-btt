@@ -146,7 +146,7 @@ export class CustomStages {
    let catalog;
    if(online){
     for(const name of ['custom-stage-native.mjs','worlds-online.mjs','worlds-capture.mjs','worlds-playback.mjs'])await copyFile(join(this.root,'desktop',name),join(bundle,'desktop',name));
-    for(const name of ['worlds.mjs','replay.mjs','characters.mjs'])await shareFile(join(this.root,'shared',name),join(bundle,'shared',name));
+    for(const name of ['worlds.mjs','replay.mjs','characters.mjs','score-season.mjs'])await shareFile(join(this.root,'shared',name),join(bundle,'shared',name));
     for(const name of ['watch_online.ps1','watch_world_replay.ps1','OnlineMemory.cs','DolphinReader.cs'])await shareFile(join(this.root,'scripts',name),join(bundle,'scripts',name));
     await shareTree(join(this.root,'node_modules'),join(bundle,'node_modules'));
     if(await exists(join(this.root,'Dolphin/playback')))await shareTree(join(this.root,'Dolphin/playback'),join(bundle,'Playback'));

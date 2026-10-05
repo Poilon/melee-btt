@@ -134,7 +134,7 @@ import {WorldCapture} from '../desktop/worlds-capture.mjs';
 test('capture retries previously rejected settings and continues after a transient upload error',async t=>{
  const {mkdtemp,mkdir,writeFile,rm}=await import('node:fs/promises'),{tmpdir}=await import('node:os'),{join}=await import('node:path');
  const root=await mkdtemp(join(tmpdir(),'ttrc-recover-'));t.after(()=>rm(root,{recursive:true,force:true}));await mkdir(join(root,'Replays'));await writeFile(join(root,'Replays/run.slp'),replay);
- const {course}=fixture(),client={identity:{id:'player'},boardCache:new Map([['old',{}]]),request:async()=>{throw Error('Temporary outage');}},capture=new WorldCapture({root,course:{courses:[course]},client});
+ const {course}=fixture(),client={identity:{id:'player'},boardCache:new Map([['old',{}]]),request:async()=>{throw Error('Temporary outage');}},capture=new WorldCapture({root,course:{courses:[course]},client,scoreCutoff:0});
  const run={id:'00000000-0000-0000-0000-000000000003',playerId:'player',character:'donkey-kong',courseId:course.id,frames:1066,startedAt:Date.parse(new SlippiGame(replay).getMetadata().startAt),excluded:'Different game settings'};
  await capture.save(run);await capture.sync();let saved=JSON.parse(await readFile(join(capture.directory,run.id+'.json')));assert.equal(saved.excluded,undefined);assert.equal(saved.lastError,'Temporary outage');assert.ok(!saved.submitted);
  saved.lastAttemptAt=0;await capture.save(saved);client.request=async(path,options)=>{assert.equal(path,'worlds/submit');assert.equal(options.body.frames,1066);assert.equal(options.authenticated,true);};await capture.sync();

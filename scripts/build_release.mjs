@@ -9,7 +9,7 @@ import {generateChallenge} from '../src/challenge.mjs';
 import {readSources} from '../src/upstream.mjs';
 import {downloadVerified} from '../server/onboarding.mjs';
 const exec=promisify(execFile),root=resolve(import.meta.dirname,'..');
-const version=(process.env.TTRC_VERSION||'0.9.5').replace(/^v/,'');
+const version=(process.env.TTRC_VERSION||'0.9.6').replace(/^v/,'');
 if(!/^\d+\.\d+\.\d+(?:-[a-z0-9.]+)?$/.test(version))throw new Error('Invalid release version.');
 const output=join(root,'build/release'),app=join(output,'Custom Melee BTT');
 const nativeBuild=resolve(process.env.TTRC_DOLPHIN_BUILD||join(root,'build/dolphin-build'));

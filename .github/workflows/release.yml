@@ -26,7 +26,7 @@ jobs:
           path: build/dolphin-build
       - run: node scripts/build_release.mjs
         env:
-          TTRC_VERSION: ${{ github.ref_type == 'tag' && github.ref_name || '0.9.5' }}
+          TTRC_VERSION: ${{ github.ref_type == 'tag' && github.ref_name || '0.9.6' }}
       - uses: actions/upload-artifact@v4
         with:
           name: Custom-Melee-BTT-Windows-x64
