@@ -2,7 +2,7 @@ import {readFile,writeFile,mkdir,readdir,rename,stat,unlink} from 'node:fs/promi
 import {join} from 'node:path';
 import {randomUUID} from 'node:crypto';
 import {createRequire} from 'node:module';
-import {WORLD_CHARACTERS,sha256,worldRulesHash} from '../shared/worlds.mjs';
+import {WORLD_CHARACTERS,sha256,worldRulesHash,WORLD_RULES_VALIDATION_VERSION} from '../shared/worlds.mjs';
 import {SCORE_SEASON_START} from '../shared/score-season.mjs';
 import {inspectReplay,MAX_REPLAY_BYTES} from '../shared/replay.mjs';
 const {SlippiGame}=createRequire(import.meta.url)('@slippi/slippi-js');
@@ -38,7 +38,7 @@ export class WorldCapture{
   if(this.busy||!this.client.identity)return;this.busy=true;
   try{
    const files=await readdir(this.directory).catch(()=>[]),runs=[];
-   for(const file of files.filter(n=>/^[a-f0-9-]+\.json$/.test(n))){const r=JSON.parse(await readFile(join(this.directory,file),'utf8'));if(r.startedAt<this.scoreCutoff){await unlink(join(this.directory,file));continue;}if((!r.status||r.status==='finished')&&!r.submitted&&(!r.excluded||(r.excluded==='Different game settings'&&r.rulesValidationVersion!==2))&&r.playerId===this.client.identity.id&&(!r.lastError||r.id===retryId||Date.now()-(r.lastAttemptAt||0)>30000))runs.push(r);}
+   for(const file of files.filter(n=>/^[a-f0-9-]+\.json$/.test(n))){const r=JSON.parse(await readFile(join(this.directory,file),'utf8'));if(r.startedAt<this.scoreCutoff){await unlink(join(this.directory,file));continue;}if((!r.status||r.status==='finished')&&!r.submitted&&(!r.excluded||(r.excluded==='Different game settings'&&(r.rulesValidationVersion||0)<WORLD_RULES_VALIDATION_VERSION))&&r.playerId===this.client.identity.id&&(!r.lastError||r.id===retryId||Date.now()-(r.lastAttemptAt||0)>30000))runs.push(r);}
    if(!runs.length)return;
    const dir=join(this.root,'Replays'),replays=[];
    const names=await readdir(dir).catch(()=>[]);
@@ -60,7 +60,8 @@ export class WorldCapture{
     const replay=matches[0],course=this.course.courses.find(c=>c.id===run.courseId);
     run.replaySha256=replay.details.sha256;run.replayName=replay.path.slice(dir.length+1);
     if(replay.details.pauseFrames>0){run.excluded='Paused run';await this.save(run);continue;}
-    if(replay.rulesSha256!==course?.rulesSha256){run.excluded='Different game settings';run.rulesValidationVersion=2;await this.save(run);continue;}
+    run.rulesValidationVersion=WORLD_RULES_VALIDATION_VERSION;
+    if(replay.rulesSha256!==course?.rulesSha256){run.excluded='Different game settings';await this.save(run);continue;}
     delete run.excluded;
     // Identity is checked again after asynchronous disk reads; never upload another player's run.
     if(this.client.identity?.id!==run.playerId)continue;

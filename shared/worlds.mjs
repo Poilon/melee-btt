@@ -13,6 +13,7 @@ export const WORLD_CHARACTERS = [
 ].map(([id,name,externalId,suffix])=>({id,name,externalId,suffix,stageId:33+['Mr','Ca','Cl','Dk','Dr','Fc','Fx','Ic','Kb','Kp','Lk','Lg','Ms','Mt','Ns','Pe','Pc','Pk','Pr','Ss','Sk','Ys','Zd','Gw','Fe','Gn'].indexOf(suffix)}));
 export const sha256 = value => createHash('sha256').update(value).digest('hex');
 export const isHash = value => typeof value==='string' && /^[a-f0-9]{64}$/.test(value);
+export const WORLD_RULES_VALIDATION_VERSION = 3;
 // The Warp Star host is a no-op unless the archive opts in. Pin the exact
 // reviewed executable so unchanged levels retain records; ISO verification
 // still uses the real dolSha256. Any other executable gets a new revision.
@@ -80,6 +81,15 @@ export function worldRulesHash(input){
   // Only this data buffer is mutable; keep all instructions/constants hashed.
   // project-slippi/slippi-ssbm-asm: External/UCF 0.84/UCF/UCF Pad Buffer + 1.0 Cardinals.asm
   if(address===0xc206b460&&value===0x54&&code.readUInt32BE(8)===0x480000b1&&code.readUInt32BE(60)===0xbf1c0000&&code.readUInt32BE(64)===0x38d1b717&&code.readUInt32BE(68)===0x42a00000)code.fill(0,12,60);
+  // UCF 0.84 DBOOC SquatRv Fix: stfd f1, 0xC(r4) writes an eight-byte
+  // conversion scratch slot after the three constants. This is runtime data,
+  // not a setting. Only normalize the exact reviewed hook (return relocated
+  // above); all instructions, constants and the hook address must still match.
+  // project-slippi/slippi-ssbm-asm: External/UCF 0.84/UCF/UCF DBOOC SquatRv Fix.asm
+  if(address===0xc20d65ec&&value===0x10){
+   const canonical=Buffer.from(code);canonical.fill(0,24,32);
+   if(sha256(canonical)==='014235f6065f41ac570cf823df159eaef8985da2b590831b3e869d7effee8c3c')canonical.copy(code);
+  }
   if(address!==0x04023ffc||value!==0x38800000)parts.push(code);
   p+=length;
  }
