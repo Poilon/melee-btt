@@ -146,6 +146,7 @@ const server = createApp({
     try{
       if(runtime?.native&&(await launchNative(root,runtime.dolphin,true)).status==='already-running')throw new CustomStageError('Close the ISO selection window before opening a level.');
       await playSettings.queue;
+      if(id==='character-worlds'&&runtime?.native){if(await customStages.running())return {status:'already-running'};return await launchNative(root,runtime.dolphin);}
       return await customStages.launch(id,project);
     }finally{launching=false;}
   },
@@ -196,10 +197,9 @@ const server = createApp({
       await playSettings.queue;
       if(runtime?.native){
         if((await launchNative(root,runtime.dolphin,true)).status==='already-running')return {status:'already-running'};
-        // Published authored levels are the normal Custom Melee BTT game. The root Dolphin
-        // is only needed on first launch to let the player choose their ISO.
+        // The native entry point verifies the source ISO on every launch.
         runtime=JSON.parse(await readFile(join(challengeDir,'runtime.json'),'utf8'));
-        return runtime.iso?await customStages.launch('character-worlds'):await launchNative(root,runtime.dolphin);
+        return await launchNative(root,runtime.dolphin);
       }
       await exec(pythonExecutable(root), [join(root, 'scripts/prepare_dolphin.py'), '--challenge', challengeDir, ...(runtime?.recording ? ['--record-replays'] : []), ...(runtime?.dolphin ? ['--dolphin', runtime.dolphin] : []), ...(runtime?.iso ? ['--iso', runtime.iso] : []), '--launch'], { timeout: 30_000 });
       runtime = JSON.parse(await readFile(join(challengeDir, 'runtime.json'), 'utf8'));

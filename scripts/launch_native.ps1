@@ -9,6 +9,12 @@ $deadline = [DateTime]::UtcNow.AddSeconds(12)
 do {
     Start-Sleep -Milliseconds 100
     $dolphin.Refresh()
-    if ($dolphin.HasExited) { throw 'Dolphin could not start. See .local/startup.log.' }
+    if ($dolphin.HasExited) {
+        # Native startup exits after handing off to the prepared game, or when setup is cancelled.
+        $game=Join-Path (Split-Path $Executable) '.local\custom-stages\character-worlds\Dolphin\Slippi Dolphin.exe'
+        $playing=Get-CimInstance Win32_Process -Filter "name = 'Slippi Dolphin.exe'" | Where-Object {$_.ExecutablePath -eq $game} | Select-Object -First 1
+        if($playing){[Console]::WriteLine('{"status":"started"}')}else{[Console]::WriteLine('{"status":"cancelled"}')}
+        exit
+    }
 } while ($dolphin.MainWindowHandle -eq 0 -and [DateTime]::UtcNow -lt $deadline)
 [Console]::WriteLine('{"status":"started"}')
