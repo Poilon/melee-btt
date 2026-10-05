@@ -156,10 +156,10 @@
       "suffix": "Zd",
       "stageId": 55,
       "name": "Temple of Light",
-      "stageSha256": "7d1a15079ce1498ada1568daddd09b9785efb35da3b04232c0c7de7bfdca3cf8",
+      "stageSha256": "e23a370c0681453abbee593fcede6f43bedb1f3f1ca139720d2f8f69159f279f",
       "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
       "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
-      "id": "44d669faf5ad48e85e147da1eb082297450affe27a47c5df562db9d28236f012"
+      "id": "506054386b12e3347f8cd749ee4b7d77dcfb8db7646d2a958a32c5233787859e"
     },
     {
       "character": "sheik",
@@ -196,20 +196,20 @@
       "suffix": "Pc",
       "stageId": 49,
       "name": "Battery Workshop",
-      "stageSha256": "9e1157c6e8ba1d9dca9f519adf9fe551e28cf0320f4bb0e9b74b0014a8f8eb26",
+      "stageSha256": "67073593a7f84b117a2cbd48f784a8e95543771fc21ba5e75f87d399cebf31aa",
       "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
       "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
-      "id": "31886ccb3f67eef49c4e761e251db27816f2e8bb70c0fb9739fa5dfe75d2f78e"
+      "id": "f85e9609158f0e7c4c886e02478aadcb3d40de5a70573a175ec00fc6d1286062"
     },
     {
       "character": "pikachu",
       "suffix": "Pk",
       "stageId": 50,
       "name": "Power Plant",
-      "stageSha256": "7bb5177f4bac75f13cd40d0c39e9c680dabf3f5425cf7ba3cbea0b46f94573cc",
+      "stageSha256": "d8bbee54d2b30efcef8f119f25af375fc5ac6c7690a44f01b00d4395720fb338",
       "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
       "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
-      "id": "ac2f8e7476b854032371b6b3a925a320f18f7fab3271de3865f47a661766b190"
+      "id": "dd3a276d4502373d13fe5ced5b5649c3ca4122aa53a59b3a47199b1e38bc4763"
     },
     {
       "character": "jigglypuff",
@@ -256,10 +256,10 @@
       "suffix": "Fe",
       "stageId": 57,
       "name": "Ember Bastion",
-      "stageSha256": "564f6763c53868a80549af1c91d3219cf7502e5006eb289c2dcacb409316fabe",
+      "stageSha256": "0931a84ff3403239c8cf6889b03ee2b298cf81da7adb5784dfa409791ad939bf",
       "dolSha256": "ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6",
       "rulesSha256": "18b91a4ef447df49530c94a4a197235bbc7d2b4048cd35c9d3e0dde65550d937",
-      "id": "35af2fd92e028173f8d2f35187a260b8ffca7faa68927f184017910ffb525a4e"
+      "id": "4c94e9aeaaffdda19582a429b817d675f9341c1ae12d88f5d2e9220bd9178d48"
     }
   ]
 }
