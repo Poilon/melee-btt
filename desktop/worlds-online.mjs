@@ -109,8 +109,8 @@ export async function serveWorlds({root,course,pid,playReplay,onSample,client:pr
  if(process.platform!=='win32'||!Number.isInteger(pid)||pid<1)throw Error('Custom Melee BTT Dolphin process required.');
  const client=providedClient||new WorldsClient({root,course,playReplay});await client.load();
  const sessionTimer=setInterval(()=>client.load().catch(()=>{}),1500);
- const capture=providedClient?null:new WorldCapture({root,course,client});
- const timer=capture?setInterval(()=>capture.sync().catch(()=>{}),1500):null;
+ const capture=providedClient?null:new WorldCapture({root,course,client,pid});
+ const timer=capture?setInterval(()=>capture.heartbeat().then(()=>capture.sync()).catch(()=>{}),1500):null;
  const child=spawn('powershell.exe',['-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',join(root,'scripts/watch_online.ps1'),'-Root',root,'-DolphinPid',String(pid)],{windowsHide:true,stdio:['pipe','pipe','pipe']});
  child.stderr.resume();const lines=createInterface({input:child.stdout});let current='',active=null,lastIdentity='';
  lines.on('line',line=>{
@@ -131,5 +131,5 @@ export async function serveWorlds({root,course,pid,playReplay,onSample,client:pr
    if(current===key&&!task.controller.signal.aborted&&!child.stdin.destroyed)child.stdin.write(JSON.stringify(reply)+'\n');
   }).catch(()=>{}).finally(()=>{q.password='';if(active===task)active=null;});
  });
- try{await new Promise((resolve,reject)=>{child.once('error',reject);child.once('exit',resolve);});}finally{active?.controller.abort();clearInterval(timer);clearInterval(sessionTimer);lines.close();child.stdin.end();}
+ try{await new Promise((resolve,reject)=>{child.once('error',reject);child.once('exit',resolve);});}finally{active?.controller.abort();clearInterval(timer);clearInterval(sessionTimer);await capture?.close();lines.close();child.stdin.end();}
 }

@@ -1,3 +1,4 @@
+import {WorldHistory} from './world-history.mjs';
 import {clearOldScores} from './score-reset.mjs';
 import {AccountSession,SITE_ORIGIN} from '../shared/account-session.mjs';
 import {AppUpdates} from './app-updates.mjs';
@@ -81,6 +82,7 @@ const replays = new ReplayLibrary({ directory: () => runtime?.replays, cacheDire
   run: async (file, stage) => {if(runtime?.native)await ensurePlayback(root);return exec(pythonExecutable(root), [join(root, 'scripts/launch_replay.py'), '--challenge', challengeDir, '--replay', file, '--stage', String(stage), ...bundledPlayback(root), ...(runtime?.iso ? ['--iso', runtime.iso] : [])], { timeout: 30000, windowsHide: true });},
 });
 const autoSubmit = new AutoSubmitter({store,replays,remote,challenge:generated.manifest,gecko:generated.gecko,getIdentity:()=>identity});
+const worldHistory=runtime?.native?new WorldHistory({root}):null;
 let updatingChallenge=false,recordingSync;
 async function updateChallenge(){
   if(updatingChallenge)throw new Error('Challenge update already in progress.');
@@ -110,7 +112,7 @@ function syncRecordings(){
   recordingSync=(async()=>{
   // Dolphin records the ISO selected through its native Open dialog.
   if(runtime?.native){try{const next=JSON.parse(await readFile(join(challengeDir,'runtime.json'),'utf8'));if(next.native&&next.profile===runtime.profile)runtime.iso=next.iso;}catch{}}
-  await replays.syncRuns(store);await autoSubmit.sync();
+  if(worldHistory)await worldHistory.sync();else{await replays.syncRuns(store);await autoSubmit.sync();}
   })().finally(()=>{recordingSync=null;});
   return recordingSync;
 }
@@ -143,7 +145,7 @@ const customStages=new CustomStages({root,getRuntime:()=>runtime});
 const appUpdates=new AppUpdates({root,port,instance:companionInstance,running:async()=>await customStages.running()||await dolphinRunning(root),canInstall:()=>!launching&&!updatingChallenge&&!recordingSync&&!onboarding.get().busy});
 await appUpdates.initialize();
 const server = createApp({
-  customStages,
+  customStages,worldHistory,
   launchCustomStage: async (id,project) => {
     if(launching||updatingChallenge)throw new CustomStageError('Dolphin is already being prepared.');
     launching=true;
@@ -168,7 +170,7 @@ const server = createApp({
   getCapture: () => ({ ...bridge.status(), native: Boolean(runtime?.native), replayEnabled: Boolean(runtime?.recording) }),
   openReplays: async () => {
     if (!runtime?.replays) throw new Error('Prepare the replay profile first');
-    const path = await windowsPath(runtime.replays);
+    const path = await windowsPath(worldHistory?join(worldHistory.bundle,'Replays'):runtime.replays);
     // Explorer commonly returns 1 after handing off to an existing window.
     await exec('explorer.exe', [path]).catch(error => { if (error.code !== 1) throw error; });
     return { ok: true };

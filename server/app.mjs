@@ -6,6 +6,7 @@ import {verifyChallengePackage} from './online-challenge.mjs';
 import { inspectReplay, MAX_REPLAY_BYTES } from '../shared/replay.mjs';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
+import {WORLD_CHARACTERS} from '../shared/worlds.mjs';
 import { stages } from '../src/challenge.mjs';
 
 const files = new Map([
@@ -32,7 +33,7 @@ const files = new Map([
   ['/favicon-admin.svg', ['favicon-admin.svg', 'image/svg+xml']],
 ]);
 
-export function createApp({ challenge:initialChallenge, gecko:initialGecko, getChallenge, onlineChallenge, updateChallenge, store, getIdentity, getCapture, launch, remote, importPlayer, prepareRecorder, reviewerProxy, openReplays, replays, getPlaySettings, savePlaySettings, onboarding, account, instance, quit, appUpdates, customStages, launchCustomStage }) {
+export function createApp({ challenge:initialChallenge, gecko:initialGecko, getChallenge, onlineChallenge, updateChallenge, store, getIdentity, getCapture, launch, remote, importPlayer, prepareRecorder, reviewerProxy, openReplays, replays, getPlaySettings, savePlaySettings, onboarding, account, instance, quit, appUpdates, customStages, launchCustomStage, worldHistory }) {
   const server = createServer(async (req, res) => {
     const {manifest:challenge,gecko}=getChallenge?getChallenge():{manifest:initialChallenge,gecko:initialGecko};
     const port = server.address()?.port;
@@ -148,6 +149,7 @@ export function createApp({ challenge:initialChallenge, gecko:initialGecko, getC
         if (!identity) return json(401, { error: 'Sign in first.' });
         let body = ''; for await (const chunk of req) { body += chunk; if (body.length > 3 * 1024 * 1024) return json(413, { error: 'Replay must be under 2 MB.' }); }
         let input; try { input = JSON.parse(body); } catch { return json(400, { error: 'Invalid request.' }); }
+        if(worldHistory){if(url.pathname.endsWith('/link'))return json(409,{error:'Published level replays are matched automatically.'});return json(200,await worldHistory.launch(input.id,identity.id));}
         const run = store.run(input.id, identity.id, challenge.id);
         if (!run) return json(404, { error: 'Local run not found for this player.' });
         if (url.pathname.endsWith('/link')) {
@@ -212,7 +214,9 @@ export function createApp({ challenge:initialChallenge, gecko:initialGecko, getC
         if (!identity) return json(401, { error: 'Sign in first.' });
         let body = '';
         for await (const chunk of req) { body += chunk; if (body.length > 3 * 1024 * 1024) return json(413, { error: 'Replay must be under 2 MB.' }); }
-        const input = JSON.parse(body), run = store.run(input.id, identity.id, challenge.id);
+        const input = JSON.parse(body);
+        if(worldHistory)return json(202,await worldHistory.retry(input.id,identity.id));
+        const run = store.run(input.id, identity.id, challenge.id);
         if (!run) return json(404, { error: 'Local run not found for this player and seed.' });
         if (run.exclusionReason) return json(409, { error: run.exclusionReason });
         const saved = store.replay(run.id);
@@ -243,14 +247,15 @@ export function createApp({ challenge:initialChallenge, gecko:initialGecko, getC
         const identity = await getIdentity();
         if (!identity) return json(401, { error: 'Sign in first.' });
         const character = url.searchParams.get('character'), offset = Number(url.searchParams.get('offset') || 0);
-        if (!stages.includes(character) || !Number.isInteger(offset) || offset < 0 || offset > 1000000) return json(400, { error: 'Invalid history request.' });
-        return json(200, { runs: store.characterHistory(challenge.id, identity.id, character, offset) });
+        if (!(worldHistory?WORLD_CHARACTERS.some(c=>c.id===character):stages.includes(character)) || !Number.isInteger(offset) || offset < 0 || offset > 1000000) return json(400, { error: 'Invalid history request.' });
+        return json(200, { runs: worldHistory?await worldHistory.history(identity.id,character,offset):store.characterHistory(challenge.id, identity.id, character, offset) });
       }
       if (req.method === 'GET' && url.pathname === '/api/dashboard') {
         const character = url.searchParams.get('character') || 'fox';
-        if (!stages.includes(character)) return json(400, { error: 'Unknown character.' });
+        if (!(worldHistory?WORLD_CHARACTERS.some(c=>c.id===character):stages.includes(character))) return json(400, { error: 'Unknown character.' });
         const identity = await getIdentity();
         const player = identity;
+        const worldData=worldHistory?await worldHistory.snapshot(player?.id,character):null;
         return json(200, {
           challenge, identity, player, auth: { mode: 'password', configured: true, connection: account?.status(), account: identity ? { name: identity.displayName, linked: true } : null }, capture: getCapture(), scope: 'local', character,
           remote: remote?.status(identity) || { available: false, paired: false, pending: 0 },
@@ -265,6 +270,7 @@ export function createApp({ challenge:initialChallenge, gecko:initialGecko, getC
           attempts: store.attemptStats(challenge.id,player?.id||''),
           progress: player ? store.progress(challenge.id, player.id) : {},
           personalBest: player ? store.personalBest(challenge.id, character, player.id) : null,
+          ...(worldData?{...worldData,capture:{...getCapture(),...worldData.worldCapture},remote:{...remote?.status(identity),pending:worldData.history.filter(r=>!r.exclusionReason&&r.submissionStatus!=='submitted').length,lastError:worldData.history.find(r=>r.submissionStatus==='upload-error')?.reviewNote||null}}:{}),
         });
       }
       if (req.method === 'GET' && url.pathname === '/api/challenge/code') {

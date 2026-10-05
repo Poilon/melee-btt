@@ -1,7 +1,7 @@
 import { formatTime } from '/time.js';
 import {startLoading,showSkeleton,skeletonRows} from '/loading.js';
 const $ = id => document.getElementById(id), text = (id, value) => { $(id).textContent = value; };
-const names = { 'dr-mario':'Dr. Mario',mario:'Mario',luigi:'Luigi',bowser:'Bowser',peach:'Peach',yoshi:'Yoshi','donkey-kong':'Donkey Kong','captain-falcon':'Captain Falcon',ganondorf:'Ganondorf',falco:'Falco',fox:'Fox',ness:'Ness','ice-climbers':'Ice Climbers',kirby:'Kirby',samus:'Samus',zelda:'Zelda',link:'Link','young-link':'Young Link',pichu:'Pichu',pikachu:'Pikachu',jigglypuff:'Jigglypuff',mewtwo:'Mewtwo','game-and-watch':'Mr. Game & Watch',marth:'Marth',roy:'Roy' };
+const names = { 'dr-mario':'Dr. Mario',mario:'Mario',luigi:'Luigi',bowser:'Bowser',peach:'Peach',yoshi:'Yoshi','donkey-kong':'Donkey Kong','captain-falcon':'Captain Falcon',ganondorf:'Ganondorf',falco:'Falco',fox:'Fox',ness:'Ness','ice-climbers':'Ice Climbers',kirby:'Kirby',samus:'Samus',sheik:'Sheik',zelda:'Zelda',link:'Link','young-link':'Young Link',pichu:'Pichu',pikachu:'Pikachu',jigglypuff:'Jigglypuff',mewtwo:'Mewtwo','game-and-watch':'Mr. Game & Watch',marth:'Marth',roy:'Roy' };
 const make = (tag, value, css) => { const n=document.createElement(tag);n.textContent=value;if(css)n.className=css;return n; };
 let companionClosed=false,loadedVersion,updateLoading;
 function renderUpdate(update){
@@ -112,13 +112,13 @@ function render(d){
  $('update-challenge').disabled=Boolean(c.dolphinRunning)||updatingChallenge;
  $('play').hidden=false;$('recorder-note').hidden=Boolean(c.native);
  $('replay-folder').hidden=!c.replayEnabled;$('recorder').hidden=Boolean(c.replayEnabled);text('recorder-state',c.native?'Dolphin records automatically. Choose your ISO with Open in Dolphin.':c.replayEnabled?'Replay-enabled profile ready. Launch Dolphin here for your next recorded attempt.':'Standard Dolphin does not create .slp files. Prepare the replay-enabled profile for new attempts.');
- $('motion-note').hidden=!d.challenge.motion;
+ $('motion-note').hidden=d.scope==='worlds'||!d.challenge.motion;
  text('motion-note',d.challenge.motion?'10 targets per stage · 6–10 fixed · the rest move or teleport. The seed sets the mix and timing.':'');
  text('seed',d.challenge.rules.seed);text('player-name',ident?.displayName||'Not signed in');text('player-code',ident?.slug ? `@${ident.slug}` : ident?.connectCode || 'Username and password');text('avatar',ident?.displayName.slice(0,2).toUpperCase()||'?');
  text('check-player',`${ident?'✓':'○'} Signed in`);text('connection',connected?ident?'Dolphin connected':'Practice · no player':'Waiting for Dolphin');$('connection').classList.toggle('on',connected&&Boolean(ident));
  text('launch-note',ident?'Automatic submissions on · valid personal bests upload with their replays.':'Practice mode: sign in before starting a scored run.');
  text('sync',d.remote?.lastError|| (d.remote?.pending?`${d.remote.pending} submission(s) waiting to upload.`:'Automatic submissions on. No uploads waiting.'));
- const count=Object.values(d.progress||{}).filter(p=>p.best).length;$('progress-count').replaceChildren(document.createTextNode(count+' '),make('small','/ 25 cleared'));$('progress').value=count;
+ const count=Object.values(d.progress||{}).filter(p=>p.best).length;$('progress-count').replaceChildren(document.createTextNode(count+' '),make('small',`/ ${d.totalCharacters||25} cleared`));$('progress').max=d.totalCharacters||25;$('progress').value=count;
  for(const [character,cache]of attempts){if(cache.loading)continue;const fresh=new Map(d.history.map(r=>[r.id,r]));cache.rows=cache.rows.map(r=>fresh.get(r.id)||r);}
  text('total-attempts',d.attempts?.total??(d.bestRuns||[]).reduce((n,r)=>n+r.attemptCount,0));text('finished-attempts',d.attempts?.finished??(d.bestRuns||[]).reduce((n,r)=>n+(r.finishedCount??r.attemptCount),0));text('active-attempts',d.attempts?.active?`${d.attempts.active} in progress`:'');
  renderUpdate(d.appUpdate);
@@ -131,7 +131,7 @@ const attemptSignature=character=>JSON.stringify(data.attempts?.byCharacter?.[ch
 function matchesTab(r){if(r.attemptStatus&&r.attemptStatus!=='finished')return tab==='all';if(r.exclusionReason)return tab==='all';return tab==='all'||(tab==='ready'?['local','upload-error'].includes(r.submissionStatus):!['local','upload-error'].includes(r.submissionStatus));}
 function makeRunRow(r,group=false){ const unfinished=Boolean(r.attemptStatus&&r.attemptStatus!=='finished');
  const row=make('article','','run'),info=make(group?'button':'div','','run-info'),top=make('div','','run-top');
- top.append(make('strong',group?names[r.character]:`${names[r.character]} → ${names[r.stage]}`),make('time',unfinished?'—':formatTime(r.frames)),make('span',unfinished?({active:'In progress',aborted:'Aborted',interrupted:'Interrupted'})[r.attemptStatus]:r.exclusionReason?'Excluded':({local:'Local only',queued:'Queued',submitted:'Submitted',pending:'Submitted',approved:'Submitted',rejected:'Rejected','upload-error':'Upload failed',superseded:'Replaced'})[r.submissionStatus]||'Local only',`badge ${unfinished?r.attemptStatus:r.submissionStatus}`));
+ top.append(make('strong',group?names[r.character]:r.source==='worlds'?names[r.character]:`${names[r.character]} → ${names[r.stage]}`),make('time',unfinished?'—':formatTime(r.frames)),make('span',unfinished?({active:'In progress',aborted:'Aborted',interrupted:'Interrupted'})[r.attemptStatus]:r.exclusionReason?'Excluded':({local:'Local only',queued:'Queued',submitted:'Submitted',pending:'Submitted',approved:'Submitted',rejected:'Rejected','upload-error':'Upload failed',superseded:'Replaced'})[r.submissionStatus]||'Local only',`badge ${unfinished?r.attemptStatus:r.submissionStatus}`));
  info.append(top,make('small',group?`${unfinished?'No completed run':r.exclusionReason?'No valid clear':'Personal best'} · ${r.attemptCount} total attempts · ${r.finishedCount??r.attemptCount} finished · ${expanded.has(r.character)?'Hide':'Show'} history ${expanded.has(r.character)?'▴':'▾'}`:new Date(r.createdAt).toLocaleString('en-US')));
  if(group){const portrait=make('img','','run-portrait');portrait.src=`/assets/melee/${r.character}-portrait.webp`;portrait.alt='';portrait.width=32;portrait.height=36;portrait.loading='lazy';info.prepend(portrait);info.type='button';info.classList.add('run-summary');info.setAttribute('aria-expanded',String(expanded.has(r.character)));info.setAttribute('aria-label',`${names[r.character]}: ${expanded.has(r.character)?'hide':'show'} run history`);info.addEventListener('click',()=>toggleHistory(r.character));}
  if(unfinished){if(!group&&r.abortReason)info.append(make('small',r.abortReason,'muted'));row.append(info);return row;}
@@ -144,11 +144,11 @@ function makeRunRow(r,group=false){ const unfinished=Boolean(r.attemptStatus&&r.
   submit.disabled=!r.hasReplay||submitting.has(r.id);submit.title=r.hasReplay?'Submit this run and its replay':watch.title;
   submit.addEventListener('click',async()=>{
    if(submitting.has(r.id))return;submitting.add(r.id);renderRuns(data);
-   try{await post('submissions',{id:r.id},'submit');toast('Run submitted privately with its replay.');await refresh();}
+   try{await post('submissions',{id:r.id},'submit');toast(data.scope==='worlds'?'Upload retried. Status updates automatically.':'Run submitted privately with its replay.');await refresh();}
    catch(error){toast(error.message);}finally{submitting.delete(r.id);renderRuns(data);}
   });buttons.append(submit);
  }
- if(!r.exclusionReason&&['submitted','pending','approved','superseded'].includes(r.submissionStatus)){
+ if(r.source!=='worlds'&&!r.exclusionReason&&['submitted','pending','approved','superseded'].includes(r.submissionStatus)){
   const finalPublic=data.remote?.finalRunIds?.includes(r.id);
   const kind=finalPublic?'replay':data.remote?.disclosures?.[r.id]||'private';
   const share=make('button',kind==='score'?'Score public':kind==='replay'?'Replay public':'Share…','quiet');
@@ -159,9 +159,9 @@ function makeRunRow(r,group=false){ const unfinished=Boolean(r.attemptStatus&&r.
  row.append(info,buttons);return row;
 }
 function renderRuns(d){
- if(historyPlayer!==`${d.challenge.id}:${d.identity?.id}`){historyPlayer=`${d.challenge.id}:${d.identity?.id}`;expanded.clear();attempts.clear();runsKey=null;}
+ if(historyPlayer!==`${d.scope}:${d.challenge.id}:${d.identity?.id}`){historyPlayer=`${d.scope}:${d.challenge.id}:${d.identity?.id}`;expanded.clear();attempts.clear();runsKey=null;}
  const groups=d.bestRuns||[];const key=JSON.stringify([groups,d.remote?.disclosures,d.remote?.finalRunIds,tab,[...expanded],[...attempts],[...submitting]]);if(key===runsKey)return;runsKey=key;
- const visible=groups.filter(matchesTab);text('run-count',`${groups.length} character${groups.length===1?'':'s'} · ${groups.reduce((n,r)=>n+r.attemptCount,0)} attempts`);$('empty').hidden=visible.length>0;$('run-list').replaceChildren();
+ const visible=groups.filter(matchesTab);text('empty-title',groups.length?'No runs in this tab.':d.identity?'No completed run yet.':'Sign in to see your runs.');text('empty-description',groups.length?'Try All runs to see your history.':d.identity?'Finish a published level from the beginning. Your records and replays appear here automatically.':'Connect your Custom Melee BTT account to see your saved runs.');text('run-count',`${groups.length} character${groups.length===1?'':'s'} · ${groups.reduce((n,r)=>n+r.attemptCount,0)} attempts`);$('empty').hidden=visible.length>0;$('run-list').replaceChildren();
  for(const r of visible){const group=make('section','','run-group');group.append(makeRunRow(r,true));if(expanded.has(r.character)){const list=make('div','','attempt-history');const cache=attempts.get(r.character);list.setAttribute('aria-busy',String(Boolean(cache?.loading)));list.append(make('p',`All ${names[r.character]} attempts · newest first`,'eyebrow'));if(!cache||cache.loading&&!cache.rows.length)list.append(skeletonRows(3));if(cache){for(const attempt of cache.rows){const row=makeRunRow(attempt);if(attempt.id===r.id&&(!attempt.attemptStatus||attempt.attemptStatus==='finished'))row.classList.add('best-attempt');list.append(row);}if(cache.error)list.append(make('p',cache.error,'muted'));if(cache.rows.length<r.attemptCount&&!cache.loading){const more=make('button',cache.error?'Retry':'Load older runs','quiet');more.addEventListener('click',()=>loadHistory(r.character,true));list.append(more);}}group.append(list);} $('run-list').append(group);}
 }
 function toggleHistory(character){if(expanded.has(character)){expanded.delete(character);renderRuns(data);}else{expanded.add(character);renderRuns(data);loadHistory(character);}}
