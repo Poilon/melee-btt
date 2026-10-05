@@ -1,0 +1,8 @@
+{
+  "ucf": true,
+  "removeGo": true,
+  "fixedCamera": false,
+  "iceClimbers": true,
+  "luigiMisfire": true,
+  "peachItems": ["beam-sword", "random", "random", "random", "random", "random", "random", "random", "random", "random"]
+}

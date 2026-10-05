@@ -1,6 +1,7 @@
 """Configure an isolated free-play course using the player's controller preferences."""
 import argparse
 import configparser
+import json
 from pathlib import Path
 import shutil
 from play_settings import read_ini, write_ini, load_preferences, apply_preferences, preference_codes
@@ -46,6 +47,10 @@ def prepare(bundle, source, iso, course_id='grassland-1', course_name='Grassland
     config['Display'] = {'Fullscreen': 'False', 'RenderToMain': 'False',
                          'RenderWindowWidth': '1280', 'RenderWindowHeight': '960', 'RenderWindowXPos': '20', 'RenderWindowYPos': '20'}
     previous = read_ini(profile / 'Config/Dolphin.ini')
+    for settings in (previous, original):
+        if settings.has_option('DSP', 'Volume'):
+            config['DSP'] = {'Volume': settings['DSP']['Volume']}
+            break
     for section,keys in [('Interface',('MainWindowPosX','MainWindowPosY','MainWindowWidth','MainWindowHeight')),('Display',('RenderWindowXPos','RenderWindowYPos','RenderWindowWidth','RenderWindowHeight'))]:
         for key in keys:
             for settings in (previous,original):
@@ -58,6 +63,11 @@ def prepare(bundle, source, iso, course_id='grassland-1', course_name='Grassland
                           'MemcardAPath': windows_path(profile / 'GC/MemoryCardA.USA.raw')})
     write_ini(profile / 'Config/Dolphin.ini', config)
     prefs = load_preferences()
+    if online:
+        # All published records must use the exact same gameplay rules.
+        # Music and rumble remain local preferences; editor playtests are configurable.
+        rules = Path(__file__).resolve().parents[1] / 'web/editor/published-settings.json'
+        prefs.update(json.loads(rules.read_text()))
     # The authored route relies on the following camera, not the challenge's fixed camera.
     prefs['fixedCamera'] = False
     extras = preference_codes(prefs)

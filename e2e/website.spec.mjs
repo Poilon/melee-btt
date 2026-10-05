@@ -497,21 +497,21 @@ test('companion shows download progress, deferred installation, errors and autom
  await page.setViewportSize({width:390,height:844});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
 
-test('custom stage gallery previews the course, shows launch progress and reports errors',async({page})=>{
+test('TTRC gallery hides the prototype, previews published stages and reports launch progress',async({page})=>{
  const base=await(await page.request.get('http://localhost:4318/api/dashboard')).json();
  base.customStages=[{id:'grassland-1',name:'Grassland 1',character:'Fox',targets:10,preview:'/assets/custom-stages/grassland-1.png',description:'Pipes and hills.',available:true,prepared:false,busy:false},{id:'character-worlds',name:'Character Worlds',character:'All characters',targets:10,preview:'/assets/custom-stages/character-worlds.png',description:'26 themed courses.',available:true,prepared:false,busy:false}];
  await page.route('**/api/dashboard',route=>route.fulfill({json:base}));
  let finish;const gate=new Promise(r=>finish=r);
- await page.route('**/api/custom-stages/grassland-1/launch',async route=>{expect(route.request().headers()['x-ttrc-action']).toBe('launch');await gate;await route.fulfill({status:409,json:{error:'Close the challenge Dolphin window before opening a custom stage.'}});});
+ await page.route('**/api/custom-stages/character-worlds/launch',async route=>{expect(route.request().headers()['x-ttrc-action']).toBe('launch');await gate;await route.fulfill({status:409,json:{error:'Close the ISO selection window before opening a level.'}});});
  await page.goto('/');await page.locator('#custom-stages summary').click();
- await expect(page.locator('#custom-stages h3')).toHaveText(['Grassland 1','Character Worlds']);
- await expect(page.locator('#custom-stages img').first()).toBeVisible();
+ await expect(page.locator('#custom-stages h3')).toHaveText(['TTRC stages']);
+ await expect(page.locator('#custom-stages img').first()).toBeVisible();await expect(page.locator('#play-grassland')).toHaveCount(0);await expect(page.getByRole('link',{name:'Open stage editor ↗',exact:true})).toHaveCount(0);
  await expect(page.locator('#play-character-worlds')).toBeEnabled();
- await page.locator('#play-grassland').click();await expect(page.locator('#play-grassland')).toBeDisabled();
+ await page.locator('#play-character-worlds').click();await expect(page.locator('#play-character-worlds')).toBeDisabled();
  await expect(page.locator('#play-character-worlds')).toBeDisabled();
- finish();await expect(page.locator('#toast')).toContainText('Close the challenge Dolphin');await expect(page.locator('#play-grassland')).toBeEnabled();
+ finish();await expect(page.locator('#toast')).toContainText('Close the ISO selection window');await expect(page.locator('#play-character-worlds')).toBeEnabled();
  await page.route('**/api/custom-stages/character-worlds/launch',route=>route.fulfill({json:{status:'started'}}));
- await page.locator('#play-character-worlds').click();await expect(page.locator('#toast')).toContainText('Character Worlds is open. Choose your character');
+ await page.locator('#play-character-worlds').click();await expect(page.locator('#toast')).toContainText('TTRC is open. Choose your character');
  await page.setViewportSize({width:390,height:844});
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBeTruthy();
 });

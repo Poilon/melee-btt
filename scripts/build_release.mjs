@@ -1,5 +1,5 @@
 // Build a Windows portable ZIP from an explicit list of public source files.
-import {cp,mkdir,readFile,writeFile,rm,readdir,rename} from 'node:fs/promises';
+import {cp,mkdir,readFile,writeFile,rm,readdir,rename,stat} from 'node:fs/promises';
 import {join,resolve} from 'node:path';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
@@ -18,7 +18,18 @@ const nativeExe=await readFile(join(nativeBuild,'Slippi Dolphin.exe'));
 if(nativeExe.subarray(0,2).toString()!=='MZ')throw new Error('Native Dolphin build missing.');
 await rm(app,{recursive:true,force:true});await mkdir(app,{recursive:true});
 const hash=data=>createHash('sha256').update(data).digest('hex');
-for(const name of ['server','shared','src','scripts','companion','web','assets','desktop'])await cp(join(root,name),join(app,name),{recursive:true,filter:source=>!source.includes('__pycache__')&&!source.endsWith('Start TTRC.cmd')&&!source.endsWith('desktop/start.mjs')});
+function publicRuntimeFile(source){
+ if(source.includes('__pycache__')||source.endsWith('Start TTRC.cmd')||source.endsWith('desktop/start.mjs'))return false;
+ // Authoring PNGs duplicate the encoded game textures and the editor's own
+ // images. Keep those originals in GitHub, not in every portable installation.
+ const stageArt=join(root,'assets/custom-stages')+'/';
+ if(source.startsWith(stageArt)&&source.endsWith('.png')){
+  const relative=source.slice(stageArt.length);
+  if(relative.includes('/')&&!relative.startsWith('background-textures/'))return false;
+ }
+ return true;
+}
+for(const name of ['server','shared','src','scripts','companion','web','assets','desktop'])await cp(join(root,name),join(app,name),{recursive:true,filter:publicRuntimeFile});
 await mkdir(join(app,'generator-sources'),{recursive:true});
 for(const [name,source] of Object.entries(await readSources()))await writeFile(join(app,'generator-sources',name),source);
 await cp(join(root,'desktop/companion.vbs'),join(app,'TTRC Companion.vbs'));
@@ -66,6 +77,7 @@ await audit(app);
 await writeFile(join(app,'update-manifest.json'),JSON.stringify({format:1,version,files:await inventory(app)}));
 const zip=join(output,'TTRC-Windows-x64.zip');await rm(zip,{force:true});
 await exec('zip',['-qr',zip,'TTRC'],{cwd:output,maxBuffer:1024*1024});
+if((await stat(zip)).size>500_000_000)throw Error('Release exceeds the download limit of existing TTRC updaters.');
 const source=join(output,'TTRC-Dolphin-Source.tar.gz');
 await cp(join(nativeBuild,'TTRC-Dolphin-Source.tar.gz'),source);
 const versionedName=`TTRC-Dolphin-v${version}-Windows-x64.zip`;

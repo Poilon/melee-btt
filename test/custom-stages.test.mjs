@@ -4,7 +4,7 @@ import {mkdtemp,writeFile,readFile,mkdir,rm,access} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {createHash} from 'node:crypto';
-import {execFile} from 'node:child_process';
+import {execFile,execFileSync} from 'node:child_process';
 import {promisify} from 'node:util';
 import {createApp} from '../server/app.mjs';
 import {CustomStages,CustomStageError} from '../server/custom-stages.mjs';
@@ -62,4 +62,28 @@ test('character worlds profile boots the authored disc without challenge stage s
  assert.match(gecko,/\$Character Worlds/);assert.doesNotMatch(gecko,/\$Grassland|Randomizer|Recording\n\[/);
  assert.match(gecko,/C21B6598 00000006/);
  assert.match(gecko.split('[Gecko_Enabled]')[1],/\$Character Worlds: Sheik stage \(hold A\)/);
+});
+
+test('published profiles pin gameplay rules but preserve audio and controller preferences',()=>{
+ execFileSync('python3',['-c',String.raw`
+import sys,tempfile
+from pathlib import Path
+sys.path.insert(0,'scripts')
+import prepare_custom_stage as p
+from play_settings import default_preferences, read_ini
+with tempfile.TemporaryDirectory() as tmp:
+ root=Path(tmp);source=root/'source';(source/'Config').mkdir(parents=True)
+ (source/'Config/Dolphin.ini').write_text('[Core]\nSIDevice0 = 6\n[DSP]\nVolume = 0\n')
+ original=p.load_preferences
+ try:
+  codes=[]
+  for i in range(2):
+   prefs=default_preferences();prefs.update(ucf=bool(i),luigiMisfire=bool(i),iceClimbers=bool(i),removeGo=bool(i),rumble=bool(i))
+   p.load_preferences=lambda:prefs.copy()
+   bundle=root/str(i);p.prepare(bundle,source,root/'game.iso','character-worlds','Character Worlds',online=True)
+   codes.append((bundle/'User/GameSettings/GALE01.ini').read_text())
+   ini=read_ini(bundle/'User/Config/Dolphin.ini');assert ini['DSP']['Volume']=='0';assert ini['Core']['AdapterRumble0']==str(bool(i))
+  assert codes[0]==codes[1]
+ finally:p.load_preferences=original
+`],{cwd:new URL('../',import.meta.url),stdio:'pipe'});
 });
