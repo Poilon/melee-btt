@@ -21,7 +21,7 @@ inline const std::string& Title() {
     const auto path = Root() + L"\\release.json";
     HANDLE file = CreateFileW(path.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr,
                               OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-    if (file == INVALID_HANDLE_VALUE) return std::string("TTRC Dolphin Beta");
+    if (file == INVALID_HANDLE_VALUE) return std::string("Custom Melee BTT Dolphin Beta");
     char bytes[4096]; DWORD count = 0;
     const bool ok = ReadFile(file, bytes, sizeof(bytes), &count, nullptr) != FALSE;
     CloseHandle(file);
@@ -29,9 +29,9 @@ inline const std::string& Title() {
       const std::string json(bytes, count);
       std::smatch match;
       const std::regex version(R"ttrc("version"\s*:\s*"([0-9]+\.[0-9]+\.[0-9]+(-[a-z0-9.]+)?)")ttrc");
-      if (std::regex_search(json, match, version)) return std::string("TTRC Dolphin Beta v") + match[1].str();
+      if (std::regex_search(json, match, version)) return std::string("Custom Melee BTT Dolphin Beta v") + match[1].str();
     }
-    return std::string("TTRC Dolphin Beta");
+    return std::string("Custom Melee BTT Dolphin Beta");
   }();
   return title;
 }
@@ -73,9 +73,9 @@ inline bool Start() {
   if (code == 2) return false;
   if (!prepared ||
       !Helper(L"--serve --parent " + std::to_wstring(GetCurrentProcessId()), false)) {
-    wxMessageBox("TTRC could not start. Extract the entire release ZIP into a writable folder, "
-                 "and close any other TTRC instance. Details are in .local/startup.log.",
-                 "TTRC", wxOK | wxICON_ERROR); return false;
+    wxMessageBox("Custom Melee BTT could not start. Extract the entire release ZIP into a writable folder, "
+                 "and close any other Custom Melee BTT instance. Details are in .local/startup.log.",
+                 "Custom Melee BTT", wxOK | wxICON_ERROR); return false;
   }
   return true;
 }
@@ -84,9 +84,9 @@ inline bool VerifyGame(const std::string& file) {
   DWORD code = 1;
   if (Helper(L"--iso " + Quote(path) + L" --play", true, &code)) return true;
   if (code == 2) { wxTheApp->ExitMainLoop(); return false; }
-  wxMessageBox("TTRC could not prepare the game. Choose an original Melee USA 1.02 ISO "
+  wxMessageBox("Custom Melee BTT could not prepare the game. Choose an original Melee USA 1.02 ISO "
                "and check .local/startup.log if the problem persists. Your original ISO is unchanged.",
-               "TTRC — Melee ISO", wxOK | wxICON_ERROR); return false;
+               "Custom Melee BTT — Melee ISO", wxOK | wxICON_ERROR); return false;
 }
 inline void OpenCompanion() {
   wchar_t port[16] = {};
