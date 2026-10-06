@@ -265,3 +265,21 @@ All-level packs (2026-10-03): Export all levels saves a versioned TTRC_STAGE_PAC
 Every character's palette includes **Warp Star**, exported from Melee's original common-item archive (item kind 29). It is saved in `nativeActors`, so placement, duplication, deletion and pack export use the same path as other native actors. In Dolphin, the original item factory supplies its model, animation, pickup, ascent, steerable descent and landing. It falls onto the level's terrain; Start + Z creates a fresh item. The published Kirby level places one near the right edge of the starting platform.
 
 `world_items.py` extends only archives containing this item with an optional descriptor after the eleven existing yakumono slots. The host occupies the retired Bowser target-stage module at `0x80221648`; Kirby's retired module remains reserved for the wind callback. `build_world_items.py` rebuilds the shipped PPC binary. The exact reviewed optional-host executable is mapped to the previous course engine identity; the real executable hash is still checked when opening the ISO, and altered stage/rules hashes still create distinct records.
+
+## Imported backgrounds and textured objects (v0.9.14 Beta)
+
+Open **Background & custom objects** in the left sidebar:
+
+- **Import background** accepts PNG, JPG, WebP, GIF, MP4 and WebM. A still image replaces the backdrop; a GIF or video becomes a silent texture loop in the editor and Dolphin. Set its start time and duration before importing. **Preview motion** plays it; the timeline scrubs it. Background bounds and **Fit stage** control its placement; **Restore original background** removes the override.
+- **Create textured object** imports an image and creates a reusable solid block, one-way platform or decoration. Choose its dimensions and horizontal repeat, alternating mirror or stretch mapping. Click its library card to place another copy. Solids collide along their polygon, including transparent pixels; decorations have no collision and render behind terrain.
+- **Apply texture to selection** reskins an existing solid or platform without changing its collision geometry.
+
+This is a 2D texture/object workflow, not a 3D model importer. PNG transparency uses source-alpha blending in the editor and game. Use seamless source tiles for seamless repetition. GIF decoding requires a browser with ImageDecoder, such as current Chrome or Edge; MP4/WebM support depends on browser codecs. Animated WebP is imported as a still image.
+
+Loops use 10 frames per second, up to 12 seconds. Maximum texture size is 1024 pixels; dimensions are fitted to a shared 4 MiB encoded-texture budget per stage. Shorter loops preserve more detail. Conversion runs locally in the browser and shows progress. Source files are limited to 80 MiB. No uploaded media is sent to an external conversion service.
+
+Drafts containing embedded media are stored in IndexedDB, with migration from existing localStorage drafts. **Export project** and **Export all levels** include the encoded textures. Keep an exported copy: clearing browser data removes drafts. Large website-to-companion transfers download a project file and open the local editor; use **Open project**, then **Test in Dolphin**. Update the companion to v0.9.14 or newer to compile imported media. Existing published levels and their competition records are unchanged.
+
+The compiler uses native HSD texture animation tracks. It validates media, frame sizes and references independently, and needs no Pillow, FFmpeg or additional runtime codecs. Per-project and full-pack build requests are bounded to 8 MiB and 128 MiB respectively.
+
+Validation: 160 Node tests, 99 Python stage tests, and 32 editor browser tests passed (including GIF/WebM conversion, persistence/export/import, unchanged collision on reskin, invalid-file rollback, and a request larger than the former 512 KiB limit). All 26 published DAT hashes still match the live catalog. A private muted Dolphin run rendered the imported GIF and transparent texture before and after a real Start + Z restart; the native timer reset and continued, with ten targets present. Mario's pipe occlusion pass preserves imported alpha while restoring depth. Evidence is local under `build/editor-media`; diagnostic media was not added to the published courses.

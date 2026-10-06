@@ -83,7 +83,7 @@ export class CustomStages {
      for(const name of ['model.dat','model.json'])hash.update(entry.name+'/'+name).update(await readFile(join(props,entry.name,name)));
     }
     hash.update(await readFile(join(this.root,'scripts/adventure_mechanisms.py')));
-    for(const name of ['corneria_arwings.py','native/world-arwing.bin','native/world-arwing.s','native/world-arwing-symbols.json','world_chest.py','native/world-chest.bin','native/world-chest.s','native/world-chest-symbols.json'])hash.update(await readFile(join(this.root,'scripts',name)));
+    for(const name of ['editor_media.py','corneria_arwings.py','native/world-arwing.bin','native/world-arwing.s','native/world-arwing-symbols.json','world_chest.py','native/world-chest.bin','native/world-chest.s','native/world-chest-symbols.json'])hash.update(await readFile(join(this.root,'scripts',name)));
     for(const kind of ['plant','ghost','fireball','arwing','wolfen','beamos','beam','octorok','rock','deku','wallmaster','chest']){
      for(const name of (await readdir(join(actors,kind))).sort())hash.update(kind+'/'+name).update(await readFile(join(actors,kind,name)));
     }

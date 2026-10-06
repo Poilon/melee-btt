@@ -1,3 +1,4 @@
+import {customSkins,drawMedia} from './media.js';
 // Rendering uses the same UV rectangle and collision polygon as the compiler.
 export function bounds(points){const xs=points.map(v=>v[0]),ys=points.map(v=>v[1]);return [Math.min(...xs),Math.max(...ys),Math.max(...xs),Math.min(...ys)];}
 // Horizontal source fractions stay continuous at every join. Only the interior
@@ -29,8 +30,8 @@ export function drawPiece(ctx,image,source,polygon,artBounds,screen,repeatWidth)
  ctx.restore();
 }
 export function platformPolygon(p,skin){const [x,y,w]=p,b=bounds(skin.points),h=skin.fixedHeight?skin.height:skin.height*w/(b[2]-b[0]);const t=y+(skin.walkingInset||0)*h;return [[x,t],[x+w,t],[x+w,t-h],[x,t-h]];}
-export function terrain(ctx,base,p,image,screen,sprites={}){
- const skins=new Map(base.pieces.map(s=>[s.id,s]));
- for(const s of p.solids){const skin=skins.get(s.asset);if(skin){const b=bounds(skin.points);drawPiece(ctx,skin.sprite?sprites[skin.sprite]:image,skin.sprite?[0,0,1,-1]:skin.sourceRect,s.points,skin.sprite?[0,0,1,-1]:base.artBounds,screen,b[2]-b[0]);}}
- p.platforms.forEach((platform,i)=>{const skin=skins.get(p.platformAssets[i]);if(skin){const b=bounds(skin.points);drawPiece(ctx,skin.sprite?sprites[skin.sprite]:image,skin.sprite?[0,0,1,-1]:skin.sourceRect,platformPolygon(platform,skin),skin.sprite?[0,0,1,-1]:base.artBounds,screen,skin.sharedTexture?64:skin.sprite?undefined:skin.textureWidth||b[2]-b[0]);}});
+export function terrain(ctx,base,p,image,screen,sprites={},frame=0){
+ const skins=new Map([...base.pieces,...customSkins(p)].map(s=>[s.id,s]));
+ for(const s of p.solids){const skin=skins.get(s.asset);if(skin?.custom){drawMedia(ctx,p.media.find(m=>m.id===skin.media),s.points,screen,frame,skin.mapping,skin.width);continue;}if(skin){const b=bounds(skin.points);drawPiece(ctx,skin.sprite?sprites[skin.sprite]:image,skin.sprite?[0,0,1,-1]:skin.sourceRect,s.points,skin.sprite?[0,0,1,-1]:base.artBounds,screen,b[2]-b[0]);}}
+ p.platforms.forEach((platform,i)=>{const skin=skins.get(p.platformAssets[i]);if(skin?.custom){drawMedia(ctx,p.media.find(m=>m.id===skin.media),platformPolygon(platform,skin),screen,frame,skin.mapping,skin.width);return;}if(skin){const b=bounds(skin.points);drawPiece(ctx,skin.sprite?sprites[skin.sprite]:image,skin.sprite?[0,0,1,-1]:skin.sourceRect,platformPolygon(platform,skin),skin.sprite?[0,0,1,-1]:base.artBounds,screen,skin.sharedTexture?64:skin.sprite?undefined:skin.textureWidth||b[2]-b[0]);}});
 }

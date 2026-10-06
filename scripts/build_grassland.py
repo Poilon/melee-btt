@@ -317,6 +317,8 @@ def build_stage(source, art=None, targets=TARGETS, spawn=SPAWN, sky=(139,216,238
     if hasattr(art,'mechanisms'):
         from world_mechanics import build_mechanics
         build_mechanics(d,art)
+        from editor_media import install_animation
+        install_animation(d)
         from world_challenge import scale_archive
         scale_archive(d,art)
         if getattr(art,"retail_corneria",False):

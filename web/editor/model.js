@@ -1,3 +1,4 @@
+import {validateMedia,customSkins} from './media.js';
 export const clone=value=>structuredClone(value);
 export function validateStagePack(pack,bases){
  const errors=[];
@@ -31,7 +32,8 @@ function validate(p,base){
  if(errors.length)return {errors,warnings};
  if(p.targets.length!==10||!p.targets.every(pt))fail('Exactly ten valid target positions are required.');
  if(!pt(p.spawn))fail('Invalid spawn position.');
- const assets=new Map((base.pieces||[]).map(a=>[a.id,a]));
+ const mediaErrors=validateMedia(p);if(mediaErrors.length)return {errors:[...errors,...mediaErrors],warnings};
+ const assets=new Map([...(base.pieces||[]),...customSkins(p)].map(a=>[a.id,a]));
  if(base.modular){if(!Array.isArray(p.platformAssets)||p.platformAssets.length!==p.platforms.length||p.platformAssets.some(k=>assets.get(k)?.kind!=='platform'))fail('Every platform needs a valid texture asset.');if(p.solids.some(s=>assets.get(s.asset)?.kind!=='solid'))fail('Every solid needs a valid texture asset.');}
  const native=p.nativeActors||[],allowed=new Set([29,...(base.project.nativeActors||[]).map(a=>a.kind)]);
  if(!Array.isArray(native)||native.length>16)fail('At most 16 native actors.');
@@ -93,6 +95,7 @@ export function moveSelection(p,selection,dx,dy,base){
  if(base){for(const [i,m]of base.mechanisms.entries()){if(m.opensTarget===undefined)continue;if(type==='target'&&index===m.opensTarget){p.mechanisms[i].x+=dx;p.mechanisms[i].y+=dy;}else if(type==='mechanism'&&i===index){p.targets[m.opensTarget][0]+=dx;p.targets[m.opensTarget][1]+=dy;}}}
  if(type==='target'){p.targets[index]=p.targets[index].map((v,i)=>v+(i?dy:dx));for(const c of p.targetCycles.filter(c=>c.target===index))c.keys=c.keys.map(([f,x,y])=>[f,x+dx,y+dy]);}
  if(type==='actor'){p.nativeActors[index].x+=dx;p.nativeActors[index].y+=dy;}
+ if(type==='decoration'){p.decorations[index].x+=dx;p.decorations[index].y+=dy;}
  if(type==='spawn')p.spawn=[p.spawn[0]+dx,p.spawn[1]+dy];
  if(type==='solid')p.solids[index].points=p.solids[index].points.map(([x,y])=>[x+dx,y+dy]);
  if(type==='platform'){p.platforms[index][0]+=dx;p.platforms[index][1]+=dy;}
@@ -105,7 +108,9 @@ export function motion(m,original,frame){const period=m.period,t=((frame%period)
  if(original?.orbit)return m[axis]+m['d'+axis]*(axis==='x'?.5-.5*Math.cos(2*Math.PI*t/period):.5*Math.sin(2*Math.PI*t/period));
  const h=m.hold;return interpolate([[0,m[axis]],[h,m[axis]],[period/2-h,m[axis]+m['d'+axis]],[period/2+h,m[axis]+m['d'+axis]],[period-h,m[axis]],[period,m[axis]]].filter((k,i,a)=>!i||k[0]>a[i-1][0]),t);
 });}
-export class History{constructor(project){this.items=[clone(project)];this.index=0;}push(p){this.items.splice(this.index+1);this.items.push(clone(p));if(this.items.length>100)this.items.shift();this.index=this.items.length-1;}undo(){if(this.index)this.index--;return clone(this.items[this.index]);}redo(){if(this.index<this.items.length-1)this.index++;return clone(this.items[this.index]);}}
+// Encoded media is immutable; geometry undo must not copy megabytes per drag.
+const snapshot=p=>{const {media,...rest}=p,result=clone(rest);if(media)result.media=media;return result;};
+export class History{constructor(project){this.items=[snapshot(project)];this.index=0;}push(p){this.items.splice(this.index+1);this.items.push(snapshot(p));if(this.items.length>100)this.items.shift();this.index=this.items.length-1;}undo(){if(this.index)this.index--;return snapshot(this.items[this.index]);}redo(){if(this.index<this.items.length-1)this.index++;return snapshot(this.items[this.index]);}}
 
 // Explicit platform tracks use the same interpolation as the native HSD animation.
 export function setPlatformMotion(m,original,kind){
@@ -145,7 +150,8 @@ export function randomizeTargets(input,base,seed){
 }
 
 export function addPiece(p,base,id,x,y){
- const a=base.pieces.find(a=>a.id===id);if(!a)throw Error('Unknown block');
+ const a=[...base.pieces,...customSkins(p)].find(a=>a.id===id);if(!a)throw Error('Unknown block');
+ if(a.kind==='decoration'){p.decorations??=[];if(p.decorations.length>=64)throw Error('At most 64 decorations');p.decorations.push({piece:id,x,y,width:a.width,height:a.height});return {type:'decoration',index:p.decorations.length-1};}
  const xs=a.points.map(v=>v[0]),ys=a.points.map(v=>v[1]);const l=Math.min(...xs),t=Math.max(...ys);
  if(a.kind==='solid'){if(p.solids.length>=64)throw Error('At most 64 solid blocks');p.solids.push({asset:id,points:a.points.map(([u,v])=>[u+x-l,v+y-t]),material:a.material});return {type:'solid',index:p.solids.length-1};}
  if(p.platforms.length>=128)throw Error('At most 128 platforms');

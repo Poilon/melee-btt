@@ -94,35 +94,44 @@ def configure(art):
 
 def mesh(d,art):
  from stage_texture import texture_scene
+ from editor_media import background as custom_background,append as append_custom
  from build_grassland import Art
  if art.suffix=='Gw':
   from world_mechanics import colour_mesh
   drawing=Art();drawing.triangles=copy.deepcopy(art.modular_printing)
   from solid_readability import triangulate
   for i,(x,y,w,h,_) in enumerate(art.solids):
-   if art.terrain_skins[i].startswith('basic-'):continue
+   if art.terrain_skins[i].startswith(('basic-','custom-')):continue
    for tri in triangulate(getattr(art,'solid_contours',{}).get(i,rect(x,y+h,x+w,y))):
     drawing.triangles.append([(px,py,0,bytes([38,50,44,255])) for px,py in tri])
   for i,(x,y,w,_) in enumerate(art.platforms):
-   if not art.platform_skins[i].startswith('basic-'):drawing.rect(x,y-3,w,3,'#26322c',0)
-  return append_basic(d,art,colour_mesh(d,drawing))
+   if not art.platform_skins[i].startswith(('basic-','custom-')):drawing.rect(x,y-3,w,3,'#26322c',0)
+  foreground=append_custom(d,art,append_basic(d,art,colour_mesh(d,drawing)))
+  first=append_custom(d,art,custom_background(d,art),decorations_only=True)
+  if first:
+   last=first
+   while d.u(last+4):last=d.u(last+4)
+   d.pointer(last+4,foreground);return first
+  return foreground
  folder=art.modular_background
  if not (folder/'scene.json').exists():raise ValueError('Missing modular background: '+art.suffix)
- if art.suffix=='Kp':
+ if getattr(art,'editor_background',None):first=custom_background(d,art)
+ elif art.suffix=='Kp':
   # A distant vista, not a giant wall at the fighter's depth. Perspective
   # parallax keeps the castle and Bowser relief in frame while crossing it.
   s=art.world_scale;height=1650;width=height*2;cx=-450
   first=texture_scene(d,directory=folder,copies=[],render_bounds=[(cx-width/2)/s,height/2/s,(cx+width/2)/s,-height/2/s],depth=-8000)
  else:first=texture_scene(d,directory=folder,copies=[])
+ first=append_custom(d,art,first,decorations_only=True)
  pieces={p['id']:p for p in art.piece_catalog};draws=[];sprites=[]
  for i,(x,y,w,h,_) in enumerate(art.solids):
   skin=pieces[art.terrain_skins[i]]
-  if skin.get('sharedTexture'):continue
+  if skin.get('sharedTexture') or skin.get('custom'):continue
   original=box(skin['points'])
   draws.append((getattr(art,'solid_contours',{}).get(i,rect(x,y+h,x+w,y)),skin['sourceRect'],original[2]-original[0]))
  for i,(x,y,w,_) in enumerate(art.platforms):
   skin=pieces[art.platform_skins[i]];original=box(skin['points']);height=skin['height']*w/(original[2]-original[0])
-  if skin.get('sharedTexture'):continue
+  if skin.get('sharedTexture') or skin.get('custom'):continue
   if skin.get('sprite'):sprites.append((skin,[x,y+skin.get('walkingInset',0)*height,w,height]))
   else:draws.append((rect(x,y,x+w,y-height),skin['sourceRect'],skin.get('textureWidth',original[2]-original[0])))
  foreground=painted_polygons(d,art.world_assets,draws)
@@ -140,7 +149,7 @@ def mesh(d,art):
    directory=ROOT/'assets/custom-stages/worlds'/donor if donor else folder
    obj=sprite_mesh(d,SimpleNamespace(world_assets=directory),'deck' if donor else skin['sprite'],rectangle,manifest='props.json' if donor else 'furniture.json')
    d.pointer(last+4,obj);last=obj
- return append_basic(d,art,first)
+ return append_custom(d,art,append_basic(d,art,first))
 
 def append_basic(d,art,first,solids_only=False):
  pieces={p['id']:p for p in art.piece_catalog};draws={}
@@ -180,9 +189,10 @@ def actor_occluders(d,art):
  pieces={p['id']:p for p in art.piece_catalog};draws=[]
  for i,(x,y,w,h,_) in enumerate(art.solids):
   skin=pieces[art.terrain_skins[i]];original=box(skin['points'])
-  if skin.get('sharedTexture'):continue
+  if skin.get('sharedTexture') or skin.get('custom'):continue
   draws.append((getattr(art,'solid_contours',{}).get(i,rect(x,y+h,x+w,y)),skin['sourceRect'],original[2]-original[0]))
- return append_basic(d,art,painted_polygons(d,art.world_assets,draws) if draws else None,solids_only=True)
+ from editor_media import append as append_custom
+ return append_custom(d,art,append_basic(d,art,painted_polygons(d,art.world_assets,draws) if draws else None,solids_only=True),solids_only=True)
 
 def texture_strips(length,width):
  """Continuous interior reflections at original density, one pair of end caps.

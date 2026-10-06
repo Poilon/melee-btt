@@ -531,7 +531,8 @@ def build_mechanics(d,art):
         obj=model
         while obj:
             material=d.u(obj+8)
-            d.pointer(material+20,d.buffer(bytes([0x39,0,0,0,0,4,5,15,7,7,0,7])))
+            from editor_media import restore_occluder_depth
+            if not restore_occluder_depth(d,obj):d.pointer(material+20,d.buffer(bytes([0x39,0,0,0,0,4,5,15,7,7,0,7])))
             obj=d.u(obj+4)
         if model:d.pointer(joint+12,d.joint(dobj=model))
     anims=d.alloc(8);d.pointer(anims,aroot);d.pointer(g+4,anims)

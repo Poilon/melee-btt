@@ -51,6 +51,8 @@ def validate(p,base):
   if not isinstance(p.get(key),list) or len(p[key])>limit:raise ProjectError('Too many or invalid '+key)
  if len(p['targets'])!=10:raise ProjectError('Target Test needs exactly ten targets')
  p=copy.deepcopy(p);p['spawn']=point(p['spawn'])
+ from editor_media import validate_media,skins
+ validate_media(p)
  actors=p.get('nativeActors',[])
  allowed={29,*[a['kind'] for a in base['project'].get('nativeActors',[])]}
  if not isinstance(actors,list) or len(actors)>16:raise ProjectError('At most 16 native actors')
@@ -59,7 +61,7 @@ def validate(p,base):
   if not isinstance(a,dict) or a.get('kind') not in allowed:raise ProjectError('Unsupported native actor')
   number(a.get('x'),-1500,1500);number(a.get('y'),-1500,1500)
   if not isinstance(a.get('name'),str) or len(a['name'])>80:raise ProjectError('Invalid actor name')
- assets={a['id']:a for a in base.get('pieces',[])}
+ assets={a['id']:a for a in base.get('pieces',[])+skins(p)}
  if base.get('modular'):
   skins=p.get('platformAssets')
   if not isinstance(skins,list) or len(skins)!=len(p['platforms']) or any(k not in assets or assets[k]['kind']!='platform' for k in skins):raise ProjectError('Every platform needs a valid texture asset')
@@ -156,6 +158,8 @@ def validate(p,base):
 
 def apply(art,p):
  base=json.loads((ROOT/'web/editor/data'/f'{art.suffix}.json').read_text());p=validate(p,base)
+ from editor_media import bind
+ bind(art,p)
  # Fail closed when the editor data has not been re-exported after a route edit.
  if not same_authored(art.targets,base['project']['targets']) or not same_authored(art.mechanisms,base['mechanisms']):raise ProjectError('Editor catalog is stale; regenerate it before building')
  art.targets=p['targets'];art.spawn=p['spawn'];art.name=p['name'];art.native_actor_edits=p.get('nativeActors',[])

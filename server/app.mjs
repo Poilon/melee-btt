@@ -20,7 +20,7 @@ const files = new Map([
   ['/editor', ['editor/index.html', 'text/html; charset=utf-8']],
   ['/editor/', ['editor/index.html', 'text/html; charset=utf-8']],
   ['/editor/published-levels.json', ['editor/published-levels.json', 'application/json']],
-  ...['editor.js','model.js','pieces.js','native-preview.js','editor.css'].map(n=>['/editor/'+n,['editor/'+n,n.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8']]),
+  ...['editor.js','model.js','pieces.js','native-preview.js','media.js','media-import.js','media-ui.js','storage.js','editor.css'].map(n=>['/editor/'+n,['editor/'+n,n.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8']]),
   ['/review', ['review.html', 'text/html; charset=utf-8']],
   ['/review.js', ['review.js', 'text/javascript; charset=utf-8']],
   ['/review.css', ['review.css', 'text/css; charset=utf-8']],
@@ -45,7 +45,7 @@ export function createApp({ challenge:initialChallenge, gecko:initialGecko, getC
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Referrer-Policy', 'no-referrer');
-    res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
+    res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob:; media-src 'self' blob:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
     if (!hosts.has(req.headers.host)) return json(403, { error: 'Host not allowed.' });
     if (req.headers.origin && ![`http://localhost:${port}`, `http://127.0.0.1:${port}`].includes(req.headers.origin)) {
       return json(403, { error: 'Origin not allowed.' });
@@ -56,14 +56,14 @@ export function createApp({ challenge:initialChallenge, gecko:initialGecko, getC
         const name=url.pathname.slice('/editor/data/'.length);
         try{const bytes=await readFile(new URL('../web/editor/data/'+name,import.meta.url));res.writeHead(200,{'Content-Type':name.endsWith('.json')?'application/json':'image/png'});return res.end(bytes);}catch{return json(404,{error:'Editor asset unavailable.'});}
       }
-      if(req.method==='GET'&&url.pathname==='/api/editor/status')return json(200,{available:Boolean((await customStages?.list())?.some(s=>s.available)),busy:customStages?.busy||false,message:customStages?.message||''});
+      if(req.method==='GET'&&url.pathname==='/api/editor/status')return json(200,{available:Boolean((await customStages?.list())?.some(s=>s.available)),busy:customStages?.busy||false,message:customStages?.message||'',mediaVersion:1});
       if(req.method==='POST'&&['/api/editor/test','/api/editor/build-all'].includes(url.pathname)){
         if(!req.headers.origin||req.headers['x-ttrc-action']!=='launch')return json(403,{error:'Launch not allowed.'});
         if(!launchCustomStage)return json(503,{error:'Open the editor from an updated Custom Melee BTT Companion to test.'});
         if(appUpdates?.status().phase==='installing')return json(409,{error:'Custom Melee BTT is updating. Try again shortly.'});
-        const all=url.pathname==='/api/editor/build-all',limit=all?8*1024*1024:512*1024;
-        let body='';for await(const part of req){body+=part;if(Buffer.byteLength(body)>limit)return json(413,{error:all?'Level pack must be under 8 MB.':'Project must be under 512 KB.'});}
-        let project;try{project=JSON.parse(body);}catch{return json(400,{error:'Invalid project JSON.'});}
+        const all=url.pathname==='/api/editor/build-all',limit=all?128*1024*1024:8*1024*1024;
+        const chunks=[];let length=0;for await(const part of req){length+=part.length;if(length>limit)return json(413,{error:all?'Level pack must be under 128 MB.':'Project must be under 8 MB.'});chunks.push(part);}
+        let project;try{project=JSON.parse(Buffer.concat(chunks,length).toString('utf8'));}catch{return json(400,{error:'Invalid project JSON.'});}
         return json(200,await launchCustomStage(all?'stage-editor-all':'stage-editor',project));
       }
       if(req.method==='POST'&&/^\/api\/custom-stages\/[^/]+\/launch$/.test(url.pathname)){

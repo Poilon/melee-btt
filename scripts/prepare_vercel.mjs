@@ -32,7 +32,7 @@ await writeFile(join(out, 'vercel.json'), JSON.stringify({
   headers: [{ source: '/(.*)', headers: [
     { key: 'X-Content-Type-Options', value: 'nosniff' },
     { key: 'Referrer-Policy', value: 'no-referrer' },
-    { key: 'Content-Security-Policy', value: "default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'" },
+    { key: 'Content-Security-Policy', value: "default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' blob:; media-src 'self' blob:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'" },
   ] }, { source: '/editor', headers: [{ key: 'Cache-Control', value: 'no-store' }] },
   { source: '/editor/:path*', headers: [{ key: 'Cache-Control', value: 'no-store' }] }],
 }, null, 2));
