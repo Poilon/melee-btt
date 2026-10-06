@@ -51,6 +51,13 @@ class Corneria(unittest.TestCase):
         new=patch_callbacks(old);_,sections=dol_sections(old)
         def off(address):return next(o+address-a for a,o,n in sections if a<=address<a+n)
         changed=[a for a in range(0x801dccfc,0x801e2fcc,4) if old[off(a):off(a)+4]!=new[off(a):off(a)+4]]
+        random_sites=[]
+        for a in changed:
+            word=struct.unpack_from('>I',old,off(a))[0]
+            if any(word==0x48000001|((target-a)&0x3fffffc) for target in (0x80380580,0x80380528)):
+                random_sites.append(a)
+        self.assertEqual(len(random_sites),17)
+        changed=[a for a in changed if a not in random_sites]
         self.assertEqual(len(changed),5)
         self.assertEqual([a for a in changed if 0x801df000<=a],[0x801df1a0,0x801df4fc,0x801df528])
         self.assertEqual(sum(0x801dd534<=a<0x801dd620 for a in changed),1)
@@ -95,5 +102,5 @@ class EditedCorneria(unittest.TestCase):
         d=Dat(data);config=d.u(d.roots['yakumono_param'])
         self.assertEqual(d.u(config+8),1)
         params=d.u(config+4)
-        self.assertEqual(struct.unpack_from('>4f',d.data,params+0x3c),(120.,180.,120.,180.))
+        self.assertEqual(struct.unpack_from('>4f',d.data,params+0x3c),(150.,150.,150.,150.))
         self.assertEqual(bytes(d.data[params+0x74:params+0x84]),bytes(native.SOURCE.data[native.SOURCE.roots['yakumono_param']+0x74:native.SOURCE.roots['yakumono_param']+0x84]))

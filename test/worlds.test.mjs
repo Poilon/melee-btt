@@ -147,3 +147,14 @@ test('reviewed optional item host preserves unchanged courses but never hides st
  assert.equal(worldCourseId(old),worldCourseId(next));
  for(const field of ['stageSha256','rulesSha256','dolSha256'])assert.notEqual(worldCourseId(old),worldCourseId({...next,[field]:'d'.repeat(64)}));
 });
+
+test('deterministic Falco engine resets only Falco, preserving every other published world',async()=>{
+ const catalog=JSON.parse(await readFile(new URL('../cloud/worlds-catalog.json',import.meta.url)));
+ for(const course of catalog.courses){
+  const old={...course,dolSha256:'3282b4f53589c1dea328dff85b1bb3a069a675e094712f58476af599c9a1dd8f'};
+  const fixed={...course,dolSha256:'bb0768f6ea4e0c4dc6bb565e3baabf357bee50b9589395de0f1fed4fa159a3d1'};
+  if(course.character==='falco')assert.notEqual(worldCourseId(old),worldCourseId(fixed));
+  else assert.equal(worldCourseId(old),worldCourseId(fixed),course.character);
+  assert.notEqual(worldCourseId({...fixed,dolSha256:'f'.repeat(64)}),worldCourseId(fixed));
+ }
+});

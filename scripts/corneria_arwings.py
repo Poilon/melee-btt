@@ -111,7 +111,8 @@ def install(d,scale=1.0,wolfen=False):
     The native factory adapter only remaps those IDs. All per-frame aircraft
     updates, animations, shots and collision activation use retail code. The
     hosted ships face their horizontal travel. Fox repeats the original near
-    path high then low, alternating directions; Falco keeps native selection.
+    path high then low, alternating directions; Falco replays a resettable
+    native flight/banking/laser sequence isolated from fighter RNG.
     """
     sm=SOURCE.roots['map_head'];sg=SOURCE.u(sm+8)
     m=d.roots['map_head'];old=d.u(m+8);groups=d.alloc(22*52)
@@ -144,8 +145,9 @@ def install(d,scale=1.0,wolfen=False):
     d.put(config+8,'I',int(wolfen))
     if wolfen:
         # Original Wolfen animation rig, flight patterns and laser article.
-        # Short pauses between passes; the banking animations still gate fire.
-        d.put(params+0x3c,'4f',120.,180.,120.,180.)
+        # Fixed 2.5-second initial/inter-pass waits. The native banking and
+        # firing decisions use their own stage-reset sequence in the host.
+        d.put(params+0x3c,'4f',150.,150.,150.,150.)
     else:
         # Fox: first dispatch after half a second, then a 0.75–1 second gap.
         # The host plays native near-flight 4 faster and mirrors successive passes.
@@ -219,3 +221,19 @@ def patch_callback(data,offset):
     if len(calls)!=1:raise ValueError('Native aircraft path start not found')
     address=calls[0]
     struct.pack_into('>I',data,offset(address),0x48000001|((symbols['world_arwing_start_path']-address)&0x3fffffc))
+
+    # Every random call in the retail flight subsystem (reset, scheduler,
+    # constructor, banking, laser decisions). The wrappers delegate unchanged
+    # on Fox and stock stages; only Falco uses its archive-local reset seed.
+    expected_sites={0x801dcdcc,0x801dcdf0,0x801dcf1c,0x801dcf50,
+                    0x801dcfe4,0x801dd008,0x801dd14c,0x801dd228,
+                    0x801dd314,0x801dd324,0x801debdc,0x801def4c,
+                    0x801df318,0x801df36c,0x801df588,0x801df5dc,0x801df6f8}
+    random_sites=set()
+    for address in range(0x801dccfc,0x801df8cc,4):
+        word=struct.unpack_from('>I',data,offset(address))[0]
+        for target,symbol in ((0x80380580,'world_arwing_randi'),(0x80380528,'world_arwing_randf')):
+            if word==0x48000001|((target-address)&0x3fffffc):
+                random_sites.add(address)
+                struct.pack_into('>I',data,offset(address),0x48000001|((symbols[symbol]-address)&0x3fffffc))
+    if random_sites!=expected_sites:raise ValueError('Unexpected native aircraft random call sites')

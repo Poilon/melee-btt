@@ -257,3 +257,41 @@ path_started:
  blr
 fox_path_speed:
  .float 1.6
+
+# Only Falco's hosted Corneria calls use this resettable, private sequence.
+# Fighter RNG (including cosmetic random calls) must not change its flights,
+# banking or laser cadence. Restore the engine RNG pointer after every call.
+# config+12 is Fox's pass counter OR Falco's private seed, reset by stage init.
+.global world_arwing_randi,world_arwing_randf
+world_arwing_randi:
+ lis 11,0x8038
+ ori 11,11,0x0580
+ b aircraft_random
+world_arwing_randf:
+ lis 11,0x8038
+ ori 11,11,0x0528
+aircraft_random:
+ mtctr 11
+ lis 12,0x804a
+ lwz 12,-0x18b0(12)
+ cmpwi 12,0x2d
+ bnectr
+ stwu 1,-32(1)
+ mflr 0
+ stw 0,36(1)
+ lis 12,0x804d
+ lwz 0,0x5f94(12)
+ stw 0,8(1)
+ lis 11,0x804a
+ lwz 11,-0x1278(11)
+ lwz 11,0(11)
+ addi 11,11,12
+ stw 11,0x5f94(12)
+ bctrl
+ lis 12,0x804d
+ lwz 0,8(1)
+ stw 0,0x5f94(12)
+ lwz 0,36(1)
+ mtlr 0
+ addi 1,1,32
+ blr

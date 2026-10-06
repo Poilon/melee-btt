@@ -20,9 +20,13 @@ export const WORLD_RULES_VALIDATION_VERSION = 3;
 const compatibleEngines = new Map([
  ['3282b4f53589c1dea328dff85b1bb3a069a675e094712f58476af599c9a1dd8f','ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6'],
 ]);
+// Exact Falco-only aircraft RNG patch. All other stages take the original
+// RNG path, so their existing records remain on the same level revision.
+const falcoDeterministicEngine='bb0768f6ea4e0c4dc6bb565e3baabf357bee50b9589395de0f1fed4fa159a3d1';
 export function worldCourseId({character,stageSha256,dolSha256,rulesSha256}) {
  if(!WORLD_CHARACTERS.some(c=>c.id===character)||![stageSha256,dolSha256,rulesSha256].every(isHash))throw Error('Invalid world revision.');
- return sha256(JSON.stringify(['ttrc-world-v1',character,stageSha256,compatibleEngines.get(dolSha256)||dolSha256,rulesSha256]));
+ const engine=character!=='falco'&&dolSha256===falcoDeterministicEngine?'ace7da8155ac496bef68c096da04c07607429110194b3d4725715a757e01c0a6':compatibleEngines.get(dolSha256)||dolSha256;
+ return sha256(JSON.stringify(['ttrc-world-v1',character,stageSha256,engine,rulesSha256]));
 }
 export function validateWorldCatalog(catalog) {
  if(catalog?.format!=='ttrc-worlds-v1'||!Array.isArray(catalog.courses))throw Error('Invalid world catalog.');

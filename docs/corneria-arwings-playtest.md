@@ -73,3 +73,37 @@ Evidence: `build/editor/fox-shuttle/verification.json`, `cpu.log`,
 
 
 Fox high/low alternation (2026-10-03): native path offsets now repeat -60, +100, -60, +100. The first flight is high, the return is 160 native units lower. A muted private Dolphin run recorded 1,140 samples: phase sequence 0,1,2,3,0,1, high Y 192.6–271.4, low Y 32.6–111.4; Start+Z restarted with phase 0 then 1. No Wolfen instance appeared. PPC execution checks and the five Corneria integration tests passed. Evidence: build/editor/fox-high-low/verification.json. Installed with backups; editor description published.
+
+## Falco repeatable competition revision — 2026-10-06
+
+Falco's first dispatch and inter-flight waits are fixed at 150 frames. All 17
+random calls in Corneria's flight subsystem (scheduler, initialization,
+banking, and laser decisions) now use a private sequence for Falco alone.
+The seed lives in the course archive at config+12 and resets to 0xffffffff
+on stage initialization, including Start+Z. The same native flight sequence
+therefore repeats across attempts, independently of the engine RNG seed or
+random calls made by fighters. The wrapper restores the engine RNG pointer
+on every return. Fox, stock Corneria and Venom continue through the original
+RNG functions without swapping their state. Native models, flight animation
+tracks, damage and collision geometry are unchanged.
+
+The 932-byte adapter ends before the online menu hook at 0x80221d00. It is
+reproducible with `python3 scripts/build_world_arwing.py`. The PPC harness
+executes the retail RNG instructions and checks repeatability over three
+600-frame sequences with different global seeds and interleaved fighter RNG
+calls, engine-state preservation, reset and stock/Fox parity. The archive
+regression checks all 17 call-site patches and fixed Falco waits.
+
+Only GrTFc.dat changes in a full 26-world build. The exact reviewed executable
+hash is treated as compatible for the other 25 characters; Falco has a new
+course ID in both the general catalog and First challenge. Previous Falco
+records are retired, while other character records and challenge dates stay
+unchanged. Old Falco clients cannot submit runs to the retired course ID.
+
+Muted Dolphin validation sampled 1,120 native frames across a real Start+Z
+restart: flight order 1, 3, 4 before restart and 1, 3 afterward, with the seed
+reset before the first dispatch. At 92 shared frame numbers both attempts
+had the same flight type; 83 of 86 sampled aircraft positions were bit-exact
+(the three remaining live reads straddled a simulation update, with at most
+1.02 units difference). Evidence: `build/falco-deterministic/native-verification.json`.
+The 156 JavaScript tests and 96 stage tests passed.

@@ -4,7 +4,7 @@ from pathlib import Path
 from unicorn import Uc,UC_ARCH_PPC,UC_MODE_PPC32,UC_MODE_BIG_ENDIAN,UC_HOOK_CODE
 from unicorn.ppc_const import *
 cpu=Uc(UC_ARCH_PPC,UC_MODE_PPC32|UC_MODE_BIG_ENDIAN);cpu.mem_map(0x80000000,0x1800000)
-code=Path('scripts/native/world-arwing.bin').read_bytes();assert len(code)<=0x5c4
+code=Path('scripts/native/world-arwing.bin').read_bytes();assert len(code)<=0x3d0
 cpu.mem_write(0x80221930,code);symbols=json.loads(Path('scripts/native/world-arwing-symbols.json').read_text())
 cpu.mem_write(0x80221368,Path('scripts/native/world-wind.bin').read_bytes())
 stop=0x81000000;table=0x81500000;config=table+0x100;native=table+0x200;gobj=table+0x400;gp=table+0x600
@@ -115,3 +115,52 @@ for stage in (0xe,0x2d,0x2e):
  W(0x8049e750,stage);path_calls.clear();run('world_arwing_start_path',gobj)
  assert path_calls==([0x801c8138,0x801c7a04] if stage==0x2e else [0x801c8138])
 print('Fox native playback at 1.6x; Falco/stock speed preserved, reset and ABI checks passed')
+
+# Run the original Melee RNG machine code, not a mocked return value. Falco
+# must repeat across arbitrary global seeds/interleaved fighter RNG calls;
+# Fox and stock Corneria must retain their normal shared RNG behavior.
+from build_character_worlds import dol_sections
+with Path('Super Smash Bros. Melee (USA) (En,Ja) (v1.02).iso').open('rb') as f:retail=f.read(0x500000)
+_,sections=dol_sections(retail)
+for address,offset,size in sections:
+ cpu.mem_write(address,retail[offset:offset+size])
+cpu.mem_write(0x80221930,code)
+seed_address=table+0x2000
+def random_call(symbol,limit=13):
+ cpu.reg_write(UC_PPC_REG_MSR,0x2000)
+ cpu.reg_write(UC_PPC_REG_2,0x804df9e0)
+ cpu.reg_write(UC_PPC_REG_13,0x804db6a0)
+ cpu.reg_write(UC_PPC_REG_1,stack)
+ cpu.reg_write(UC_PPC_REG_LR,stop)
+ cpu.reg_write(UC_PPC_REG_3,limit)
+ cpu.emu_start(symbols[symbol] if isinstance(symbol,str) else symbol,stop,count=200)
+ assert cpu.reg_read(UC_PPC_REG_PC)==stop
+ assert cpu.reg_read(UC_PPC_REG_1)==stack and cpu.reg_read(UC_PPC_REG_LR)==stop
+ assert R(0x804d5f94)==seed_address
+ return (cpu.reg_read(UC_PPC_REG_3) if symbol!='world_arwing_randf' else cpu.reg_read(UC_PPC_REG_FPR1))
+W(0x804d5f94,seed_address);W(0x8049ed88,table);W(table,config);W(config,0x434e4152)
+sequences=[]
+for attempt in range(3):
+ W(0x8049e750,0x2d);run('world_arwing_init')
+ assert R(config+12)==0xffffffff
+ sequence=[]
+ for frame in range(600):
+  W(seed_address,(frame*7919+attempt*0x1234567)&0xffffffff)
+  for _ in range(attempt):random_call(0x80380580)
+  before=R(seed_address)
+  sequence.append(random_call('world_arwing_randi',9))
+  sequence.append(random_call('world_arwing_randf'))
+  assert R(seed_address)==before
+ sequences.append(sequence)
+assert sequences[0]==sequences[1]==sequences[2]
+for stage in (0xe,0x16,0x2e):
+ W(0x8049e750,stage);W(config+12,99)
+ for symbol,original in [('world_arwing_randi',0x80380580),('world_arwing_randf',0x80380528)]:
+  W(seed_address,0x12345678)
+  result=random_call(symbol);after=R(seed_address)
+  W(seed_address,0x12345678)
+  if symbol.endswith('randf'):
+   random_call(original);expected=cpu.reg_read(UC_PPC_REG_FPR1)
+  else:expected=random_call(original)
+  assert result==expected and after==R(seed_address) and R(config+12)==99
+print('Falco: 3 identical 600-frame random sequences across different global seeds/fighter RNG; reset, engine RNG preservation and stock/Fox parity passed')
