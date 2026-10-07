@@ -65,7 +65,7 @@ export class WorldHistory{
   let pulse={};try{pulse=JSON.parse(await readFile(join(this.bundle,'.local/world-capture.json'),'utf8'));}catch{}
   const running=pulse.running!==false&&this.now()-pulse.at<10000;
   const progress=Object.fromEntries(bestRuns.filter(r=>r.attemptStatus==='finished'&&!r.exclusionReason).map(r=>[r.character,{runs:r.finishedCount,best:r.frames}]));
-  return {scope:'worlds',totalCharacters:26,progress,personalBest:progress[character]?{frames:progress[character].best}:null,worldCapture:{status:running?'connected':'waiting',dolphinRunning:running},history:rows.filter(r=>r.attemptStatus==='finished'),bestRuns,attempts,stats:{completions:attempts.finished,players:rows.length?1:0,characters:bestRuns.length}};
+  return {scope:'worlds',totalCharacters:26,progress,personalBest:progress[character]?{frames:progress[character].best}:null,worldCapture:{status:running?'connected':'waiting',dolphinRunning:running,error:pulse.error||null},history:rows.filter(r=>r.attemptStatus==='finished'),bestRuns,attempts,stats:{completions:attempts.finished,players:rows.length?1:0,characters:bestRuns.length}};
  }
  async history(playerId,character,offset=0){return (await this.records(playerId)).filter(r=>r.character===character).slice(offset,offset+50);}
  async launch(id,playerId){

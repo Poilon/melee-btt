@@ -117,7 +117,7 @@ function render(d){
  text('seed',d.challenge.rules.seed);text('player-name',ident?.displayName||'Not signed in');text('player-code',ident?.slug ? `@${ident.slug}` : ident?.connectCode || 'Username and password');text('avatar',ident?.displayName.slice(0,2).toUpperCase()||'?');
  text('check-player',`${ident?'✓':'○'} Signed in`);text('connection',connected?ident?'Dolphin connected':'Practice · no player':'Waiting for Dolphin');$('connection').classList.toggle('on',connected&&Boolean(ident));
  text('launch-note',ident?'Automatic submissions on · valid personal bests upload with their replays.':'Practice mode: sign in before starting a scored run.');
- text('sync',d.remote?.lastError|| (d.remote?.pending?`${d.remote.pending} submission(s) waiting to upload.`:'Automatic submissions on. No uploads waiting.'));
+ text('sync',c.error||d.remote?.lastError|| (d.remote?.pending?`${d.remote.pending} submission(s) waiting to upload.`:'Automatic submissions on. No uploads waiting.'));
  const count=Object.values(d.progress||{}).filter(p=>p.best).length;$('progress-count').replaceChildren(document.createTextNode(count+' '),make('small',`/ ${d.totalCharacters||25} cleared`));$('progress').max=d.totalCharacters||25;$('progress').value=count;
  for(const [character,cache]of attempts){if(cache.loading)continue;const fresh=new Map(d.history.map(r=>[r.id,r]));cache.rows=cache.rows.map(r=>fresh.get(r.id)||r);}
  text('total-attempts',d.attempts?.total??(d.bestRuns||[]).reduce((n,r)=>n+r.attemptCount,0));text('finished-attempts',d.attempts?.finished??(d.bestRuns||[]).reduce((n,r)=>n+(r.finishedCount??r.attemptCount),0));text('active-attempts',d.attempts?.active?`${d.attempts.active} in progress`:'');

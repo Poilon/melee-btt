@@ -123,7 +123,7 @@ export async function serveWorlds({root,course,pid,playReplay,onSample,client:pr
  child.stderr.resume();const lines=createInterface({input:child.stdout});let current='',active=null,lastIdentity='';
  lines.on('line',line=>{
   let message;try{message=JSON.parse(line);}catch{return;}
-  if(message.sample){onSample?.(message.sample,client.identity);capture?.detector.sample(message.sample,client.identity);}else capture?.detector.reset();
+  if(message.sample){onSample?.(message.sample,client.identity);capture?.detector.sample(message.sample,client.identity);}
   const q=parseMailbox(message.mailbox);
   if(!q){lastIdentity='';return;}
   const name=client.identity?.slug||client.identity?.displayName||'';
