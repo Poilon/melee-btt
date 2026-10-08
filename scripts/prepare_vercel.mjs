@@ -15,6 +15,9 @@ for (const name of ['public', 'api', 'cloud', 'challenge', 'shared','src','gener
 }
 // Explicit allowlist: no ISO, user.json, database, credentials, or local tools.
 await cp(join(root, 'web'), join(out, 'public'), { recursive: true });
+// Official browser BTT is built independently from the Dolphin/custom stages.
+const browserBundle = process.env.MELEE_BROWSER_BTT_BUILD || join(root, '../melee-browser/build/btt-site/play');
+await cp(browserBundle, join(out, 'public/play'), { recursive: true });
 await cp(join(root, 'cloud'), join(out, 'cloud'), { recursive: true });
 await cp(join(root, 'shared'), join(out, 'shared'), { recursive: true });
 await cp(join(root, 'src'), join(out, 'src'), { recursive: true });
@@ -28,12 +31,19 @@ await writeFile(join(out, 'package.json'), JSON.stringify({ name: 'target-test-r
 await writeFile(join(out, 'vercel.json'), JSON.stringify({
   framework: null, outputDirectory: 'public', installCommand: 'npm install --omit=dev', buildCommand: '',
   functions: { 'api/index.mjs': { includeFiles: '{challenge/**,generator-sources/**,src/gecko/**,cloud/worlds-catalog.json,cloud/worlds-first-challenge.json}', maxDuration: 30 } },
-  rewrites: [{ source: '/editor', destination: '/editor/index.html' }, { source: '/review', destination: '/review.html' }, { source: '/players/:slug', destination: '/legacy-challenge.html' }, { source: '/api/:route*', destination: '/api/index?route=:route*' }],
+  rewrites: [{ source: '/play', destination: '/play/index.html' }, { source: '/editor', destination: '/editor/index.html' }, { source: '/review', destination: '/review.html' }, { source: '/players/:slug', destination: '/legacy-challenge.html' }, { source: '/api/:route*', destination: '/api/index?route=:route*' }],
   headers: [{ source: '/(.*)', headers: [
     { key: 'X-Content-Type-Options', value: 'nosniff' },
     { key: 'Referrer-Policy', value: 'no-referrer' },
     { key: 'Content-Security-Policy', value: "default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' blob:; media-src 'self' blob:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'" },
-  ] }, { source: '/editor', headers: [{ key: 'Cache-Control', value: 'no-store' }] },
+  ] }, { source: '/play/:path*', headers: [
+    { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
+    { key: 'Cross-Origin-Embedder-Policy', value: 'require-corp' },
+    { key: 'Content-Security-Policy', value: "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; connect-src 'self' ws://127.0.0.1:4326; img-src 'self' blob:; worker-src 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'" },
+  ] },
+  { source: '/play/:path*.mjs', headers: [{ key: 'Content-Type', value: 'text/javascript; charset=utf-8' }] },
+  { source: '/play/btt-game/:asset*.blob', headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }] },
+  { source: '/editor', headers: [{ key: 'Cache-Control', value: 'no-store' }] },
   { source: '/editor/:path*', headers: [{ key: 'Cache-Control', value: 'no-store' }] }],
 }, null, 2));
 await writeFile(join(out, '.vercelignore'), '.env*\nnode_modules\n');

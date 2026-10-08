@@ -249,3 +249,20 @@ volume and sound effects are preserved. Adapter rumble is configured for all
 four ports; emulated controller motor strengths are restored when re-enabled.
 Sources: [Slippi music patch](https://github.com/project-slippi/slippi-ssbm-asm/blob/master/Binary/GameMusicOff.bin),
 [Dolphin configuration](https://github.com/project-slippi/Ishiiruka/blob/slippi/Source/Core/Core/ConfigManager.cpp).
+
+## Official browser BTT beta (October 2026)
+
+`https://www.melee-btt.com/play` hosts the native WebAssembly Target Test port
+from the sibling `Poilon/melee-browser` repository. This is the original game’s
+Target Test; the custom-level Dolphin leaderboards remain separate. Browser bests
+are local to the device; no scores are sent to the custom challenge API.
+
+Before publishing this website, build the browser repo's verified artifact with
+`npm run build:btt-site`. `scripts/prepare_vercel.mjs` copies
+`../melee-browser/build/btt-site/play` into the deployment's public directory.
+Set `MELEE_BROWSER_BTT_BUILD` to the `play` artifact directory when using another
+layout. The prepare step intentionally fails if the artifact is unavailable,
+so a routine website deployment cannot silently remove the playable game.
+The runtime requires the route-specific WASM CSP, COOP/COEP headers and JavaScript
+MIME rules already emitted by the deployment script. It does not use the Fly VS
+relay and does not require another server.
