@@ -1,6 +1,7 @@
 import { get, put, del, list, BlobPreconditionFailedError } from '@vercel/blob';
 
 export class CloudStore {
+  constructor({ getBlob = get } = {}) { this.getBlob = getBlob; }
   async get(path) {
     const result = await get(path, { access: 'private', useCache: false });
     return result?.statusCode === 200 ? new Response(result.stream).json() : null;
@@ -10,7 +11,10 @@ export class CloudStore {
       allowOverwrite: overwrite, contentType: 'application/json', cacheControlMaxAge: 0 });
   }
   async readVersion(path) {
-    const result = await get(path, { access: 'private', useCache: false });
+    // Compression changes strong ETags into weak validators (W/…), which
+    // cannot satisfy Blob's If-Match conditional writes. Read the exact stored
+    // representation so the value and its strong version come from one read.
+    const result = await this.getBlob(path, { access: 'private', useCache: false, headers: { 'Accept-Encoding': 'identity' } });
     return result?.statusCode === 200 ? { value: await new Response(result.stream).json(), etag: result.blob.etag } : null;
   }
   async writeVersion(path, value, etag) {
