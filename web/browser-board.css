@@ -92,8 +92,12 @@
   font-family: Consolas, monospace;
 }
 @media (max-width: 800px) {
-  .browser-leaderboard .records { grid-template-columns: minmax(0, 1fr); }
-  .browser-leaderboard .records aside { min-width: 0; }
+  .browser-leaderboard .records {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .browser-leaderboard .records aside {
+    min-width: 0;
+  }
   .browser-leaderboard .intro {
     min-height: 280px;
   }
@@ -118,4 +122,17 @@
   .browser-guide {
     padding: 36px 0;
   }
+}
+
+.browser-leaderboard .competition-notice {
+  margin: 0 0 20px;
+  padding: 12px 16px;
+  border-left: 3px solid var(--gold);
+  background: #171f30;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.browser-leaderboard .competition-notice strong {
+  color: var(--gold);
 }
