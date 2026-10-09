@@ -144,6 +144,25 @@ export class BttRecorder {
       overflow: false,
     });
   }
+  static fromReplay(replay, frame, state, name = "") {
+    const events = replay.frameEvents(frame);
+    const recorder = new BttRecorder({
+      fighter: replay.fighter,
+      engine: replay.engine,
+      seed: replay.seed,
+      name,
+    });
+    recorder.parts = [events];
+    recorder.inputs = Array.from(replay.inputs.subarray(0, frame * 10));
+    recorder.ucfEnabled = Array.from({ length: frame }, (_, i) =>
+      Number(replay.ucf(i)),
+    );
+    recorder.checks = [replay.checks.slice(0, frame * 6)];
+    recorder.count = frame;
+    recorder.practice = true;
+    recorder.last = state.slice();
+    return recorder;
+  }
   record(pad, before, after, cstick, ucf = true) {
     if (this.count >= MAX_REPLAY_FRAMES) {
       this.overflow = true;
@@ -372,6 +391,11 @@ export function parseBttReplay(input) {
     start.getUint32(0x145) !== Number(ucf(0))
   )
     throw Error("Replay UCF settings mismatch.");
+  const frameStart = at;
+  const frameBytes = [0x3a, 0x37, 0x38, 0x3c].reduce(
+    (n, c) => n + 1 + sizes.get(c),
+    0,
+  );
   const posts = [];
   for (let i = 0; i < count; i++)
     for (const c of [0x3a, 0x37, 0x38, 0x3c]) {
@@ -402,6 +426,11 @@ export function parseBttReplay(input) {
     name: m.players?.["0"]?.names?.netplay || "",
     posts,
     ucf,
+    frameEvents(frame) {
+      if (!Number.isSafeInteger(frame) || frame < 1 || frame > count)
+        throw Error("Invalid replay branch frame.");
+      return raw.slice(frameStart, frameStart + frame * frameBytes);
+    },
     pad(i) {
       return Array.from(this.inputs.subarray(i * 10, i * 10 + 9));
     },
