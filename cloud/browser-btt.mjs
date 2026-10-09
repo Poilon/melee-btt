@@ -1,0 +1,236 @@
+import { createHash, createHmac } from "node:crypto";
+import { gunzipSync } from "node:zlib";
+import {
+  parseBttReplay,
+  MAX_REPLAY_BYTES,
+} from "../shared/browser-btt-replay.mjs";
+import { publicProfile } from "./auth.mjs";
+const validId = (x) => typeof x === "string" && /^[a-f0-9]{64}$/.test(x);
+const digest = (x) => createHash("sha256").update(x).digest("hex");
+const error = (message, status = 400) =>
+  Object.assign(Error(message), { status });
+async function input(req) {
+  let value = req.body;
+  if (value === undefined) {
+    let chunks = [],
+      size = 0;
+    for await (const c of req) {
+      const b = Buffer.from(c);
+      size += b.length;
+      if (size > 4 * 1024 * 1024)
+        throw error("Replay upload is too large.", 413);
+      chunks.push(b);
+    }
+    value = Buffer.concat(chunks).toString("utf8");
+  }
+  if (typeof value === "string") {
+    if (value.length > 4 * 1024 * 1024)
+      throw error("Replay upload is too large.", 413);
+    try {
+      value = JSON.parse(value);
+    } catch {
+      throw error("Invalid request.");
+    }
+  }
+  if (!value || typeof value !== "object") throw error("Invalid request.");
+  return value;
+}
+export function createBrowserBtt({
+  store,
+  session,
+  json,
+  origin,
+  secret,
+  now,
+}) {
+  const rowPath = (uid, id) => `browser-btt/runs/${uid}/${id}.json`;
+  const replayPath = (uid, id) => `browser-btt/replays/${uid}/${id}.json`;
+  async function once(path, value) {
+    try {
+      await store.put(path, value);
+    } catch (e) {
+      if (!(await store.get(path))) throw e;
+    }
+  }
+  async function update(path, change) {
+    for (let i = 0; i < 8; i++) {
+      const previous = await store.readVersion(path),
+        value = change(previous?.value);
+      if (previous) {
+        if (await store.writeVersion(path, value, previous.etag)) return value;
+      } else {
+        try {
+          await store.put(path, value);
+          return value;
+        } catch (e) {
+          if (!(await store.get(path))) throw e;
+        }
+      }
+    }
+    throw error(
+      "Your account is busy saving another run. This replay will be retried.",
+      503,
+    );
+  }
+  async function indexRun(uid, run) {
+    await update(`browser-btt/index/${uid}.json`, (old) => {
+      const runs = [run, ...(old?.runs || []).filter((r) => r.id !== run.id)]
+        .sort(
+          (a, b) =>
+            b.createdAt.localeCompare(a.createdAt) || a.id.localeCompare(b.id),
+        )
+        .slice(0, 100);
+      const best = { ...(old?.best || {}) };
+      if (!best[run.fighter] || run.frames < best[run.fighter].frames)
+        best[run.fighter] = run;
+      return { runs, best };
+    });
+  }
+  async function userFor(req) {
+    const u = await session(req);
+    if (!u) throw error("Sign in to save or view your runs.", 401);
+    return u;
+  }
+  return async (path, req, res, url) => {
+    if (!path.startsWith("browser-btt/")) return false;
+    try {
+      if (path === "browser-btt/session" && req.method === "GET") {
+        const u = await session(req),
+          p = u && (await store.get(`profiles/${u.id}.json`));
+        json(res, 200, { profile: p ? publicProfile(p) : null });
+        return true;
+      }
+      if (path === "browser-btt/runs" && req.method === "GET") {
+        const u = await userFor(req);
+        const index = await store.get(`browser-btt/index/${u.id}.json`);
+        json(res, 200, index || { runs: [], best: {} });
+        return true;
+      }
+      if (path === "browser-btt/runs" && req.method === "POST") {
+        const u = await userFor(req),
+          data = await input(req);
+        if (data.owner !== u.id)
+          throw error(
+            "Account changed. Sign in to the account that recorded this run.",
+            409,
+          );
+        if (
+          typeof data.gzip !== "string" ||
+          data.gzip.length > 4 * 1024 * 1024 ||
+          !/^[A-Za-z0-9+/]+={0,2}$/.test(data.gzip)
+        )
+          throw error("Invalid replay upload.", 413);
+        let bytes, replay;
+        try {
+          bytes = gunzipSync(Buffer.from(data.gzip, "base64"), {
+            maxOutputLength: MAX_REPLAY_BYTES,
+          });
+          replay = parseBttReplay(bytes);
+        } catch (e) {
+          throw error(e.message || "Invalid replay.");
+        }
+        if (!replay.complete || replay.practice)
+          throw error(
+            "Only completed attempts with official controls can save a score.",
+          );
+        const id = digest(bytes),
+          existing = await store.get(rowPath(u.id, id));
+        if (existing) {
+          await indexRun(u.id, existing);
+          json(res, 200, { run: existing });
+          return true;
+        }
+        // Constant-cost counter instead of one storage read per earlier upload.
+        const hour = Math.floor(now() / 3600000);
+        await update(`browser-btt/limits/${u.id}/${hour}.json`, (old) => {
+          if ((old?.count || 0) >= 600)
+            throw error(
+              "Uploads are temporarily rate limited. Your local replay will be retried automatically.",
+              429,
+            );
+          return { count: (old?.count || 0) + 1 };
+        });
+        const p = await store.get(`profiles/${u.id}.json`);
+        const run = {
+          id,
+          fighter: replay.fighter,
+          frames: replay.frames,
+          engine: replay.engine,
+          createdAt: new Date(now()).toISOString(),
+          displayName: p?.displayName || u.username,
+          status: "browser-recorded",
+          bytes: bytes.length,
+        };
+        await once(replayPath(u.id, id), { gzip: data.gzip });
+        await once(rowPath(u.id, id), run);
+        const saved = await store.get(rowPath(u.id, id));
+        await indexRun(u.id, saved);
+        json(res, 200, { run: saved });
+        return true;
+      }
+      if (path === "browser-btt/share" && req.method === "POST") {
+        const u = await userFor(req),
+          data = await input(req);
+        if (!validId(data.id)) throw error("Replay not found.", 404);
+        const run = await store.get(rowPath(u.id, data.id));
+        if (!run) throw error("Replay not found.", 404);
+        if (!secret) throw error("Sharing is temporarily unavailable.", 503);
+        const key = createHmac("sha256", secret)
+          .update(`browser-replay:${u.id}:${data.id}`)
+          .digest("hex");
+        await once(`browser-btt/shares/${key}.json`, {
+          userId: u.id,
+          id: run.id,
+        });
+        json(res, 200, { url: `${origin}/play?replay=${key}` });
+        return true;
+      }
+      if (
+        ["browser-btt/replay", "browser-btt/shared"].includes(path) &&
+        req.method === "GET"
+      ) {
+        let uid, id;
+        const key = url.searchParams.get("share");
+        if (key) {
+          if (!validId(key)) throw error("Replay not found.", 404);
+          const share = await store.get(`browser-btt/shares/${key}.json`);
+          if (!share) throw error("Replay not found.", 404);
+          uid = share.userId;
+          id = share.id;
+        } else {
+          const u = await userFor(req);
+          uid = u.id;
+          id = url.searchParams.get("id");
+        }
+        if (!validId(id)) throw error("Replay not found.", 404);
+        const run = await store.get(rowPath(uid, id));
+        if (!run) throw error("Replay not found.", 404);
+        if (path === "browser-btt/shared") {
+          json(res, 200, { run });
+          return true;
+        }
+        const saved = await store.get(replayPath(uid, id));
+        if (!saved) throw error("Replay file not found.", 404);
+        const bytes = gunzipSync(Buffer.from(saved.gzip, "base64"), {
+          maxOutputLength: MAX_REPLAY_BYTES,
+        });
+        res.writeHead(200, {
+          "Content-Type": "application/octet-stream",
+          "Content-Disposition": `attachment; filename="BTT-${run.fighter}-${run.frames}-${id.slice(0, 8)}.slp"`,
+          "Content-Length": bytes.length,
+        });
+        res.end(bytes);
+        return true;
+      }
+      json(res, 404, { error: "Resource not found." });
+      return true;
+    } catch (e) {
+      json(res, e.status || 503, {
+        error: e.status
+          ? e.message
+          : "Could not save or load your replay. Please try again.",
+      });
+      return true;
+    }
+  };
+}

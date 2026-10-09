@@ -1,3 +1,4 @@
+import { createBrowserBtt } from './browser-btt.mjs';
 import { createAuth, publicProfile } from './auth.mjs';
 import { currentCredential } from './password.mjs';
 import { createWorlds } from './worlds.mjs';
@@ -35,6 +36,7 @@ export function createCloudHandler({ store, challenge, gecko, origin, secret, re
     return JSON.parse(data || '{}');
   };
   const auth = createAuth({ store, origin, secret, session, body, cookie, json, now, gameAccountsOnly });
+  const browserBtt = createBrowserBtt({store,session,json,origin,secret,now});
   const worlds = createWorlds({store,catalog:worldsCatalog,challenges:worldsChallenges,bearer,json,now});
   const competition = createCompetition({ store, challenge, gecko, origin, reviewerKey, endsAt, challengeManager, bearer, session, json, now });
 
@@ -49,6 +51,7 @@ export function createCloudHandler({ store, challenge, gecko, origin, secret, re
         return json(res, 403, { error: 'Action not allowed.' });
       }
       if (await auth(path, req, res, url)) return;
+      if (await browserBtt(path, req, res, url)) return;
       if (await worlds(path, req, res, url)) return;
       if (await competition.handle(path, req, res)) return;
       if(req.method==='GET'&&path==='challenges/mine'){
