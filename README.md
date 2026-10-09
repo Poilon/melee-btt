@@ -150,3 +150,41 @@ From v0.9.0, starting Custom Melee BTT Dolphin or the companion checks the lates
 Updates preserve `.local`, `User`, `Replays`, `Games`, playback Dolphin and `build/challenge`, including the current seed and ISO path. Only inventoried application files are replaced. The installer runs from a separate Node copy, verifies the archive checksum and file inventory, backs up changed files under `.local/updates/backup`, and rolls back on an installation error. An interrupted file transaction is recovered on the next companion start. Downloaded updates require 1.5 GB free space. Development checkouts do not auto-update.
 
 Updater verification: `node --test test/app-updates.test.mjs`, `npm run test:ui`, and on Windows `npm run test:update:windows` (isolated installation, file-lock rollback, service restart and data preservation). The Windows build workflow runs the Windows integration test.
+
+### Browser weekly competitions
+
+`/weekly.html` is the permanent weekly competition page, separate from the
+all-time browser leaderboard and the archived Dolphin/custom-stage challenges.
+The opening round is Dr. Mario, October 10–12, 2026. Subsequent rounds change
+every Monday at 00:00 **Europe/Paris**, including daylight-saving transitions.
+Characters rotate in Melee select-screen order, including Zelda and Sheik as
+separate featured fighters. There is no 1v1 mode or rating system here.
+
+The calendar is deterministic (`shared/browser-weekly.mjs`); no scheduled job,
+extra server, or manual round creation is needed. The API derives the current
+round and provides public standings and previous/next archive links. A round
+accepts only completed non-practice runs of its featured character and pinned
+engine. UCF on/off is accepted. The signed entry binds the account, round and
+server entry time; the browser uses that server clock for replay start times.
+It must enter through the weekly page, start a fresh run and upload before the
+exclusive deadline. Old records and later uploads never roll into the new round.
+This remains a browser-recorded beta competition, not independently verified
+competitive play; the entry ticket is not an anti-cheat proof of execution.
+
+Only each player's best weekly time is ranked; equal times share a rank. Weekly
+indexes are independent of the all-time best and survive the personal recent-run
+list's retention limit. Entry replays stay public for archive viewing. A receipt
+saved before the deadline retains its admission when a partial storage failure
+requires a retry after the round has closed. Late runs still save as personal
+records and display why they were not entered in the weekly competition.
+
+Engine changes must append a future `fromWeek` in `WEEKLY_ENGINES`; do not alter
+a past or active round's version. Site preparation verifies that every pinned
+engine is still in the replay archive.
+
+Validation: `node --test test/browser-weekly.test.mjs test/browser-btt.test.mjs`.
+After building the site, `node scripts/serve-weekly-smoke.mjs` and
+`node scripts/smoke-browser-weekly.mjs` exercise entry, the real native engine,
+restart, IndexedDB upload, public replay and the leaderboard with a dedicated
+muted Chrome CDP endpoint on port 9333. The fixture uses only ephemeral local
+accounts and synthetic test results; it never submits runs to production.

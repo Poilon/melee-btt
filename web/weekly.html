@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#0c1017" />
+    <title>Weekly competitions · Melee BTT Beta</title>
+    <link rel="icon" href="/favicon-site.svg" />
+    <link rel="stylesheet" href="/worlds.css" />
+    <link rel="stylesheet" href="/browser-board.css" />
+    <link rel="stylesheet" href="/weekly.css" />
+    <script type="module" src="/weekly.js"></script>
+  </head>
+  <body class="browser-leaderboard weekly-page">
+    <a class="skip" href="#weekly-board">Skip to weekly leaderboard</a>
+    <header>
+      <a class="brand" href="/"
+        ><img src="/target.svg" width="36" height="36" alt="" /><span
+          >Melee BTT <span class="beta-badge">Beta</span
+          ><small>BREAK THE TARGETS · BROWSER</small></span
+        ></a
+      >
+      <nav aria-label="Main">
+        <a href="/">Leaderboard</a
+        ><a href="/weekly.html" aria-current="page">Weekly</a
+        ><a href="/play">Play</a><a href="/play/spectate.html">Spectate</a>
+      </nav>
+    </header>
+    <main>
+      <section class="weekly-hero">
+        <div>
+          <p class="eyebrow">ONE STAGE. ONE WEEK. YOUR BEST RUN.</p>
+          <h1 id="title">Weekly competitions</h1>
+          <p id="dates">
+            A new competition every Monday at 00:00, Europe/Paris.
+          </p>
+          <p id="countdown" class="weekly-clock" aria-live="off"></p>
+          <a id="enter" class="play-now" hidden>Enter competition →</a>
+          <p id="next-round" class="note"></p>
+        </div>
+        <img id="portrait" alt="" width="200" height="220" hidden />
+      </section>
+      <section class="board" id="weekly-board">
+        <div class="board-heading">
+          <div>
+            <p class="eyebrow" id="phase">WEEKLY LEADERBOARD</p>
+            <h2 id="board-title">Loading…</h2>
+          </div>
+          <button id="refresh">Refresh</button>
+        </div>
+        <p id="status" role="status">Loading competition…</p>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Rank</th>
+                <th scope="col">Player</th>
+                <th scope="col">Time</th>
+                <th scope="col">UCF</th>
+                <th scope="col">Watch</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <button id="previous" disabled>Previous</button
+          ><span id="page-count"></span><button id="next" disabled>Next</button>
+        </div>
+      </section>
+      <nav class="weekly-archive" aria-label="Competition archive">
+        <a id="older" hidden>← Previous competition</a
+        ><a href="/weekly.html">Current competition</a
+        ><a id="newer" hidden>Next competition →</a>
+      </nav>
+      <section class="weekly-rules">
+        <h2>How it works</h2>
+        <ol>
+          <li>Open the competition and sign in with your Melee BTT account.</li>
+          <li>
+            Play the featured character on its original Target Test stage. Try
+            as often as you want; your fastest eligible clear counts.
+          </li>
+          <li>
+            Finish and upload before the countdown ends. Runs must start during
+            this competition. Previous records and late uploads do not carry
+            over.
+          </li>
+          <li>
+            Your best weekly time and replay appear here automatically. Equal
+            times share a rank.
+          </li>
+          <li>
+            Every Monday at 00:00 in Europe/Paris, the next competition opens.
+            Completed competitions keep their results and replays.
+          </li>
+        </ol>
+        <p>
+          Official C-stick camera controls only; replay takeovers are practice
+          and do not count. UCF on or off is accepted. The game version is fixed
+          for each competition and loads automatically.
+        </p>
+        <p>
+          The opening round runs from October 10 to October 12, 2026. Following
+          rounds last a full calendar week.
+        </p>
+        <p class="competition-notice">
+          <strong>Community beta competition:</strong> browser-recorded runs are
+          not independently verified or approved for external competitive
+          leaderboards. See the
+          <a
+            href="https://www.speedrun.com/ssbm?rules=game"
+            target="_blank"
+            rel="noopener noreferrer"
+            >leaderboard rules</a
+          >
+          and
+          <a
+            href="https://www.speedrun.com/ssbm/guides/8oxqf"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Dolphin setup guide</a
+          >.
+        </p>
+      </section>
+    </main>
+    <footer>
+      <span>Melee BTT · Browser Beta</span><a href="/play">Play in browser</a>
+    </footer>
+  </body>
+</html>

@@ -3,22 +3,30 @@ import assert from "node:assert/strict";
 import { gzipSync } from "node:zlib";
 import { createCloudHandler } from "../cloud/backend.mjs";
 import { BttRecorder } from "../shared/browser-btt-replay.mjs";
-function replay({ practice = false, complete = true, ucf = true } = {}) {
+function replay({
+  practice = false,
+  complete = true,
+  ucf = true,
+  fighter = 2,
+  engine = "a".repeat(64),
+  startAt = "2026-10-09T00:00:00.000Z",
+  frames = 2,
+} = {}) {
   const r = new BttRecorder({
-    fighter: 2,
-    engine: "a".repeat(64),
-    startAt: "2026-10-09T00:00:00.000Z",
+    fighter,
+    engine,
+    startAt,
   });
   const s = [1, 2, 3, 0, 1, 14, 2, 1, 10, 10, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0];
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i <= frames; i++) {
     const before = s.slice();
     s[10] = i;
-    s[8] = complete && i === 2 ? 0 : 10;
+    s[8] = complete && i === frames ? 0 : 10;
     r.record([1, 0, 0, 128, 128, 128, 128, 0, 0], before, s, practice, ucf);
   }
   return Buffer.from(r.finish({ complete, practice }));
 }
-function fixture() {
+function fixture(now = Date.now) {
   const rows = new Map(),
     versions = new Map();
   const store = {
@@ -50,6 +58,7 @@ function fixture() {
     origin,
     secret: "test",
     gameAccountsOnly: true,
+    now,
     challenge: { id: "test", assignments: {}, rules: {} },
     gecko: "",
   });
@@ -92,7 +101,7 @@ function fixture() {
       id: r.data.profile.id,
     };
   }
-  return { rows, request, account };
+  return { rows, request, account, store };
 }
 const post = (a, body) => ({ method: "POST", cookie: a.cookie, body });
 const payload = (a, bytes = replay()) => ({
@@ -539,4 +548,172 @@ test("live tickets are authenticated, signed for the account, and CSRF protected
   assert.equal(claims.exp - claims.iat, 900);
   assert.equal(r.data.relay, "wss://melee-browser-relay.fly.dev/btt-spectate");
   assert.deepEqual(Object.keys(k.data), ["publicKey"]);
+});
+
+test("weekly competition: fresh runs, separate bests, ties, public replay and automatic rollover", async () => {
+  const { weeklyRound } = await import("../shared/browser-weekly.mjs");
+  let time = Date.parse("2026-10-10T12:00:00+02:00");
+  const f = fixture(() => time),
+    a = await f.account("WeeklyAlice"),
+    b = await f.account("WeeklyBob");
+  const round = weeklyRound(1, time),
+    options = {
+      fighter: 22,
+      engine: round.engine,
+      startAt: new Date(time).toISOString(),
+    };
+  const old = await f.request(
+    "browser-btt/runs",
+    post(a, payload(a, replay({ ...options, frames: 1 }))),
+  );
+  assert.equal(old.status, 200);
+  const ticket = async (account) =>
+    (await f.request("browser-btt/weekly/entry", post(account, { week: 1 })))
+      .data.ticket;
+  const ta = await ticket(a),
+    tb = await ticket(b);
+  const submit = (account, t, opts = {}) =>
+    f.request(
+      "browser-btt/runs",
+      post(account, {
+        ...payload(account, replay({ ...options, ...opts })),
+        weeklyTicket: t,
+      }),
+    );
+  const first = await submit(a, ta, { frames: 4 });
+  assert.equal(first.status, 200);
+  assert.equal(first.data.weekly.accepted, true);
+  const second = await submit(a, ta, { frames: 3 }),
+    tie = await submit(b, tb, { frames: 3 });
+  assert.equal(second.data.weekly.accepted, true);
+  assert.equal(tie.data.weekly.accepted, true);
+  let board = (await f.request("browser-btt/weekly")).data;
+  assert.equal(board.total, 2);
+  assert.deepEqual(
+    board.rows.map((r) => r.rank),
+    [1, 1],
+  );
+  assert.equal(board.rows[0].frames, 3);
+  assert.equal(
+    f.rows.get(`browser-btt/index/${a.id}.json`).best[22].frames,
+    1,
+    "All-time best is independent",
+  );
+  const share = new URL(
+    board.rows[0].replayUrl,
+    "https://test.example",
+  ).searchParams.get("replay");
+  assert.equal(
+    (await f.request("browser-btt/replay?share=" + share)).status,
+    200,
+  );
+  assert.equal(
+    (await submit(a, ta, { frames: 6, startAt: "2026-10-09T00:00:00Z" })).data
+      .weekly.accepted,
+    false,
+  );
+  assert.equal(
+    (await submit(a, ta, { frames: 7, fighter: 2 })).data.weekly.accepted,
+    false,
+  );
+  assert.equal(
+    (await submit(a, ta, { frames: 8, engine: "b".repeat(64) })).data.weekly
+      .accepted,
+    false,
+  );
+  assert.equal(
+    (await submit(a, tb, { frames: 9 })).data.weekly.accepted,
+    false,
+  );
+  assert.equal(
+    (await submit(a, ta + "x", { frames: 10 })).data.weekly.accepted,
+    false,
+  );
+  assert.equal(
+    (await submit(a, ta, { frames: 11, practice: true })).status,
+    400,
+  );
+  time = Date.parse(round.endsAt);
+  assert.equal(
+    (await submit(a, ta, { frames: 12 })).data.weekly.accepted,
+    false,
+    "Deadline is exclusive",
+  );
+  board = (await f.request("browser-btt/weekly")).data;
+  assert.equal(board.round.number, 2);
+  assert.equal(board.round.character.fighter, 8);
+  assert.equal(board.total, 0);
+  const archive = (await f.request("browser-btt/weekly?week=1")).data;
+  assert.equal(archive.round.status, "closed");
+  assert.equal(archive.total, 2);
+  const retry = await submit(a, ta, { frames: 3 });
+  assert.equal(
+    retry.data.weekly.accepted,
+    true,
+    "Idempotent saved entry remains eligible after closure",
+  );
+  assert.equal(
+    (await f.request("browser-btt/weekly?week=1")).data.rows[0].frames,
+    3,
+  );
+  assert.equal(
+    (await f.request("browser-btt/replay?share=" + share)).status,
+    200,
+    "Archive replay remains public",
+  );
+  assert.equal(
+    (await f.request("browser-btt/weekly/entry", post(a, { week: 1 }))).status,
+    409,
+  );
+  assert.equal(
+    (
+      await f.request("browser-btt/weekly/entry", {
+        method: "POST",
+        body: { week: 2 },
+      })
+    ).status,
+    401,
+  );
+});
+
+test("weekly upload retry after storage failure preserves pre-deadline admission and never replaces a faster run", async () => {
+  const { weeklyRound } = await import("../shared/browser-weekly.mjs");
+  let time = Date.parse("2026-10-11T23:59:00+02:00");
+  const f = fixture(() => time),
+    a = await f.account("WeeklyRetry"),
+    round = weeklyRound(1, time);
+  const t = await f.request("browser-btt/weekly/entry", post(a, { week: 1 }));
+  const bytes = replay({
+    fighter: 22,
+    engine: round.engine,
+    startAt: new Date(time).toISOString(),
+    frames: 6,
+  });
+  const body = { ...payload(a, bytes), weeklyTicket: t.data.ticket },
+    put = f.store.put;
+  f.store.put = async (path, ...args) => {
+    if (path.startsWith("browser-btt/weekly/"))
+      throw Error("temporary failure");
+    return put(path, ...args);
+  };
+  assert.equal(
+    (await f.request("browser-btt/runs", post(a, body))).status,
+    503,
+  );
+  time = Date.parse(round.endsAt) + 1000;
+  f.store.put = put;
+  assert.equal(
+    (await f.request("browser-btt/runs", post(a, body))).data.weekly.accepted,
+    true,
+  );
+  assert.equal(
+    (await f.request("browser-btt/weekly?week=1")).data.rows[0].frames,
+    6,
+  );
+  assert.equal((await f.request("browser-btt/weekly?week=2")).data.total, 0);
+  assert.equal(
+    (await f.request("browser-btt/weekly/entry", post(a, { week: "nope" })))
+      .status,
+    404,
+  );
 });

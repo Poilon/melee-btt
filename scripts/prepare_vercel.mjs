@@ -1,6 +1,7 @@
 import { mkdir, cp, readFile, writeFile, rm } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { generateChallenge } from '../src/challenge.mjs';
+import {WEEKLY_ENGINES} from '../shared/browser-weekly.mjs';
 import {readSources} from '../src/upstream.mjs';
 
 const root = resolve(import.meta.dirname, '..');
@@ -18,6 +19,12 @@ await cp(join(root, 'web'), join(out, 'public'), { recursive: true });
 // Official browser BTT is built independently from the Dolphin/custom stages.
 const browserBundle = process.env.MELEE_BROWSER_BTT_BUILD || join(root, '../melee-browser/build/btt-site/play');
 await cp(browserBundle, join(out, 'public/play'), { recursive: true });
+// A weekly competition keeps its original engine across later deployments.
+for(const {engine} of WEEKLY_ENGINES){
+  const metadata=JSON.parse(await readFile(join(browserBundle,'native/versions',engine,'build.json'),'utf8'));
+  if(metadata.sha256!==engine)throw new Error('Weekly engine archive mismatch: '+engine);
+}
+
 // The leaderboard, game toolbar and saved-run list must use Melee's timer.
 if (await readFile(join(browserBundle, 'shared/btt-time.mjs'), 'utf8') !== await readFile(join(root, 'web/time.js'), 'utf8'))
   throw new Error('Browser BTT timer formatter is out of sync with the website.');

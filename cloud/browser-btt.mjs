@@ -6,6 +6,7 @@ import {
 } from "../shared/browser-btt-replay.mjs";
 import { createBrowserLeaderboard } from "./browser-leaderboard.mjs";
 import { browserBttCatalog } from "../shared/browser-btt-catalog.mjs";
+import { createWeekly } from "./browser-weekly.mjs";
 import { spectateSigner } from "./btt-spectate.mjs";
 import { publicProfile } from "./auth.mjs";
 const validId = (x) => typeof x === "string" && /^[a-f0-9]{64}$/.test(x);
@@ -77,6 +78,7 @@ export function createBrowserBtt({
       503,
     );
   }
+  const weekly = createWeekly({ store, secret, now, update, once });
   async function indexRun(uid, run) {
     await update(`browser-btt/index/${uid}.json`, (old) => {
       const runs = [run, ...(old?.runs || []).filter((r) => r.id !== run.id)]
@@ -91,6 +93,7 @@ export function createBrowserBtt({
       return { runs, best };
     });
     leaderboard.invalidate();
+    await weekly.record(uid, run);
   }
   async function userFor(req) {
     const u = await session(req);
@@ -100,6 +103,23 @@ export function createBrowserBtt({
   return async (path, req, res, url) => {
     if (!path.startsWith("browser-btt/")) return false;
     try {
+      if (path === "browser-btt/weekly" && req.method === "GET") {
+        json(
+          res,
+          200,
+          await weekly.get(
+            Number(url.searchParams.get("week") || weekly.current()),
+            Number(url.searchParams.get("offset") || 0),
+          ),
+        );
+        return true;
+      }
+      if (path === "browser-btt/weekly/entry" && req.method === "POST") {
+        const u = await userFor(req),
+          data = await input(req);
+        json(res, 200, weekly.entry(u.id, Number(data.week)));
+        return true;
+      }
       if (path === "browser-btt/spectate-key" && req.method === "GET") {
         json(res, 200, { publicKey: spectate.publicKey });
         return true;
@@ -208,11 +228,23 @@ export function createBrowserBtt({
           throw error(
             "Only completed attempts with official controls can save a score.",
           );
+        const receivedAt = now();
         const id = digest(bytes),
           existing = await store.get(rowPath(u.id, id));
         if (existing) {
           await indexRun(u.id, existing);
-          json(res, 200, { run: existing });
+          json(res, 200, {
+            run: existing,
+            ...(data.weeklyTicket && !existing.weekly
+              ? {
+                  weekly: {
+                    accepted: false,
+                    reason:
+                      "This replay was already saved outside the weekly competition. Start a new attempt.",
+                  },
+                }
+              : { weekly: existing.weekly }),
+          });
           return true;
         }
         // Constant-cost counter instead of one storage read per earlier upload.
@@ -237,8 +269,15 @@ export function createBrowserBtt({
               : replay.ucfEnabled.some(Boolean)
                 ? "mixed"
                 : "off",
-          createdAt: new Date(now()).toISOString(),
+          createdAt: new Date(receivedAt).toISOString(),
+          weekly: weekly.eligibility(
+            data.weeklyTicket,
+            u.id,
+            replay,
+            receivedAt,
+          ),
           displayName: p?.displayName || u.username,
+          playerSlug: p?.slug || u.username,
           status: "browser-recorded",
           bytes: bytes.length,
         };
@@ -246,7 +285,7 @@ export function createBrowserBtt({
         await once(rowPath(u.id, id), run);
         const saved = await store.get(rowPath(u.id, id));
         await indexRun(u.id, saved);
-        json(res, 200, { run: saved });
+        json(res, 200, { run: saved, weekly: saved.weekly });
         return true;
       }
       if (path === "browser-btt/share" && req.method === "POST") {
