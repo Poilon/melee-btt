@@ -4,6 +4,8 @@ import {
   parseBttReplay,
   MAX_REPLAY_BYTES,
 } from "../shared/browser-btt-replay.mjs";
+import { createBrowserLeaderboard } from "./browser-leaderboard.mjs";
+import { browserBttCatalog } from "../shared/browser-btt-catalog.mjs";
 import { publicProfile } from "./auth.mjs";
 const validId = (x) => typeof x === "string" && /^[a-f0-9]{64}$/.test(x);
 const digest = (x) => createHash("sha256").update(x).digest("hex");
@@ -43,6 +45,7 @@ export function createBrowserBtt({
   secret,
   now,
 }) {
+  const leaderboard = createBrowserLeaderboard({ store, secret, now });
   const rowPath = (uid, id) => `browser-btt/runs/${uid}/${id}.json`;
   const replayPath = (uid, id) => `browser-btt/replays/${uid}/${id}.json`;
   async function once(path, value) {
@@ -85,6 +88,7 @@ export function createBrowserBtt({
         best[run.fighter] = run;
       return { runs, best };
     });
+    leaderboard.invalidate();
   }
   async function userFor(req) {
     const u = await session(req);
@@ -94,6 +98,26 @@ export function createBrowserBtt({
   return async (path, req, res, url) => {
     if (!path.startsWith("browser-btt/")) return false;
     try {
+      if (path === "browser-btt/catalog" && req.method === "GET") {
+        json(res, 200, {
+          characters: browserBttCatalog,
+          scope: "official-browser-btt",
+        });
+        return true;
+      }
+      if (path === "browser-btt/leaderboard" && req.method === "GET") {
+        const fighter = url.searchParams.get("fighter") || "22";
+        const offset = Number(url.searchParams.get("offset") || 0);
+        if (
+          fighter !== "total" &&
+          !browserBttCatalog.some((c) => String(c.fighter) === fighter)
+        )
+          throw error("Unknown character.");
+        if (!Number.isSafeInteger(offset) || offset < 0 || offset > 100000)
+          throw error("Invalid leaderboard page.");
+        json(res, 200, await leaderboard.get(fighter, offset));
+        return true;
+      }
       if (path === "browser-btt/session" && req.method === "GET") {
         const u = await session(req),
           p = u && (await store.get(`profiles/${u.id}.json`));
@@ -225,6 +249,7 @@ export function createBrowserBtt({
           userId: u.id,
           id: run.id,
         });
+        leaderboard.invalidate();
         json(res, 200, { url: `${origin}/play?replay=${key}` });
         return true;
       }

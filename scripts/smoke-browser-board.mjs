@@ -1,0 +1,44 @@
+import { chromium } from '@playwright/test';
+import assert from 'node:assert/strict';
+const browser = await chromium.connectOverCDP('http://localhost:9333');
+const context = await browser.newContext({ viewport: { width: 1440, height: 1100 } });
+const page = await context.newPage();
+const errors = [];
+page.on('pageerror', e => errors.push(e.message));
+const origin = process.env.TEST_URL || 'http://localhost:4319';
+try {
+  await page.goto(origin);
+  await page.waitForFunction(() => document.querySelectorAll('#characters button').length === 27);
+  await page.waitForFunction(() => !document.querySelector('#refresh').disabled);
+  assert.equal(await page.locator('nav a[href*="challenges"]').count(), 0);
+  assert.equal(await page.locator('a[href="#downloads"]').count(), 0);
+  assert.deepEqual(await page.locator('#characters button').evaluateAll(bs => bs.slice(0, 3).map(b => b.textContent)), ['Total time', 'Dr. Mario', 'Mario']);
+  await page.route('**/api/browser-btt/leaderboard?*', async route => {
+    const fighter = new URL(route.request().url()).searchParams.get('fighter');
+    if (fighter === '22') await new Promise(resolve => setTimeout(resolve, 350));
+    await route.fulfill({json: fighter === 'total' ? { total:1, offset:0, rows:[{rank:1, username:'Completed', frames:36000, completed:25}], inProgress:[{username:'StillPlaying', frames:null, completed:7}], requiredStages:25 } : {total:2, offset:0, rows:[{rank:1, username:'MiXeD_Player', frames:239, ucf:'on', replayUrl:'/play?replay='+'a'.repeat(64)}, {rank:2, username:'<b>literal</b>', frames:333, ucf:'off', replayUrl:null}]}});
+  });
+  await page.locator('#refresh').click();
+  await page.locator('[data-id="2"]').click();
+  await page.waitForFunction(() => !document.querySelector('#refresh').disabled);
+  assert.equal(await page.locator('#level-name').textContent(), 'Fox');
+  assert.equal(await page.locator('#rows tr').count(), 2);
+  assert.match(await page.locator('#rows tr').first().textContent(), /MiXeD_Player.*0:03.98/);
+  assert.equal(await page.locator('#rows b').count(), 0);
+  assert.equal(await page.locator('#rows tr').last().locator('a').count(), 0);
+  assert.equal(await page.locator('#rows a').first().getAttribute('href'), '/play?replay='+'a'.repeat(64));
+  assert.equal(await page.locator('#play-character').getAttribute('href'), '/play?fighter=2');
+  await page.waitForTimeout(450);
+  assert.equal(await page.locator('#level-name').textContent(), 'Fox');
+  await page.screenshot({path:'.local/browser-board-desktop.png', fullPage:true});
+  await page.locator('[data-id="total"]').click();
+  await page.waitForFunction(() => !document.querySelector('#refresh').disabled);
+  assert.match(await page.locator('#status').textContent(), /25 stages/);
+  assert.match(await page.locator('#rows tr').last().textContent(), /StillPlaying.*7 \/ 25/);
+  await page.setViewportSize({width:390,height:844});
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+  assert.ok(await page.locator('.board').evaluate(el => el.getBoundingClientRect().right <= innerWidth));
+  await page.screenshot({path:'.local/browser-board-mobile.png', fullPage:true});
+  assert.deepEqual(errors, []);
+  console.log('Browser board: catalog, navigation, records, explicit replay shares, stale response, totals, escaping and mobile layout passed.');
+} finally { await context.close(); await browser.close(); }

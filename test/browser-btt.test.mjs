@@ -289,3 +289,176 @@ test("checkbox preferences are account-specific and partial changes retain other
     409,
   );
 });
+
+test("public browser leaderboard includes existing bests, uses ties, and never mixes custom stages or private replays", async () => {
+  const f = fixture(),
+    a = await f.account("browser_first"),
+    b = await f.account("browser_second");
+  const run = {
+    id: "a".repeat(64),
+    fighter: 2,
+    frames: 600,
+    ucf: "on",
+    createdAt: "2026-10-09T00:00:00Z",
+    status: "browser-recorded",
+    engine: "b".repeat(64),
+    bytes: 12345,
+  };
+  for (const user of [a, b])
+    f.rows.set(`browser-btt/index/${user.id}.json`, {
+      best: { 2: run },
+      runs: [],
+    });
+  f.rows.set("worlds/runs/something.json", {
+    ...run,
+    frames: 1,
+    displayName: "Custom score must not appear",
+  });
+  const board = await f.request("browser-btt/leaderboard?fighter=2");
+  assert.equal(board.status, 200);
+  assert.equal(board.data.scope, "official-browser-btt");
+  assert.equal(board.data.total, 2);
+  assert.deepEqual(
+    board.data.rows.map((r) => r.rank),
+    [1, 1],
+  );
+  assert.deepEqual(
+    board.data.rows.map((r) => r.username),
+    ["browser_first", "browser_second"],
+  );
+  assert.ok(board.data.rows.every((r) => r.replayUrl === null));
+  for (const field of [
+    "userId",
+    "id",
+    "engine",
+    "bytes",
+    "connectCode",
+    "gzip",
+  ])
+    assert.equal(field in board.data.rows[0], false);
+  assert.equal(
+    (await f.request("browser-btt/replay?id=" + run.id)).status,
+    401,
+  );
+  assert.equal(
+    (await f.request("browser-btt/leaderboard?fighter=999")).status,
+    400,
+  );
+  assert.equal(
+    (await f.request("browser-btt/leaderboard?fighter=2&offset=-1")).status,
+    400,
+  );
+  assert.equal(
+    (await f.request("browser-btt/leaderboard?fighter=2&offset=0.5")).status,
+    400,
+  );
+});
+
+test("saving and explicitly sharing a PB refreshes the browser leaderboard without publishing other replays", async () => {
+  const f = fixture(),
+    a = await f.account("board_owner");
+  assert.equal(
+    (await f.request("browser-btt/leaderboard?fighter=2")).data.total,
+    0,
+  );
+  const saved = await f.request("browser-btt/runs", post(a, payload(a)));
+  let board = await f.request("browser-btt/leaderboard?fighter=2");
+  assert.equal(board.data.total, 1);
+  assert.equal(board.data.rows[0].frames, 2);
+  assert.equal(board.data.rows[0].replayUrl, null);
+  const shared = await f.request(
+    "browser-btt/share",
+    post(a, { id: saved.data.run.id }),
+  );
+  board = await f.request("browser-btt/leaderboard?fighter=2");
+  assert.equal(
+    board.data.rows[0].replayUrl,
+    new URL(shared.data.url).pathname + new URL(shared.data.url).search,
+  );
+  const key = new URL(shared.data.url).searchParams.get("replay");
+  assert.equal(
+    (await f.request("browser-btt/shared?share=" + key)).status,
+    200,
+  );
+  assert.deepEqual(
+    (await f.request("browser-btt/replay?share=" + key)).bytes,
+    replay(),
+  );
+});
+
+test("total browser leaderboard requires all 25 official stages and counts Zelda/Sheik once", async () => {
+  const f = fixture(),
+    a = await f.account("total_player"),
+    b = await f.account("partial_player");
+  const catalog = (await f.request("browser-btt/catalog")).data.characters;
+  assert.equal(catalog.length, 26);
+  assert.deepEqual(
+    catalog.slice(0, 3).map((c) => c.name),
+    ["Dr. Mario", "Mario", "Luigi"],
+  );
+  const best = Object.fromEntries(
+    catalog.map((c) => [
+      c.fighter,
+      {
+        id: "a".repeat(64),
+        fighter: c.fighter,
+        frames: c.fighter === 19 ? 5 : 10,
+        status: "browser-recorded",
+        createdAt: "2026-10-09T00:00:00Z",
+        ucf: "off",
+      },
+    ]),
+  );
+  f.rows.set(`browser-btt/index/${a.id}.json`, { best });
+  f.rows.set(`browser-btt/index/${b.id}.json`, {
+    best: { 18: best[18], 19: best[19] },
+  });
+  const board = (await f.request("browser-btt/leaderboard?fighter=total")).data;
+  assert.equal(board.requiredStages, 25);
+  assert.equal(board.total, 1);
+  assert.equal(board.rows[0].frames, 245);
+  assert.equal(board.rows[0].completed, 25);
+  assert.equal(board.inProgress[0].completed, 1);
+  assert.equal(board.inProgress[0].frames, null);
+  assert.equal(
+    (await f.request("browser-btt/leaderboard?fighter=19")).data.total,
+    2,
+  );
+});
+
+test("username display keeps registration case, while login and uniqueness remain case-insensitive", async () => {
+  const f = fixture();
+  const signup = await f.request("browser-btt/signup", {
+    method: "POST",
+    body: { username: "MiXeD_Player", password: "test-password-42" },
+  });
+  assert.equal(signup.status, 200);
+  assert.equal(signup.data.profile.displayName, "MiXeD_Player");
+  assert.equal(signup.data.profile.slug, "mixed_player");
+  const uid = signup.data.profile.id;
+  const duplicate = await f.request("browser-btt/signup", {
+    method: "POST",
+    body: { username: "MIXED_PLAYER", password: "another-password" },
+  });
+  assert.equal(duplicate.status, 409);
+  for (const username of ["mixed_player", "MIXED_PLAYER", "MiXeD_Player"]) {
+    const login = await f.request("auth/login", {
+      method: "POST",
+      body: { username, password: "test-password-42" },
+    });
+    assert.equal(login.status, 200);
+    const session = await f.request("browser-btt/session", {
+      cookie: login.headers["set-cookie"].split(";")[0],
+    });
+    assert.equal(session.data.profile.id, uid);
+    assert.equal(session.data.profile.displayName, "MiXeD_Player");
+  }
+  // A signup interrupted before its profile write can repair the intended case.
+  f.rows.delete(`profiles/${uid}.json`);
+  const repaired = await f.request("auth/login", {
+    method: "POST",
+    body: { username: "MIXED_PLAYER", password: "test-password-42" },
+  });
+  assert.equal(repaired.status, 200);
+  assert.equal(f.rows.get(`profiles/${uid}.json`).displayName, "MiXeD_Player");
+});

@@ -1,0 +1,121 @@
+.browser-leaderboard .intro {
+  min-height: 330px;
+  gap: 24px;
+}
+.browser-leaderboard h1 {
+  font-size: clamp(36px, 5vw, 62px);
+}
+.play-now {
+  display: inline-flex;
+  gap: 40px;
+  align-items: center;
+  margin: 10px 0 0;
+  padding: 13px 22px;
+  border-radius: 5px;
+  background: var(--gold);
+  color: #151a24;
+  font-weight: 800;
+  font-size: 14px;
+}
+.play-now:hover {
+  background: #ffe6b2;
+}
+.browser-leaderboard .browser-caption {
+  font-size: 11px;
+}
+.play-character {
+  color: var(--gold);
+  font-size: 13px;
+}
+.browser-leaderboard .note {
+  margin-top: 20px;
+}
+.browser-leaderboard .verification-note {
+  font-size: 11px;
+  opacity: 0.85;
+  margin-top: 12px;
+}
+.replay-links {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  align-items: center;
+}
+.replay-private {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.browser-leaderboard td:nth-child(4) {
+  font-size: 12px;
+  color: var(--muted);
+}
+.browser-guide {
+  padding: 60px 0;
+  scroll-margin-top: 20px;
+}
+.browser-guide ol {
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+  counter-reset: guide;
+}
+.browser-guide li {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 24px;
+  background: #131923;
+  counter-increment: guide;
+}
+.browser-guide h3 {
+  margin: 0 0 12px;
+  font-size: 17px;
+}
+.browser-guide h3::before {
+  content: "0" counter(guide);
+  color: var(--gold);
+  font-size: 12px;
+  margin-right: 12px;
+}
+.browser-guide p {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 0;
+}
+.browser-guide a {
+  color: var(--gold);
+  text-decoration: underline;
+}
+.browser-guide code {
+  font-family: Consolas, monospace;
+}
+@media (max-width: 800px) {
+  .browser-leaderboard .records { grid-template-columns: minmax(0, 1fr); }
+  .browser-leaderboard .records aside { min-width: 0; }
+  .browser-leaderboard .intro {
+    min-height: 280px;
+  }
+  .browser-guide ol {
+    grid-template-columns: 1fr;
+  }
+  .browser-leaderboard .intro-art {
+    margin: 0;
+    width: 110px;
+  }
+}
+@media (max-width: 480px) {
+  .browser-leaderboard .intro-art {
+    display: none;
+  }
+  .browser-leaderboard .intro {
+    min-height: 270px;
+  }
+  .browser-leaderboard table {
+    min-width: 440px;
+  }
+  .browser-guide {
+    padding: 36px 0;
+  }
+}

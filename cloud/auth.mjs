@@ -93,7 +93,7 @@ export function createAuth({ store, origin, secret, session, body, cookie, json,
         if (!await checkPassword(input.password, account?.credential?.password)) return json(res, 401, { error: 'Username or password is incorrect.' }), true;
         // A retry can repair the public profile after an interrupted registration.
         const old = await store.get(`profiles/${account.id}.json`);
-        if (!old?.slug) await store.put(`profiles/${account.id}.json`, profileFor(account.id, username, old), true);
+        if (!old?.slug) await store.put(`profiles/${account.id}.json`, profileFor(account.id, username, old || { displayName: account.displayName || username }), true);
         if(inGame)return gameLogin(res,account,username);
         await login(res, account, username);
         return json(res, 200, { ok: true }), true;
@@ -107,7 +107,7 @@ export function createAuth({ store, origin, secret, session, body, cookie, json,
       const accountPath = `usernames/${username}.json`, previous = await store.readVersion(accountPath);
       if (previous && (previous.value.id !== user?.id || previous.value.credential)) return json(res, 409, { error: 'This username is taken. Choose another.' }), true;
       const id = user?.id || random(), revision = random();
-      const account = { id, credential: { password: await hashPassword(input.password), revision } };
+      const account = { id, displayName: old?.displayName || input.username.trim(), credential: { password: await hashPassword(input.password), revision } };
       if (previous) {
         if (!await store.writeVersion(accountPath, account, previous.etag)) return json(res, 409, { error: 'This username was just registered. Sign in instead.' }), true;
       } else {
@@ -119,7 +119,7 @@ export function createAuth({ store, origin, secret, session, body, cookie, json,
         if (!previous) await store.delete(accountPath);
         return json(res, 409, { error: `Use your existing username: ${chosen.slug}.` }), true;
       }
-      const profile = profileFor(id, username, old);
+      const profile = profileFor(id, username, old || { displayName: account.displayName });
       await store.put(`profiles/${id}.json`, profile, true);
       if(inGame)return gameLogin(res,account,username);
       await login(res, account, username);

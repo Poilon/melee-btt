@@ -19,6 +19,6 @@ test('challenge board scopes catalog, totals, character records and replay links
  await page.route('**/api/worlds/catalog?event=first-challenge',r=>r.fulfill({json:{courses:[course],challenge:{...challenge,phase:'open'}}}));
  await page.route('**/api/worlds/total?*',r=>{expect(new URL(r.request().url()).searchParams.get('event')).toBe('first-challenge');return r.fulfill({json:{total:0,rows:[],inProgress:[],requiredCharacters:26}});});
  await page.route('**/api/worlds/leaderboard?*',r=>{expect(new URL(r.request().url()).searchParams.get('event')).toBe('first-challenge');return r.fulfill({json:{total:1,rows:[{rank:1,username:'player',playerId:'b'.repeat(64),id:'00000000-0000-0000-0000-000000000001',frames:120}]}});});
- await page.goto('http://localhost:4319/?event=first-challenge#total');await expect(page.locator('.intro h1')).toHaveText('First challenge');
+ await page.goto('http://localhost:4319/custom-stages.html?event=first-challenge#total');await expect(page.locator('.intro h1')).toHaveText('First challenge');
  await page.getByRole('button',{name:'Dr. Mario',exact:true}).click();await expect(page.locator('#rows a')).toHaveAttribute('href',/event=first-challenge/);await expect(page.locator('#rows')).toContainText('player');
 });
