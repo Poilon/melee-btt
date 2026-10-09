@@ -6,6 +6,7 @@ import {
 } from "../shared/browser-btt-replay.mjs";
 import { createBrowserLeaderboard } from "./browser-leaderboard.mjs";
 import { browserBttCatalog } from "../shared/browser-btt-catalog.mjs";
+import { spectateSigner } from "./btt-spectate.mjs";
 import { publicProfile } from "./auth.mjs";
 const validId = (x) => typeof x === "string" && /^[a-f0-9]{64}$/.test(x);
 const digest = (x) => createHash("sha256").update(x).digest("hex");
@@ -45,6 +46,7 @@ export function createBrowserBtt({
   secret,
   now,
 }) {
+  const spectate = spectateSigner(secret);
   const leaderboard = createBrowserLeaderboard({ store, secret, now });
   const rowPath = (uid, id) => `browser-btt/runs/${uid}/${id}.json`;
   const replayPath = (uid, id) => `browser-btt/replays/${uid}/${id}.json`;
@@ -98,6 +100,18 @@ export function createBrowserBtt({
   return async (path, req, res, url) => {
     if (!path.startsWith("browser-btt/")) return false;
     try {
+      if (path === "browser-btt/spectate-key" && req.method === "GET") {
+        json(res, 200, { publicKey: spectate.publicKey });
+        return true;
+      }
+      if (path === "browser-btt/spectate-ticket" && req.method === "POST") {
+        const u = await userFor(req),
+          p = await store.get(`profiles/${u.id}.json`);
+        if (!p?.slug)
+          throw error("Choose your username before allowing spectators.", 409);
+        json(res, 200, spectate.ticket(publicProfile(p), now()));
+        return true;
+      }
       if (path === "browser-btt/catalog" && req.method === "GET") {
         json(res, 200, {
           characters: browserBttCatalog,

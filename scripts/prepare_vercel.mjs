@@ -45,11 +45,11 @@ await writeFile(join(out, 'vercel.json'), JSON.stringify({
   ] }, { source: '/play/:path*', headers: [
     { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
     { key: 'Cross-Origin-Embedder-Policy', value: 'require-corp' },
-    { key: 'Content-Security-Policy', value: "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; connect-src 'self' ws://127.0.0.1:4326; img-src 'self' blob:; worker-src 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'" },
+    { key: 'Content-Security-Policy', value: "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; connect-src 'self' ws://127.0.0.1:4326 wss://melee-browser-relay.fly.dev; img-src 'self' blob:; worker-src 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'" },
   ] }, { source: '/play/', headers: [
     { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
     { key: 'Cross-Origin-Embedder-Policy', value: 'require-corp' },
-    { key: 'Content-Security-Policy', value: "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; connect-src 'self' ws://127.0.0.1:4326; img-src 'self' blob:; worker-src 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'" },
+    { key: 'Content-Security-Policy', value: "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; connect-src 'self' ws://127.0.0.1:4326 wss://melee-browser-relay.fly.dev; img-src 'self' blob:; worker-src 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'" },
   ] },
   { source: '/play/:path*.mjs', headers: [{ key: 'Content-Type', value: 'text/javascript; charset=utf-8' }] },
   { source: '/play/btt-game/:asset*.blob', headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }] },

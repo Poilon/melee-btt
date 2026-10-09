@@ -496,3 +496,47 @@ test("username display keeps registration case, while login and uniqueness remai
   assert.equal(repaired.status, 200);
   assert.equal(f.rows.get(`profiles/${uid}.json`).displayName, "MiXeD_Player");
 });
+
+test("live tickets are authenticated, signed for the account, and CSRF protected", async () => {
+  const { verify, createPublicKey } = await import("node:crypto");
+  const f = fixture(),
+    a = await f.account("LivePlayer");
+  assert.equal(
+    (await f.request("browser-btt/spectate-ticket", { method: "POST" })).status,
+    401,
+  );
+  assert.equal(
+    (
+      await f.request("browser-btt/spectate-ticket", {
+        ...post(a, {}),
+        requestOrigin: "https://evil.example",
+      })
+    ).status,
+    403,
+  );
+  const r = await f.request(
+    "browser-btt/spectate-ticket",
+    post(a, { slug: "someone_else" }),
+  );
+  assert.equal(r.status, 200);
+  const k = await f.request("browser-btt/spectate-key", {
+    requestOrigin: undefined,
+  });
+  assert.equal(k.status, 200);
+  const [payload, sig] = r.data.ticket.split(".");
+  assert.ok(
+    verify(
+      null,
+      Buffer.from(payload),
+      createPublicKey(k.data.publicKey),
+      Buffer.from(sig, "base64url"),
+    ),
+  );
+  const claims = JSON.parse(Buffer.from(payload, "base64url"));
+  assert.equal(claims.sub, a.id);
+  assert.equal(claims.slug, "liveplayer");
+  assert.equal(claims.displayName, "LivePlayer");
+  assert.equal(claims.exp - claims.iat, 900);
+  assert.equal(r.data.relay, "wss://melee-browser-relay.fly.dev/btt-spectate");
+  assert.deepEqual(Object.keys(k.data), ["publicKey"]);
+});
