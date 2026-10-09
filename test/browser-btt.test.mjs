@@ -233,3 +233,59 @@ test("eligible UCF-disabled clears keep their replay and account score", async (
   ).bytes;
   assert.deepEqual(bytes, replay({ ucf: false }));
 });
+
+test("checkbox preferences are account-specific and partial changes retain other settings", async () => {
+  const f = fixture(),
+    a = await f.account("prefs_a"),
+    b = await f.account("prefs_b");
+  assert.equal((await f.request("browser-btt/preferences")).status, 401);
+  assert.equal(
+    (
+      await f.request(
+        "browser-btt/preferences",
+        post(a, {
+          owner: a.id,
+          preferences: { rumble: true, music: false, ucf: true },
+        }),
+      )
+    ).status,
+    200,
+  );
+  assert.equal(
+    (
+      await f.request(
+        "browser-btt/preferences",
+        post(a, { owner: a.id, preferences: { sound: true } }),
+      )
+    ).status,
+    200,
+  );
+  assert.deepEqual(
+    (await f.request("browser-btt/preferences", { cookie: a.cookie })).data
+      .preferences,
+    { rumble: true, music: false, ucf: true, sound: true },
+  );
+  assert.deepEqual(
+    (await f.request("browser-btt/preferences", { cookie: b.cookie })).data
+      .preferences,
+    {},
+  );
+  assert.equal(
+    (
+      await f.request(
+        "browser-btt/preferences",
+        post(a, { owner: a.id, preferences: { rumble: "yes" } }),
+      )
+    ).status,
+    400,
+  );
+  assert.equal(
+    (
+      await f.request(
+        "browser-btt/preferences",
+        post(a, { owner: b.id, preferences: { sound: true } }),
+      )
+    ).status,
+    409,
+  );
+});

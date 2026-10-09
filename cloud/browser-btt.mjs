@@ -100,6 +100,43 @@ export function createBrowserBtt({
         json(res, 200, { profile: p ? publicProfile(p) : null });
         return true;
       }
+      if (
+        path === "browser-btt/preferences" &&
+        ["GET", "POST"].includes(req.method)
+      ) {
+        const u = await userFor(req),
+          key = `browser-btt/preferences/${u.id}.json`;
+        if (req.method === "GET") {
+          json(res, 200, { preferences: (await store.get(key)) || {} });
+        } else {
+          const data = await input(req);
+          if (data.owner !== u.id)
+            throw error("Account changed. Reload your settings.", 409);
+          const patch = data.preferences;
+          if (!patch || typeof patch !== "object" || Array.isArray(patch))
+            throw error("Invalid preferences.");
+          const allowed = new Set([
+            "sound",
+            "music",
+            "rumble",
+            "ucf",
+            "cstick",
+          ]);
+          if (
+            !Object.keys(patch).length ||
+            Object.entries(patch).some(
+              ([k, v]) => !allowed.has(k) || typeof v !== "boolean",
+            )
+          )
+            throw error("Invalid preferences.");
+          const preferences = await update(key, (old) => ({
+            ...old,
+            ...patch,
+          }));
+          json(res, 200, { preferences });
+        }
+        return true;
+      }
       if (path === "browser-btt/runs" && req.method === "GET") {
         const u = await userFor(req);
         const index = await store.get(`browser-btt/index/${u.id}.json`);
