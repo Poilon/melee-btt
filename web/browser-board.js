@@ -1,3 +1,4 @@
+import { formatTime as time } from "/time.js";
 // Keep existing companion sign-in and archived challenge bookmarks working.
 const legacy = new URLSearchParams(location.search);
 if (legacy.has("event"))
@@ -19,8 +20,6 @@ let catalog = [],
   controller;
 const cache = new Map();
 const totalCourse = { fighter: "total", slug: "total", name: "Total time" };
-const time = (frames) =>
-  `${Math.floor(frames / 3600)}:${String(Math.floor(frames / 60) % 60).padStart(2, "0")}.${String(Math.floor(((frames % 60) * 100) / 60)).padStart(2, "0")}`;
 async function json(url, signal) {
   const response = await fetch(url, {
     signal: signal

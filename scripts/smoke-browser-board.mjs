@@ -23,7 +23,7 @@ try {
   await page.waitForFunction(() => !document.querySelector('#refresh').disabled);
   assert.equal(await page.locator('#level-name').textContent(), 'Fox');
   assert.equal(await page.locator('#rows tr').count(), 2);
-  assert.match(await page.locator('#rows tr').first().textContent(), /MiXeD_Player.*0:03.98/);
+  assert.match(await page.locator('#rows tr').first().textContent(), /MiXeD_Player.*00:03.99/);
   assert.equal(await page.locator('#rows b').count(), 0);
   assert.equal(await page.locator('#rows tr').last().locator('a').count(), 0);
   assert.equal(await page.locator('#rows a').first().getAttribute('href'), '/play?replay='+'a'.repeat(64));

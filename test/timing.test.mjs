@@ -4,7 +4,7 @@ import { formatTime } from '../web/time.js';
 import { RunDetector } from '../server/telemetry.mjs';
 
 test('displayed hundredths match Melee, including the observed 704-frame Fox clear', () => {
-  for (const [frames, text] of [[0,'00:00.00'],[34,'00:00.57'],[59,'00:00.99'],[60,'00:01.00'],[704,'00:11.73'],[1234,'00:20.57'],[3600,'01:00.00']]) assert.equal(formatTime(frames), text);
+  for (const [frames, text] of [[0,'00:00.00'],[34,'00:00.57'],[59,'00:00.99'],[60,'00:01.00'],[704,'00:11.73'],[811,'00:13.52'],[839,'00:13.99'],[840,'00:14.00'],[1234,'00:20.57'],[3600,'01:00.00']]) assert.equal(formatTime(frames), text);
 });
 
 test('observed Fox result is saved only after a fresh attempt with a player', () => {

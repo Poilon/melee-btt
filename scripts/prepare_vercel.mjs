@@ -18,6 +18,9 @@ await cp(join(root, 'web'), join(out, 'public'), { recursive: true });
 // Official browser BTT is built independently from the Dolphin/custom stages.
 const browserBundle = process.env.MELEE_BROWSER_BTT_BUILD || join(root, '../melee-browser/build/btt-site/play');
 await cp(browserBundle, join(out, 'public/play'), { recursive: true });
+// The leaderboard, game toolbar and saved-run list must use Melee's timer.
+if (await readFile(join(browserBundle, 'shared/btt-time.mjs'), 'utf8') !== await readFile(join(root, 'web/time.js'), 'utf8'))
+  throw new Error('Browser BTT timer formatter is out of sync with the website.');
 // Browser and server must validate the same version of the replay format.
 if (await readFile(join(browserBundle, 'shared/btt-replay.mjs'), 'utf8') !== await readFile(join(root, 'shared/browser-btt-replay.mjs'), 'utf8'))
   throw new Error('Browser replay parser is out of sync. Copy melee-browser/shared/btt-replay.mjs to shared/browser-btt-replay.mjs and rebuild.');
