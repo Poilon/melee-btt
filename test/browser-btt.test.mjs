@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { gzipSync } from "node:zlib";
 import { createCloudHandler } from "../cloud/backend.mjs";
 import { BttRecorder } from "../shared/browser-btt-replay.mjs";
-function replay({ practice = false, complete = true } = {}) {
+function replay({ practice = false, complete = true, ucf = true } = {}) {
   const r = new BttRecorder({
     fighter: 2,
     engine: "a".repeat(64),
@@ -14,7 +14,7 @@ function replay({ practice = false, complete = true } = {}) {
     const before = s.slice();
     s[10] = i;
     s[8] = complete && i === 2 ? 0 : 10;
-    r.record([1, 0, 0, 128, 128, 128, 128, 0, 0], before, s, practice);
+    r.record([1, 0, 0, 128, 128, 128, 128, 0, 0], before, s, practice, ucf);
   }
   return Buffer.from(r.finish({ complete, practice }));
 }
@@ -215,4 +215,21 @@ test("browser account creation keeps CSRF and username uniqueness protections", 
     ).status,
     409,
   );
+});
+
+test("eligible UCF-disabled clears keep their replay and account score", async () => {
+  const f = fixture(),
+    a = await f.account("ucf_off");
+  const result = await f.request(
+    "browser-btt/runs",
+    post(a, payload(a, replay({ ucf: false }))),
+  );
+  assert.equal(result.status, 200, JSON.stringify(result.data));
+  assert.equal(result.data.run.ucf, "off");
+  const bytes = (
+    await f.request("browser-btt/replay?id=" + result.data.run.id, {
+      cookie: a.cookie,
+    })
+  ).bytes;
+  assert.deepEqual(bytes, replay({ ucf: false }));
 });

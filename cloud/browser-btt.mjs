@@ -156,6 +156,12 @@ export function createBrowserBtt({
           fighter: replay.fighter,
           frames: replay.frames,
           engine: replay.engine,
+          ucf:
+            replay.version === 1 || replay.ucfEnabled.every(Boolean)
+              ? "on"
+              : replay.ucfEnabled.some(Boolean)
+                ? "mixed"
+                : "off",
           createdAt: new Date(now()).toISOString(),
           displayName: p?.displayName || u.username,
           status: "browser-recorded",

@@ -137,13 +137,14 @@ export class BttRecorder {
       name,
       parts: [],
       inputs: [],
+      ucfEnabled: [],
       checks: [],
       count: 0,
       practice: false,
       overflow: false,
     });
   }
-  record(pad, before, after, cstick) {
+  record(pad, before, after, cstick, ucf = true) {
     if (this.count >= MAX_REPLAY_FRAMES) {
       this.overflow = true;
       return;
@@ -152,6 +153,7 @@ export class BttRecorder {
     this.count++;
     this.practice ||= !!cstick;
     this.inputs.push(...pad, Number(!!cstick));
+    this.ucfEnabled.push(Number(!!ucf));
     const check = new Uint8Array(6),
       cv = new DataView(check.buffer);
     cv.setUint16(0, after[8]);
@@ -227,8 +229,8 @@ export class BttRecorder {
       start[p + 2] = 1;
       start[p + 8] = 9;
       for (const off of [0x18, 0x1c, 0x20]) v.setFloat32(p + off, 1);
-      v.setUint32(0x141 + 8 * i, 1);
-      v.setUint32(0x145 + 8 * i, 1);
+      v.setUint32(0x141 + 8 * i, this.ucfEnabled[0]);
+      v.setUint32(0x145 + 8 * i, this.ucfEnabled[0]);
     }
     v.setUint32(0x13d, this.seed);
     start[0x1a3] = 2;
@@ -249,7 +251,8 @@ export class BttRecorder {
         },
       },
       meleeBrowser: {
-        version: 1,
+        version: 2,
+        ucfEnabled: Uint8Array.from(this.ucfEnabled),
         engine: this.engine,
         fighter: this.fighter,
         seed: this.seed,
@@ -269,7 +272,7 @@ export function parseBttReplay(input) {
   const root = readUbjson(bytes),
     m = root.metadata,
     b = m?.meleeBrowser;
-  if (!b || b.version !== 1)
+  if (!b || ![1, 2].includes(b.version))
     throw Error(
       "Open a .slp recorded by Browser BTT. Dolphin/Slippi recordings are not supported by this player yet.",
     );
@@ -296,6 +299,14 @@ export function parseBttReplay(input) {
     m.lastFrame !== count - 124
   )
     throw Error("Invalid replay length.");
+  if (
+    b.version === 2 &&
+    (!(b.ucfEnabled instanceof Uint8Array) ||
+      b.ucfEnabled.length !== count ||
+      b.ucfEnabled.some((v) => v > 1))
+  )
+    throw Error("Invalid replay UCF settings.");
+  const ucf = (i) => b.version === 1 || !!b.ucfEnabled[i];
   const checks = new DataView(
     b.checks.buffer,
     b.checks.byteOffset,
@@ -356,6 +367,11 @@ export function parseBttReplay(input) {
     start.getUint8(0x1a4) !== 15
   )
     throw Error("Replay settings mismatch.");
+  if (
+    start.getUint32(0x141) !== Number(ucf(0)) ||
+    start.getUint32(0x145) !== Number(ucf(0))
+  )
+    throw Error("Replay UCF settings mismatch.");
   const posts = [];
   for (let i = 0; i < count; i++)
     for (const c of [0x3a, 0x37, 0x38, 0x3c]) {
@@ -385,6 +401,7 @@ export function parseBttReplay(input) {
     startAt: m.startAt,
     name: m.players?.["0"]?.names?.netplay || "",
     posts,
+    ucf,
     pad(i) {
       return Array.from(this.inputs.subarray(i * 10, i * 10 + 9));
     },
