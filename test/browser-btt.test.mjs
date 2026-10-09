@@ -99,7 +99,7 @@ const payload = (a, bytes = replay()) => ({
   owner: a.id,
   gzip: gzipSync(bytes).toString("base64"),
 });
-test("browser signup reuses site session; completed runs are idempotent, private, and shareable explicitly", async () => {
+test("browser signup reuses site session; completed runs are idempotent and explicit sharing remains available", async () => {
   const f = fixture(),
     a = await f.account("browser_a"),
     b = await f.account("browser_b");
@@ -290,7 +290,7 @@ test("checkbox preferences are account-specific and partial changes retain other
   );
 });
 
-test("public browser leaderboard includes existing bests, uses ties, and never mixes custom stages or private replays", async () => {
+test("public browser leaderboard includes existing bests, uses ties, and never mixes custom stages or non-best attempts", async () => {
   const f = fixture(),
     a = await f.account("browser_first"),
     b = await f.account("browser_second");
@@ -326,7 +326,11 @@ test("public browser leaderboard includes existing bests, uses ties, and never m
     board.data.rows.map((r) => r.username),
     ["browser_first", "browser_second"],
   );
-  assert.ok(board.data.rows.every((r) => r.replayUrl === null));
+  assert.ok(
+    board.data.rows.every((r) =>
+      /^\/play\?replay=[a-f0-9]{64}$/.test(r.replayUrl),
+    ),
+  );
   for (const field of [
     "userId",
     "id",
@@ -354,7 +358,7 @@ test("public browser leaderboard includes existing bests, uses ties, and never m
   );
 });
 
-test("saving and explicitly sharing a PB refreshes the browser leaderboard without publishing other replays", async () => {
+test("new and existing PB replays are public automatically; superseded attempts require explicit sharing", async () => {
   const f = fixture(),
     a = await f.account("board_owner");
   assert.equal(
@@ -365,7 +369,37 @@ test("saving and explicitly sharing a PB refreshes the browser leaderboard witho
   let board = await f.request("browser-btt/leaderboard?fighter=2");
   assert.equal(board.data.total, 1);
   assert.equal(board.data.rows[0].frames, 2);
-  assert.equal(board.data.rows[0].replayUrl, null);
+  const automaticKey = new URL(
+    board.data.rows[0].replayUrl,
+    "https://test.example",
+  ).searchParams.get("replay");
+  assert.equal(
+    (await f.request("browser-btt/shared?share=" + automaticKey)).status,
+    200,
+  );
+  assert.deepEqual(
+    (await f.request("browser-btt/replay?share=" + automaticKey)).bytes,
+    replay(),
+  );
+  assert.equal(
+    (await f.request("browser-btt/shared?share=" + "f".repeat(64))).status,
+    404,
+  );
+  // A pre-existing index resolves without rewriting or migrating any scores.
+  const cold = fixture();
+  for (const [key, value] of f.rows) cold.rows.set(key, structuredClone(value));
+  assert.deepEqual(
+    (await cold.request("browser-btt/replay?share=" + automaticKey)).bytes,
+    replay(),
+  );
+  // Cache snapshots are not authorization: replacing a PB revokes implicit access.
+  const index = f.rows.get(`browser-btt/index/${a.id}.json`);
+  f.rows.set(`browser-btt/index/${a.id}.json`, { ...index, best: {} });
+  assert.equal(
+    (await f.request("browser-btt/replay?share=" + automaticKey)).status,
+    404,
+  );
+  f.rows.set(`browser-btt/index/${a.id}.json`, index);
   const shared = await f.request(
     "browser-btt/share",
     post(a, { id: saved.data.run.id }),

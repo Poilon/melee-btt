@@ -16,7 +16,7 @@ const ranked = (rows) => {
   });
 };
 // Read existing per-user best indexes, including records saved before this
-// leaderboard existed. No score migration or replay publication is required.
+// leaderboard existed. Only current personal bests become public automatically.
 export function createBrowserLeaderboard({ store, secret, now }) {
   let cached,
     pending,
@@ -26,11 +26,8 @@ export function createBrowserLeaderboard({ store, secret, now }) {
     generation++;
   };
   async function build() {
-    const [indexes, shares] = await Promise.all([
-      store.list("browser-btt/index/"),
-      store.list("browser-btt/shares/"),
-    ]);
-    const shared = new Set(shares.map((entry) => entry.pathname));
+    const indexes = await store.list("browser-btt/index/");
+    const publicBests = new Map();
     const perFighter = Object.fromEntries([...fighters].map((id) => [id, []]));
     const totals = [],
       inProgress = [];
@@ -67,17 +64,16 @@ export function createBrowserLeaderboard({ store, secret, now }) {
               createHmac("sha256", secret)
                 .update(`browser-replay:${uid}:${run.id}`)
                 .digest("hex");
+            if (token)
+              publicBests.set(token, { userId: uid, id: run.id, fighter });
             const row = {
               username: profile.displayName || run.displayName,
               fighter,
               frames: run.frames,
               ucf: run.ucf,
               createdAt: run.createdAt,
-              // Only an explicitly shared replay gets a public watch link.
-              replayUrl:
-                token && shared.has(`browser-btt/shares/${token}.json`)
-                  ? `/play?replay=${token}`
-                  : null,
+              // Official browser personal bests are automatically watchable.
+              replayUrl: token ? `/play?replay=${token}` : null,
             };
             perFighter[fighter].push(row);
             const stage = stages.get(fighter),
@@ -109,7 +105,7 @@ export function createBrowserLeaderboard({ store, secret, now }) {
       (a, b) =>
         b.completed - a.completed || a.username.localeCompare(b.username),
     );
-    return { perFighter, totals: ranked(totals), inProgress };
+    return { perFighter, totals: ranked(totals), inProgress, publicBests };
   }
   async function snapshot() {
     if (cached && now() - cached.at < 15000) return cached.value;
@@ -128,6 +124,18 @@ export function createBrowserLeaderboard({ store, secret, now }) {
   }
   return {
     invalidate,
+    async resolveReplay(token) {
+      const candidate = (await snapshot()).publicBests.get(token);
+      if (!candidate) return null;
+      // Recheck the live index: a superseded best is private unless its owner
+      // explicitly shared it. The board cache never grants replay access.
+      const index = await store.get(
+        `browser-btt/index/${candidate.userId}.json`,
+      );
+      return index?.best?.[candidate.fighter]?.id === candidate.id
+        ? candidate
+        : null;
+    },
     async get(fighter, offset = 0) {
       const data = await snapshot(),
         total = fighter === "total";

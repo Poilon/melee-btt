@@ -261,7 +261,9 @@ export function createBrowserBtt({
         const key = url.searchParams.get("share");
         if (key) {
           if (!validId(key)) throw error("Replay not found.", 404);
-          const share = await store.get(`browser-btt/shares/${key}.json`);
+          const share =
+            (await store.get(`browser-btt/shares/${key}.json`)) ||
+            (await leaderboard.resolveReplay(key));
           if (!share) throw error("Replay not found.", 404);
           uid = share.userId;
           id = share.id;
