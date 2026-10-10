@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="/browser-board.css" />
     <link rel="stylesheet" href="/weekly.css" />
     <script type="module" src="/browser-board.js"></script>
+    <script type="module" src="/live-players.js"></script>
   </head>
   <body class="browser-leaderboard">
     <a class="skip" href="#records">Skip to leaderboard</a>
@@ -80,6 +81,38 @@
           </p>
         </div>
         <a href="/weekly.html">Enter this week’s competition →</a>
+      </section>
+      <section
+        id="live-players"
+        class="live-players"
+        aria-labelledby="live-players-title"
+      >
+        <div class="board-heading">
+          <h2 id="live-players-title">
+            Online players <span id="live-players-count">—</span>
+          </h2>
+          <a href="/play/spectate.html">Open Spectate →</a>
+        </div>
+        <p id="live-players-status" role="status">
+          Connecting to live players…
+        </p>
+        <div class="table-scroll">
+          <table aria-label="Players available to spectate">
+            <thead>
+              <tr>
+                <th scope="col">Player</th>
+                <th scope="col">Character</th>
+                <th scope="col">Status</th>
+                <th scope="col"><span class="sr-only">Watch live</span></th>
+              </tr>
+            </thead>
+            <tbody id="live-player-rows"></tbody>
+          </table>
+        </div>
+        <p class="live-players-note">
+          Want to appear here? Enable “Allow spectators” in the game.
+        </p>
+        <noscript><p>Enable JavaScript to see available players.</p></noscript>
       </section>
       <section id="records" class="records" aria-labelledby="records-title">
         <aside>

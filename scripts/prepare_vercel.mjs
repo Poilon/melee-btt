@@ -48,7 +48,7 @@ await writeFile(join(out, 'vercel.json'), JSON.stringify({
   headers: [{ source: '/(.*)', headers: [
     { key: 'X-Content-Type-Options', value: 'nosniff' },
     { key: 'Referrer-Policy', value: 'no-referrer' },
-    { key: 'Content-Security-Policy', value: "default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' blob:; media-src 'self' blob:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'" },
+    { key: 'Content-Security-Policy', value: "default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' blob:; media-src 'self' blob:; connect-src 'self' wss://melee-browser-relay.fly.dev; frame-ancestors 'none'; base-uri 'none'; form-action 'self'" },
   ] }, { source: '/play/:path*', headers: [
     { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
     { key: 'Cross-Origin-Embedder-Policy', value: 'require-corp' },

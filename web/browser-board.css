@@ -136,3 +136,95 @@
 .browser-leaderboard .competition-notice strong {
   color: var(--gold);
 }
+
+.live-players {
+  margin: 0 0 24px;
+  padding: 22px 26px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #131923;
+}
+.live-players .board-heading {
+  min-height: 0;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.live-players h2 {
+  margin: 0;
+  font-size: 21px;
+}
+#live-players-count {
+  margin-left: 8px;
+  color: #71dfae;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+.live-players .board-heading > a {
+  color: var(--gold);
+  font-size: 12px;
+}
+#live-players-status,
+.live-players-note {
+  font-size: 12px;
+  color: var(--muted);
+}
+.live-players-note {
+  margin-bottom: 0;
+}
+.browser-leaderboard .live-players td:first-child {
+  width: 30%;
+  color: #edf1f7;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.live-players td:first-child::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 9px;
+  border-radius: 50%;
+  background: #71dfae;
+}
+.live-players td:nth-child(3) {
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--muted);
+  white-space: normal;
+}
+.live-players .spectate-link {
+  display: inline-block;
+  padding: 7px 12px;
+  border: 1px solid #ffcf7270;
+  border-radius: 4px;
+}
+.live-players .spectate-link:hover {
+  background: #ffcf7214;
+  border-color: var(--gold);
+}
+@media (max-width: 600px) {
+  .live-players {
+    padding: 18px 12px;
+  }
+  .browser-leaderboard .live-players table {
+    min-width: 0;
+    table-layout: fixed;
+  }
+  .live-players th,
+  .live-players td {
+    padding: 12px 4px;
+    font-size: 11px;
+    overflow-wrap: anywhere;
+  }
+  .live-players th {
+    font-size: 9px;
+    letter-spacing: 0;
+  }
+  .live-players th:last-child {
+    width: 25%;
+  }
+  .live-players .spectate-link {
+    padding: 7px 4px;
+    font-size: 11px;
+  }
+}
