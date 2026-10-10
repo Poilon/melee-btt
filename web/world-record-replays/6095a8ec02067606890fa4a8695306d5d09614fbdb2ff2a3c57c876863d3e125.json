@@ -1,0 +1,104 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 23,
+  "holder": "Mario 64 Master",
+  "source": "https://www.youtube.com/watch?v=C2lAEDNXnF0",
+  "frames": 320,
+  "time": "5.33",
+  "complete": true,
+  "practice": true,
+  "sha256": "6095a8ec02067606890fa4a8695306d5d09614fbdb2ff2a3c57c876863d3e125",
+  "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+  "verification": {
+    "deterministicPasses": 2,
+    "browserPlayback": "Standard browser replay player displays REPLAY CLEAR \u00b7 00:05.33, 480 frames, practice, UCF off, without page errors",
+    "sourceVideoTargetFrames": [
+      98,
+      153,
+      179,
+      184,
+      253,
+      311,
+      355,
+      393,
+      440,
+      443
+    ],
+    "sourceTargetGameFrames": [
+      0,
+      30,
+      56,
+      61,
+      130,
+      188,
+      232,
+      270,
+      317,
+      320
+    ],
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 98,
+        "gameFrame": 0,
+        "time": "0.00",
+        "remaining": 9
+      },
+      {
+        "frame": 153,
+        "gameFrame": 30,
+        "time": "0.50",
+        "remaining": 8
+      },
+      {
+        "frame": 179,
+        "gameFrame": 56,
+        "time": "0.93",
+        "remaining": 7
+      },
+      {
+        "frame": 184,
+        "gameFrame": 61,
+        "time": "1.01",
+        "remaining": 6
+      },
+      {
+        "frame": 253,
+        "gameFrame": 130,
+        "time": "2.16",
+        "remaining": 5
+      },
+      {
+        "frame": 311,
+        "gameFrame": 188,
+        "time": "3.13",
+        "remaining": 4
+      },
+      {
+        "frame": 355,
+        "gameFrame": 232,
+        "time": "3.87",
+        "remaining": 3
+      },
+      {
+        "frame": 393,
+        "gameFrame": 270,
+        "time": "4.50",
+        "remaining": 2
+      },
+      {
+        "frame": 440,
+        "gameFrame": 317,
+        "time": "5.28",
+        "remaining": 1
+      },
+      {
+        "frame": 443,
+        "gameFrame": 320,
+        "time": "5.33",
+        "remaining": 0
+      }
+    ],
+    "knownTimingDifferences": []
+  },
+  "limitations": "Inputs inferred from numeric and graphical controller overlays and character motion, not an original recording. All ten audited target transitions and the final time match. OCR sign corrections, bumper SDI, edgecancel and aerial input timing required manual inference. Exact original inputs cannot be proven from video."
+}

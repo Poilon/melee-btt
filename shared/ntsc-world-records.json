@@ -486,7 +486,14 @@
           "url": "https://www.youtube.com/watch?v=C2lAEDNXnF0"
         }
       ],
-      "replayUrl": null
+      "replayUrl": "/play?worldRecord=23",
+      "reconstruction": {
+        "downloadUrl": "/world-record-replays/6095a8ec02067606890fa4a8695306d5d09614fbdb2ff2a3c57c876863d3e125.slp",
+        "sha256": "6095a8ec02067606890fa4a8695306d5d09614fbdb2ff2a3c57c876863d3e125",
+        "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+        "evidenceUrl": "/world-record-replays/6095a8ec02067606890fa4a8695306d5d09614fbdb2ff2a3c57c876863d3e125.json",
+        "timingNote": "Mario 64 Master video reconstruction. All ten audited target transitions and final time match; bumper SDI and input timing are inferred."
+      }
     }
   ]
 }
