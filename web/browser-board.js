@@ -82,6 +82,17 @@ function showWorldRecord(record) {
   const proof = document.createElement("td");
   const links = document.createElement("div");
   links.className = "replay-links";
+  if (record.reconstruction && record.replayUrl) {
+    const watch = document.createElement("a");
+    watch.href = record.replayUrl;
+    watch.textContent = "Watch reconstruction";
+    const download = document.createElement("a");
+    download.href = record.reconstruction.downloadUrl;
+    download.download = `${record.character}-${record.time}-reconstructed.slp`;
+    download.textContent = ".slp ↓";
+    download.setAttribute("aria-label", `Download ${record.character}'s reconstructed WR replay`);
+    links.append(watch, download);
+  }
   for (const video of record.videos) {
     const link = document.createElement("a");
     link.href = video.url;
@@ -102,6 +113,8 @@ function showWorldRecord(record) {
   link.textContent = "NTSC world record spreadsheet";
   source.append(link, ` · Updated ${record.retrievedAt.slice(0, 10)}. `,
     sum ? "Sum of the 25 individual records, not a single player's total." : "WR references are separate from browser rankings.");
+  if (record.reconstruction)
+    source.append(" Replay reconstructed from video: matching clear time and target timings; inferred inputs, not the original recording.");
 }
 async function show(character, from = 0, force = false) {
   const seq = ++request;

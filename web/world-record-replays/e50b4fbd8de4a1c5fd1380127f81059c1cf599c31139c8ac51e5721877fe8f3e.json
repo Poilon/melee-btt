@@ -1,0 +1,84 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 8,
+  "holder": "sockdude1",
+  "source": "https://youtu.be/8VZHKC3936I",
+  "frames": 467,
+  "time": "7.78",
+  "complete": true,
+  "practice": true,
+  "sha256": "e50b4fbd8de4a1c5fd1380127f81059c1cf599c31139c8ac51e5721877fe8f3e",
+  "engine": "a8a3520d917b8ab058a625cd3afde695e6b2e8c16f9d9bfaec579f37cc294264",
+  "verification": {
+    "deterministicPasses": 2,
+    "browserPlayback": "10 targets cleared, game frame 467, no page errors",
+    "sourceTargetTransitions": [
+      142,
+      169,
+      201,
+      306,
+      360,
+      483,
+      518,
+      521,
+      589
+    ],
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 143,
+        "gameFrame": 20,
+        "time": "0.33",
+        "remaining": 9
+      },
+      {
+        "frame": 170,
+        "gameFrame": 47,
+        "time": "0.78",
+        "remaining": 8
+      },
+      {
+        "frame": 202,
+        "gameFrame": 79,
+        "time": "1.31",
+        "remaining": 6
+      },
+      {
+        "frame": 307,
+        "gameFrame": 184,
+        "time": "3.06",
+        "remaining": 5
+      },
+      {
+        "frame": 361,
+        "gameFrame": 238,
+        "time": "3.97",
+        "remaining": 4
+      },
+      {
+        "frame": 484,
+        "gameFrame": 361,
+        "time": "6.01",
+        "remaining": 3
+      },
+      {
+        "frame": 519,
+        "gameFrame": 396,
+        "time": "6.60",
+        "remaining": 2
+      },
+      {
+        "frame": 522,
+        "gameFrame": 399,
+        "time": "6.65",
+        "remaining": 1
+      },
+      {
+        "frame": 590,
+        "gameFrame": 467,
+        "time": "7.78",
+        "remaining": 0
+      }
+    ]
+  },
+  "limitations": "Inputs inferred from the on-screen controller and numeric axes, not the original recording. Last Y press placed one frame before B to reproduce the visible double jump. Exact original inputs cannot be proven from video."
+}
