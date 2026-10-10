@@ -26,7 +26,25 @@ export function createWeekly({ store, secret, now, update, once }) {
     return { ticket: payload + "." + mac(payload), serverTime: at, round };
   }
   function eligibility(ticket, uid, replay, received) {
-    if (!ticket) return null;
+    if (!ticket) {
+      const round = weeklyRound(currentWeek(received), received),
+        start = Date.parse(replay.startAt);
+      // Normal play and the weekly shortcut share the same eligibility rules.
+      // Date both the actual recording and its server receipt; never import PBs.
+      if (
+        round.status !== "active" ||
+        !replay.complete ||
+        replay.practice ||
+        replay.fighter !== round.character.fighter ||
+        replay.engine !== round.engine ||
+        !Number.isFinite(start) ||
+        start < Date.parse(round.startsAt) ||
+        start >= Date.parse(round.endsAt) ||
+        start > received + 2000
+      )
+        return null;
+      return { accepted: true, number: round.number };
+    }
     try {
       if (typeof ticket !== "string" || ticket.length > 1024) throw Error();
       const [p, s, ...rest] = ticket.split("."),

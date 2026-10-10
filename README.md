@@ -166,8 +166,10 @@ round and provides public standings and previous/next archive links. A round
 accepts only completed non-practice runs of its featured character and pinned
 engine. UCF on/off is accepted. The signed entry binds the account, round and
 server entry time; the browser uses that server clock for replay start times.
-It must enter through the weekly page, start a fresh run and upload before the
-exclusive deadline. Old records and later uploads never roll into the new round.
+Normal play also enters automatically when its character, engine, recording
+start and server receipt match the active round. The weekly page is a shortcut
+that pins the right settings and supplies server time. Start a fresh run and
+upload before the exclusive deadline. Old records and later uploads never roll into the new round.
 This remains a browser-recorded beta competition, not independently verified
 competitive play; the entry ticket is not an anti-cheat proof of execution.
 

@@ -564,7 +564,13 @@ test("weekly competition: fresh runs, separate bests, ties, public replay and au
     };
   const old = await f.request(
     "browser-btt/runs",
-    post(a, payload(a, replay({ ...options, frames: 1 }))),
+    post(
+      a,
+      payload(
+        a,
+        replay({ ...options, frames: 1, startAt: "2026-10-09T00:00:00Z" }),
+      ),
+    ),
   );
   assert.equal(old.status, 200);
   const ticket = async (account) =>
@@ -716,4 +722,44 @@ test("weekly upload retry after storage failure preserves pre-deadline admission
       .status,
     404,
   );
+});
+
+test("normal play automatically enters only fresh matching weekly runs, without an entry ticket", async () => {
+  const { weeklyRound } = await import("../shared/browser-weekly.mjs");
+  let time = Date.parse("2026-10-10T08:10:53Z");
+  const f = fixture(() => time),
+    a = await f.account("AutoWeekly"),
+    r = weeklyRound(1, time);
+  const opts = {
+    fighter: 22,
+    engine: r.engine,
+    startAt: "2026-10-10T08:10:35Z",
+  };
+  const submit = (extra) =>
+    f.request(
+      "browser-btt/runs",
+      post(a, payload(a, replay({ ...opts, ...extra }))),
+    );
+  const run = await submit({ frames: 804 });
+  assert.equal(run.status, 200);
+  assert.equal(run.data.weekly.accepted, true);
+  assert.equal(run.data.weekly.number, 1);
+  const board = (await f.request("browser-btt/weekly")).data;
+  assert.equal(board.total, 1);
+  assert.equal(board.rows[0].frames, 804);
+  for (const extra of [
+    { frames: 2, startAt: "2026-10-09T12:00:00Z" },
+    { frames: 3, fighter: 2 },
+    { frames: 4, engine: "b".repeat(64) },
+    { frames: 5, startAt: "2026-10-10T10:00:00Z" },
+  ])
+    assert.equal((await submit(extra)).data.weekly, null);
+  assert.equal((await submit({ frames: 6, practice: true })).status, 400);
+  time = Date.parse(r.endsAt);
+  assert.equal((await submit({ frames: 7 })).data.weekly, null);
+  assert.equal(
+    (await f.request("browser-btt/weekly?week=1")).data.rows[0].frames,
+    804,
+  );
+  assert.equal((await f.request("browser-btt/weekly")).data.total, 0);
 });
