@@ -239,7 +239,13 @@
           "url": "https://www.youtube.com/watch?v=si10ORv3WkA"
         }
       ],
-      "replayUrl": null
+      "replayUrl": "/play?worldRecord=11",
+      "reconstruction": {
+        "downloadUrl": "/world-record-replays/9c59eabc35c3fe5c2f0822b9286c70e14711eff447fbc3afa6e8dda98a45e41c.slp",
+        "sha256": "9c59eabc35c3fe5c2f0822b9286c70e14711eff447fbc3afa6e8dda98a45e41c",
+        "engine": "a8a3520d917b8ab058a625cd3afde695e6b2e8c16f9d9bfaec579f37cc294264",
+        "evidenceUrl": "/world-record-replays/9c59eabc35c3fe5c2f0822b9286c70e14711eff447fbc3afa6e8dda98a45e41c.json"
+      }
     },
     {
       "stage": 14,

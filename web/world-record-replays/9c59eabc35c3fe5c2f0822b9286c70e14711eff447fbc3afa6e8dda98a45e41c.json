@@ -1,0 +1,84 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 11,
+  "holder": "MegaQwertification",
+  "source": "https://youtu.be/si10ORv3WkA",
+  "frames": 777,
+  "time": "12.95",
+  "complete": true,
+  "practice": true,
+  "sha256": "9c59eabc35c3fe5c2f0822b9286c70e14711eff447fbc3afa6e8dda98a45e41c",
+  "engine": "a8a3520d917b8ab058a625cd3afde695e6b2e8c16f9d9bfaec579f37cc294264",
+  "verification": {
+    "deterministicPasses": 2,
+    "browserPlayback": "10 targets cleared, game frame 777, no page errors",
+    "sourceTargetTransitions": [
+      265,
+      372,
+      384,
+      464,
+      733,
+      823,
+      942,
+      983,
+      1054
+    ],
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 111,
+        "gameFrame": 0,
+        "time": "0.00",
+        "remaining": 9
+      },
+      {
+        "frame": 218,
+        "gameFrame": 95,
+        "time": "1.58",
+        "remaining": 8
+      },
+      {
+        "frame": 230,
+        "gameFrame": 107,
+        "time": "1.78",
+        "remaining": 7
+      },
+      {
+        "frame": 310,
+        "gameFrame": 187,
+        "time": "3.11",
+        "remaining": 6
+      },
+      {
+        "frame": 579,
+        "gameFrame": 456,
+        "time": "7.60",
+        "remaining": 5
+      },
+      {
+        "frame": 669,
+        "gameFrame": 546,
+        "time": "9.10",
+        "remaining": 4
+      },
+      {
+        "frame": 788,
+        "gameFrame": 665,
+        "time": "11.08",
+        "remaining": 3
+      },
+      {
+        "frame": 829,
+        "gameFrame": 706,
+        "time": "11.77",
+        "remaining": 2
+      },
+      {
+        "frame": 900,
+        "gameFrame": 777,
+        "time": "12.95",
+        "remaining": 0
+      }
+    ]
+  },
+  "limitations": "Inputs inferred from numeric axes and controller overlay, not the original recording. Second X jump moved one frame earlier; one idle frame inserted after target 4; PK Fire and final A edges moved one frame later to reproduce observed events. Exact original inputs cannot be proven from video."
+}
