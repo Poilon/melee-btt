@@ -222,7 +222,14 @@
           "url": "https://www.youtube.com/watch?v=c-EBuMAKDN0"
         }
       ],
-      "replayUrl": null
+      "replayUrl": "/play?worldRecord=20",
+      "reconstruction": {
+        "downloadUrl": "/world-record-replays/db6ef4550952e3e0d0a39be00a27724a2b6debcb8db054e18b1473acb8a5e112.slp",
+        "sha256": "db6ef4550952e3e0d0a39be00a27724a2b6debcb8db054e18b1473acb8a5e112",
+        "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+        "evidenceUrl": "/world-record-replays/db6ef4550952e3e0d0a39be00a27724a2b6debcb8db054e18b1473acb8a5e112.json",
+        "timingNote": "All ten target transition clocks match. Bumper exit, fall, double jump and final laser checked against sampled video frames; inputs remain inferred."
+      }
     },
     {
       "stage": 2,

@@ -1,0 +1,124 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 20,
+  "holder": "Mario 64 Master",
+  "source": "https://www.youtube.com/watch?v=c-EBuMAKDN0",
+  "frames": 273,
+  "time": "4.55",
+  "complete": true,
+  "practice": true,
+  "sha256": "db6ef4550952e3e0d0a39be00a27724a2b6debcb8db054e18b1473acb8a5e112",
+  "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+  "verification": {
+    "deterministicPasses": 2,
+    "sourceDecoding": "Sequential 60fps decode; source frame125 shows game frame1. Masked HUD icon matching and visual captures.",
+    "sourceTargetVideoFrames": [
+      114,
+      135,
+      161,
+      191,
+      196,
+      198,
+      269,
+      311,
+      382,
+      397
+    ],
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 113,
+        "gameFrame": 0,
+        "time": "0.00",
+        "remaining": 9
+      },
+      {
+        "frame": 134,
+        "gameFrame": 11,
+        "time": "0.18",
+        "remaining": 8
+      },
+      {
+        "frame": 160,
+        "gameFrame": 37,
+        "time": "0.62",
+        "remaining": 7
+      },
+      {
+        "frame": 190,
+        "gameFrame": 67,
+        "time": "1.11",
+        "remaining": 6
+      },
+      {
+        "frame": 195,
+        "gameFrame": 72,
+        "time": "1.20",
+        "remaining": 5
+      },
+      {
+        "frame": 197,
+        "gameFrame": 74,
+        "time": "1.23",
+        "remaining": 4
+      },
+      {
+        "frame": 268,
+        "gameFrame": 145,
+        "time": "2.41",
+        "remaining": 3
+      },
+      {
+        "frame": 310,
+        "gameFrame": 187,
+        "time": "3.11",
+        "remaining": 2
+      },
+      {
+        "frame": 381,
+        "gameFrame": 258,
+        "time": "4.30",
+        "remaining": 1
+      },
+      {
+        "frame": 396,
+        "gameFrame": 273,
+        "time": "4.55",
+        "remaining": 0
+      }
+    ],
+    "poseChecks": {
+      "nativeFrames": [
+        110,
+        124,
+        134,
+        160,
+        190,
+        195,
+        197,
+        230,
+        268,
+        310,
+        323,
+        335,
+        339,
+        349,
+        359,
+        365,
+        366,
+        369,
+        375,
+        379,
+        380,
+        381,
+        390,
+        392,
+        396
+      ],
+      "sourceFrameOffset": 1,
+      "scope": "Sampled side-by-side pose and stage-relative position comparisons, including the bumper bounce, fall, double jump, last laser and final jab.",
+      "tailCorrection": "Fast fall and double jump delayed one frame; the accompanying stick-neutral interval moved with the jump. Last laser now spawns at the matching animation frame and destroys target9 at4.30 instead of4.28."
+    },
+    "browserPlayback": "Standard file picker: REPLAY CLEAR 00:04.55;435 frames,UCF off,Practice,no page errors."
+  },
+  "limitations": "Inputs inferred from video, not an original recording. All ten target transition clocks match; sampled visual comparisons do not prove identical positions, poses or underlying inputs on every frame. Not competitive evidence."
+}
