@@ -1,5 +1,6 @@
 import { createHmac } from "node:crypto";
 import { browserBttCatalog } from "../shared/browser-btt-catalog.mjs";
+import { ntscWorldRecord } from "../shared/ntsc-world-records.mjs";
 const fighters = new Set(browserBttCatalog.map((c) => c.fighter));
 const stages = new Map(browserBttCatalog.map((c) => [c.fighter, c.stage]));
 const requiredStages = new Set(stages.values()).size;
@@ -141,6 +142,7 @@ export function createBrowserLeaderboard({ store, secret, now }) {
         total = fighter === "total";
       const rows = total ? data.totals : data.perFighter[fighter];
       return {
+        worldRecord: ntscWorldRecord(fighter),
         rows: rows.slice(offset, offset + 100),
         total: rows.length,
         offset,

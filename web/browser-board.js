@@ -38,6 +38,7 @@ function controls(busy) {
   $("rows").setAttribute("aria-busy", String(busy));
 }
 function loading() {
+  showWorldRecord(null);
   $("rows").replaceChildren(
     ...Array.from({ length: 5 }, () => {
       const row = document.createElement("tr");
@@ -47,6 +48,60 @@ function loading() {
       return row;
     }),
   );
+}
+function showWorldRecord(record) {
+  const rows = $("world-record-rows"), source = $("world-record-source");
+  rows.replaceChildren();
+  source.replaceChildren();
+  source.hidden = !record;
+  if (!record) return;
+  const sum = record.kind === "sum-of-world-records";
+  const row = document.createElement("tr");
+  row.className = "world-record-row";
+  const badgeCell = document.createElement("td");
+  const badge = document.createElement("span");
+  badge.className = "world-record-badge";
+  badge.textContent = sum ? "Σ WR" : "WR";
+  badge.title = sum ? "Sum of NTSC world records" : "NTSC world record";
+  badgeCell.append(badge);
+  const player = document.createElement("td");
+  if (sum) player.textContent = "Sum of individual WRs";
+  else record.holders.forEach((holder, i) => {
+    if (i) player.append(" / ");
+    const name = document.createElement("span");
+    name.textContent = holder.name;
+    name.dataset.holder = holder.id;
+    if (holder.accountSlug) name.title = `Site account: ${holder.accountSlug}`;
+    player.append(name);
+  });
+  const score = document.createElement("td");
+  // Preserve the source's displayed hundredths instead of rounding seconds.
+  score.textContent = record.time ? `00:${record.time.padStart(5, "0")}` : time(record.frames);
+  const settings = document.createElement("td");
+  settings.textContent = sum ? "" : "—";
+  const proof = document.createElement("td");
+  const links = document.createElement("div");
+  links.className = "replay-links";
+  for (const video of record.videos) {
+    const link = document.createElement("a");
+    link.href = video.url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = record.videos.length > 1 ? `Video · ${video.player}` : "Video ↗";
+    link.setAttribute("aria-label", `Watch ${video.player}'s world record video`);
+    links.append(link);
+  }
+  if (sum) proof.textContent = `${record.stages} stages`;
+  else proof.append(links);
+  row.append(badgeCell, player, score, settings, proof);
+  rows.append(row);
+  const link = document.createElement("a");
+  link.href = record.source;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  link.textContent = "NTSC world record spreadsheet";
+  source.append(link, ` · Updated ${record.retrievedAt.slice(0, 10)}. `,
+    sum ? "Sum of the 25 individual records, not a single player's total." : "WR references are separate from browser rankings.");
 }
 async function show(character, from = 0, force = false) {
   const seq = ++request;
@@ -90,6 +145,7 @@ async function show(character, from = 0, force = false) {
     if (seq !== request) return;
     cache.set(key, { board, at: Date.now() });
     total = board.total;
+    showWorldRecord(board.worldRecord);
     const displayed =
       isTotal && offset === 0
         ? [...board.rows, ...board.inProgress]

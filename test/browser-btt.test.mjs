@@ -327,6 +327,8 @@ test("public browser leaderboard includes existing bests, uses ties, and never m
   assert.equal(board.status, 200);
   assert.equal(board.data.scope, "official-browser-btt");
   assert.equal(board.data.total, 2);
+  assert.equal(board.data.worldRecord.time, "6.31");
+  assert.equal(board.data.worldRecord.holders[0].name, "jenkem66");
   assert.deepEqual(
     board.data.rows.map((r) => r.rank),
     [1, 1],
@@ -365,6 +367,18 @@ test("public browser leaderboard includes existing bests, uses ties, and never m
     (await f.request("browser-btt/leaderboard?fighter=2&offset=0.5")).status,
     400,
   );
+});
+
+test("world records remain visible on an empty or paginated browser board", async () => {
+  const f = fixture();
+  for (const offset of [0, 100]) {
+    const board = (await f.request(`browser-btt/leaderboard?fighter=23&offset=${offset}`)).data;
+    assert.equal(board.total, 0);
+    assert.deepEqual(board.rows, []);
+    assert.equal(board.worldRecord.time, "5.33");
+    assert.equal(board.worldRecord.holders.length, 2);
+    assert.equal(board.worldRecord.replayUrl, null);
+  }
 });
 
 test("new and existing PB replays are public automatically; superseded attempts require explicit sharing", async () => {

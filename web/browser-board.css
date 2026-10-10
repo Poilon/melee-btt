@@ -46,6 +46,36 @@
   color: var(--muted);
   white-space: nowrap;
 }
+.world-record-row {
+  background: #ffcf720c;
+  border-block: 1px solid #ffcf7240;
+}
+.browser-leaderboard .world-record-row td {
+  color: var(--gold);
+}
+.world-record-badge {
+  display: inline-block;
+  padding: 4px 6px;
+  border: 1px solid #ffcf7260;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.world-record-row .replay-links {
+  flex-wrap: wrap;
+  font-size: 12px;
+}
+.world-record-source {
+  margin: 12px 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.world-record-source a {
+  color: var(--gold);
+  text-decoration: underline;
+}
 .browser-leaderboard td:nth-child(4) {
   font-size: 12px;
   color: var(--muted);

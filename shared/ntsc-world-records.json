@@ -1,0 +1,446 @@
+{
+  "source": "https://docs.google.com/spreadsheets/d/15wdkLsmSU2T9Os1j-lISe-XmXH-l3Awk9xBipYnTQCI/edit?gid=97055681",
+  "retrievedAt": "2026-10-10T09:57:55.371474+00:00",
+  "region": "NTSC",
+  "holders": {
+    "samplay": {
+      "name": "Samplay",
+      "accountSlug": null
+    },
+    "sockdude1": {
+      "name": "sockdude1",
+      "accountSlug": null
+    },
+    "megaqwertification": {
+      "name": "MegaQwertification",
+      "accountSlug": null
+    },
+    "judge9": {
+      "name": "Judge9",
+      "accountSlug": null
+    },
+    "jenkem66": {
+      "name": "jenkem66",
+      "accountSlug": null
+    },
+    "mario-64-master": {
+      "name": "Mario 64 Master",
+      "accountSlug": null
+    },
+    "samthedigital": {
+      "name": "samthedigital",
+      "accountSlug": null
+    },
+    "marth1": {
+      "name": "marth1",
+      "accountSlug": null
+    }
+  },
+  "records": [
+    {
+      "stage": 22,
+      "character": "Dr. Mario",
+      "frames": 772,
+      "time": "12.87",
+      "holders": [
+        "samplay"
+      ],
+      "videos": [
+        {
+          "player": "Samplay",
+          "url": "https://www.youtube.com/watch?v=LvmizWLWPYI"
+        }
+      ],
+      "replayUrl": null
+    },
+    {
+      "stage": 8,
+      "character": "Mario",
+      "frames": 467,
+      "time": "7.78",
+      "holders": [
+        "sockdude1"
+      ],
+      "videos": [
+        {
+          "player": "sockdude1",
+          "url": "https://youtu.be/8VZHKC3936I"
+        }
+      ],
+      "replayUrl": null
+    },
+    {
+      "stage": 7,
+      "character": "Luigi",
+      "frames": 180,
+      "time": "3.00",
+      "holders": [
+        "samplay"
+      ],
+      "videos": [
+        {
+          "player": "Samplay",
+          "url": "https://www.youtube.com/watch?v=cXXZQlEozGo"
+        }
+      ],
+      "replayUrl": null
+    },
+    {
+      "stage": 5,
+      "character": "Bowser",
+      "frames": 484,
+      "time": "8.06",
+      "holders": [
+        "megaqwertification"
+      ],
+      "videos": [
+        {
+          "player": "MegaQwertification",
+          "url": "https://www.youtube.com/watch?v=ZuApYtH6bBg"
+        }
+      ],
+      "replayUrl": null
+    },
+    {
+      "stage": 12,
+      "character": "Peach",
+      "frames": 536,
+      "time": "8.93",
+      "holders": [
+        "judge9"
+      ],
+      "videos": [
+        {
+          "player": "Judge9",
+          "url": "https://www.youtube.com/watch?v=PR4W7Fc9uqY"
+        }
+      ],
+      "replayUrl": null
+    },
+    {
+      "stage": 17,
+      "character": "Yoshi",
+      "frames": 415,
+      "time": "6.92",
+      "holders": [
+        "sockdude1"
+      ],
+      "videos": [
+        {
+          "player": "sockdude1",
+          "url": "https://www.youtube.com/watch?v=yf1dJlSdfBQ"
+        }
+      ],
+      "replayUrl": null
+    },
+    {
+      "stage": 1,
+      "character": "Donkey Kong",
+      "frames": 500,
+      "time": "8.33",
+      "holders": [
+        "jenkem66"
+      ],
+      "videos": [
+        {
+          "player": "jenkem66",
+          "url": "https://www.youtube.com/watch?v=aAiBhTi_xuY"
+        }
+      ],
+      "replayUrl": null
+    },
+    {
+      "stage": 0,
+      "character": "Captain Falcon",
+      "frames": 435,
+      "time": "7.25",
+      "holders": [
+        "mario-64-master"
+      ],
+      "videos": [
+        {
+          "player": "Mario 64 Master",
+          "url": "https://www.youtube.com/watch?v=RRXUSMGYW60"
+        }
+      ],
+      "replayUrl": null
+    },
+    {
+      "stage": 25,
+      "character": "Ganondorf",
+      "frames": 266,
+      "time": "4.43",
+      "holders": [
+        "samplay"
+      ],
+      "videos": [
+        {
+          "player": "Samplay",
+          "url": "https://www.youtube.com/watch?v=z5BK48TDwtw"
+        }
+      ],
+      "replayUrl": null
+    },
+    {
+      "stage": 20,
+      "character": "Falco",
+      "frames": 273,
+      "time": "4.55",
+      "holders": [
+        "mario-64-master"
+      ],
+      "videos": [
+        {
+          "player": "Mario 64 Master",
+          "url": "https://www.youtube.com/watch?v=c-EBuMAKDN0"
+        }
+      ],
+      "replayUrl": null
+    },
+    {
+      "stage": 2,
+      "character": "Fox",
+      "frames": 379,
+      "time": "6.31",
+      "holders": [
+        "jenkem66"
+      ],
+      "videos": [
+        {
+          "player": "jenkem66",
+          "url": "https://www.youtube.com/watch?v=jloK7UrCwcQ"
+        }
+      ],
+      "replayUrl": null
+    },
+    {
+      "stage": 11,
+      "character": "Ness",
+      "frames": 777,
+      "time": "12.95",
+      "holders": [
+        "megaqwertification"
+      ],
+      "videos": [
+        {
+          "player": "MegaQwertification",
+          "url": "https://www.youtube.com/watch?v=si10ORv3WkA"
+        }
+      ],
+      "replayUrl": null
+    },
+    {
+      "stage": 14,
+      "character": "Ice Climbers",
+      "frames": 584,
+      "time": "9.73",
+      "holders": [
+        "sockdude1"
+      ],
+      "videos": [
+        {
+          "player": "sockdude1",
+          "url": "https://youtu.be/X3UfQp2_Bbo"
+        }
+      ],
+      "replayUrl": null
+    },
+    {
+      "stage": 4,
+      "character": "Kirby",
+      "frames": 701,
+      "time": "11.68",
+      "holders": [
+        "samthedigital"
+      ],
+      "videos": [
+        {
+          "player": "samthedigital",
+          "url": "https://www.youtube.com/watch?v=XEd8gt4_5cA"
+        }
+      ],
+      "replayUrl": null
+    },
+    {
+      "stage": 16,
+      "character": "Samus",
+      "frames": 452,
+      "time": "7.53",
+      "holders": [
+        "mario-64-master"
+      ],
+      "videos": [
+        {
+          "player": "Mario 64 Master",
+          "url": "https://youtu.be/Js0Ig9u7V5Q"
+        }
+      ],
+      "replayUrl": null
+    },
+    {
+      "stage": 18,
+      "character": "Zelda/Sheik",
+      "frames": 364,
+      "time": "6.06",
+      "holders": [
+        "marth1"
+      ],
+      "videos": [
+        {
+          "player": "marth1",
+          "url": "https://www.youtube.com/watch?v=yRMvUfRZ68c"
+        }
+      ],
+      "replayUrl": null
+    },
+    {
+      "stage": 6,
+      "character": "Link",
+      "frames": 209,
+      "time": "3.48",
+      "holders": [
+        "mario-64-master"
+      ],
+      "videos": [
+        {
+          "player": "Mario 64 Master",
+          "url": "https://www.youtube.com/watch?v=61MnKMe_xa4"
+        }
+      ],
+      "replayUrl": null
+    },
+    {
+      "stage": 21,
+      "character": "Young Link",
+      "frames": 287,
+      "time": "4.78",
+      "holders": [
+        "mario-64-master"
+      ],
+      "videos": [
+        {
+          "player": "Mario 64 Master",
+          "url": "https://www.youtube.com/watch?v=nTmWM0B6_W4"
+        }
+      ],
+      "replayUrl": null
+    },
+    {
+      "stage": 24,
+      "character": "Pichu",
+      "frames": 327,
+      "time": "5.45",
+      "holders": [
+        "mario-64-master"
+      ],
+      "videos": [
+        {
+          "player": "Mario 64 Master",
+          "url": "https://www.youtube.com/watch?v=bZEhqFZ6DZo"
+        }
+      ],
+      "replayUrl": null
+    },
+    {
+      "stage": 13,
+      "character": "Pikachu",
+      "frames": 408,
+      "time": "6.80",
+      "holders": [
+        "megaqwertification"
+      ],
+      "videos": [
+        {
+          "player": "MegaQwertification",
+          "url": "https://www.youtube.com/watch?v=ONlrcb-abH4"
+        }
+      ],
+      "replayUrl": null
+    },
+    {
+      "stage": 15,
+      "character": "Jigglypuff",
+      "frames": 457,
+      "time": "7.62",
+      "holders": [
+        "sockdude1"
+      ],
+      "videos": [
+        {
+          "player": "sockdude1",
+          "url": "https://www.youtube.com/watch?v=zFQQcTv_XZ8"
+        }
+      ],
+      "replayUrl": null
+    },
+    {
+      "stage": 10,
+      "character": "Mewtwo",
+      "frames": 239,
+      "time": "3.99",
+      "holders": [
+        "samplay"
+      ],
+      "videos": [
+        {
+          "player": "Samplay",
+          "url": "https://www.youtube.com/watch?v=GaMbgAfIg6U"
+        }
+      ],
+      "replayUrl": null
+    },
+    {
+      "stage": 3,
+      "character": "Mr. Game & Watch",
+      "frames": 161,
+      "time": "2.68",
+      "holders": [
+        "mario-64-master"
+      ],
+      "videos": [
+        {
+          "player": "Mario 64 Master",
+          "url": "https://www.youtube.com/watch?v=37zCsraVUu0"
+        }
+      ],
+      "replayUrl": null
+    },
+    {
+      "stage": 9,
+      "character": "Marth",
+      "frames": 512,
+      "time": "8.53",
+      "holders": [
+        "sockdude1"
+      ],
+      "videos": [
+        {
+          "player": "sockdude1",
+          "url": "https://www.youtube.com/watch?v=hMIeO5h0m5Y"
+        }
+      ],
+      "replayUrl": null
+    },
+    {
+      "stage": 23,
+      "character": "Roy",
+      "frames": 320,
+      "time": "5.33",
+      "holders": [
+        "judge9",
+        "mario-64-master"
+      ],
+      "videos": [
+        {
+          "player": "Judge9",
+          "url": "https://youtu.be/JRt3UUFS_xc"
+        },
+        {
+          "player": "Mario 64 Master",
+          "url": "https://www.youtube.com/watch?v=C2lAEDNXnF0"
+        }
+      ],
+      "replayUrl": null
+    }
+  ]
+}

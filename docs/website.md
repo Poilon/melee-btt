@@ -266,3 +266,21 @@ so a routine website deployment cannot silently remove the playable game.
 The runtime requires the route-specific WASM CSP, COOP/COEP headers and JavaScript
 MIME rules already emitted by the deployment script. It does not use the Fly VS
 relay and does not require another server.
+
+### NTSC world record references
+
+`shared/ntsc-world-records.json` is a dated snapshot of the NTSC Target Test
+spreadsheet, including the original displayed times, holders and proof videos.
+The leaderboard API exposes it as `worldRecord`, separately from browser `rows`,
+counts and ranks. Zelda and Sheik share one course; Roy has two tied holders.
+The total reference sums the 25 individual records, not a player's total record.
+
+Holder IDs are stable keys. `holders[id].accountSlug` is reserved for an explicit,
+verified association with a site account; never infer ownership from matching
+names. Keep the spreadsheet holder name when an account is associated. `replayUrl`
+remains null until a faithful replay has been verified; experimental video
+reconstructions must not become world record evidence automatically.
+
+To update the references, review the linked spreadsheet and its proof videos,
+update the snapshot and retrieval timestamp, then run
+`node --test test/ntsc-world-records.test.mjs test/browser-btt.test.mjs`.

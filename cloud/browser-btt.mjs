@@ -128,7 +128,7 @@ export function createBrowserBtt({
         const u = await userFor(req),
           p = await store.get(`profiles/${u.id}.json`);
         if (!p?.slug)
-          throw error("Choose your username before allowing spectators.", 409);
+          throw error("Choose your username to join live players.", 409);
         json(res, 200, spectate.ticket(publicProfile(p), now()));
         return true;
       }
