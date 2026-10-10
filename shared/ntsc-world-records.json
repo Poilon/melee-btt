@@ -385,7 +385,14 @@
           "url": "https://www.youtube.com/watch?v=bZEhqFZ6DZo"
         }
       ],
-      "replayUrl": null
+      "replayUrl": "/play?worldRecord=24",
+      "reconstruction": {
+        "downloadUrl": "/world-record-replays/66a8bcafe081a102e5d8a46c7b30c4cd314f66312c4a6943ebcdcae79c51952d.slp",
+        "sha256": "66a8bcafe081a102e5d8a46c7b30c4cd314f66312c4a6943ebcdcae79c51952d",
+        "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+        "evidenceUrl": "/world-record-replays/66a8bcafe081a102e5d8a46c7b30c4cd314f66312c4a6943ebcdcae79c51952d.json",
+        "timingNote": "All ten audited target transition times and final time match. Controller inputs, landing dash and aerial stick magnitude are inferred from video."
+      }
     },
     {
       "stage": 13,

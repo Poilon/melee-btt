@@ -1,0 +1,117 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 24,
+  "holder": "Mario 64 Master",
+  "source": "https://www.youtube.com/watch?v=bZEhqFZ6DZo",
+  "frames": 327,
+  "time": "5.45",
+  "complete": true,
+  "practice": true,
+  "sha256": "66a8bcafe081a102e5d8a46c7b30c4cd314f66312c4a6943ebcdcae79c51952d",
+  "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+  "verification": {
+    "deterministicPasses": 2,
+    "sourceDecoding": "Sequential decoding of the complete source video. Target HUD transitions checked on adjacent frames.",
+    "sourceTargetVideoFrames": [
+      141,
+      162,
+      173,
+      220,
+      250,
+      313,
+      318,
+      436,
+      442,
+      450
+    ],
+    "sourceTargetGameFrames": [
+      18,
+      39,
+      50,
+      97,
+      127,
+      190,
+      195,
+      313,
+      319,
+      327
+    ],
+    "sourceTargetTimes": [
+      "0.30",
+      "0.65",
+      "0.83",
+      "1.62",
+      "2.11",
+      "3.16",
+      "3.25",
+      "5.21",
+      "5.31",
+      "5.45"
+    ],
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 141,
+        "gameFrame": 18,
+        "time": "0.30",
+        "remaining": 9
+      },
+      {
+        "frame": 162,
+        "gameFrame": 39,
+        "time": "0.65",
+        "remaining": 8
+      },
+      {
+        "frame": 173,
+        "gameFrame": 50,
+        "time": "0.83",
+        "remaining": 7
+      },
+      {
+        "frame": 220,
+        "gameFrame": 97,
+        "time": "1.62",
+        "remaining": 6
+      },
+      {
+        "frame": 250,
+        "gameFrame": 127,
+        "time": "2.11",
+        "remaining": 5
+      },
+      {
+        "frame": 313,
+        "gameFrame": 190,
+        "time": "3.16",
+        "remaining": 4
+      },
+      {
+        "frame": 318,
+        "gameFrame": 195,
+        "time": "3.25",
+        "remaining": 3
+      },
+      {
+        "frame": 436,
+        "gameFrame": 313,
+        "time": "5.21",
+        "remaining": 2
+      },
+      {
+        "frame": 442,
+        "gameFrame": 319,
+        "time": "5.31",
+        "remaining": 1
+      },
+      {
+        "frame": 450,
+        "gameFrame": 327,
+        "time": "5.45",
+        "remaining": 0
+      }
+    ],
+    "knownTimingDifferences": [],
+    "browserPlayback": "Standard replay player: REPLAY CLEAR \u00b7 00:05.45; 470 frames; practice; UCF off; no page errors"
+  },
+  "limitations": "Practice reconstruction inferred from video, not an original recording. All ten audited target clocks and final time match. The dash after the first landing and aerial stick magnitude before Thunder Jolt required manual inference; the video cannot prove the exact original input sequence."
+}
