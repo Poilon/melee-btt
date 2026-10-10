@@ -1,0 +1,171 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 10,
+  "holder": "Samplay",
+  "source": "https://www.youtube.com/watch?v=GaMbgAfIg6U",
+  "frames": 239,
+  "time": "3.99",
+  "complete": true,
+  "practice": true,
+  "sha256": "baf038fc3fa12491c8da8aef8a3562e43670a6cd1bd29f940e9f430a7fbb1e13",
+  "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+  "seed": 1311822472,
+  "verification": {
+    "deterministicPasses": 2,
+    "sourceDecoding": "Sequential decode with per-image HUD clocks; the source contains duplicated and omitted game frames.",
+    "sourceTargetVideoFrames": [
+      154,
+      202,
+      218,
+      231,
+      245,
+      293,
+      293,
+      334,
+      362,
+      365
+    ],
+    "sourceTargetGameFrameIntervals": [
+      [
+        31,
+        31
+      ],
+      [
+        79,
+        80
+      ],
+      [
+        93,
+        94
+      ],
+      [
+        107,
+        107
+      ],
+      [
+        121,
+        121
+      ],
+      [
+        168,
+        169
+      ],
+      [
+        168,
+        169
+      ],
+      [
+        208,
+        208
+      ],
+      [
+        236,
+        236
+      ],
+      [
+        239,
+        239
+      ]
+    ],
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 154,
+        "gameFrame": 31,
+        "time": "0.52",
+        "remaining": 9
+      },
+      {
+        "frame": 203,
+        "gameFrame": 80,
+        "time": "1.33",
+        "remaining": 8
+      },
+      {
+        "frame": 216,
+        "gameFrame": 93,
+        "time": "1.55",
+        "remaining": 7
+      },
+      {
+        "frame": 230,
+        "gameFrame": 107,
+        "time": "1.78",
+        "remaining": 6
+      },
+      {
+        "frame": 244,
+        "gameFrame": 121,
+        "time": "2.01",
+        "remaining": 5
+      },
+      {
+        "frame": 291,
+        "gameFrame": 168,
+        "time": "2.80",
+        "remaining": 3
+      },
+      {
+        "frame": 331,
+        "gameFrame": 208,
+        "time": "3.46",
+        "remaining": 2
+      },
+      {
+        "frame": 359,
+        "gameFrame": 236,
+        "time": "3.93",
+        "remaining": 1
+      },
+      {
+        "frame": 362,
+        "gameFrame": 239,
+        "time": "3.99",
+        "remaining": 0
+      }
+    ],
+    "poseChecks": {
+      "sourceNativePairs": [
+        [
+          154,
+          154
+        ],
+        [
+          202,
+          203
+        ],
+        [
+          218,
+          217
+        ],
+        [
+          231,
+          230
+        ],
+        [
+          245,
+          244
+        ],
+        [
+          293,
+          292
+        ],
+        [
+          334,
+          331
+        ],
+        [
+          362,
+          359
+        ],
+        [
+          365,
+          362
+        ]
+      ],
+      "scope": "Sampled same-clock side-by-side pose and stage-relative position checks. Images retained in mewtwo-comparison-0..2.jpg."
+    },
+    "startupSeed": "Normal engine startup with MELEE_RNG_SEED=1311822472 yields initial RNG state1234567 after13 initialization calls. No writes to RNG or game state during recorded simulation. Shadow Ball oscillation uses retail HSD_Randf; this inferred initial seed yields target9 at3.93.",
+    "browserPlayback": "Standard file picker: REPLAY CLEAR 00:03.99;395 frames,UCF off,Practice,no page errors."
+  },
+  "limitations": "Practice reconstruction inferred from video, not the original inputs or original RNG seed. Target transitions agree with visible clocks or missing-frame intervals. Sampled pose comparisons do not prove frame-by-frame identity; not competitive evidence."
+}

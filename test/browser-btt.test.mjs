@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { gzipSync } from "node:zlib";
 import { createCloudHandler } from "../cloud/backend.mjs";
-import { BttRecorder } from "../shared/browser-btt-replay.mjs";
+import { BttRecorder, parseBttReplay } from "../shared/browser-btt-replay.mjs";
 function replay({
   practice = false,
   complete = true,
@@ -11,11 +11,13 @@ function replay({
   engine = "a".repeat(64),
   startAt = "2026-10-09T00:00:00.000Z",
   frames = 2,
+  seed = 1234567,
 } = {}) {
   const r = new BttRecorder({
     fighter,
     engine,
     startAt,
+    seed,
   });
   const s = [1, 2, 3, 0, 1, 14, 2, 1, 10, 10, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0];
   for (let i = 0; i <= frames; i++) {
@@ -166,6 +168,8 @@ test("reject practice, incomplete, corrupt, wrong-owner and cross-origin score u
     a = await f.account("tester");
   for (const bytes of [
     replay({ practice: true }),
+    replay({ practice: true, seed: 0xfedcba98 }),
+    replay({ seed: 0xfedcba98 }),
     replay({ complete: false }),
     Buffer.from("not a replay"),
   ])
@@ -201,6 +205,12 @@ test("reject practice, incomplete, corrupt, wrong-owner and cross-origin score u
       .length,
     0,
   );
+});
+test("practice reconstructions preserve uint32 startup seeds without becoming score eligible", () => {
+  const parsed = parseBttReplay(replay({ practice: true, seed: 0xfedcba98 }));
+  assert.equal(parsed.seed, 0xfedcba98);
+  assert.equal(parsed.practice, true);
+  assert.throws(() => parseBttReplay(replay({ seed: 0xfedcba98 })), /Invalid replay result/);
 });
 test("browser account creation keeps CSRF and username uniqueness protections", async () => {
   const f = fixture();
@@ -377,7 +387,8 @@ test("world records remain visible on an empty or paginated browser board", asyn
     assert.deepEqual(board.rows, []);
     assert.equal(board.worldRecord.time, "5.33");
     assert.equal(board.worldRecord.holders.length, 2);
-    assert.equal(board.worldRecord.replayUrl, null);
+    assert.equal(board.worldRecord.replayUrl, "/play?worldRecord=23");
+    assert.match(board.worldRecord.reconstruction.downloadUrl, /^\/world-record-replays\/[a-f0-9]{64}\.slp$/);
   }
 });
 

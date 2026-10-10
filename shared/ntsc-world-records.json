@@ -455,7 +455,14 @@
           "url": "https://www.youtube.com/watch?v=GaMbgAfIg6U"
         }
       ],
-      "replayUrl": null
+      "replayUrl": "/play?worldRecord=10",
+      "reconstruction": {
+        "downloadUrl": "/world-record-replays/baf038fc3fa12491c8da8aef8a3562e43670a6cd1bd29f940e9f430a7fbb1e13.slp",
+        "sha256": "baf038fc3fa12491c8da8aef8a3562e43670a6cd1bd29f940e9f430a7fbb1e13",
+        "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+        "evidenceUrl": "/world-record-replays/baf038fc3fa12491c8da8aef8a3562e43670a6cd1bd29f940e9f430a7fbb1e13.json",
+        "timingNote": "Target clocks match the visible source or missing-frame intervals. Sampled poses checked; inputs and startup RNG seed inferred. Practice reconstruction."
+      }
     },
     {
       "stage": 3,

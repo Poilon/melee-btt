@@ -4,6 +4,7 @@
 // https://github.com/project-slippi/slippi-wiki/blob/master/SPEC.md
 export const MAX_REPLAY_BYTES = 12 * 1024 * 1024;
 export const MAX_REPLAY_FRAMES = 36000;
+export const DEFAULT_RNG_SEED = 1234567;
 export const stageIds = [
   34, 36, 39, 56, 41, 42, 43, 44, 33, 45, 46, 47, 48, 50, 40, 51, 52, 54, 55,
   55, 38, 35, 37, 57, 49, 58,
@@ -38,6 +39,13 @@ function i32(n) {
   new DataView(b.buffer).setInt32(1, n);
   return b;
 }
+function integer(n) {
+  if (n >= -0x80000000 && n <= 0x7fffffff) return i32(n);
+  const b = new Uint8Array(9);
+  b[0] = 0x4c;
+  new DataView(b.buffer).setBigInt64(1, BigInt(n));
+  return b;
+}
 function key(s) {
   const b = encoder.encode(s);
   return join([
@@ -50,7 +58,7 @@ function ubjson(v) {
     return join([Uint8Array.of(0x5b, 0x24, 0x55, 0x23), i32(v.length), v]);
   if (typeof v === "string") return join([Uint8Array.of(0x53), key(v)]);
   if (typeof v === "boolean") return Uint8Array.of(v ? 0x54 : 0x46);
-  if (Number.isSafeInteger(v)) return i32(v);
+  if (Number.isSafeInteger(v)) return integer(v);
   if (v === null) return Uint8Array.of(0x5a);
   return join([
     Uint8Array.of(0x7b),
@@ -81,6 +89,12 @@ function readUbjson(bytes) {
       take(4);
       return view.getInt32(at - 4);
     }
+    if (type === 0x4c) {
+      take(8);
+      const n = Number(view.getBigInt64(at - 8));
+      if (!Number.isSafeInteger(n)) throw Error("Unsafe replay integer.");
+      return n;
+    }
     throw Error("Unsupported replay encoding.");
   }
   const string = () => decoder.decode(take(number()));
@@ -92,7 +106,7 @@ function readUbjson(bytes) {
     if (t === 0x54) return true;
     if (t === 0x46) return false;
     if (t === 0x5a) return null;
-    if ([0x55, 0x69, 0x6c].includes(t)) return number(t);
+    if ([0x55, 0x69, 0x6c, 0x4c].includes(t)) return number(t);
     if (t === 0x5b) {
       if (byte() !== 0x24 || byte() !== 0x55 || byte() !== 0x23)
         throw Error("Unsupported replay array.");
@@ -119,14 +133,17 @@ export class BttRecorder {
   constructor({
     fighter,
     engine,
-    seed = 1234567,
+    seed = DEFAULT_RNG_SEED,
     startAt = new Date().toISOString(),
     name = "",
   }) {
     if (
       !Number.isInteger(fighter) ||
       !stageIds[fighter] ||
-      !/^[a-f0-9]{64}$/.test(engine)
+      !/^[a-f0-9]{64}$/.test(engine) ||
+      !Number.isSafeInteger(seed) ||
+      seed < 0 ||
+      seed > 0xffffffff
     )
       throw Error("Invalid replay settings.");
     Object.assign(this, {
@@ -299,7 +316,9 @@ export function parseBttReplay(input) {
     !Number.isInteger(b.fighter) ||
     !stageIds[b.fighter] ||
     !/^[a-f0-9]{64}$/.test(b.engine) ||
-    b.seed !== 1234567 ||
+    !Number.isSafeInteger(b.seed) ||
+    b.seed < 0 ||
+    b.seed > 0xffffffff ||
     typeof b.complete !== "boolean" ||
     typeof b.practice !== "boolean"
   )
@@ -352,6 +371,7 @@ export function parseBttReplay(input) {
   }
   if (
     (practice && !b.practice) ||
+    (b.seed !== DEFAULT_RNG_SEED && !b.practice) ||
     !Number.isSafeInteger(b.frames) ||
     b.frames !== lastTime ||
     (b.complete && (lastTargets !== 0 || b.frames <= 0))
