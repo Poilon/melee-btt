@@ -1,0 +1,184 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 22,
+  "holder": "Samplay",
+  "source": "https://www.youtube.com/watch?v=LvmizWLWPYI",
+  "frames": 772,
+  "time": "12.87",
+  "complete": true,
+  "practice": true,
+  "sha256": "9d79b40fd9c863e5d6d6642413df4ffd5e0c26cfa0ae415bf0d29afb1786a6d6",
+  "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+  "verification": {
+    "deterministicPasses": 2,
+    "sourceDecoding": "Sequential decode with per-image HUD clocks; source includes omitted game frames.",
+    "sourceTargetVideoFrames": [
+      120,
+      308,
+      325,
+      418,
+      531,
+      559,
+      631,
+      789,
+      790,
+      898
+    ],
+    "sourceTargetGameFrameIntervals": [
+      [
+        0,
+        0
+      ],
+      [
+        187,
+        187
+      ],
+      [
+        204,
+        204
+      ],
+      [
+        295,
+        296
+      ],
+      [
+        406,
+        407
+      ],
+      [
+        435,
+        435
+      ],
+      [
+        507,
+        507
+      ],
+      [
+        663,
+        663
+      ],
+      [
+        664,
+        664
+      ],
+      [
+        772,
+        772
+      ]
+    ],
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 121,
+        "gameFrame": 0,
+        "time": "0.00",
+        "remaining": 9
+      },
+      {
+        "frame": 310,
+        "gameFrame": 187,
+        "time": "3.11",
+        "remaining": 8
+      },
+      {
+        "frame": 327,
+        "gameFrame": 204,
+        "time": "3.40",
+        "remaining": 7
+      },
+      {
+        "frame": 419,
+        "gameFrame": 296,
+        "time": "4.93",
+        "remaining": 6
+      },
+      {
+        "frame": 530,
+        "gameFrame": 407,
+        "time": "6.78",
+        "remaining": 5
+      },
+      {
+        "frame": 558,
+        "gameFrame": 435,
+        "time": "7.25",
+        "remaining": 4
+      },
+      {
+        "frame": 630,
+        "gameFrame": 507,
+        "time": "8.45",
+        "remaining": 3
+      },
+      {
+        "frame": 786,
+        "gameFrame": 663,
+        "time": "11.05",
+        "remaining": 2
+      },
+      {
+        "frame": 787,
+        "gameFrame": 664,
+        "time": "11.06",
+        "remaining": 1
+      },
+      {
+        "frame": 895,
+        "gameFrame": 772,
+        "time": "12.87",
+        "remaining": 0
+      }
+    ],
+    "poseChecks": {
+      "sourceNativePairs": [
+        [
+          308,
+          310
+        ],
+        [
+          325,
+          327
+        ],
+        [
+          418,
+          419
+        ],
+        [
+          531,
+          530
+        ],
+        [
+          559,
+          558
+        ],
+        [
+          631,
+          630
+        ],
+        [
+          789,
+          786
+        ],
+        [
+          790,
+          787
+        ],
+        [
+          895,
+          892
+        ],
+        [
+          898,
+          895
+        ]
+      ],
+      "scope": "Sampled matching-clock animation and stage-relative position comparisons; doc-comparison-0..3.jpg. Last attack is DownAir, with final drift corrected so body position matches source at12.82 and12.87. Not a proof of every-frame identity."
+    },
+    "correctedMechanics": [
+      "Target8 is Up-B top right; target9 is the previous reversed pill hitting lower-left after wall bounce.",
+      "Last moving-platform contact must edge-cancel.",
+      "Last attack is Down-Air action69, not Back-Air67. Pose comparison revealed this even though both could clear at12.87."
+    ],
+    "browserPlayback": "REPLAY CLEAR \u00b7 00:12.87; 925/925 frames, UCF off, practice; no page errors"
+  },
+  "limitations": "Inferred inputs from video, not the original recording. Target transitions match visible HUD clocks or missing-frame intervals; sampled pose checks do not prove identity on every frame. Capsule color and visual effects can differ with the original random state. Not competitive evidence."
+}
