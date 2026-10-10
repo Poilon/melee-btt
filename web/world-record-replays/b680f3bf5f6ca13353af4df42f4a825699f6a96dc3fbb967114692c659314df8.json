@@ -1,0 +1,78 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 3,
+  "holder": "Mario 64 Master",
+  "source": "https://youtu.be/37zCsraVUu0",
+  "frames": 161,
+  "time": "2.68",
+  "complete": true,
+  "practice": true,
+  "sha256": "b680f3bf5f6ca13353af4df42f4a825699f6a96dc3fbb967114692c659314df8",
+  "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+  "verification": {
+    "deterministicPasses": 2,
+    "browserPlayback": "10 targets cleared, game frame 161, no page errors",
+    "sourceTargetTransitions": [
+      87,
+      130,
+      142,
+      155,
+      223,
+      239,
+      284
+    ],
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 87,
+        "gameFrame": 0,
+        "time": "0.00",
+        "remaining": 9
+      },
+      {
+        "frame": 130,
+        "gameFrame": 7,
+        "time": "0.11",
+        "remaining": 8
+      },
+      {
+        "frame": 142,
+        "gameFrame": 19,
+        "time": "0.31",
+        "remaining": 7
+      },
+      {
+        "frame": 155,
+        "gameFrame": 32,
+        "time": "0.53",
+        "remaining": 6
+      },
+      {
+        "frame": 223,
+        "gameFrame": 100,
+        "time": "1.67",
+        "remaining": 3
+      },
+      {
+        "frame": 238,
+        "gameFrame": 115,
+        "time": "1.92",
+        "remaining": 1
+      },
+      {
+        "frame": 284,
+        "gameFrame": 161,
+        "time": "2.68",
+        "remaining": 0
+      }
+    ],
+    "knownTimingDifferences": [
+      {
+        "sourceFrame": 239,
+        "reconstructedFrame": 238,
+        "remainingTargets": 1,
+        "earlyByFrames": 1
+      }
+    ]
+  },
+  "limitations": "Inputs inferred from the graphical controller overlay and character motion, not the original recording. One double target hit is one frame earlier than the video; the final time and other target transitions match. Waveland inputs are inferred. Exact original inputs cannot be proven from video."
+}

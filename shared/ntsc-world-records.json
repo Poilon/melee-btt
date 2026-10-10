@@ -435,7 +435,14 @@
           "url": "https://www.youtube.com/watch?v=37zCsraVUu0"
         }
       ],
-      "replayUrl": null
+      "replayUrl": "/play?worldRecord=3",
+      "reconstruction": {
+        "downloadUrl": "/world-record-replays/b680f3bf5f6ca13353af4df42f4a825699f6a96dc3fbb967114692c659314df8.slp",
+        "sha256": "b680f3bf5f6ca13353af4df42f4a825699f6a96dc3fbb967114692c659314df8",
+        "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+        "evidenceUrl": "/world-record-replays/b680f3bf5f6ca13353af4df42f4a825699f6a96dc3fbb967114692c659314df8.json",
+        "timingNote": "One double target hit is one frame earlier than the video; the final time and other target transitions match. Waveland inputs are inferred."
+      }
     },
     {
       "stage": 9,
