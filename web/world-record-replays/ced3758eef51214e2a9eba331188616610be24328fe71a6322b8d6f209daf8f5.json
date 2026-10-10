@@ -1,0 +1,184 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 6,
+  "holder": "Mario 64 Master",
+  "source": "https://www.youtube.com/watch?v=61MnKMe_xa4",
+  "frames": 209,
+  "time": "3.48",
+  "complete": true,
+  "practice": true,
+  "sha256": "ced3758eef51214e2a9eba331188616610be24328fe71a6322b8d6f209daf8f5",
+  "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+  "verification": {
+    "deterministicPasses": 2,
+    "browserPlayback": "Standard browser replay player displays REPLAY CLEAR \u00b7 00:03.48, 341 frames, practice, UCF off, without page errors",
+    "sourceTargetGameFrames": [
+      94,
+      122,
+      126,
+      154,
+      154,
+      167,
+      192,
+      199,
+      208,
+      209
+    ],
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 216,
+        "gameFrame": 93,
+        "time": "1.55",
+        "remaining": 9
+      },
+      {
+        "frame": 245,
+        "gameFrame": 122,
+        "time": "2.03",
+        "remaining": 8
+      },
+      {
+        "frame": 249,
+        "gameFrame": 126,
+        "time": "2.10",
+        "remaining": 7
+      },
+      {
+        "frame": 277,
+        "gameFrame": 154,
+        "time": "2.57",
+        "remaining": 5
+      },
+      {
+        "frame": 290,
+        "gameFrame": 167,
+        "time": "2.78",
+        "remaining": 4
+      },
+      {
+        "frame": 315,
+        "gameFrame": 192,
+        "time": "3.20",
+        "remaining": 3
+      },
+      {
+        "frame": 323,
+        "gameFrame": 200,
+        "time": "3.33",
+        "remaining": 2
+      },
+      {
+        "frame": 331,
+        "gameFrame": 208,
+        "time": "3.46",
+        "remaining": 1
+      },
+      {
+        "frame": 332,
+        "gameFrame": 209,
+        "time": "3.48",
+        "remaining": 0
+      }
+    ],
+    "reconstructedTargetIdentities": [
+      {
+        "gameFrame": 93,
+        "targetsHit": [
+          [
+            20.5,
+            75
+          ]
+        ]
+      },
+      {
+        "gameFrame": 122,
+        "targetsHit": [
+          [
+            114.8,
+            84.7
+          ]
+        ]
+      },
+      {
+        "gameFrame": 126,
+        "targetsHit": [
+          [
+            -52.7,
+            -7.7
+          ]
+        ]
+      },
+      {
+        "gameFrame": 154,
+        "targetsHit": [
+          [
+            -52.4,
+            67.4
+          ],
+          [
+            23.9,
+            -22.4
+          ]
+        ]
+      },
+      {
+        "gameFrame": 167,
+        "targetsHit": [
+          [
+            -10,
+            65
+          ]
+        ]
+      },
+      {
+        "gameFrame": 192,
+        "targetsHit": [
+          [
+            57.6,
+            36.6
+          ]
+        ]
+      },
+      {
+        "gameFrame": 200,
+        "targetsHit": [
+          [
+            -120.7,
+            27.6
+          ]
+        ]
+      },
+      {
+        "gameFrame": 208,
+        "targetsHit": [
+          [
+            90,
+            0
+          ]
+        ]
+      },
+      {
+        "gameFrame": 209,
+        "targetsHit": [
+          [
+            -150,
+            20
+          ]
+        ]
+      }
+    ],
+    "knownTimingDifferences": [
+      {
+        "target": 1,
+        "sourceGameFrame": 94,
+        "reconstructedGameFrame": 93
+      },
+      {
+        "target": 8,
+        "sourceGameFrame": 199,
+        "reconstructedGameFrame": 200
+      }
+    ]
+  },
+  "limitations": "Inferred practice reconstruction, not an original replay or a competitive submission. All ten targets clear and the final 3.48 time matches. The video audit indicates the first target clears one frame early and the first hookshot target one frame late. Boomerang release angle, controller thresholds and short button edges are inferred. Exact original inputs cannot be proven from video."
+}

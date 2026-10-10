@@ -1,0 +1,105 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 1,
+  "holder": "jenkem66",
+  "source": "https://www.youtube.com/watch?v=aAiBhTi_xuY",
+  "frames": 500,
+  "time": "8.33",
+  "complete": true,
+  "practice": true,
+  "sha256": "6caa686960236dc2804afd9637f4ac0293ec4ab68f79503bec316805be24f36c",
+  "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+  "verification": {
+    "deterministicPasses": 2,
+    "browserPlayback": "Standard browser replay player displays REPLAY CLEAR \u00b7 00:08.33, 650 frames, practice, UCF off, without page errors",
+    "sourceTargetGameFrames": [
+      -23,
+      -18,
+      38,
+      104,
+      236,
+      295,
+      334,
+      411,
+      462,
+      500
+    ],
+    "sourceTargetTimes": [
+      "-0.38",
+      "-0.30",
+      "0.63",
+      "1.73",
+      "3.93",
+      "4.92",
+      "5.57",
+      "6.85",
+      "7.70",
+      "8.33"
+    ],
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 100,
+        "gameFrame": 0,
+        "time": "0.00",
+        "remaining": 9
+      },
+      {
+        "frame": 105,
+        "gameFrame": 0,
+        "time": "0.00",
+        "remaining": 8
+      },
+      {
+        "frame": 161,
+        "gameFrame": 38,
+        "time": "0.63",
+        "remaining": 7
+      },
+      {
+        "frame": 227,
+        "gameFrame": 104,
+        "time": "1.73",
+        "remaining": 6
+      },
+      {
+        "frame": 359,
+        "gameFrame": 236,
+        "time": "3.93",
+        "remaining": 5
+      },
+      {
+        "frame": 418,
+        "gameFrame": 295,
+        "time": "4.92",
+        "remaining": 4
+      },
+      {
+        "frame": 457,
+        "gameFrame": 334,
+        "time": "5.57",
+        "remaining": 3
+      },
+      {
+        "frame": 534,
+        "gameFrame": 411,
+        "time": "6.85",
+        "remaining": 2
+      },
+      {
+        "frame": 585,
+        "gameFrame": 462,
+        "time": "7.70",
+        "remaining": 1
+      },
+      {
+        "frame": 623,
+        "gameFrame": 500,
+        "time": "8.33",
+        "remaining": 0
+      }
+    ],
+    "countdownConvention": "The native game clock remains zero before GO. The first two raw replay clear frames 100 and 105 correspond to countdown game frames -23 and -18.",
+    "knownTimingDifferences": []
+  },
+  "limitations": "Inputs inferred from the graphical controller overlay and character motion, not an original recording. All ten audited target transition times and the final time match. Stick magnitude thresholds, short input edges, upper-column edgecancel and final-platform edgecancel required manual inference. Exact original inputs and sub-frame stick motion cannot be proven from video."
+}

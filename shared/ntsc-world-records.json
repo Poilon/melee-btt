@@ -160,7 +160,14 @@
           "url": "https://www.youtube.com/watch?v=aAiBhTi_xuY"
         }
       ],
-      "replayUrl": null
+      "replayUrl": "/play?worldRecord=1",
+      "reconstruction": {
+        "downloadUrl": "/world-record-replays/6caa686960236dc2804afd9637f4ac0293ec4ab68f79503bec316805be24f36c.slp",
+        "sha256": "6caa686960236dc2804afd9637f4ac0293ec4ab68f79503bec316805be24f36c",
+        "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+        "evidenceUrl": "/world-record-replays/6caa686960236dc2804afd9637f4ac0293ec4ab68f79503bec316805be24f36c.json",
+        "timingNote": "All ten audited target transition times and final time match. Controller inputs and both edgecancels are inferred from video."
+      }
     },
     {
       "stage": 0,
@@ -332,7 +339,14 @@
           "url": "https://www.youtube.com/watch?v=61MnKMe_xa4"
         }
       ],
-      "replayUrl": null
+      "replayUrl": "/play?worldRecord=6",
+      "reconstruction": {
+        "downloadUrl": "/world-record-replays/ced3758eef51214e2a9eba331188616610be24328fe71a6322b8d6f209daf8f5.slp",
+        "sha256": "ced3758eef51214e2a9eba331188616610be24328fe71a6322b8d6f209daf8f5",
+        "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+        "evidenceUrl": "/world-record-replays/ced3758eef51214e2a9eba331188616610be24328fe71a6322b8d6f209daf8f5.json",
+        "timingNote": "All ten targets and final 3.48 time match. First target is one frame early; first hookshot target is one frame late in the video audit. Practice reconstruction with inferred inputs."
+      }
     },
     {
       "stage": 21,
