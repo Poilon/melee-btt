@@ -1,0 +1,127 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 21,
+  "holder": "Mario 64 Master",
+  "source": "https://www.youtube.com/watch?v=nTmWM0B6_W4",
+  "frames": 287,
+  "time": "4.78",
+  "complete": true,
+  "practice": true,
+  "sha256": "f2bf0922916ad8be2c3b64a073f75fceea262e69fc049d65c9c168be899c639b",
+  "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+  "verification": {
+    "deterministicPasses": 2,
+    "sourceDecoding": "Sequential, 60 fps; source frame 125 shows game frame1. HUD ring template comparison, checked against captures.",
+    "sourceTargetVideoFrames": [
+      153,
+      232,
+      247,
+      343,
+      346,
+      360,
+      365,
+      400,
+      409,
+      411
+    ],
+    "sourceTargetGameFrames": [
+      29,
+      108,
+      123,
+      219,
+      222,
+      236,
+      241,
+      276,
+      285,
+      287
+    ],
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 152,
+        "gameFrame": 29,
+        "time": "0.48",
+        "remaining": 9
+      },
+      {
+        "frame": 231,
+        "gameFrame": 108,
+        "time": "1.80",
+        "remaining": 8
+      },
+      {
+        "frame": 246,
+        "gameFrame": 123,
+        "time": "2.05",
+        "remaining": 7
+      },
+      {
+        "frame": 342,
+        "gameFrame": 219,
+        "time": "3.65",
+        "remaining": 6
+      },
+      {
+        "frame": 345,
+        "gameFrame": 222,
+        "time": "3.70",
+        "remaining": 5
+      },
+      {
+        "frame": 359,
+        "gameFrame": 236,
+        "time": "3.93",
+        "remaining": 4
+      },
+      {
+        "frame": 364,
+        "gameFrame": 241,
+        "time": "4.01",
+        "remaining": 3
+      },
+      {
+        "frame": 399,
+        "gameFrame": 276,
+        "time": "4.60",
+        "remaining": 2
+      },
+      {
+        "frame": 408,
+        "gameFrame": 285,
+        "time": "4.75",
+        "remaining": 1
+      },
+      {
+        "frame": 410,
+        "gameFrame": 287,
+        "time": "4.78",
+        "remaining": 0
+      }
+    ],
+    "poseChecks": {
+      "firstBoomerang": "Sword crosses in front of the head at game frame8 (0.13), matching source frame132; previous reconstruction was one frame late.",
+      "sampledGameFrames": [
+        8,
+        21,
+        34,
+        45,
+        57,
+        82,
+        107,
+        109,
+        122,
+        147,
+        219,
+        222,
+        236,
+        241,
+        276,
+        285,
+        287
+      ],
+      "scope": "Side-by-side comparisons of the pose and position relative to nearby stage geometry. This is a sampled visual audit, not proof of identical poses on every frame."
+    },
+    "browserPlayback": "Standard file picker: REPLAY CLEAR 00:04.78; 412 frames, no page errors."
+  },
+  "limitations": "Inputs inferred from video, not the original recording. All ten target clocks match. Default costume differs from source; visual comparisons do not prove identical underlying inputs or every-frame state. Not competitive evidence."
+}

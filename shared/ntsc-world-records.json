@@ -364,11 +364,11 @@
       ],
       "replayUrl": "/play?worldRecord=21",
       "reconstruction": {
-        "downloadUrl": "/world-record-replays/5d1ac9e50071ead87a2d17ba162e1dbc63d9af64e64d96e6dd940a5a9ab42685.slp",
-        "sha256": "5d1ac9e50071ead87a2d17ba162e1dbc63d9af64e64d96e6dd940a5a9ab42685",
+        "downloadUrl": "/world-record-replays/f2bf0922916ad8be2c3b64a073f75fceea262e69fc049d65c9c168be899c639b.slp",
+        "sha256": "f2bf0922916ad8be2c3b64a073f75fceea262e69fc049d65c9c168be899c639b",
         "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
-        "evidenceUrl": "/world-record-replays/5d1ac9e50071ead87a2d17ba162e1dbc63d9af64e64d96e6dd940a5a9ab42685.json",
-        "timingNote": "Route and final time match the video; exact intermediate target timings remain uncertain in the compressed footage."
+        "evidenceUrl": "/world-record-replays/f2bf0922916ad8be2c3b64a073f75fceea262e69fc049d65c9c168be899c639b.json",
+        "timingNote": "Initial boomerang animation and later one-frame offsets corrected. All ten target clocks match the video; inputs remain inferred and pose checks are sampled."
       }
     },
     {
