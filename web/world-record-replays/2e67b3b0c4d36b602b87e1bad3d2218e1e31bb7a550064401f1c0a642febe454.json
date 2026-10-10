@@ -1,0 +1,91 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 0,
+  "holder": "Mario 64 Master",
+  "source": "https://youtu.be/RRXUSMGYW60",
+  "frames": 435,
+  "time": "7.25",
+  "complete": true,
+  "practice": true,
+  "sha256": "2e67b3b0c4d36b602b87e1bad3d2218e1e31bb7a550064401f1c0a642febe454",
+  "engine": "a8a3520d917b8ab058a625cd3afde695e6b2e8c16f9d9bfaec579f37cc294264",
+  "verification": {
+    "deterministicPasses": 2,
+    "browserPlayback": "10 targets cleared, game frame 435, no page errors",
+    "sourceTargetTransitions": [
+      112,
+      229,
+      272,
+      327,
+      344,
+      394,
+      439,
+      471,
+      518,
+      559
+    ],
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 111,
+        "gameFrame": 0,
+        "time": "0.00",
+        "remaining": 9
+      },
+      {
+        "frame": 228,
+        "gameFrame": 105,
+        "time": "1.75",
+        "remaining": 8
+      },
+      {
+        "frame": 271,
+        "gameFrame": 148,
+        "time": "2.46",
+        "remaining": 7
+      },
+      {
+        "frame": 326,
+        "gameFrame": 203,
+        "time": "3.38",
+        "remaining": 6
+      },
+      {
+        "frame": 343,
+        "gameFrame": 220,
+        "time": "3.67",
+        "remaining": 5
+      },
+      {
+        "frame": 393,
+        "gameFrame": 270,
+        "time": "4.50",
+        "remaining": 4
+      },
+      {
+        "frame": 438,
+        "gameFrame": 315,
+        "time": "5.25",
+        "remaining": 3
+      },
+      {
+        "frame": 470,
+        "gameFrame": 347,
+        "time": "5.78",
+        "remaining": 2
+      },
+      {
+        "frame": 517,
+        "gameFrame": 394,
+        "time": "6.57",
+        "remaining": 1
+      },
+      {
+        "frame": 558,
+        "gameFrame": 435,
+        "time": "7.25",
+        "remaining": 0
+      }
+    ]
+  },
+  "limitations": "Inputs inferred from the on-screen controller and numeric axes, not the original recording. Background-obscured numeric signs were reviewed manually. Input video frame i+1 maps to native frame i. Exact original inputs cannot be proven from video."
+}

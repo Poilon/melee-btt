@@ -169,7 +169,13 @@
           "url": "https://www.youtube.com/watch?v=RRXUSMGYW60"
         }
       ],
-      "replayUrl": null
+      "replayUrl": "/play?worldRecord=0",
+      "reconstruction": {
+        "downloadUrl": "/world-record-replays/2e67b3b0c4d36b602b87e1bad3d2218e1e31bb7a550064401f1c0a642febe454.slp",
+        "sha256": "2e67b3b0c4d36b602b87e1bad3d2218e1e31bb7a550064401f1c0a642febe454",
+        "engine": "a8a3520d917b8ab058a625cd3afde695e6b2e8c16f9d9bfaec579f37cc294264",
+        "evidenceUrl": "/world-record-replays/2e67b3b0c4d36b602b87e1bad3d2218e1e31bb7a550064401f1c0a642febe454.json"
+      }
     },
     {
       "stage": 25,
