@@ -341,7 +341,14 @@
           "url": "https://www.youtube.com/watch?v=nTmWM0B6_W4"
         }
       ],
-      "replayUrl": null
+      "replayUrl": "/play?worldRecord=21",
+      "reconstruction": {
+        "downloadUrl": "/world-record-replays/5d1ac9e50071ead87a2d17ba162e1dbc63d9af64e64d96e6dd940a5a9ab42685.slp",
+        "sha256": "5d1ac9e50071ead87a2d17ba162e1dbc63d9af64e64d96e6dd940a5a9ab42685",
+        "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+        "evidenceUrl": "/world-record-replays/5d1ac9e50071ead87a2d17ba162e1dbc63d9af64e64d96e6dd940a5a9ab42685.json",
+        "timingNote": "Route and final time match the video; exact intermediate target timings remain uncertain in the compressed footage."
+      }
     },
     {
       "stage": 24,
@@ -373,7 +380,14 @@
           "url": "https://www.youtube.com/watch?v=ONlrcb-abH4"
         }
       ],
-      "replayUrl": null
+      "replayUrl": "/play?worldRecord=13",
+      "reconstruction": {
+        "downloadUrl": "/world-record-replays/9ced5d6d143ce5056dd3fe2dad903b9bb45b935f863459316b1b0e7e8b9d9df9.slp",
+        "sha256": "9ced5d6d143ce5056dd3fe2dad903b9bb45b935f863459316b1b0e7e8b9d9df9",
+        "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+        "evidenceUrl": "/world-record-replays/9ced5d6d143ce5056dd3fe2dad903b9bb45b935f863459316b1b0e7e8b9d9df9.json",
+        "timingNote": "Fourth target hit one frame earlier than the video; the other target transitions and final time match."
+      }
     },
     {
       "stage": 15,

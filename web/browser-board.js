@@ -113,8 +113,14 @@ function showWorldRecord(record) {
   link.textContent = "NTSC world record spreadsheet";
   source.append(link, ` · Updated ${record.retrievedAt.slice(0, 10)}. `,
     sum ? "Sum of the 25 individual records, not a single player's total." : "WR references are separate from browser rankings.");
-  if (record.reconstruction)
-    source.append(" Replay reconstructed from video: matching clear time and target timings; inferred inputs, not the original recording.");
+  if (record.reconstruction) {
+    source.append(" Replay reconstructed from video: matching clear time; inferred inputs, not the original recording. ");
+    if (record.reconstruction.timingNote) source.append(record.reconstruction.timingNote + " ");
+    const evidence = document.createElement("a");
+    evidence.href = record.reconstruction.evidenceUrl;
+    evidence.textContent = "Reconstruction details";
+    source.append(evidence);
+  }
 }
 async function show(character, from = 0, force = false) {
   const seq = ++request;

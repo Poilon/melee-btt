@@ -1,0 +1,88 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 21,
+  "holder": "Mario 64 Master",
+  "source": "https://youtu.be/nTmWM0B6_W4",
+  "frames": 287,
+  "time": "4.78",
+  "complete": true,
+  "practice": true,
+  "sha256": "5d1ac9e50071ead87a2d17ba162e1dbc63d9af64e64d96e6dd940a5a9ab42685",
+  "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+  "verification": {
+    "deterministicPasses": 2,
+    "browserPlayback": "10 targets cleared, game frame 287, no page errors",
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 153,
+        "gameFrame": 30,
+        "time": "0.50",
+        "remaining": 9
+      },
+      {
+        "frame": 232,
+        "gameFrame": 109,
+        "time": "1.82",
+        "remaining": 8
+      },
+      {
+        "frame": 247,
+        "gameFrame": 124,
+        "time": "2.06",
+        "remaining": 7
+      },
+      {
+        "frame": 342,
+        "gameFrame": 219,
+        "time": "3.65",
+        "remaining": 6
+      },
+      {
+        "frame": 346,
+        "gameFrame": 223,
+        "time": "3.72",
+        "remaining": 5
+      },
+      {
+        "frame": 359,
+        "gameFrame": 236,
+        "time": "3.93",
+        "remaining": 4
+      },
+      {
+        "frame": 364,
+        "gameFrame": 241,
+        "time": "4.01",
+        "remaining": 3
+      },
+      {
+        "frame": 400,
+        "gameFrame": 277,
+        "time": "4.62",
+        "remaining": 2
+      },
+      {
+        "frame": 409,
+        "gameFrame": 286,
+        "time": "4.77",
+        "remaining": 1
+      },
+      {
+        "frame": 410,
+        "gameFrame": 287,
+        "time": "4.78",
+        "remaining": 0
+      }
+    ],
+    "sourceComparison": {
+      "basis": "visual route landmarks and timer/target HUD in analysis-lossless.mkv",
+      "observations": [
+        "At about 3.70s, source and replay show Young Link landing on the narrow stone platform in the same route segment.",
+        "Around 3.93\u20134.01s, source and replay show the airborne traversal and target-counter reductions in close alignment; HUD sampling suggests within roughly 0\u20131 frame, but transient hit effects make exact frame attribution uncertain.",
+        "At about 4.60s the source shows two targets remaining; both source and candidate clear at 4.78s."
+      ],
+      "limitations": "Video sampling and the noisy/partly obscured target counter do not establish exact per-frame input fidelity. Do not describe this reconstruction as an authentic original SLP or as verified competitive evidence."
+    }
+  },
+  "limitations": "Inputs inferred from video, not the original recording. Route and final time match the video; exact intermediate target timings remain uncertain in the compressed footage. Exact original inputs cannot be proven from video."
+}

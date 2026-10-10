@@ -1,0 +1,101 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 13,
+  "holder": "MegaQwertification",
+  "source": "https://youtu.be/ONlrcb-abH4",
+  "frames": 408,
+  "time": "6.80",
+  "complete": true,
+  "practice": true,
+  "sha256": "9ced5d6d143ce5056dd3fe2dad903b9bb45b935f863459316b1b0e7e8b9d9df9",
+  "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+  "verification": {
+    "deterministicPasses": 2,
+    "browserPlayback": "10 targets cleared, game frame 408, no page errors",
+    "sourceTargetTransitions": [
+      145,
+      152,
+      271,
+      283,
+      363,
+      407,
+      414,
+      508,
+      563,
+      576
+    ],
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 100,
+        "gameFrame": 0,
+        "time": "0.00",
+        "remaining": 9
+      },
+      {
+        "frame": 107,
+        "gameFrame": 0,
+        "time": "0.00",
+        "remaining": 8
+      },
+      {
+        "frame": 226,
+        "gameFrame": 103,
+        "time": "1.72",
+        "remaining": 7
+      },
+      {
+        "frame": 237,
+        "gameFrame": 114,
+        "time": "1.90",
+        "remaining": 6
+      },
+      {
+        "frame": 318,
+        "gameFrame": 195,
+        "time": "3.25",
+        "remaining": 5
+      },
+      {
+        "frame": 362,
+        "gameFrame": 239,
+        "time": "3.99",
+        "remaining": 4
+      },
+      {
+        "frame": 369,
+        "gameFrame": 246,
+        "time": "4.10",
+        "remaining": 3
+      },
+      {
+        "frame": 463,
+        "gameFrame": 340,
+        "time": "5.67",
+        "remaining": 2
+      },
+      {
+        "frame": 518,
+        "gameFrame": 395,
+        "time": "6.58",
+        "remaining": 1
+      },
+      {
+        "frame": 531,
+        "gameFrame": 408,
+        "time": "6.80",
+        "remaining": 0
+      }
+    ],
+    "knownTimingDifferences": [
+      {
+        "sourceTransitionFrame": 283,
+        "nativeMappedFrame": 282,
+        "nativeEarlyByFrames": 1,
+        "nativeHitRow": 237,
+        "nativeGameFrame": 114,
+        "proofMontage": "transition-283-proof.png"
+      }
+    ]
+  },
+  "limitations": "Inputs inferred from video, not the original recording. Fourth target hit one frame earlier than the video; the other target transitions and final time match. Exact original inputs cannot be proven from video."
+}
