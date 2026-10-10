@@ -89,7 +89,14 @@
           "url": "https://www.youtube.com/watch?v=cXXZQlEozGo"
         }
       ],
-      "replayUrl": null
+      "replayUrl": "/play?worldRecord=7",
+      "reconstruction": {
+        "downloadUrl": "/world-record-replays/a9732581603a5a259cbc1631091c5ce9583d3d7e5d1fca293b515c326287fb33.slp",
+        "sha256": "a9732581603a5a259cbc1631091c5ce9583d3d7e5d1fca293b515c326287fb33",
+        "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+        "evidenceUrl": "/world-record-replays/a9732581603a5a259cbc1631091c5ce9583d3d7e5d1fca293b515c326287fb33.json",
+        "timingNote": "All audited target transitions and final time match. Analog inputs, bumper SDI and fireball turnaround are inferred."
+      }
     },
     {
       "stage": 5,

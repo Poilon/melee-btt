@@ -1,0 +1,75 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 7,
+  "holder": "Samplay",
+  "source": "https://youtu.be/cXXZQlEozGo",
+  "frames": 180,
+  "time": "3.00",
+  "complete": true,
+  "practice": true,
+  "sha256": "a9732581603a5a259cbc1631091c5ce9583d3d7e5d1fca293b515c326287fb33",
+  "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+  "verification": {
+    "deterministicPasses": 2,
+    "browserPlayback": "10 targets cleared at game frame180; standard browser replay player displays REPLAY CLEAR \u00b7 00:03.00 without page errors",
+    "sourceTargetGameFrames": [
+      0,
+      52,
+      54,
+      101,
+      173,
+      179,
+      180
+    ],
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 85,
+        "gameFrame": 0,
+        "time": "0.00",
+        "remaining": 9
+      },
+      {
+        "frame": 175,
+        "gameFrame": 52,
+        "time": "0.87",
+        "remaining": 8
+      },
+      {
+        "frame": 177,
+        "gameFrame": 54,
+        "time": "0.90",
+        "remaining": 7
+      },
+      {
+        "frame": 224,
+        "gameFrame": 101,
+        "time": "1.68",
+        "remaining": 5
+      },
+      {
+        "frame": 296,
+        "gameFrame": 173,
+        "time": "2.88",
+        "remaining": 3
+      },
+      {
+        "frame": 302,
+        "gameFrame": 179,
+        "time": "2.99",
+        "remaining": 2
+      },
+      {
+        "frame": 303,
+        "gameFrame": 180,
+        "time": "3.00",
+        "remaining": 0
+      }
+    ],
+    "finalTargetIdentities": {
+      "gameFrame179": "fireball destroys the right-hand target",
+      "gameFrame180": "up-B destroys both upper moving targets together"
+    },
+    "knownTimingDifferences": []
+  },
+  "limitations": "Inputs inferred from the graphical controller overlay and character motion, not the original recording. All audited target transitions and final time match. Bumper SDI, moving-platform edgecancel and fireball turnaround inputs include manual inferences. Exact original inputs cannot be proven from video."
+}
