@@ -1,0 +1,184 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 0,
+  "holder": "Mario 64 Master",
+  "source": "https://www.youtube.com/watch?v=RRXUSMGYW60",
+  "frames": 435,
+  "time": "7.25",
+  "complete": true,
+  "practice": true,
+  "sha256": "4ff563d4df06b3bc3f8af4307f5312ba7c2705f5550da1ac081c1e492d24bd4f",
+  "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+  "verification": {
+    "deterministicPasses": 2,
+    "sourceDecoding": "Sequential 60fps; source frame125 shows game frame1. Initial HUD obscured by GO ignored until frame87.",
+    "sourceTargetVideoFrames": [
+      111,
+      229,
+      272,
+      327,
+      344,
+      394,
+      439,
+      471,
+      518,
+      559
+    ],
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 110,
+        "gameFrame": 0,
+        "time": "0.00",
+        "remaining": 9
+      },
+      {
+        "frame": 228,
+        "gameFrame": 105,
+        "time": "1.75",
+        "remaining": 8
+      },
+      {
+        "frame": 271,
+        "gameFrame": 148,
+        "time": "2.46",
+        "remaining": 7
+      },
+      {
+        "frame": 326,
+        "gameFrame": 203,
+        "time": "3.38",
+        "remaining": 6
+      },
+      {
+        "frame": 343,
+        "gameFrame": 220,
+        "time": "3.67",
+        "remaining": 5
+      },
+      {
+        "frame": 393,
+        "gameFrame": 270,
+        "time": "4.50",
+        "remaining": 4
+      },
+      {
+        "frame": 438,
+        "gameFrame": 315,
+        "time": "5.25",
+        "remaining": 3
+      },
+      {
+        "frame": 470,
+        "gameFrame": 347,
+        "time": "5.78",
+        "remaining": 2
+      },
+      {
+        "frame": 517,
+        "gameFrame": 394,
+        "time": "6.57",
+        "remaining": 1
+      },
+      {
+        "frame": 558,
+        "gameFrame": 435,
+        "time": "7.25",
+        "remaining": 0
+      }
+    ],
+    "poseCorrection": "Initial neutral-air and stick interval89\u2013110 advanced one frame. First target now hits in the matching countdown frame. Corrected position before the walljump; later inputs unchanged.",
+    "sampledPoseOffsets": [
+      {
+        "nativeFrame": 124,
+        "sourceFrame": 125,
+        "gameFrame": 1,
+        "yellowSilhouetteBestTranslations": [
+          [
+            0.6975308641975309,
+            0,
+            0
+          ],
+          [
+            0.6616314199395771,
+            -1,
+            0
+          ],
+          [
+            0.6566265060240963,
+            -1,
+            1
+          ]
+        ]
+      },
+      {
+        "nativeFrame": 149,
+        "sourceFrame": 150,
+        "gameFrame": 26,
+        "yellowSilhouetteBestTranslations": [
+          [
+            0.6903914590747331,
+            0,
+            0
+          ],
+          [
+            0.5993265993265994,
+            1,
+            0
+          ],
+          [
+            0.5939597315436241,
+            -1,
+            0
+          ]
+        ]
+      },
+      {
+        "nativeFrame": 172,
+        "sourceFrame": 173,
+        "gameFrame": 49,
+        "yellowSilhouetteBestTranslations": [
+          [
+            0.7612359550561798,
+            0,
+            0
+          ],
+          [
+            0.7038043478260869,
+            -1,
+            0
+          ],
+          [
+            0.6945945945945946,
+            0,
+            -1
+          ]
+        ]
+      },
+      {
+        "nativeFrame": 184,
+        "sourceFrame": 185,
+        "gameFrame": 61,
+        "yellowSilhouetteBestTranslations": [
+          [
+            0.7158273381294964,
+            1,
+            0
+          ],
+          [
+            0.6006711409395973,
+            1,
+            -1
+          ],
+          [
+            0.59,
+            0,
+            -1
+          ]
+        ]
+      }
+    ],
+    "poseMetric": "Source resized to browser canvas; yellow limb silhouette translation over a fighter ROI, no stage or state edits. At0.82 best translation drops from +4px horizontal to0px. This simple color mask is supporting evidence, not an exact model fit.",
+    "browserPlayback": "Standard file picker: REPLAY CLEAR 00:07.25; 590 frames, no page errors."
+  },
+  "limitations": "Inputs inferred from video, not an original SLP. All ten target transitions match the source timing. Sampled pose checks do not prove every-frame or input identity; not competitive evidence."
+}
