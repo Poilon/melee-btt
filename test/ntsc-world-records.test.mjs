@@ -39,7 +39,8 @@ test("published WR reconstructions are checksum-pinned, complete practice replay
     assert.equal(parsed.complete, true);
     assert.equal(parsed.practice, true);
     assert.equal(parsed.frames, record.frames);
-    assert.equal(parsed.fighter, record.stage);
+    assert.equal(browserBttCatalog.find(f => f.fighter === parsed.fighter)?.stage, record.stage,
+      "the replay fighter must use the record's course (Zelda and Sheik share one)");
     assert.equal(parsed.engine, replay.engine);
     const evidence = JSON.parse(await readFile(new URL(`../web${replay.evidenceUrl}`, import.meta.url)));
     assert.equal(evidence.sha256, replay.sha256);

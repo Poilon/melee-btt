@@ -1,0 +1,219 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 19,
+  "stage": 18,
+  "holder": "marth1",
+  "source": "https://www.youtube.com/watch?v=yRMvUfRZ68c",
+  "frames": 364,
+  "time": "6.06",
+  "complete": true,
+  "practice": true,
+  "sha256": "0dc4ccca91483979852303003d9f7ab49955fce91c3ff4923cbbaea307116d4e",
+  "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+  "verification": {
+    "deterministicPasses": 2,
+    "sourceDecoding": "Sequential decode with matching HUD clocks; two-frame intervals retain source-video uncertainty.",
+    "sourceTargetVideoFrames": [
+      76,
+      84,
+      106,
+      139,
+      157,
+      173,
+      194,
+      197,
+      235,
+      243
+    ],
+    "sourceTargetGameFrameIntervals": [
+      [
+        27,
+        28
+      ],
+      [
+        41,
+        42
+      ],
+      [
+        85,
+        86
+      ],
+      [
+        153,
+        154
+      ],
+      [
+        191,
+        192
+      ],
+      [
+        221,
+        222
+      ],
+      [
+        265,
+        266
+      ],
+      [
+        271,
+        272
+      ],
+      [
+        347,
+        348
+      ],
+      [
+        363,
+        364
+      ]
+    ],
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 150,
+        "gameFrame": 27,
+        "time": "0.45",
+        "remaining": 9
+      },
+      {
+        "frame": 164,
+        "gameFrame": 41,
+        "time": "0.68",
+        "remaining": 8
+      },
+      {
+        "frame": 209,
+        "gameFrame": 86,
+        "time": "1.43",
+        "remaining": 7
+      },
+      {
+        "frame": 277,
+        "gameFrame": 154,
+        "time": "2.57",
+        "remaining": 6
+      },
+      {
+        "frame": 314,
+        "gameFrame": 191,
+        "time": "3.18",
+        "remaining": 5
+      },
+      {
+        "frame": 344,
+        "gameFrame": 221,
+        "time": "3.68",
+        "remaining": 4
+      },
+      {
+        "frame": 389,
+        "gameFrame": 266,
+        "time": "4.43",
+        "remaining": 3
+      },
+      {
+        "frame": 395,
+        "gameFrame": 272,
+        "time": "4.53",
+        "remaining": 2
+      },
+      {
+        "frame": 470,
+        "gameFrame": 347,
+        "time": "5.78",
+        "remaining": 1
+      },
+      {
+        "frame": 487,
+        "gameFrame": 364,
+        "time": "6.06",
+        "remaining": 0
+      }
+    ],
+    "poseComparison": {
+      "method": "Matching HUD-clock source/native screenshots",
+      "pairs": [
+        {
+          "sourceFrame": 76,
+          "nativeFrame": 151
+        },
+        {
+          "sourceFrame": 84,
+          "nativeFrame": 165
+        },
+        {
+          "sourceFrame": 106,
+          "nativeFrame": 209
+        },
+        {
+          "sourceFrame": 114,
+          "nativeFrame": 225
+        },
+        {
+          "sourceFrame": 126,
+          "nativeFrame": 251
+        },
+        {
+          "sourceFrame": 139,
+          "nativeFrame": 277
+        },
+        {
+          "sourceFrame": 146,
+          "nativeFrame": 291
+        },
+        {
+          "sourceFrame": 157,
+          "nativeFrame": 315
+        },
+        {
+          "sourceFrame": 173,
+          "nativeFrame": 345
+        },
+        {
+          "sourceFrame": 180,
+          "nativeFrame": 361
+        },
+        {
+          "sourceFrame": 189,
+          "nativeFrame": 379
+        },
+        {
+          "sourceFrame": 194,
+          "nativeFrame": 389
+        },
+        {
+          "sourceFrame": 197,
+          "nativeFrame": 395
+        },
+        {
+          "sourceFrame": 212,
+          "nativeFrame": 425
+        },
+        {
+          "sourceFrame": 222,
+          "nativeFrame": 445
+        },
+        {
+          "sourceFrame": 235,
+          "nativeFrame": 471
+        },
+        {
+          "sourceFrame": 243,
+          "nativeFrame": 487
+        }
+      ],
+      "evidence": [
+        "sheik-comparison-0.jpg",
+        "sheik-comparison-1.jpg",
+        "sheik-comparison-2.jpg",
+        "sheik-comparison-3.jpg",
+        "sheik-comparison-4.jpg"
+      ]
+    },
+    "browserPlayback": {
+      "url": "http://localhost:4329/btt.html?localReplay=0dc4ccca91483979852303003d9f7ab49955fce91c3ff4923cbbaea307116d4e",
+      "result": "REPLAY CLEAR \u00b7 00:06.06",
+      "status": "Replay \u00b7 540 / 540 frames \u00b7 1\u00d7 \u00b7 UCF off \u00b7 Practice"
+    }
+  },
+  "limitations": "Video-inferred practice reconstruction, not original inputs or competitive evidence. All ten target transitions fall within the adjacent-image clock intervals in the approximately 30 fps source; the final time is 6.06. Matching-clock pose checks still show costume, camera, position and animation-phase differences, including needle-release and platform landing transitions. Every-frame identity is not established."
+}
