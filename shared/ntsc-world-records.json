@@ -156,7 +156,13 @@
           "url": "https://www.youtube.com/watch?v=yf1dJlSdfBQ"
         }
       ],
-      "replayUrl": null
+      "replayUrl": "/play?worldRecord=17",
+      "reconstruction": {
+        "downloadUrl": "/world-record-replays/d435816d1c12fc549dd70a1673228be2fc065e8d0ce97295a5be8cf47b929899.slp",
+        "sha256": "d435816d1c12fc549dd70a1673228be2fc065e8d0ce97295a5be8cf47b929899",
+        "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+        "evidenceUrl": "/world-record-replays/d435816d1c12fc549dd70a1673228be2fc065e8d0ce97295a5be8cf47b929899.json"
+      }
     },
     {
       "stage": 1,

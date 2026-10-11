@@ -1,0 +1,192 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 17,
+  "holder": "sockdude1",
+  "source": "https://www.youtube.com/watch?v=yf1dJlSdfBQ",
+  "frames": 415,
+  "time": "6.92",
+  "complete": true,
+  "practice": true,
+  "sha256": "d435816d1c12fc549dd70a1673228be2fc065e8d0ce97295a5be8cf47b929899",
+  "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+  "verification": {
+    "deterministicPasses": 2,
+    "sourceDecoding": "Sequential decode with matching HUD clocks.",
+    "sourceTargetVideoFrames": [
+      204,
+      218,
+      253,
+      287,
+      322,
+      426,
+      431,
+      527,
+      533,
+      537
+    ],
+    "sourceTargetGameFrames": [
+      81,
+      95,
+      130,
+      165,
+      200,
+      304,
+      309,
+      405,
+      411,
+      415
+    ],
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 204,
+        "gameFrame": 81,
+        "time": "1.35",
+        "remaining": 9
+      },
+      {
+        "frame": 218,
+        "gameFrame": 95,
+        "time": "1.58",
+        "remaining": 8
+      },
+      {
+        "frame": 253,
+        "gameFrame": 130,
+        "time": "2.16",
+        "remaining": 7
+      },
+      {
+        "frame": 288,
+        "gameFrame": 165,
+        "time": "2.75",
+        "remaining": 6
+      },
+      {
+        "frame": 323,
+        "gameFrame": 200,
+        "time": "3.33",
+        "remaining": 5
+      },
+      {
+        "frame": 427,
+        "gameFrame": 304,
+        "time": "5.06",
+        "remaining": 4
+      },
+      {
+        "frame": 432,
+        "gameFrame": 309,
+        "time": "5.15",
+        "remaining": 3
+      },
+      {
+        "frame": 528,
+        "gameFrame": 405,
+        "time": "6.75",
+        "remaining": 2
+      },
+      {
+        "frame": 534,
+        "gameFrame": 411,
+        "time": "6.85",
+        "remaining": 1
+      },
+      {
+        "frame": 538,
+        "gameFrame": 415,
+        "time": "6.92",
+        "remaining": 0
+      }
+    ],
+    "poseChecks": {
+      "pairs": [
+        {
+          "sourceFrame": 125,
+          "nativeFrame": 125
+        },
+        {
+          "sourceFrame": 150,
+          "nativeFrame": 150
+        },
+        {
+          "sourceFrame": 204,
+          "nativeFrame": 204
+        },
+        {
+          "sourceFrame": 218,
+          "nativeFrame": 218
+        },
+        {
+          "sourceFrame": 253,
+          "nativeFrame": 253
+        },
+        {
+          "sourceFrame": 287,
+          "nativeFrame": 288
+        },
+        {
+          "sourceFrame": 322,
+          "nativeFrame": 323
+        },
+        {
+          "sourceFrame": 350,
+          "nativeFrame": 351
+        },
+        {
+          "sourceFrame": 365,
+          "nativeFrame": 366
+        },
+        {
+          "sourceFrame": 426,
+          "nativeFrame": 427
+        },
+        {
+          "sourceFrame": 431,
+          "nativeFrame": 432
+        },
+        {
+          "sourceFrame": 458,
+          "nativeFrame": 459
+        },
+        {
+          "sourceFrame": 482,
+          "nativeFrame": 483
+        },
+        {
+          "sourceFrame": 514,
+          "nativeFrame": 515
+        },
+        {
+          "sourceFrame": 522,
+          "nativeFrame": 523
+        },
+        {
+          "sourceFrame": 527,
+          "nativeFrame": 528
+        },
+        {
+          "sourceFrame": 533,
+          "nativeFrame": 534
+        },
+        {
+          "sourceFrame": 537,
+          "nativeFrame": 538
+        }
+      ],
+      "evidence": [
+        "yoshi-comparison-0.jpg",
+        "yoshi-comparison-1.jpg",
+        "yoshi-comparison-2.jpg",
+        "yoshi-comparison-3.jpg",
+        "yoshi-comparison-4.jpg",
+        "yoshi-comparison-5.jpg"
+      ]
+    },
+    "browserPlayback": {
+      "url": "http://localhost:4329/btt.html?localReplay=d435816d1c12fc549dd70a1673228be2fc065e8d0ce97295a5be8cf47b929899",
+      "result": "REPLAY CLEAR \u00b7 00:06.92",
+      "status": "Replay \u00b7 570 / 570 frames \u00b7 1\u00d7 \u00b7 UCF off \u00b7 Practice"
+    }
+  },
+  "limitations": "Video-inferred practice reconstruction, not an original replay or competitive evidence. All ten target clocks match. Matching-clock pose comparisons include the backward wavedash, left-facing seventh-target jump and final double-jump-cancelled back-air. Small position and animation-phase differences remain, including the opening landing and egg-throw poses; the player uses green Yoshi rather than the source pink costume. Every-frame identity is not established."
+}
