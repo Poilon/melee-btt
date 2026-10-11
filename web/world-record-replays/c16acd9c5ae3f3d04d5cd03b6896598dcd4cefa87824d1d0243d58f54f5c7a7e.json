@@ -1,0 +1,126 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 14,
+  "holder": "sockdude1",
+  "source": "https://www.youtube.com/watch?v=X3UfQp2_Bbo",
+  "frames": 584,
+  "time": "9.73",
+  "complete": true,
+  "practice": true,
+  "sha256": "c16acd9c5ae3f3d04d5cd03b6896598dcd4cefa87824d1d0243d58f54f5c7a7e",
+  "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+  "verification": {
+    "deterministicPasses": 2,
+    "sourceDecoding": "Sequential decode with matching HUD clocks.",
+    "sourceTargetVideoFrames": [
+      148,
+      227,
+      259,
+      404,
+      488,
+      494,
+      581,
+      613,
+      647,
+      706
+    ],
+    "sourceTargetGameFrames": [
+      26,
+      105,
+      137,
+      282,
+      366,
+      372,
+      459,
+      491,
+      525,
+      584
+    ],
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 149,
+        "gameFrame": 26,
+        "time": "0.43",
+        "remaining": 9
+      },
+      {
+        "frame": 228,
+        "gameFrame": 105,
+        "time": "1.75",
+        "remaining": 8
+      },
+      {
+        "frame": 260,
+        "gameFrame": 137,
+        "time": "2.28",
+        "remaining": 7
+      },
+      {
+        "frame": 405,
+        "gameFrame": 282,
+        "time": "4.70",
+        "remaining": 6
+      },
+      {
+        "frame": 489,
+        "gameFrame": 366,
+        "time": "6.10",
+        "remaining": 5
+      },
+      {
+        "frame": 495,
+        "gameFrame": 372,
+        "time": "6.20",
+        "remaining": 4
+      },
+      {
+        "frame": 582,
+        "gameFrame": 459,
+        "time": "7.65",
+        "remaining": 3
+      },
+      {
+        "frame": 614,
+        "gameFrame": 491,
+        "time": "8.18",
+        "remaining": 2
+      },
+      {
+        "frame": 648,
+        "gameFrame": 525,
+        "time": "8.75",
+        "remaining": 1
+      },
+      {
+        "frame": 707,
+        "gameFrame": 584,
+        "time": "9.73",
+        "remaining": 0
+      }
+    ],
+    "poseChecks": {
+      "nativeFrames": [
+        149,
+        228,
+        260,
+        405,
+        489,
+        495,
+        582,
+        614,
+        648,
+        668,
+        688,
+        707
+      ],
+      "sourceFrameOffset": -1,
+      "evidence": [
+        "ice-climbers-comparison-0.jpg",
+        "ice-climbers-comparison-1.jpg",
+        "ice-climbers-comparison-2.jpg"
+      ]
+    },
+    "browserPlayback": "REPLAY CLEAR \u00b7 00:09.73;730/730frames;UCFoff;Practice;no page errors"
+  },
+  "limitations": "Video-inferred practice reconstruction, not an original replay or competitive evidence. All ten target clocks match. Sampled poses and positions are close, but the jump near 4.70 begins one frame early and some positions and cosmetic particles differ; every-frame identity is not established."
+}
