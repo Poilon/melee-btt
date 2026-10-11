@@ -179,11 +179,16 @@ export function createBrowserBtt({
             "rumble",
             "ucf",
             "cstick",
+            "ghostOpacity",
           ]);
           if (
             !Object.keys(patch).length ||
             Object.entries(patch).some(
-              ([k, v]) => !allowed.has(k) || typeof v !== "boolean",
+              ([k, v]) =>
+                !allowed.has(k) ||
+                (k === "ghostOpacity"
+                  ? !Number.isInteger(v) || v < 0 || v > 100
+                  : typeof v !== "boolean"),
             )
           )
             throw error("Invalid preferences.");

@@ -210,7 +210,10 @@ test("practice reconstructions preserve uint32 startup seeds without becoming sc
   const parsed = parseBttReplay(replay({ practice: true, seed: 0xfedcba98 }));
   assert.equal(parsed.seed, 0xfedcba98);
   assert.equal(parsed.practice, true);
-  assert.throws(() => parseBttReplay(replay({ seed: 0xfedcba98 })), /Invalid replay result/);
+  assert.throws(
+    () => parseBttReplay(replay({ seed: 0xfedcba98 })),
+    /Invalid replay result/,
+  );
 });
 test("browser account creation keeps CSRF and username uniqueness protections", async () => {
   const f = fixture();
@@ -264,7 +267,12 @@ test("checkbox preferences are account-specific and partial changes retain other
         "browser-btt/preferences",
         post(a, {
           owner: a.id,
-          preferences: { rumble: true, music: false, ucf: true },
+          preferences: {
+            rumble: true,
+            music: false,
+            ucf: true,
+            ghostOpacity: 72,
+          },
         }),
       )
     ).status,
@@ -282,7 +290,7 @@ test("checkbox preferences are account-specific and partial changes retain other
   assert.deepEqual(
     (await f.request("browser-btt/preferences", { cookie: a.cookie })).data
       .preferences,
-    { rumble: true, music: false, ucf: true, sound: true },
+    { rumble: true, music: false, ucf: true, sound: true, ghostOpacity: 72 },
   );
   assert.deepEqual(
     (await f.request("browser-btt/preferences", { cookie: b.cookie })).data
@@ -307,6 +315,26 @@ test("checkbox preferences are account-specific and partial changes retain other
     ).status,
     409,
   );
+});
+
+test("ghost opacity accepts endpoints and rejects invalid account values", async () => {
+  const f = fixture(),
+    a = await f.account("ghost_prefs");
+  for (const value of [0, 100]) {
+    const response = await f.request(
+      "browser-btt/preferences",
+      post(a, { owner: a.id, preferences: { ghostOpacity: value } }),
+    );
+    assert.equal(response.status, 200);
+    assert.equal(response.data.preferences.ghostOpacity, value);
+  }
+  for (const value of [-1, 101, 1.5, "50", true, null]) {
+    const response = await f.request(
+      "browser-btt/preferences",
+      post(a, { owner: a.id, preferences: { ghostOpacity: value } }),
+    );
+    assert.equal(response.status, 400);
+  }
 });
 
 test("public browser leaderboard includes existing bests, uses ties, and never mixes custom stages or non-best attempts", async () => {
@@ -382,13 +410,18 @@ test("public browser leaderboard includes existing bests, uses ties, and never m
 test("world records remain visible on an empty or paginated browser board", async () => {
   const f = fixture();
   for (const offset of [0, 100]) {
-    const board = (await f.request(`browser-btt/leaderboard?fighter=23&offset=${offset}`)).data;
+    const board = (
+      await f.request(`browser-btt/leaderboard?fighter=23&offset=${offset}`)
+    ).data;
     assert.equal(board.total, 0);
     assert.deepEqual(board.rows, []);
     assert.equal(board.worldRecord.time, "5.33");
     assert.equal(board.worldRecord.holders.length, 2);
     assert.equal(board.worldRecord.replayUrl, "/play?worldRecord=23");
-    assert.match(board.worldRecord.reconstruction.downloadUrl, /^\/world-record-replays\/[a-f0-9]{64}\.slp$/);
+    assert.match(
+      board.worldRecord.reconstruction.downloadUrl,
+      /^\/world-record-replays\/[a-f0-9]{64}\.slp$/,
+    );
   }
 });
 
