@@ -1,0 +1,212 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 16,
+  "stage": 16,
+  "holder": "Mario 64 Master",
+  "source": "https://www.youtube.com/watch?v=Js0Ig9u7V5Q",
+  "frames": 452,
+  "time": "7.53",
+  "complete": true,
+  "practice": true,
+  "sha256": "56daf893a51b64b8451dfde7b41fce2d643c52726c7fe04461ee9e8e25891498",
+  "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+  "verification": {
+    "deterministicPasses": 2,
+    "sourceDecoding": "Sequential decode with matching HUD clocks.",
+    "sourceTargetVideoFrames": [
+      132,
+      171,
+      294,
+      304,
+      343,
+      367,
+      411,
+      478,
+      516,
+      574
+    ],
+    "sourceTargetGameFrames": [
+      10,
+      49,
+      172,
+      182,
+      221,
+      245,
+      289,
+      356,
+      394,
+      452
+    ],
+    "targetClockDifferences": [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 133,
+        "gameFrame": 10,
+        "time": "0.16",
+        "remaining": 9
+      },
+      {
+        "frame": 172,
+        "gameFrame": 49,
+        "time": "0.82",
+        "remaining": 8
+      },
+      {
+        "frame": 295,
+        "gameFrame": 172,
+        "time": "2.87",
+        "remaining": 7
+      },
+      {
+        "frame": 306,
+        "gameFrame": 183,
+        "time": "3.05",
+        "remaining": 6
+      },
+      {
+        "frame": 344,
+        "gameFrame": 221,
+        "time": "3.68",
+        "remaining": 5
+      },
+      {
+        "frame": 368,
+        "gameFrame": 245,
+        "time": "4.08",
+        "remaining": 4
+      },
+      {
+        "frame": 412,
+        "gameFrame": 289,
+        "time": "4.82",
+        "remaining": 3
+      },
+      {
+        "frame": 479,
+        "gameFrame": 356,
+        "time": "5.93",
+        "remaining": 2
+      },
+      {
+        "frame": 517,
+        "gameFrame": 394,
+        "time": "6.57",
+        "remaining": 1
+      },
+      {
+        "frame": 575,
+        "gameFrame": 452,
+        "time": "7.53",
+        "remaining": 0
+      }
+    ],
+    "poseComparison": {
+      "method": "Matching HUD-clock source/native screenshots",
+      "pairs": [
+        {
+          "sourceFrame": 132,
+          "nativeFrame": 133,
+          "gameFrame": 10
+        },
+        {
+          "sourceFrame": 171,
+          "nativeFrame": 172,
+          "gameFrame": 49
+        },
+        {
+          "sourceFrame": 294,
+          "nativeFrame": 295,
+          "gameFrame": 172
+        },
+        {
+          "sourceFrame": 305,
+          "nativeFrame": 306,
+          "gameFrame": 183
+        },
+        {
+          "sourceFrame": 343,
+          "nativeFrame": 344,
+          "gameFrame": 221
+        },
+        {
+          "sourceFrame": 367,
+          "nativeFrame": 368,
+          "gameFrame": 245
+        },
+        {
+          "sourceFrame": 411,
+          "nativeFrame": 412,
+          "gameFrame": 289
+        },
+        {
+          "sourceFrame": 478,
+          "nativeFrame": 479,
+          "gameFrame": 356
+        },
+        {
+          "sourceFrame": 516,
+          "nativeFrame": 517,
+          "gameFrame": 394
+        },
+        {
+          "sourceFrame": 529,
+          "nativeFrame": 530,
+          "gameFrame": 407
+        },
+        {
+          "sourceFrame": 539,
+          "nativeFrame": 540,
+          "gameFrame": 417
+        },
+        {
+          "sourceFrame": 549,
+          "nativeFrame": 550,
+          "gameFrame": 427
+        },
+        {
+          "sourceFrame": 553,
+          "nativeFrame": 554,
+          "gameFrame": 431
+        },
+        {
+          "sourceFrame": 559,
+          "nativeFrame": 560,
+          "gameFrame": 437
+        },
+        {
+          "sourceFrame": 567,
+          "nativeFrame": 568,
+          "gameFrame": 445
+        },
+        {
+          "sourceFrame": 574,
+          "nativeFrame": 575,
+          "gameFrame": 452
+        }
+      ],
+      "evidence": [
+        "samus-comparison-0.jpg",
+        "samus-comparison-1.jpg",
+        "samus-comparison-2.jpg",
+        "samus-comparison-3.jpg"
+      ]
+    },
+    "browserPlayback": {
+      "url": "http://localhost:4329/btt.html?localReplay=56daf893a51b64b8451dfde7b41fce2d643c52726c7fe04461ee9e8e25891498",
+      "result": "REPLAY CLEAR \u00b7 00:07.53",
+      "status": "Replay \u00b7 578 / 578 frames \u00b7 1\u00d7 \u00b7 UCF on \u00b7 Practice"
+    }
+  },
+  "limitations": "Video-inferred practice reconstruction, not original inputs or competitive evidence. All ten targets clear in 7.53. Nine target clocks match the observed source; target 4 is one game frame late (3.05 instead of 3.03). Matching-clock pose checks retain costume, camera, position and animation-phase differences. Every-frame identity is not established."
+}
