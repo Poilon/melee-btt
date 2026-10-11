@@ -263,7 +263,13 @@
           "url": "https://www.youtube.com/watch?v=jloK7UrCwcQ"
         }
       ],
-      "replayUrl": null
+      "replayUrl": "/play?worldRecord=2",
+      "reconstruction": {
+        "downloadUrl": "/world-record-replays/33c1a105944ed8751974646b37d2444dfa6ff1e8889345adb5f74d9bcc60c777.slp",
+        "sha256": "33c1a105944ed8751974646b37d2444dfa6ff1e8889345adb5f74d9bcc60c777",
+        "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+        "evidenceUrl": "/world-record-replays/33c1a105944ed8751974646b37d2444dfa6ff1e8889345adb5f74d9bcc60c777.json"
+      }
     },
     {
       "stage": 11,

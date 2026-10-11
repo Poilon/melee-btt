@@ -1,0 +1,202 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 2,
+  "holder": "jenkem66",
+  "source": "https://www.youtube.com/watch?v=jloK7UrCwcQ",
+  "frames": 379,
+  "time": "6.31",
+  "complete": true,
+  "practice": true,
+  "sha256": "33c1a105944ed8751974646b37d2444dfa6ff1e8889345adb5f74d9bcc60c777",
+  "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+  "verification": {
+    "deterministicPasses": 2,
+    "sourceDecoding": "Sequential decode with matching HUD clocks; intervals retain dropped-source-frame uncertainty.",
+    "sourceTargetVideoFrames": [
+      114,
+      126,
+      141,
+      261,
+      290,
+      292,
+      389,
+      439,
+      462,
+      501
+    ],
+    "sourceTargetGameFrameIntervals": [
+      [
+        0,
+        0
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        18,
+        18
+      ],
+      [
+        138,
+        139
+      ],
+      [
+        167,
+        168
+      ],
+      [
+        169,
+        169
+      ],
+      [
+        267,
+        267
+      ],
+      [
+        316,
+        316
+      ],
+      [
+        339,
+        339
+      ],
+      [
+        379,
+        379
+      ]
+    ],
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 114,
+        "gameFrame": 0,
+        "time": "0.00",
+        "remaining": 9
+      },
+      {
+        "frame": 127,
+        "gameFrame": 4,
+        "time": "0.06",
+        "remaining": 8
+      },
+      {
+        "frame": 141,
+        "gameFrame": 18,
+        "time": "0.30",
+        "remaining": 7
+      },
+      {
+        "frame": 261,
+        "gameFrame": 138,
+        "time": "2.30",
+        "remaining": 6
+      },
+      {
+        "frame": 291,
+        "gameFrame": 168,
+        "time": "2.80",
+        "remaining": 5
+      },
+      {
+        "frame": 292,
+        "gameFrame": 169,
+        "time": "2.82",
+        "remaining": 4
+      },
+      {
+        "frame": 390,
+        "gameFrame": 267,
+        "time": "4.45",
+        "remaining": 3
+      },
+      {
+        "frame": 439,
+        "gameFrame": 316,
+        "time": "5.26",
+        "remaining": 2
+      },
+      {
+        "frame": 462,
+        "gameFrame": 339,
+        "time": "5.65",
+        "remaining": 1
+      },
+      {
+        "frame": 502,
+        "gameFrame": 379,
+        "time": "6.31",
+        "remaining": 0
+      }
+    ],
+    "poseComparison": {
+      "method": "Matching HUD-clock source/native screenshots",
+      "pairs": [
+        {
+          "sourceFrame": 114,
+          "nativeFrame": 114
+        },
+        {
+          "sourceFrame": 126,
+          "nativeFrame": 127
+        },
+        {
+          "sourceFrame": 141,
+          "nativeFrame": 141
+        },
+        {
+          "sourceFrame": 261,
+          "nativeFrame": 262
+        },
+        {
+          "sourceFrame": 290,
+          "nativeFrame": 291
+        },
+        {
+          "sourceFrame": 292,
+          "nativeFrame": 292
+        },
+        {
+          "sourceFrame": 389,
+          "nativeFrame": 390
+        },
+        {
+          "sourceFrame": 439,
+          "nativeFrame": 439
+        },
+        {
+          "sourceFrame": 462,
+          "nativeFrame": 462
+        },
+        {
+          "sourceFrame": 484,
+          "nativeFrame": 484
+        },
+        {
+          "sourceFrame": 486,
+          "nativeFrame": 486
+        },
+        {
+          "sourceFrame": 493,
+          "nativeFrame": 493
+        },
+        {
+          "sourceFrame": 501,
+          "nativeFrame": 502
+        }
+      ],
+      "evidence": [
+        "fox-comparison-0.jpg",
+        "fox-comparison-1.jpg",
+        "fox-comparison-2.jpg",
+        "fox-comparison-3.jpg",
+        "fox-comparison-4.jpg"
+      ]
+    },
+    "browserPlayback": {
+      "url": "http://localhost:4329/btt.html?localReplay=33c1a105944ed8751974646b37d2444dfa6ff1e8889345adb5f74d9bcc60c777",
+      "result": "REPLAY CLEAR \u00b7 00:06.31",
+      "status": "Replay \u00b7 530 / 530 frames \u00b7 1\u00d7 \u00b7 UCF off \u00b7 Practice"
+    }
+  },
+  "limitations": "Video-inferred practice reconstruction, not original inputs or competitive evidence. All ten target transitions agree with the source clocks or the interval between adjacent source images where the video skips a game frame. Pose comparisons still show position, animation-phase and camera differences, especially the bumper reaction, platform tech and final aerial approach. Every-frame identity is not established."
+}
