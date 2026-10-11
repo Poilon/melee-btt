@@ -180,6 +180,7 @@ export function createBrowserBtt({
             "ucf",
             "cstick",
             "ghostOpacity",
+            "targetTimes",
           ]);
           if (
             !Object.keys(patch).length ||

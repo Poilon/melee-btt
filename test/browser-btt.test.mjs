@@ -272,6 +272,7 @@ test("checkbox preferences are account-specific and partial changes retain other
             music: false,
             ucf: true,
             ghostOpacity: 72,
+            targetTimes: false,
           },
         }),
       )
@@ -290,7 +291,14 @@ test("checkbox preferences are account-specific and partial changes retain other
   assert.deepEqual(
     (await f.request("browser-btt/preferences", { cookie: a.cookie })).data
       .preferences,
-    { rumble: true, music: false, ucf: true, sound: true, ghostOpacity: 72 },
+    {
+      rumble: true,
+      music: false,
+      ucf: true,
+      sound: true,
+      ghostOpacity: 72,
+      targetTimes: false,
+    },
   );
   assert.deepEqual(
     (await f.request("browser-btt/preferences", { cookie: b.cookie })).data
