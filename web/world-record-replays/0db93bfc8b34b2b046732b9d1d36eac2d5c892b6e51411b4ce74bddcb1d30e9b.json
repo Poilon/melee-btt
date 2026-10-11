@@ -1,0 +1,146 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 25,
+  "stage": 25,
+  "holder": "Samplay",
+  "source": "https://www.youtube.com/watch?v=z5BK48TDwtw",
+  "frames": 266,
+  "time": "4.43",
+  "complete": true,
+  "practice": true,
+  "sha256": "0db93bfc8b34b2b046732b9d1d36eac2d5c892b6e51411b4ce74bddcb1d30e9b",
+  "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+  "verification": {
+    "deterministicPasses": 2,
+    "sourceDecoding": "Sequential video decoding; target-counter transitions timed from the HUD clock. Source contains repeated/dropped frames.",
+    "sourceTargetGameFrames": [
+      0,
+      21,
+      34,
+      null,
+      97,
+      164,
+      213,
+      224,
+      266,
+      266
+    ],
+    "sourceTargetGameFrameRanges": [
+      [
+        0,
+        0
+      ],
+      [
+        21,
+        21
+      ],
+      [
+        34,
+        34
+      ],
+      [
+        39,
+        40
+      ],
+      [
+        97,
+        97
+      ],
+      [
+        164,
+        164
+      ],
+      [
+        213,
+        213
+      ],
+      [
+        224,
+        224
+      ],
+      [
+        266,
+        266
+      ],
+      [
+        266,
+        266
+      ]
+    ],
+    "targetClockDifferences": [
+      0,
+      0,
+      0,
+      null,
+      0,
+      2,
+      0,
+      2,
+      0,
+      0
+    ],
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 87,
+        "gameFrame": 0,
+        "time": "0.00",
+        "remaining": 9
+      },
+      {
+        "frame": 144,
+        "gameFrame": 21,
+        "time": "0.35",
+        "remaining": 8
+      },
+      {
+        "frame": 157,
+        "gameFrame": 34,
+        "time": "0.57",
+        "remaining": 7
+      },
+      {
+        "frame": 162,
+        "gameFrame": 39,
+        "time": "0.65",
+        "remaining": 6
+      },
+      {
+        "frame": 220,
+        "gameFrame": 97,
+        "time": "1.62",
+        "remaining": 5
+      },
+      {
+        "frame": 289,
+        "gameFrame": 166,
+        "time": "2.77",
+        "remaining": 4
+      },
+      {
+        "frame": 336,
+        "gameFrame": 213,
+        "time": "3.55",
+        "remaining": 3
+      },
+      {
+        "frame": 349,
+        "gameFrame": 226,
+        "time": "3.77",
+        "remaining": 2
+      },
+      {
+        "frame": 389,
+        "gameFrame": 266,
+        "time": "4.43",
+        "remaining": 0
+      }
+    ],
+    "browserPlayback": {
+      "url": "http://localhost:4329/btt.html?localReplay=0db93bfc8b34b2b046732b9d1d36eac2d5c892b6e51411b4ce74bddcb1d30e9b",
+      "result": "REPLAY CLEAR \u00b7 00:04.43",
+      "status": "Replay \u00b7 409 / 409 frames \u00b7 1\u00d7 \u00b7 UCF off \u00b7 Practice",
+      "method": "Imported into the normal browser replay player, then sought to the final frame with the replay timeline."
+    }
+  },
+  "limitations": "Video-inferred practice reconstruction, not original inputs or competitive evidence. All ten targets clear in 4.43. Targets 6 and 8 are two game frames late; target 4 lies within a missing-source-frame interval. Other audited target clocks and final simultaneous double hit match. Animation/position differences remain; frame-perfect fidelity is not established."
+}

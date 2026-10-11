@@ -224,7 +224,14 @@
           "url": "https://www.youtube.com/watch?v=z5BK48TDwtw"
         }
       ],
-      "replayUrl": null
+      "replayUrl": "/play?worldRecord=25",
+      "reconstruction": {
+        "downloadUrl": "/world-record-replays/0db93bfc8b34b2b046732b9d1d36eac2d5c892b6e51411b4ce74bddcb1d30e9b.slp",
+        "sha256": "0db93bfc8b34b2b046732b9d1d36eac2d5c892b6e51411b4ce74bddcb1d30e9b",
+        "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+        "evidenceUrl": "/world-record-replays/0db93bfc8b34b2b046732b9d1d36eac2d5c892b6e51411b4ce74bddcb1d30e9b.json",
+        "timingNote": "Ten targets and final simultaneous double hit in 4.43. Targets 6 and 8 are two frames late; target 4 falls within a missing-video-frame interval. Practice reconstruction with inferred inputs."
+      }
     },
     {
       "stage": 20,
