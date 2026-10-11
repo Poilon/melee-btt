@@ -1,0 +1,125 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 15,
+  "stage": 15,
+  "holder": "sockdude1",
+  "source": "https://www.youtube.com/watch?v=zFQQcTv_XZ8",
+  "frames": 457,
+  "time": "7.62",
+  "complete": true,
+  "practice": true,
+  "sha256": "d9d971f45dc8e83ddbe6f63ff76fc933c383b0bd5e9e053df758b80aed4633a2",
+  "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+  "verification": {
+    "deterministicPasses": 2,
+    "browserPlayer": "Imported .slp into the normal player and sought to the end using its timeline: REPLAY CLEAR 00:07.62, UCF off, Practice. This was not a continuous real-time playback test.",
+    "sourceVideoTargetFrames": [
+      96,
+      111,
+      184,
+      227,
+      305,
+      363,
+      443,
+      484,
+      538,
+      579
+    ],
+    "sourceTargetGameFrames": [
+      0,
+      0,
+      62,
+      105,
+      183,
+      241,
+      321,
+      362,
+      416,
+      457
+    ],
+    "targetClockDifferences": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      0,
+      0,
+      0,
+      0
+    ],
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 97,
+        "gameFrame": 0,
+        "time": "0.00",
+        "remaining": 9
+      },
+      {
+        "frame": 112,
+        "gameFrame": 0,
+        "time": "0.00",
+        "remaining": 8
+      },
+      {
+        "frame": 185,
+        "gameFrame": 62,
+        "time": "1.03",
+        "remaining": 7
+      },
+      {
+        "frame": 228,
+        "gameFrame": 105,
+        "time": "1.75",
+        "remaining": 6
+      },
+      {
+        "frame": 306,
+        "gameFrame": 183,
+        "time": "3.05",
+        "remaining": 5
+      },
+      {
+        "frame": 366,
+        "gameFrame": 243,
+        "time": "4.05",
+        "remaining": 4
+      },
+      {
+        "frame": 444,
+        "gameFrame": 321,
+        "time": "5.35",
+        "remaining": 3
+      },
+      {
+        "frame": 485,
+        "gameFrame": 362,
+        "time": "6.03",
+        "remaining": 2
+      },
+      {
+        "frame": 539,
+        "gameFrame": 416,
+        "time": "6.93",
+        "remaining": 1
+      },
+      {
+        "frame": 580,
+        "gameFrame": 457,
+        "time": "7.62",
+        "remaining": 0
+      }
+    ]
+  },
+  "poseAudit": {
+    "scope": "Sampled source/native captures; not every-frame verification.",
+    "findings": [
+      "Down-Air replaces the incorrect Back-Air/Forward-Air guesses at targets 7 and 8. Their positions and contact clocks are closer to the video.",
+      "The final Back-Air clears at the source clock, GF457.",
+      "The sixth target is two game frames late. Fifth and ninth attack poses still differ visibly from the source; exact source inputs/actions there are not established.",
+      "Character costume, camera framing and further trajectory/animation differences remain."
+    ]
+  },
+  "limitations": "Video-inferred practice reconstruction, not original inputs or competitive evidence. Ten targets clear in 7.62. Target 6 is two frames late; other measured contact clocks match. Visible pose differences remain, especially around targets 5 and 9. This is not a frame-perfect recreation."
+}

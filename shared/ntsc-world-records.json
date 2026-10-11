@@ -488,7 +488,14 @@
           "url": "https://www.youtube.com/watch?v=zFQQcTv_XZ8"
         }
       ],
-      "replayUrl": null
+      "replayUrl": "/play?worldRecord=15",
+      "reconstruction": {
+        "downloadUrl": "/world-record-replays/d9d971f45dc8e83ddbe6f63ff76fc933c383b0bd5e9e053df758b80aed4633a2.slp",
+        "sha256": "d9d971f45dc8e83ddbe6f63ff76fc933c383b0bd5e9e053df758b80aed4633a2",
+        "engine": "db93eadadc28cd34acafcfb1aaef898ed169d907c6f277851cadf118e4ade06f",
+        "evidenceUrl": "/world-record-replays/d9d971f45dc8e83ddbe6f63ff76fc933c383b0bd5e9e053df758b80aed4633a2.json",
+        "timingNote": "Ten targets in 7.62. Target 6 is two frames late; other measured contact clocks match. Visible pose differences remain, especially at targets 5 and 9. Inferred practice reconstruction, not frame-perfect."
+      }
     },
     {
       "stage": 10,
