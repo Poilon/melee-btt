@@ -417,10 +417,12 @@ export function parseBttReplay(input) {
     0,
   );
   const posts = [];
+  let initialRng;
   for (let i = 0; i < count; i++)
     for (const c of [0x3a, 0x37, 0x38, 0x3c]) {
       const v = readEvent(c);
       if (v.getInt32(1) !== i - 123) throw Error("Replay frame mismatch.");
+      if (i === 0 && c === 0x3a) initialRng = v.getUint32(5);
       if (c === 0x38) {
         const p = [
           v.getUint8(7),
@@ -442,6 +444,7 @@ export function parseBttReplay(input) {
   return {
     ...b,
     count,
+    initialRng,
     startAt: m.startAt,
     name: m.players?.["0"]?.names?.netplay || "",
     posts,

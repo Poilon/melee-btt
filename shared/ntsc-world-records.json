@@ -140,7 +140,14 @@
           "url": "https://www.youtube.com/watch?v=PR4W7Fc9uqY"
         }
       ],
-      "replayUrl": null
+      "replayUrl": "/play?worldRecord=12",
+      "reconstruction": {
+        "downloadUrl": "/world-record-replays/0e8a737ba1ebf23c98be852989f3ad8bcde328e669a43ea41d7633581a10379b.slp",
+        "sha256": "0e8a737ba1ebf23c98be852989f3ad8bcde328e669a43ea41d7633581a10379b",
+        "engine": "7311122699c1383681b5b536d8a2239770c66b318723d84bc9efb6b082b4f60e",
+        "evidenceUrl": "/world-record-replays/0e8a737ba1ebf23c98be852989f3ad8bcde328e669a43ea41d7633581a10379b.json",
+        "timingNote": "All ten target clocks match the video, including the final consecutive-frame hits. Natural item RNG; inferred inputs and sampled pose checks."
+      }
     },
     {
       "stage": 17,

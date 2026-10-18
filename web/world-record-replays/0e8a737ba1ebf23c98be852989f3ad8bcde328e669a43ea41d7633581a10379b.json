@@ -1,0 +1,261 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 12,
+  "holder": "Judge9",
+  "source": "https://www.youtube.com/watch?v=PR4W7Fc9uqY",
+  "frames": 536,
+  "time": "8.93",
+  "complete": true,
+  "practice": true,
+  "sha256": "0e8a737ba1ebf23c98be852989f3ad8bcde328e669a43ea41d7633581a10379b",
+  "engine": "7311122699c1383681b5b536d8a2239770c66b318723d84bc9efb6b082b4f60e",
+  "seed": 3701680635,
+  "verification": {
+    "deterministicPasses": 2,
+    "sourceDecoding": "Sequential 60 fps source frames; HUD target transitions checked against captures. Game frame = source frame - 270.",
+    "sourceTargetVideoFrames": [
+      303,
+      371,
+      376,
+      435,
+      569,
+      594,
+      689,
+      710,
+      805,
+      806
+    ],
+    "sourceTargetGameFrames": [
+      33,
+      101,
+      106,
+      165,
+      299,
+      324,
+      419,
+      440,
+      535,
+      536
+    ],
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 156,
+        "gameFrame": 33,
+        "time": "0.55",
+        "remaining": 9
+      },
+      {
+        "frame": 224,
+        "gameFrame": 101,
+        "time": "1.68",
+        "remaining": 8
+      },
+      {
+        "frame": 229,
+        "gameFrame": 106,
+        "time": "1.77",
+        "remaining": 7
+      },
+      {
+        "frame": 288,
+        "gameFrame": 165,
+        "time": "2.75",
+        "remaining": 6
+      },
+      {
+        "frame": 422,
+        "gameFrame": 299,
+        "time": "4.99",
+        "remaining": 5
+      },
+      {
+        "frame": 447,
+        "gameFrame": 324,
+        "time": "5.40",
+        "remaining": 4
+      },
+      {
+        "frame": 542,
+        "gameFrame": 419,
+        "time": "6.99",
+        "remaining": 3
+      },
+      {
+        "frame": 563,
+        "gameFrame": 440,
+        "time": "7.33",
+        "remaining": 2
+      },
+      {
+        "frame": 658,
+        "gameFrame": 535,
+        "time": "8.92",
+        "remaining": 1
+      },
+      {
+        "frame": 659,
+        "gameFrame": 536,
+        "time": "8.93",
+        "remaining": 0
+      }
+    ],
+    "targetIdentityChecks": [
+      {
+        "sourceFrame": 303,
+        "gameFrame": 33,
+        "removed": [
+          {
+            "id": 2155725152,
+            "position": [
+              -105,
+              10,
+              0
+            ],
+            "kind": 209
+          }
+        ]
+      },
+      {
+        "sourceFrame": 371,
+        "gameFrame": 101,
+        "removed": [
+          {
+            "id": 2155708288,
+            "position": [
+              -50,
+              10,
+              0
+            ],
+            "kind": 209
+          }
+        ]
+      },
+      {
+        "sourceFrame": 376,
+        "gameFrame": 106,
+        "removed": [
+          {
+            "id": 2155731104,
+            "position": [
+              10,
+              -21,
+              0
+            ],
+            "kind": 209
+          }
+        ]
+      },
+      {
+        "sourceFrame": 435,
+        "gameFrame": 165,
+        "removed": [
+          {
+            "id": 2155719200,
+            "position": [
+              -40,
+              45,
+              0
+            ],
+            "kind": 209
+          }
+        ]
+      },
+      {
+        "sourceFrame": 569,
+        "gameFrame": 299,
+        "removed": [
+          {
+            "id": 2155741952,
+            "position": [
+              37,
+              111,
+              0
+            ],
+            "kind": 209
+          }
+        ]
+      },
+      {
+        "sourceFrame": 594,
+        "gameFrame": 324,
+        "removed": [
+          {
+            "id": 2155747904,
+            "position": [
+              48,
+              42,
+              0
+            ],
+            "kind": 209
+          }
+        ]
+      },
+      {
+        "sourceFrame": 689,
+        "gameFrame": 419,
+        "removed": [
+          {
+            "id": 2155736000,
+            "position": [
+              65,
+              -65,
+              0
+            ],
+            "kind": 209
+          }
+        ]
+      },
+      {
+        "sourceFrame": 710,
+        "gameFrame": 440,
+        "removed": [
+          {
+            "id": 2155753856,
+            "position": [
+              105,
+              -65,
+              0
+            ],
+            "kind": 209
+          }
+        ]
+      },
+      {
+        "sourceFrame": 805,
+        "gameFrame": 535,
+        "removed": [
+          {
+            "id": 2155759808,
+            "position": [
+              140,
+              70,
+              0
+            ],
+            "kind": 209
+          }
+        ]
+      },
+      {
+        "sourceFrame": 806,
+        "gameFrame": 536,
+        "removed": [
+          {
+            "id": 2155713248,
+            "position": [
+              192.8963165283203,
+              -85,
+              0
+            ],
+            "kind": 209
+          }
+        ]
+      }
+    ],
+    "items": "Bob-omb and Beam Sword obtained from normal item RNG with the recorded practice seed; no mid-run item injection.",
+    "poseChecks": {
+      "scope": "Sampled comparisons against stage-aligned video frames, including the opening, central platform, sword recovery and final throw. Not a pixel-perfect audit of every frame."
+    },
+    "browserPlayback": "Leaderboard Watch reconstruction link loads the checksum-pinned replay. Standard player seek validates every replay step through frame660: zero targets, game frame536 (00:08.93), no page errors. Continuous rendered playback is slow in the headless software renderer."
+  },
+  "limitations": "Inputs inferred from video, not the original recording. All ten target-clear clocks and target identities match. Costume differs; intermediate poses and analog values are approximate. Practice reconstruction, not competitive evidence."
+}
