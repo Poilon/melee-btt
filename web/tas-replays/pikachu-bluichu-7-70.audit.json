@@ -1,0 +1,171 @@
+{
+  "id": "pikachu-bluichu-7-70",
+  "source": "https://www.youtube.com/watch?v=x3Af1MacKnI",
+  "sourceVideoSha256": "5809fb1d6fd399e446daffa5f51e4f043114ad3afb10967f020415c4a7562a08",
+  "replay": {
+    "sha256": "ffefe53fef5e62bd30bf7f20d075549227f924a05d9ec6f0ad55a9c5e91e47b5",
+    "engine": "7311122699c1383681b5b536d8a2239770c66b318723d84bc9efb6b082b4f60e",
+    "downloadUrl": "/tas-replays/ffefe53fef5e62bd30bf7f20d075549227f924a05d9ec6f0ad55a9c5e91e47b5.slp",
+    "evidenceUrl": "/tas-replays/pikachu-bluichu-7-70.audit.json"
+  },
+  "time": "7.70",
+  "gameFrames": 462,
+  "complete": true,
+  "practice": true,
+  "deterministicStateComparison": "Two full simulations matched every recorded state.",
+  "method": "Inputs inferred from Bluichu\u2019s video, simulated in the unmodified browser engine. This is not the original input recording.",
+  "limits": "Source video is 29.970 fps for 60 Hz gameplay. Intermediate impact windows normally span two game frames; the first two impacts are partly obscured by GO. Matching timing and inspected poses does not establish pixel-identical motion on every frame.",
+  "detailsUrl": "https://github.com/Poilon/melee-browser/tree/main/experiments/video-reconstruction/tas/pikachu-bluichu-7.70",
+  "hits": [
+    {
+      "ordinal": 1,
+      "inputFrame": 100,
+      "gameFrame": 0,
+      "targetId": 2155277984,
+      "targetPosition": [
+        -15,
+        -50,
+        0
+      ],
+      "sourceInputFrameWindow": [
+        0,
+        123
+      ]
+    },
+    {
+      "ordinal": 2,
+      "inputFrame": 107,
+      "gameFrame": 0,
+      "targetId": 2155255168,
+      "targetPosition": [
+        20,
+        -20,
+        0
+      ],
+      "sourceInputFrameWindow": [
+        0,
+        123
+      ]
+    },
+    {
+      "ordinal": 3,
+      "inputFrame": 252,
+      "gameFrame": 129,
+      "targetId": 2155266080,
+      "targetPosition": [
+        -105,
+        75,
+        0
+      ],
+      "sourceInputFrameWindow": [
+        251,
+        252
+      ]
+    },
+    {
+      "ordinal": 4,
+      "inputFrame": 260,
+      "gameFrame": 137,
+      "targetId": 2155237312,
+      "targetPosition": [
+        -115,
+        -75,
+        0
+      ],
+      "sourceInputFrameWindow": [
+        259,
+        260
+      ]
+    },
+    {
+      "ordinal": 5,
+      "inputFrame": 320,
+      "gameFrame": 197,
+      "targetId": 2155272032,
+      "targetPosition": [
+        -95,
+        5,
+        0
+      ],
+      "sourceInputFrameWindow": [
+        319,
+        320
+      ]
+    },
+    {
+      "ordinal": 6,
+      "inputFrame": 417,
+      "gameFrame": 294,
+      "targetId": 2155283936,
+      "targetPosition": [
+        -20,
+        85,
+        0
+      ],
+      "sourceInputFrameWindow": [
+        417,
+        418
+      ]
+    },
+    {
+      "ordinal": 7,
+      "inputFrame": 423,
+      "gameFrame": 300,
+      "targetId": 2155232352,
+      "targetPosition": [
+        20,
+        85,
+        0
+      ],
+      "sourceInputFrameWindow": [
+        423,
+        424
+      ]
+    },
+    {
+      "ordinal": 8,
+      "inputFrame": 522,
+      "gameFrame": 399,
+      "targetId": 2155260128,
+      "targetPosition": [
+        95,
+        5,
+        0
+      ],
+      "sourceInputFrameWindow": [
+        521,
+        522
+      ]
+    },
+    {
+      "ordinal": 9,
+      "inputFrame": 573,
+      "gameFrame": 450,
+      "targetId": 2155249216,
+      "targetPosition": [
+        175,
+        -55,
+        0
+      ],
+      "sourceInputFrameWindow": [
+        573,
+        574
+      ]
+    },
+    {
+      "ordinal": 10,
+      "inputFrame": 585,
+      "gameFrame": 462,
+      "targetId": 2155243264,
+      "targetPosition": [
+        125,
+        90,
+        0
+      ],
+      "sourceInputFrameWindow": [
+        585,
+        585
+      ]
+    }
+  ]
+}

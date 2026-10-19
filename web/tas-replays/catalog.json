@@ -8,7 +8,12 @@
       "time": "7.70",
       "frames": 462,
       "source": "https://www.youtube.com/watch?v=x3Af1MacKnI",
-      "replay": null
+      "replay": {
+        "sha256": "ffefe53fef5e62bd30bf7f20d075549227f924a05d9ec6f0ad55a9c5e91e47b5",
+        "engine": "7311122699c1383681b5b536d8a2239770c66b318723d84bc9efb6b082b4f60e",
+        "downloadUrl": "/tas-replays/ffefe53fef5e62bd30bf7f20d075549227f924a05d9ec6f0ad55a9c5e91e47b5.slp",
+        "evidenceUrl": "/tas-replays/pikachu-bluichu-7-70.audit.json"
+      }
     }
   ]
 }

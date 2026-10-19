@@ -145,6 +145,11 @@ function showTas(fighter) {
       watch.href = `/play?tas=${encodeURIComponent(entry.id)}`; watch.textContent = "Watch TAS reconstruction";
       download.href = replay.downloadUrl; download.download = `${entry.id}.slp`; download.textContent = ".slp ↓";
       links.prepend(watch, download);
+      if (replay.evidenceUrl?.startsWith("/tas-replays/") && replay.evidenceUrl.endsWith(".audit.json")) {
+        const details = document.createElement("a");
+        details.href = replay.evidenceUrl; details.textContent = "Reconstruction details";
+        links.append(details);
+      }
     }
     proof.append(links); row.append(...cells, proof); return row;
   }));
