@@ -1,0 +1,324 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 4,
+  "holder": "samthedigital",
+  "source": "https://www.youtube.com/watch?v=XEd8gt4_5cA",
+  "frames": 701,
+  "time": "11.68",
+  "complete": true,
+  "practice": true,
+  "sha256": "3eff0292624d7c8e52fae763b8b409f608f901b5768d881ca36fada584daea93",
+  "engine": "7311122699c1383681b5b536d8a2239770c66b318723d84bc9efb6b082b4f60e",
+  "verification": {
+    "deterministicPasses": 2,
+    "sourceDecoding": "Sequential 60000/1001 fps source frames. Native input frame = source frame; game frame = max(0, source frame - 123).",
+    "sourceTargetVideoFrames": [
+      109,
+      182,
+      356,
+      407,
+      422,
+      584,
+      599,
+      639,
+      696,
+      824
+    ],
+    "sourceTargetGameFrames": [
+      0,
+      59,
+      233,
+      284,
+      299,
+      461,
+      476,
+      516,
+      573,
+      701
+    ],
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 109,
+        "gameFrame": 0,
+        "time": "0.00",
+        "remaining": 9
+      },
+      {
+        "frame": 182,
+        "gameFrame": 59,
+        "time": "0.99",
+        "remaining": 8
+      },
+      {
+        "frame": 356,
+        "gameFrame": 233,
+        "time": "3.88",
+        "remaining": 7
+      },
+      {
+        "frame": 407,
+        "gameFrame": 284,
+        "time": "4.73",
+        "remaining": 6
+      },
+      {
+        "frame": 422,
+        "gameFrame": 299,
+        "time": "4.99",
+        "remaining": 5
+      },
+      {
+        "frame": 584,
+        "gameFrame": 461,
+        "time": "7.68",
+        "remaining": 4
+      },
+      {
+        "frame": 599,
+        "gameFrame": 476,
+        "time": "7.93",
+        "remaining": 3
+      },
+      {
+        "frame": 639,
+        "gameFrame": 516,
+        "time": "8.60",
+        "remaining": 2
+      },
+      {
+        "frame": 696,
+        "gameFrame": 573,
+        "time": "9.55",
+        "remaining": 1
+      },
+      {
+        "frame": 824,
+        "gameFrame": 701,
+        "time": "11.68",
+        "remaining": 0
+      }
+    ],
+    "targetIdentityChecks": [
+      {
+        "sourceFrame": 109,
+        "nativePadIndex": 109,
+        "targetId": 8
+      },
+      {
+        "sourceFrame": 182,
+        "nativePadIndex": 182,
+        "targetId": 5
+      },
+      {
+        "sourceFrame": 356,
+        "nativePadIndex": 356,
+        "targetId": 1
+      },
+      {
+        "sourceFrame": 407,
+        "nativePadIndex": 407,
+        "targetId": 4
+      },
+      {
+        "sourceFrame": 422,
+        "nativePadIndex": 422,
+        "targetId": 6
+      },
+      {
+        "sourceFrame": 584,
+        "nativePadIndex": 584,
+        "targetId": 2
+      },
+      {
+        "sourceFrame": 599,
+        "nativePadIndex": 599,
+        "targetId": 0
+      },
+      {
+        "sourceFrame": 639,
+        "nativePadIndex": 639,
+        "targetId": 7
+      },
+      {
+        "sourceFrame": 696,
+        "nativePadIndex": 696,
+        "targetId": 3
+      },
+      {
+        "sourceFrame": 824,
+        "nativePadIndex": 824,
+        "targetId": 9
+      }
+    ],
+    "poseChecks": {
+      "scope": "Sampled source/native poses registered using static stage landmarks, including the middle-step edge cancel, air jump, waveland, descent and final Side-B hammer. Not an audit of every frame.",
+      "audit": {
+        "fighter": 4,
+        "character": "Kirby",
+        "sourceVideo": "Sam the Digital \u2014 11.68 second Kirby BTT run, source.mp4",
+        "nativeEngine": "7311122699c1383681b5b536d8a2239770c66b318723d84bc9efb6b082b4f60e",
+        "ucf": false,
+        "inputCount": 851,
+        "clearTimeFrames": 701,
+        "clearTimeSeconds": 11.683333333333334,
+        "clearHud": "00:11.68",
+        "targetContacts": [
+          {
+            "sourceFrame": 109,
+            "nativePadIndex": 109,
+            "targetId": 8
+          },
+          {
+            "sourceFrame": 182,
+            "nativePadIndex": 182,
+            "targetId": 5
+          },
+          {
+            "sourceFrame": 356,
+            "nativePadIndex": 356,
+            "targetId": 1
+          },
+          {
+            "sourceFrame": 407,
+            "nativePadIndex": 407,
+            "targetId": 4
+          },
+          {
+            "sourceFrame": 422,
+            "nativePadIndex": 422,
+            "targetId": 6
+          },
+          {
+            "sourceFrame": 584,
+            "nativePadIndex": 584,
+            "targetId": 2
+          },
+          {
+            "sourceFrame": 599,
+            "nativePadIndex": 599,
+            "targetId": 0
+          },
+          {
+            "sourceFrame": 639,
+            "nativePadIndex": 639,
+            "targetId": 7
+          },
+          {
+            "sourceFrame": 696,
+            "nativePadIndex": 696,
+            "targetId": 3
+          },
+          {
+            "sourceFrame": 824,
+            "nativePadIndex": 824,
+            "targetId": 9
+          }
+        ],
+        "finalSegmentControls": {
+          "firstJumpInput": 758,
+          "firstAerialBairInput": 761,
+          "secondJumpInput": 796,
+          "hammerSideBInput": 811
+        },
+        "poseRegistration": {
+          "method": "Sequential video frames; affine registration from static stage SIFT landmarks; actor centroid residual in pixels, native minus registered source.",
+          "frames": {
+            "756": {
+              "inliers": 65,
+              "residual": [
+                -0.19,
+                -2.29
+              ]
+            },
+            "759": {
+              "inliers": 74,
+              "residual": [
+                0.09,
+                -2.18
+              ]
+            },
+            "760": {
+              "inliers": 59,
+              "residual": [
+                -2.18,
+                -4.8
+              ]
+            },
+            "768": {
+              "inliers": 60,
+              "residual": [
+                0,
+                -2.85
+              ]
+            },
+            "784": {
+              "inliers": 87,
+              "residual": [
+                0.63,
+                -3.32
+              ]
+            },
+            "796": {
+              "inliers": 71,
+              "residual": [
+                1.66,
+                -2.87
+              ]
+            },
+            "804": {
+              "inliers": 69,
+              "residual": [
+                0.07,
+                -3.37
+              ]
+            },
+            "812": {
+              "inliers": 67,
+              "residual": null
+            },
+            "820": {
+              "inliers": 61,
+              "residual": null
+            },
+            "824": {
+              "inliers": 72,
+              "residual": [
+                0.4,
+                -0.01
+              ]
+            }
+          },
+          "artifacts": ".cache/records-root/kirby-source/pose-audit-oct18/kirby-jump758-visual-registration.json"
+        },
+        "limitations": [
+          "This is a video-derived reconstruction, not the original SLP or controller input stream.",
+          "All ten target contacts and the 11.68-second clear reproduced in native simulation. The first jump is shifted later by two frames versus the first candidate to match the source trajectory more closely.",
+          "Pose tracking is unreliable where the fighter is heavily hidden by stage geometry (812/820); impact poses align closely at824."
+        ],
+        "deterministicExport": {
+          "passes": 2,
+          "verified": true,
+          "sha256": "3eff0292624d7c8e52fae763b8b409f608f901b5768d881ca36fada584daea93",
+          "report": "kirby-11.68-reconstructed.slp.report.json"
+        },
+        "browserPlayback": {
+          "leaderboardLink": true,
+          "frame": 825,
+          "targetsRemaining": 0,
+          "gameFrames": 701,
+          "pageErrors": [],
+          "method": "Standard player seek; software-rendered continuous playback is slow in this environment."
+        }
+      }
+    },
+    "browserPlayback": {
+      "leaderboardLink": true,
+      "frame": 825,
+      "targetsRemaining": 0,
+      "gameFrames": 701,
+      "pageErrors": [],
+      "method": "Standard player seek; software-rendered continuous playback is slow in this environment."
+    }
+  },
+  "limitations": "Inputs inferred from video, not the original controller recording. All ten target-clear clocks and target identities match. Intermediate analog values remain approximate. Practice reconstruction, not competitive evidence."
+}

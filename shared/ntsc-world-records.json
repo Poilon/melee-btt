@@ -343,7 +343,14 @@
           "url": "https://www.youtube.com/watch?v=XEd8gt4_5cA"
         }
       ],
-      "replayUrl": null
+      "replayUrl": "/play?worldRecord=4",
+      "reconstruction": {
+        "downloadUrl": "/world-record-replays/3eff0292624d7c8e52fae763b8b409f608f901b5768d881ca36fada584daea93.slp",
+        "sha256": "3eff0292624d7c8e52fae763b8b409f608f901b5768d881ca36fada584daea93",
+        "engine": "7311122699c1383681b5b536d8a2239770c66b318723d84bc9efb6b082b4f60e",
+        "evidenceUrl": "/world-record-replays/3eff0292624d7c8e52fae763b8b409f608f901b5768d881ca36fada584daea93.json",
+        "timingNote": "All ten target clocks match the video. Inferred inputs with sampled stage-aligned pose checks, including the final hammer hit."
+      }
     },
     {
       "stage": 16,
