@@ -12,6 +12,7 @@ else if (
 )
   location.replace("/legacy-challenge.html" + location.search + location.hash);
 const $ = (id) => document.getElementById(id);
+let tasCatalog = [];
 let catalog = [],
   selected,
   offset = 0,
@@ -39,6 +40,7 @@ function controls(busy) {
 }
 function loading() {
   showWorldRecord(null);
+  $("tas-rows").replaceChildren();
   $("rows").replaceChildren(
     ...Array.from({ length: 5 }, () => {
       const row = document.createElement("tr");
@@ -122,6 +124,31 @@ function showWorldRecord(record) {
     source.append(evidence);
   }
 }
+function showTas(fighter) {
+  $("tas-rows").replaceChildren(...tasCatalog.filter(entry => entry.fighter === fighter).map(entry => {
+    const row = document.createElement("tr");
+    row.className = "world-record-row";
+    const cells = ["TAS", entry.holder, `00:${entry.time}`, "—"].map(value => {
+      const cell = document.createElement("td"); cell.textContent = value; return cell;
+    });
+    cells[0].title = "Tool-assisted reference · separate from world records and browser rankings";
+    const proof = document.createElement("td"), links = document.createElement("div");
+    links.className = "replay-links";
+    const video = document.createElement("a");
+    video.href = entry.source; video.textContent = "Video ↗";
+    video.target = "_blank"; video.rel = "noopener noreferrer";
+    links.append(video);
+    const replay = entry.replay;
+    if (replay && /^[a-f0-9]{64}$/.test(replay.sha256) && /^[a-f0-9]{64}$/.test(replay.engine) &&
+        replay.downloadUrl === `/tas-replays/${replay.sha256}.slp`) {
+      const watch = document.createElement("a"), download = document.createElement("a");
+      watch.href = `/play?tas=${encodeURIComponent(entry.id)}`; watch.textContent = "Watch TAS reconstruction";
+      download.href = replay.downloadUrl; download.download = `${entry.id}.slp`; download.textContent = ".slp ↓";
+      links.prepend(watch, download);
+    }
+    proof.append(links); row.append(...cells, proof); return row;
+  }));
+}
 async function show(character, from = 0, force = false) {
   const seq = ++request;
   controller?.abort();
@@ -165,6 +192,7 @@ async function show(character, from = 0, force = false) {
     cache.set(key, { board, at: Date.now() });
     total = board.total;
     showWorldRecord(board.worldRecord);
+    showTas(character.fighter);
     const displayed =
       isTotal && offset === 0
         ? [...board.rows, ...board.inProgress]
@@ -241,6 +269,7 @@ async function load() {
   try {
     const data = await json("/api/browser-btt/catalog");
     catalog = data.characters;
+    tasCatalog = await json("/tas-replays/catalog.json").then(data => data.entries || []).catch(() => []);
     $("characters").replaceChildren(
       ...[totalCourse, ...catalog].map((character) => {
         const button = document.createElement("button");
