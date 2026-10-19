@@ -1,0 +1,308 @@
+{
+  "kind": "video-reconstruction",
+  "fighter": 9,
+  "holder": "sockdude1",
+  "source": "https://www.youtube.com/watch?v=hMIeO5h0m5Y",
+  "frames": 512,
+  "time": "8.53",
+  "complete": true,
+  "practice": true,
+  "sha256": "1c0e8ef154680b874c87ada06ded290703e908366363897b07a3334c3f8ce7bc",
+  "engine": "7311122699c1383681b5b536d8a2239770c66b318723d84bc9efb6b082b4f60e",
+  "verification": {
+    "deterministicPasses": 2,
+    "sourceDecoding": "Sequential video frames. Source frame = native input frame + 2; game frame = native input frame - 123.",
+    "sourceTargetVideoFrames": [
+      179,
+      256,
+      344,
+      396,
+      446,
+      495,
+      503,
+      555,
+      637,
+      637
+    ],
+    "sourceTargetGameFrames": [
+      54,
+      131,
+      219,
+      271,
+      321,
+      370,
+      378,
+      430,
+      512,
+      512
+    ],
+    "reconstructedTargetTransitions": [
+      {
+        "frame": 177,
+        "gameFrame": 54,
+        "time": "0.90",
+        "remaining": 9
+      },
+      {
+        "frame": 254,
+        "gameFrame": 131,
+        "time": "2.18",
+        "remaining": 8
+      },
+      {
+        "frame": 342,
+        "gameFrame": 219,
+        "time": "3.65",
+        "remaining": 7
+      },
+      {
+        "frame": 394,
+        "gameFrame": 271,
+        "time": "4.52",
+        "remaining": 6
+      },
+      {
+        "frame": 444,
+        "gameFrame": 321,
+        "time": "5.35",
+        "remaining": 5
+      },
+      {
+        "frame": 493,
+        "gameFrame": 370,
+        "time": "6.16",
+        "remaining": 4
+      },
+      {
+        "frame": 501,
+        "gameFrame": 378,
+        "time": "6.30",
+        "remaining": 3
+      },
+      {
+        "frame": 553,
+        "gameFrame": 430,
+        "time": "7.16",
+        "remaining": 2
+      },
+      {
+        "frame": 635,
+        "gameFrame": 512,
+        "time": "8.53",
+        "remaining": 0
+      }
+    ],
+    "targetIdentityChecks": [
+      {
+        "ordinal": 1,
+        "expectedFrame": 177,
+        "actualFrames": [
+          177
+        ],
+        "expectedId": 2155338464,
+        "occurrenceCount": 1,
+        "frameMatch": true,
+        "identityMatch": true
+      },
+      {
+        "ordinal": 2,
+        "expectedFrame": 254,
+        "actualFrames": [
+          254
+        ],
+        "expectedId": 2155333568,
+        "occurrenceCount": 1,
+        "frameMatch": true,
+        "identityMatch": true
+      },
+      {
+        "ordinal": 3,
+        "expectedFrame": 342,
+        "actualFrames": [
+          342
+        ],
+        "expectedId": 2155327616,
+        "occurrenceCount": 1,
+        "frameMatch": true,
+        "identityMatch": true
+      },
+      {
+        "ordinal": 4,
+        "expectedFrame": 394,
+        "actualFrames": [
+          394
+        ],
+        "expectedId": 2155315712,
+        "occurrenceCount": 1,
+        "frameMatch": true,
+        "identityMatch": true
+      },
+      {
+        "ordinal": 5,
+        "expectedFrame": 444,
+        "actualFrames": [
+          444
+        ],
+        "expectedId": 2155310816,
+        "occurrenceCount": 1,
+        "frameMatch": true,
+        "identityMatch": true
+      },
+      {
+        "ordinal": 6,
+        "expectedFrame": 493,
+        "actualFrames": [
+          493
+        ],
+        "expectedId": 2155321664,
+        "occurrenceCount": 1,
+        "frameMatch": true,
+        "identityMatch": true
+      },
+      {
+        "ordinal": 7,
+        "expectedFrame": 501,
+        "actualFrames": [
+          501
+        ],
+        "expectedId": 2155304864,
+        "occurrenceCount": 1,
+        "frameMatch": true,
+        "identityMatch": true
+      },
+      {
+        "ordinal": 8,
+        "expectedFrame": 553,
+        "actualFrames": [
+          553
+        ],
+        "expectedId": 2155286880,
+        "occurrenceCount": 1,
+        "frameMatch": true,
+        "identityMatch": true
+      },
+      {
+        "ordinal": 9,
+        "expectedFrame": 635,
+        "actualFrames": [
+          635
+        ],
+        "expectedId": 2155298912,
+        "occurrenceCount": 1,
+        "frameMatch": true,
+        "identityMatch": true
+      },
+      {
+        "ordinal": 10,
+        "expectedFrame": 635,
+        "actualFrames": [
+          635
+        ],
+        "expectedId": 2155292960,
+        "occurrenceCount": 1,
+        "frameMatch": true,
+        "identityMatch": true
+      }
+    ],
+    "poseChecks": {
+      "scope": "Sampled stage-registered views, not every frame.",
+      "eighthTargetRegistration": [
+        {
+          "source_frame": 555,
+          "native_index": 553,
+          "matches": 262,
+          "inliers": 125,
+          "affine": [
+            [
+              0.9954077904563159,
+              0.000611099997112704,
+              0.2071465297601487
+            ],
+            [
+              -0.005326468312861785,
+              0.8862984568014176,
+              3.6069720876543494
+            ]
+          ],
+          "projected_actor_approx": [
+            428.4525146484375,
+            320.384033203125
+          ]
+        },
+        {
+          "source_frame": 561,
+          "native_index": 559,
+          "matches": 297,
+          "inliers": 157,
+          "affine": [
+            [
+              0.9950515614868187,
+              0.0005726751652434041,
+              0.49692746580604313
+            ],
+            [
+              0.0004621577650344771,
+              0.8850582244495057,
+              1.280892182266532
+            ]
+          ],
+          "projected_actor_approx": [
+            428.57525634765625,
+            320.1005859375
+          ]
+        },
+        {
+          "source_frame": 572,
+          "native_index": 570,
+          "matches": 258,
+          "inliers": 119,
+          "affine": [
+            [
+              0.9938613175297972,
+              -0.0009655236225602657,
+              1.5594103029000546
+            ],
+            [
+              0.00024044887638330955,
+              0.8822474096244848,
+              26.018541204987795
+            ]
+          ],
+          "projected_actor_approx": [
+            428.57220458984375,
+            343.73101806640625
+          ]
+        }
+      ],
+      "finalApproachLimitation": "The final neutral aerial and double-jump effect timing match the sampled source views. Intermediate positions and platform-exit timing remain approximate; this is not an every-frame pose match.",
+      "finalAttack": {
+        "name": "neutral aerial",
+        "action": 65,
+        "animation": 6,
+        "inputFrame": 635,
+        "gameFrame": 512,
+        "simultaneousTargets": 2
+      },
+      "finalControls": {
+        "shield": 581,
+        "shieldDrop": 582,
+        "fastFall": 585,
+        "lowerPlatformLanding": 601,
+        "dash": 603,
+        "doubleJump": 620,
+        "doubleJumpEffect": 621,
+        "neutralAir": 629,
+        "clear": 635
+      }
+    },
+    "browserPlayback": {
+      "leaderboardLink": true,
+      "frame": 636,
+      "targetsRemaining": 0,
+      "gameFrames": 512,
+      "pageErrors": [],
+      "method": "Standard browser player Watch link and seek through the clear; continuous playback is software-rendered and slow in this environment."
+    }
+  },
+  "limitations": "Video-derived inputs, not the original controller recording or a competitive submission. All ten target identities and clear clocks match the video, including the simultaneous final pair. Intermediate movement is not an every-frame match. The final neutral aerial and double-jump effect timing match the sampled source views. Intermediate positions and platform-exit timing remain approximate; this is not an every-frame pose match."
+}
