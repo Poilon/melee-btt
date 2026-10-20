@@ -16,6 +16,14 @@ test('curated TAS references remain distinct and only publish checksum-validated
     assert.equal(createHash('sha256').update(bytes).digest('hex'),r.sha256);
     const parsed=parseBttReplay(bytes);assert.equal(parsed.fighter,entry.fighter);assert.equal(parsed.frames,entry.frames);
     assert.equal(parsed.engine,r.engine);assert.equal(parsed.complete,true);assert.equal(parsed.practice,true);
+    if(entry.kind==='optimization'){
+      const baseline=entries.find(candidate=>candidate.id===entry.basedOn);
+      assert.ok(baseline?.replay,'Optimization must retain its playable baseline');
+      assert.equal(entry.fighter,baseline.fighter);
+      assert.equal(r.engine,baseline.replay.engine);
+      assert.ok(entry.frames<baseline.frames);
+      assert.equal(entry.improvementFrames,baseline.frames-entry.frames);
+    }
   }
 });
 test('site gives TAS references a separate table body and labels playback as TAS',async()=>{

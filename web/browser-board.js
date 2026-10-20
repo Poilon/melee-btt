@@ -128,21 +128,22 @@ function showTas(fighter) {
   $("tas-rows").replaceChildren(...tasCatalog.filter(entry => entry.fighter === fighter).map(entry => {
     const row = document.createElement("tr");
     row.className = "world-record-row";
-    const cells = ["TAS", entry.holder, `00:${entry.time}`, "—"].map(value => {
+    const optimized = entry.kind === "optimization";
+    const cells = [optimized ? "TAS · optimized" : "TAS", entry.holder, `00:${entry.time}`, "—"].map(value => {
       const cell = document.createElement("td"); cell.textContent = value; return cell;
     });
     cells[0].title = "Tool-assisted reference · separate from world records and browser rankings";
     const proof = document.createElement("td"), links = document.createElement("div");
     links.className = "replay-links";
     const video = document.createElement("a");
-    video.href = entry.source; video.textContent = "Video ↗";
+    video.href = entry.source; video.textContent = optimized ? "Base TAS video ↗" : "Video ↗";
     video.target = "_blank"; video.rel = "noopener noreferrer";
     links.append(video);
     const replay = entry.replay;
     if (replay && /^[a-f0-9]{64}$/.test(replay.sha256) && /^[a-f0-9]{64}$/.test(replay.engine) &&
         replay.downloadUrl === `/tas-replays/${replay.sha256}.slp`) {
       const watch = document.createElement("a"), download = document.createElement("a");
-      watch.href = `/play?tas=${encodeURIComponent(entry.id)}`; watch.textContent = "Watch TAS reconstruction";
+      watch.href = `/play?tas=${encodeURIComponent(entry.id)}`; watch.textContent = optimized ? "Watch optimized TAS" : "Watch TAS reconstruction";
       download.href = replay.downloadUrl; download.download = `${entry.id}.slp`; download.textContent = ".slp ↓";
       links.prepend(watch, download);
       if (replay.evidenceUrl?.startsWith("/tas-replays/") && replay.evidenceUrl.endsWith(".audit.json")) {

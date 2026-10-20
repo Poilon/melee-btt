@@ -14,6 +14,24 @@
         "downloadUrl": "/tas-replays/ffefe53fef5e62bd30bf7f20d075549227f924a05d9ec6f0ad55a9c5e91e47b5.slp",
         "evidenceUrl": "/tas-replays/pikachu-bluichu-7-70.audit.json"
       }
+    },
+    {
+      "id": "pikachu-browser-optimized",
+      "fighter": 13,
+      "label": "TAS",
+      "kind": "optimization",
+      "holder": "Melee BTT",
+      "time": "7.45",
+      "frames": 447,
+      "source": "https://www.youtube.com/watch?v=x3Af1MacKnI",
+      "basedOn": "pikachu-bluichu-7-70",
+      "improvementFrames": 15,
+      "replay": {
+        "sha256": "9c1f6de8dde62678b5803b360458c1ff2bb57cb3130469b4f1fe0ab90fe206df",
+        "engine": "7311122699c1383681b5b536d8a2239770c66b318723d84bc9efb6b082b4f60e",
+        "downloadUrl": "/tas-replays/9c1f6de8dde62678b5803b360458c1ff2bb57cb3130469b4f1fe0ab90fe206df.slp",
+        "evidenceUrl": "/tas-replays/pikachu-browser-optimized.audit.json"
+      }
     }
   ]
 }
